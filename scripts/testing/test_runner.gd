@@ -36,4 +36,7 @@ func _run_file(path: String) -> void:
 
 func _run_method(instance, method_name: String, path: String) -> void:
 	print("RUN %s:%s" % [path, method_name])
-	instance.call(method_name)
+	var result = instance.call(method_name)
+	if result is bool and not result:
+		failures += 1
+		print("FAIL %s:%s" % [path, method_name])
