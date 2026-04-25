@@ -17,6 +17,9 @@ func go_to(scene_path: String) -> Node:
 	if current_scene:
 		current_scene.queue_free()
 	var packed := load(scene_path) as PackedScene
+	if packed == null:
+		push_error("SceneRouter could not load scene: %s" % scene_path)
+		return null
 	current_scene = packed.instantiate()
 	host.add_child(current_scene)
 	return current_scene
