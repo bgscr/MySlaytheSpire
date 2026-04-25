@@ -1,0 +1,39 @@
+extends SceneTree
+
+const TEST_FILES := [
+	"res://tests/unit/test_rng_service.gd",
+	"res://tests/unit/test_resource_schemas.gd",
+	"res://tests/unit/test_map_generator.gd",
+	"res://tests/unit/test_combat_engine.gd",
+	"res://tests/unit/test_save_service.gd",
+	"res://tests/smoke/test_scene_flow.gd",
+]
+
+var failures := 0
+
+func _init() -> void:
+	for file in TEST_FILES:
+		if ResourceLoader.exists(file):
+			_run_file(file)
+	if failures > 0:
+		print("TESTS FAILED: %s" % failures)
+		quit(1)
+	else:
+		print("TESTS PASSED")
+		quit(0)
+
+func _run_file(path: String) -> void:
+	var script := load(path)
+	if script == null or not script.can_instantiate():
+		failures += 1
+		print("FAIL %s: could not load test script" % path)
+		return
+	var instance = script.new()
+	for method in instance.get_method_list():
+		var method_name := String(method.name)
+		if method_name.begins_with("test_"):
+			_run_method(instance, method_name, path)
+
+func _run_method(instance, method_name: String, path: String) -> void:
+	print("RUN %s:%s" % [path, method_name])
+	instance.call(method_name)
