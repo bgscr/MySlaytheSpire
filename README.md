@@ -11,6 +11,6 @@
 ## Local Commands
 
 ```powershell
-$env:GODOT4="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe"
+$env:GODOT4="C:\Tools\Godot\Godot_v4.6.2-stable_win64_console.exe"
 & $env:GODOT4 --headless --path . --script res://scripts/testing/test_runner.gd
 ```
