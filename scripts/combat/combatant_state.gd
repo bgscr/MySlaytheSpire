@@ -13,14 +13,16 @@ func _init(combatant_id: String = "", hp: int = 1) -> void:
 	current_hp = hp
 
 func take_damage(amount: int) -> int:
-	var prevented: int = min(block, amount)
+	var incoming: int = max(0, amount)
+	var prevented: int = min(block, incoming)
 	block -= prevented
-	var remaining: int = amount - prevented
+	var remaining: int = incoming - prevented
+	var hp_before := current_hp
 	current_hp = max(0, current_hp - remaining)
-	return remaining
+	return hp_before - current_hp
 
 func gain_block(amount: int) -> void:
-	block += amount
+	block += max(0, amount)
 
 func is_defeated() -> bool:
 	return current_hp <= 0
