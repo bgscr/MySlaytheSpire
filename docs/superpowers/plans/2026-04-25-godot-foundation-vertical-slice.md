@@ -130,7 +130,7 @@ If Godot is installed elsewhere, set `$env:GODOT4` to that executable path befor
 - Create: `scripts/app/scene_router.gd`
 - Create: `scripts/app/game.gd`
 
-- [ ] **Step 1: Write the project metadata and ignore rules**
+- [x] **Step 1: Write the project metadata and ignore rules**
 
 Create `.gitignore`:
 
@@ -165,7 +165,7 @@ $env:GODOT4="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe"
 ```
 ```
 
-- [ ] **Step 2: Create the minimal Godot project file**
+- [x] **Step 2: Create the minimal Godot project file**
 
 Create `project.godot`:
 
@@ -192,7 +192,7 @@ locale/translations=PackedStringArray("res://localization/zh_CN.po")
 renderer/rendering_method="forward_plus"
 ```
 
-- [ ] **Step 3: Create the root app scene**
+- [x] **Step 3: Create the root app scene**
 
 Create `scenes/app/App.tscn`:
 
@@ -211,7 +211,7 @@ grow_vertical = 2
 script = ExtResource("1_app")
 ```
 
-- [ ] **Step 4: Create the root app scripts**
+- [x] **Step 4: Create the root app scripts**
 
 Create `scripts/app/scene_router.gd`:
 
@@ -265,7 +265,7 @@ func _ready() -> void:
 	game.router.go_to(SceneRouter.MAIN_MENU)
 ```
 
-- [ ] **Step 5: Run Godot import check**
+- [x] **Step 5: Run Godot import check**
 
 Run:
 
@@ -281,7 +281,7 @@ Godot Engine v4.6.2.stable...
 
 No script parse errors should appear.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```powershell
 git add .gitignore README.md project.godot scenes/app/App.tscn scripts/app
@@ -296,7 +296,7 @@ git commit -m "chore: create Godot project skeleton"
 - Create: `scripts/core/rng_service.gd`
 - Create: `tests/unit/test_rng_service.gd`
 
-- [ ] **Step 1: Write the failing RNG tests**
+- [x] **Step 1: Write the failing RNG tests**
 
 Create `tests/unit/test_rng_service.gd`:
 
@@ -320,7 +320,7 @@ func test_fork_is_deterministic_by_label() -> void:
 	assert(map_a.next_int(0, 999) == map_b.next_int(0, 999))
 ```
 
-- [ ] **Step 2: Add the test runner**
+- [x] **Step 2: Add the test runner**
 
 Create `scripts/testing/test_runner.gd`:
 
@@ -364,7 +364,7 @@ func _run_method(instance, method_name: String, path: String) -> void:
 		result = await result.completed
 ```
 
-- [ ] **Step 3: Run tests and verify RED**
+- [x] **Step 3: Run tests and verify RED**
 
 Run:
 
@@ -378,7 +378,7 @@ Expected:
 SCRIPT ERROR: Parse Error: Could not preload resource file "res://scripts/core/rng_service.gd".
 ```
 
-- [ ] **Step 4: Implement RNG service**
+- [x] **Step 4: Implement RNG service**
 
 Create `scripts/core/rng_service.gd`:
 
@@ -417,7 +417,7 @@ func fork(label: String) -> RngService:
 	return RngService.new(hash(context))
 ```
 
-- [ ] **Step 5: Run tests and verify GREEN**
+- [x] **Step 5: Run tests and verify GREEN**
 
 Run:
 
@@ -433,7 +433,7 @@ RUN res://tests/unit/test_rng_service.gd:test_fork_is_deterministic_by_label
 TESTS PASSED
 ```
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```powershell
 git add scripts/testing/test_runner.gd scripts/core/rng_service.gd tests/unit/test_rng_service.gd
@@ -453,7 +453,7 @@ git commit -m "test: add local Godot test runner and seeded rng"
 - Create: `scripts/data/relic_def.gd`
 - Create: `tests/unit/test_resource_schemas.gd`
 
-- [ ] **Step 1: Write schema tests**
+- [x] **Step 1: Write schema tests**
 
 Create `tests/unit/test_resource_schemas.gd`:
 
@@ -493,7 +493,7 @@ func test_enemy_def_has_intent_sequence() -> void:
 	assert(enemy.intent_sequence[0] == "attack_5")
 ```
 
-- [ ] **Step 2: Run schema tests and verify RED**
+- [x] **Step 2: Run schema tests and verify RED**
 
 Run:
 
@@ -507,7 +507,7 @@ Expected:
 Could not preload resource file "res://scripts/data/card_def.gd"
 ```
 
-- [ ] **Step 3: Implement core event classes**
+- [x] **Step 3: Implement core event classes**
 
 Create `scripts/core/game_event.gd`:
 
@@ -535,7 +535,7 @@ func emit(event_type: String, payload: Dictionary = {}) -> void:
 	event_emitted.emit(GameEvent.new(event_type, payload))
 ```
 
-- [ ] **Step 4: Implement Resource schemas**
+- [x] **Step 4: Implement Resource schemas**
 
 Create `scripts/data/effect_def.gd`:
 
@@ -604,7 +604,7 @@ extends Resource
 @export var effects: Array[EffectDef] = []
 ```
 
-- [ ] **Step 5: Run tests and verify GREEN**
+- [x] **Step 5: Run tests and verify GREEN**
 
 Run:
 
@@ -621,7 +621,7 @@ RUN res://tests/unit/test_resource_schemas.gd:test_enemy_def_has_intent_sequence
 TESTS PASSED
 ```
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```powershell
 git add scripts/core scripts/data tests/unit/test_resource_schemas.gd
@@ -637,7 +637,7 @@ git commit -m "feat: add core events and resource schemas"
 - Create: `scripts/run/map_generator.gd`
 - Create: `tests/unit/test_map_generator.gd`
 
-- [ ] **Step 1: Write map generation tests**
+- [x] **Step 1: Write map generation tests**
 
 Create `tests/unit/test_map_generator.gd`:
 
@@ -659,7 +659,7 @@ func test_map_has_boss_at_end() -> void:
 	assert(nodes[nodes.size() - 1].node_type == "boss")
 ```
 
-- [ ] **Step 2: Run map tests and verify RED**
+- [x] **Step 2: Run map tests and verify RED**
 
 Run:
 
@@ -673,7 +673,7 @@ Expected:
 Could not preload resource file "res://scripts/run/map_generator.gd"
 ```
 
-- [ ] **Step 3: Implement map and run state classes**
+- [x] **Step 3: Implement map and run state classes**
 
 Create `scripts/run/map_node_state.gd`:
 
@@ -760,7 +760,7 @@ func generate(seed_value: int) -> Array:
 	return nodes
 ```
 
-- [ ] **Step 4: Run tests and verify GREEN**
+- [x] **Step 4: Run tests and verify GREEN**
 
 Run:
 
@@ -776,7 +776,7 @@ RUN res://tests/unit/test_map_generator.gd:test_map_has_boss_at_end
 TESTS PASSED
 ```
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```powershell
 git add scripts/run tests/unit/test_map_generator.gd
@@ -793,7 +793,7 @@ git commit -m "feat: add seeded run map generation"
 - Create: `scripts/combat/combat_engine.gd`
 - Create: `tests/unit/test_combat_engine.gd`
 
-- [ ] **Step 1: Write combat tests**
+- [x] **Step 1: Write combat tests**
 
 Create `tests/unit/test_combat_engine.gd`:
 
@@ -827,7 +827,7 @@ func test_block_prevents_damage() -> void:
 	assert(player.block == 0)
 ```
 
-- [ ] **Step 2: Run combat tests and verify RED**
+- [x] **Step 2: Run combat tests and verify RED**
 
 Run:
 
@@ -841,7 +841,7 @@ Expected:
 Could not preload resource file "res://scripts/combat/combat_engine.gd"
 ```
 
-- [ ] **Step 3: Implement combatant and combat state**
+- [x] **Step 3: Implement combatant and combat state**
 
 Create `scripts/combat/combatant_state.gd`:
 
@@ -890,7 +890,7 @@ var discard_pile: Array[String] = []
 var exhausted_pile: Array[String] = []
 ```
 
-- [ ] **Step 4: Implement effect execution**
+- [x] **Step 4: Implement effect execution**
 
 Create `scripts/combat/effect_executor.gd`:
 
@@ -930,7 +930,7 @@ func end_turn(state: CombatState) -> void:
 	state.player.block = 0
 ```
 
-- [ ] **Step 5: Run combat tests and verify GREEN**
+- [x] **Step 5: Run combat tests and verify GREEN**
 
 Run:
 
@@ -946,7 +946,7 @@ RUN res://tests/unit/test_combat_engine.gd:test_block_prevents_damage
 TESTS PASSED
 ```
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```powershell
 git add scripts/combat tests/unit/test_combat_engine.gd
