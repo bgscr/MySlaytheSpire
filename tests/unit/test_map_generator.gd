@@ -1,7 +1,6 @@
 extends RefCounted
 
 const MapGenerator := preload("res://scripts/run/map_generator.gd")
-const RunStateTests := preload("res://tests/unit/test_run_state.gd")
 
 func test_same_seed_generates_same_map() -> bool:
 	var first := MapGenerator.new().generate(1234)
@@ -44,15 +43,5 @@ func test_different_seeds_change_non_fixed_node_types() -> bool:
 			type_differs = true
 			break
 	var passed := type_differs
-	assert(passed)
-	return passed
-
-func test_to_dict_serializes_run_and_map_nodes() -> bool:
-	var passed := RunStateTests.new().test_to_dict_serializes_run_and_map_nodes()
-	assert(passed)
-	return passed
-
-func test_to_dict_does_not_alias_deck_or_relic_arrays() -> bool:
-	var passed := RunStateTests.new().test_to_dict_does_not_alias_deck_or_relic_arrays()
 	assert(passed)
 	return passed
