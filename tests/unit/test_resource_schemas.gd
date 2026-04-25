@@ -15,7 +15,10 @@ func test_card_def_stores_effects_and_localization_keys() -> bool:
 	card.description_key = "card.sword.strike.desc"
 	card.cost = 1
 	card.effects = [effect]
-	var passed := card.id == "sword.strike" and card.effects[0].amount == 6
+	var passed := card.id == "sword.strike" \
+		and card.effects[0].amount == 6 \
+		and card.name_key == "card.sword.strike.name" \
+		and card.description_key == "card.sword.strike.desc"
 	assert(passed)
 	return passed
 
