@@ -28,6 +28,15 @@ $env:GODOT4="C:\Tools\Godot\Godot_v4.6.2-stable_win64_console.exe"
 - Manual editor smoke: complete
 - Windows export preset: complete; `export/MySlaytheSpire.exe` generated after installing Godot 4.6.2 Windows export templates
 
+## Phase 2 Progress
+
+- Content capacity foundation: complete
+- Content catalog: complete
+- Reward generator: complete
+- Encounter generator: complete
+- Resource consistency tests: complete
+- Minimal extended combat effects: complete
+
 ## Next Plans
 
 1. Content expansion: two characters, card pools, relics, enemies, bosses, event pool.
