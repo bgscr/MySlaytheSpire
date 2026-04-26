@@ -14,3 +14,23 @@
 $env:GODOT4="C:\Tools\Godot\Godot_v4.6.2-stable_win64_console.exe"
 & $env:GODOT4 --headless --path . --script res://scripts/testing/test_runner.gd
 ```
+
+## Phase 1 Status
+
+- Godot project skeleton: complete
+- Seeded run map: complete
+- Minimal combat engine: complete
+- Save/continue: complete
+- Sample scene flow: complete
+- Debug overlay: complete
+- Local tests: complete (`TESTS PASSED`)
+- Import check: complete; Godot exits 0 with known exit-time ObjectDB/resource cleanup warnings
+- Manual editor smoke: pending in a GUI-capable session
+- Windows export preset: prepared; export artifact requires Godot 4.6.2 Windows export templates
+
+## Next Plans
+
+1. Content expansion: two characters, card pools, relics, enemies, bosses, event pool.
+2. High-presentation pass: generated assets, animation, particles, camera, audio.
+3. Developer tools: card browser, enemy sandbox, event tester, reward inspector, save inspector.
+4. Release readiness: CI, artifact export, changelog, release draft, Steam adapter.

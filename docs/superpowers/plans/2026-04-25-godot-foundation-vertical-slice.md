@@ -1854,7 +1854,7 @@ git commit -m "chore: add Windows export preset"
 
 - Modify: `README.md`
 
-- [ ] **Step 1: Run all local tests**
+- [x] **Step 1: Run all local tests**
 
 Run:
 
@@ -1868,7 +1868,9 @@ Expected:
 TESTS PASSED
 ```
 
-- [ ] **Step 2: Run project import check**
+Verification: rerun completed with exit 0 and `TESTS PASSED`; known exit-time ObjectDB/resource cleanup warnings remain.
+
+- [x] **Step 2: Run project import check**
 
 Run:
 
@@ -1877,6 +1879,8 @@ Run:
 ```
 
 Expected: no parse errors, no missing resources.
+
+Verification: rerun completed with exit 0, no parse errors, and no missing resources; known exit-time ObjectDB/resource cleanup warning remains.
 
 - [ ] **Step 3: Run the game manually in editor**
 
@@ -1898,7 +1902,9 @@ Manual acceptance:
 - Debug overlay appears in debug build.
 - Continuing a saved run returns to map.
 
-- [ ] **Step 4: Update README with Phase 1 status**
+Manual editor acceptance was not run in this noninteractive implementer session. The checklist above remains pending GUI verification.
+
+- [x] **Step 4: Update README with Phase 1 status**
 
 Modify `README.md`:
 
@@ -1912,7 +1918,9 @@ Modify `README.md`:
 - Sample scene flow: complete
 - Debug overlay: complete
 - Local tests: complete
-- Windows export preset: prepared
+- Import check: complete with known exit-time cleanup warnings
+- Manual editor smoke: pending
+- Windows export preset: prepared; export artifact requires Godot 4.6.2 Windows export templates
 
 ## Next Plans
 
@@ -1922,10 +1930,10 @@ Modify `README.md`:
 4. Release readiness: CI, artifact export, changelog, release draft, Steam adapter.
 ```
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```powershell
-git add README.md
+git add README.md docs/superpowers/plans/2026-04-25-godot-foundation-vertical-slice.md
 git commit -m "docs: record phase 1 acceptance status"
 ```
 
