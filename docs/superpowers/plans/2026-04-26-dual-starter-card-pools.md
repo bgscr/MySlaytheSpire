@@ -10,6 +10,14 @@
 
 ---
 
+## Execution Status
+
+Completed on 2026-04-26 in the current `main` workspace.
+
+- Expanded sword starter card pool to 9 total catalog cards.
+- Expanded alchemy starter card pool to 9 total catalog cards.
+- Verified catalog, reward, resource effect composition, and Godot import checks.
+
 ## Execution Constraints
 
 - Work directly in `D:\prj\Slay the Spire 2` on `main`; do not create a worktree.

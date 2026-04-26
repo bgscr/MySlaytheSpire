@@ -186,3 +186,24 @@ func test_apply_status_stacks_positive_amounts() -> bool:
 		and not enemy.statuses.has("burn")
 	assert(passed)
 	return passed
+
+func test_sword_flash_cut_resource_deals_damage_and_draws() -> bool:
+	var card := load("res://resources/cards/sword/flash_cut.tres") as CardDef
+	var state := CombatState.new()
+	state.player = CombatantState.new("player", 30)
+	var enemy := CombatantState.new("enemy", 20)
+	CombatEngine.new().play_card_in_state(card, state, state.player, enemy)
+	var passed: bool = enemy.current_hp == 16 and state.pending_draw_count == 1
+	assert(passed)
+	return passed
+
+func test_alchemy_inner_fire_pill_resource_gains_energy_and_draws() -> bool:
+	var card := load("res://resources/cards/alchemy/inner_fire_pill.tres") as CardDef
+	var state := CombatState.new()
+	state.player = CombatantState.new("player", 30)
+	state.energy = 0
+	var enemy := CombatantState.new("enemy", 20)
+	CombatEngine.new().play_card_in_state(card, state, state.player, enemy)
+	var passed: bool = state.energy == 1 and state.pending_draw_count == 1 and enemy.current_hp == 20
+	assert(passed)
+	return passed

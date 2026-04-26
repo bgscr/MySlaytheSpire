@@ -36,6 +36,7 @@ $env:GODOT4="C:\Tools\Godot\Godot_v4.6.2-stable_win64_console.exe"
 - Encounter generator: complete
 - Resource consistency tests: complete
 - Minimal extended combat effects: complete
+- Dual starter card pools: complete; sword and alchemy each have 9 catalog cards
 
 ## Next Plans
 
