@@ -471,6 +471,25 @@ func test_mixed_target_card_affects_enemy_and_player() -> bool:
 	assert(passed)
 	return passed
 
+func test_draw_effect_resolves_before_played_card_enters_discard() -> bool:
+	var catalog := _default_catalog()
+	var run := _run_with_single_node("node_0", "combat", ["sword.flash_cut"])
+	var session := CombatSession.new()
+	session.start(catalog, run)
+	session.state.hand = ["sword.flash_cut"]
+	session.state.draw_pile.clear()
+	session.state.discard_pile.clear()
+
+	var selected := session.select_card(0)
+	var confirmed := session.confirm_enemy_target(0)
+
+	var passed: bool = selected \
+		and confirmed \
+		and session.state.hand.is_empty() \
+		and session.state.discard_pile == ["sword.flash_cut"]
+	assert(passed)
+	return passed
+
 func test_insufficient_energy_keeps_card_in_hand() -> bool:
 	var catalog := _default_catalog()
 	var run := _run_with_single_node("node_0", "combat", ["sword.horizon_arc"])
@@ -607,9 +626,9 @@ func _play_pending_card(target: CombatantState) -> bool:
 	state.energy -= pending_card.cost
 	state.hand.remove_at(pending_hand_index)
 	engine.play_card_in_state(pending_card, state, state.player, target)
-	state.discard_pile.append(played_card_id)
 	_clear_pending_selection()
 	_resolve_pending_draws()
+	state.discard_pile.append(played_card_id)
 	_update_terminal_phase()
 	if phase != PHASE_WON and phase != PHASE_LOST:
 		phase = PHASE_PLAYER_TURN
