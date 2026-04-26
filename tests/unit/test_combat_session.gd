@@ -76,6 +76,150 @@ func test_enemy_intent_returns_empty_when_intent_indices_drift() -> bool:
 	assert(passed)
 	return passed
 
+func test_enemy_target_card_waits_for_enemy_and_can_cancel() -> bool:
+	var catalog := _default_catalog()
+	var run := _run_with_single_node("node_0", "combat", ["sword.strike"])
+	var session := CombatSession.new()
+	session.start(catalog, run)
+	var selected := session.select_card(0)
+	var canceled := session.cancel_selection()
+
+	var passed: bool = selected \
+		and canceled \
+		and session.phase == CombatSession.PHASE_PLAYER_TURN \
+		and session.pending_hand_index == -1 \
+		and session.state.energy == 3 \
+		and session.state.hand == ["sword.strike"] \
+		and session.state.discard_pile.is_empty() \
+		and session.state.enemies[0].current_hp == 20
+	assert(passed)
+	return passed
+
+func test_enemy_target_card_damages_selected_enemy_and_discards() -> bool:
+	var catalog := _default_catalog()
+	var run := _run_with_single_node("node_0", "combat", ["sword.strike"])
+	var session := CombatSession.new()
+	session.start(catalog, run)
+	session.state.hand = ["sword.strike"]
+	session.state.draw_pile.clear()
+	session.state.discard_pile.clear()
+	var enemies: Array[CombatantState] = [
+		CombatantState.new("first_enemy", 30),
+		CombatantState.new("second_enemy", 30),
+	]
+	session.state.enemies = enemies
+
+	var selected := session.select_card(0)
+	var confirmed := session.confirm_enemy_target(1)
+
+	var first_enemy_hp := session.state.enemies[0].current_hp
+	var second_enemy_hp := session.state.enemies[1].current_hp
+	var passed: bool = selected \
+		and confirmed \
+		and session.phase == CombatSession.PHASE_PLAYER_TURN \
+		and first_enemy_hp == session.state.enemies[0].max_hp \
+		and second_enemy_hp == session.state.enemies[1].max_hp - 6 \
+		and session.state.energy == 2 \
+		and session.state.hand.is_empty() \
+		and session.state.discard_pile == ["sword.strike"]
+	assert(passed)
+	return passed
+
+func test_player_target_card_requires_confirmation_and_can_cancel() -> bool:
+	var catalog := _default_catalog()
+	var run := _run_with_single_node("node_0", "combat", ["sword.guard"])
+	var session := CombatSession.new()
+	session.start(catalog, run)
+	var selected := session.select_card(0)
+	var canceled := session.cancel_selection()
+	selected = selected and session.select_card(0)
+	var confirmed := session.confirm_player_target()
+
+	var passed: bool = selected \
+		and canceled \
+		and confirmed \
+		and session.phase == CombatSession.PHASE_PLAYER_TURN \
+		and session.state.player.block == 7 \
+		and session.state.energy == 2 \
+		and session.state.hand.is_empty() \
+		and session.state.discard_pile == ["sword.guard"]
+	assert(passed)
+	return passed
+
+func test_mixed_target_card_affects_enemy_and_player() -> bool:
+	var catalog := _default_catalog()
+	var run := _run_with_single_node("node_0", "combat", ["sword.horizon_arc"])
+	var session := CombatSession.new()
+	session.start(catalog, run)
+	session.state.hand = ["sword.horizon_arc"]
+	session.state.energy = 3
+	var enemy_hp_before := session.state.enemies[0].current_hp
+
+	var selected := session.select_card(0)
+	var confirmed := session.confirm_enemy_target(0)
+
+	var passed: bool = selected \
+		and confirmed \
+		and session.state.enemies[0].current_hp == enemy_hp_before - 6 \
+		and session.state.player.block == 4 \
+		and session.state.energy == 1
+	assert(passed)
+	return passed
+
+func test_draw_effect_resolves_before_played_card_enters_discard() -> bool:
+	var catalog := _default_catalog()
+	var run := _run_with_single_node("node_0", "combat", ["sword.flash_cut"])
+	var session := CombatSession.new()
+	session.start(catalog, run)
+	session.state.hand = ["sword.flash_cut"]
+	session.state.draw_pile.clear()
+	session.state.discard_pile.clear()
+
+	var selected := session.select_card(0)
+	var confirmed := session.confirm_enemy_target(0)
+
+	var passed: bool = selected \
+		and confirmed \
+		and session.state.hand.is_empty() \
+		and session.state.discard_pile == ["sword.flash_cut"]
+	assert(passed)
+	return passed
+
+func test_insufficient_energy_keeps_card_in_hand() -> bool:
+	var catalog := _default_catalog()
+	var run := _run_with_single_node("node_0", "combat", ["sword.horizon_arc"])
+	var session := CombatSession.new()
+	session.start(catalog, run)
+	session.state.energy = 1
+	var selected := session.select_card(0)
+
+	var passed: bool = not selected \
+		and session.phase == CombatSession.PHASE_PLAYER_TURN \
+		and session.error_text.contains("energy") \
+		and session.state.energy == 1 \
+		and session.state.hand == ["sword.horizon_arc"] \
+		and session.state.discard_pile.is_empty()
+	assert(passed)
+	return passed
+
+func test_draw_reshuffles_discard_when_draw_pile_is_empty() -> bool:
+	var catalog := _default_catalog()
+	var run := _run_with_single_node("node_0", "combat", ["sword.strike"])
+	var session := CombatSession.new()
+	session.start(catalog, run)
+	session.state.hand.clear()
+	session.state.draw_pile.clear()
+	session.state.discard_pile = ["sword.guard", "sword.qi_surge"]
+
+	session.draw_cards(2)
+
+	var passed: bool = session.state.hand.size() == 2 \
+		and session.state.draw_pile.is_empty() \
+		and session.state.discard_pile.is_empty() \
+		and _all_values_in_pool(session.state.hand, ["sword.guard", "sword.qi_surge"])
+	assert(passed)
+	return passed
+
 func _default_catalog() -> ContentCatalog:
 	var catalog := ContentCatalog.new()
 	catalog.load_default()
@@ -93,3 +237,9 @@ func _run_with_single_node(current_node_id: String, node_type: String, deck_ids:
 	node.unlocked = true
 	run.map_nodes = [node]
 	return run
+
+func _all_values_in_pool(values: Array[String], pool: Array[String]) -> bool:
+	for value in values:
+		if not pool.has(value):
+			return false
+	return true

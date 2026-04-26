@@ -67,6 +67,61 @@ func get_enemy_intent(enemy_index: int) -> String:
 	var intent_index := enemy_intent_indices[enemy_index] % enemy_def.intent_sequence.size()
 	return enemy_def.intent_sequence[intent_index]
 
+func select_card(hand_index: int) -> bool:
+	if phase != PHASE_PLAYER_TURN:
+		error_text = "Cards can only be selected during the player turn."
+		return false
+	if hand_index < 0 or hand_index >= state.hand.size():
+		error_text = "Card selection index is invalid: %d" % hand_index
+		return false
+	var card_id := state.hand[hand_index]
+	var card: CardDef = null
+	if catalog != null:
+		card = catalog.get_card(card_id)
+	if card == null:
+		error_text = "Selected card is missing from catalog: %s" % card_id
+		return false
+	if state.energy < card.cost:
+		error_text = "Not enough energy to play card: %s" % card_id
+		return false
+
+	pending_hand_index = hand_index
+	pending_card = card
+	error_text = ""
+	if _card_requires_enemy_target(card):
+		phase = PHASE_SELECTING_ENEMY_TARGET
+	else:
+		phase = PHASE_CONFIRMING_PLAYER_TARGET
+	return true
+
+func cancel_selection() -> bool:
+	if phase != PHASE_SELECTING_ENEMY_TARGET and phase != PHASE_CONFIRMING_PLAYER_TARGET:
+		error_text = "There is no pending card selection to cancel."
+		return false
+	_clear_pending_selection()
+	phase = PHASE_PLAYER_TURN
+	error_text = ""
+	return true
+
+func confirm_enemy_target(enemy_index: int) -> bool:
+	if phase != PHASE_SELECTING_ENEMY_TARGET:
+		error_text = "Enemy target confirmation is not currently pending."
+		return false
+	if enemy_index < 0 or enemy_index >= state.enemies.size():
+		error_text = "Enemy target index is invalid: %d" % enemy_index
+		return false
+	var target := state.enemies[enemy_index]
+	if target.is_defeated():
+		error_text = "Enemy target is already defeated: %d" % enemy_index
+		return false
+	return _play_pending_card(target)
+
+func confirm_player_target() -> bool:
+	if phase != PHASE_CONFIRMING_PLAYER_TARGET:
+		error_text = "Player target confirmation is not currently pending."
+		return false
+	return _play_pending_card(state.player)
+
 func draw_cards(count: int) -> void:
 	for _i in range(max(0, count)):
 		if state.draw_pile.is_empty():
@@ -75,6 +130,78 @@ func draw_cards(count: int) -> void:
 			state.draw_pile = _shuffle_card_ids(state.discard_pile)
 			state.discard_pile.clear()
 		state.hand.append(state.draw_pile.pop_back())
+
+func _card_requires_enemy_target(card: CardDef) -> bool:
+	for effect in card.effects:
+		var target := effect.target.to_lower()
+		if target == "enemy" or target == "target":
+			return true
+	return false
+
+func _play_pending_card(target: CombatantState) -> bool:
+	if pending_card == null:
+		error_text = "Pending card is missing."
+		return false
+	if pending_hand_index < 0 or pending_hand_index >= state.hand.size():
+		error_text = "Pending card hand index is invalid: %d" % pending_hand_index
+		return false
+	var played_card_id := state.hand[pending_hand_index]
+	if played_card_id != pending_card.id:
+		error_text = "Pending card no longer matches hand card: %s" % played_card_id
+		return false
+	if state.energy < pending_card.cost:
+		error_text = "Not enough energy to play card: %s" % pending_card.id
+		return false
+
+	state.energy -= pending_card.cost
+	state.hand.remove_at(pending_hand_index)
+	engine.play_card_in_state(pending_card, state, state.player, target)
+	_resolve_pending_draws()
+	state.discard_pile.append(pending_card.id)
+	_clear_pending_selection()
+	error_text = ""
+	if not _update_terminal_phase():
+		phase = PHASE_PLAYER_TURN
+	return true
+
+func _resolve_pending_draws() -> void:
+	var draw_count: int = max(0, state.pending_draw_count)
+	state.pending_draw_count = 0
+	draw_cards(draw_count)
+
+func _clear_pending_selection() -> void:
+	pending_hand_index = -1
+	pending_card = null
+
+func _update_terminal_phase() -> bool:
+	if state.player != null and state.player.is_defeated():
+		_finish_loss()
+		return true
+	var has_living_enemy := false
+	for enemy in state.enemies:
+		if not enemy.is_defeated():
+			has_living_enemy = true
+			break
+	if not has_living_enemy and not state.enemies.is_empty():
+		_finish_win()
+		return true
+	return false
+
+func _finish_win() -> void:
+	phase = PHASE_WON
+	if run == null:
+		return
+	run.current_hp = state.player.current_hp
+	if not terminal_rewards_applied:
+		run.gold += state.gold_delta
+		terminal_rewards_applied = true
+
+func _finish_loss() -> void:
+	phase = PHASE_LOST
+	if run == null:
+		return
+	run.current_hp = 0
+	run.failed = true
 
 func _initialize_from_run() -> void:
 	var node = _find_current_node()
