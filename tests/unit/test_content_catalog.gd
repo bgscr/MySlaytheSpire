@@ -1,6 +1,8 @@
 extends RefCounted
 
 const ContentCatalog := preload("res://scripts/content/content_catalog.gd")
+const CardDef := preload("res://scripts/data/card_def.gd")
+const CharacterDef := preload("res://scripts/data/character_def.gd")
 const EnemyDef := preload("res://scripts/data/enemy_def.gd")
 
 func test_default_catalog_loads_existing_resources() -> bool:
@@ -145,6 +147,30 @@ func test_dual_starter_card_pools_are_character_isolated() -> bool:
 		and _contains_all(alchemy_ids, expected_alchemy) \
 		and not sword_ids.has("alchemy.toxic_pill") \
 		and not alchemy_ids.has("sword.strike")
+	assert(passed)
+	return passed
+
+func test_loaded_character_card_pool_ids_exclude_unlisted_same_character_cards() -> bool:
+	var catalog := ContentCatalog.new()
+	var character := CharacterDef.new()
+	character.id = "sword"
+	character.card_pool_ids = ["sword.in_pool"]
+	catalog.characters_by_id[character.id] = character
+
+	var in_pool := CardDef.new()
+	in_pool.id = "sword.in_pool"
+	in_pool.character_id = "sword"
+	catalog.cards_by_id[in_pool.id] = in_pool
+
+	var excluded := CardDef.new()
+	excluded.id = "sword.excluded"
+	excluded.character_id = "sword"
+	catalog.cards_by_id[excluded.id] = excluded
+
+	var ids := _ids(catalog.get_cards_for_character("sword"))
+	var passed: bool = ids.size() == 1 \
+		and ids.has("sword.in_pool") \
+		and not ids.has("sword.excluded")
 	assert(passed)
 	return passed
 

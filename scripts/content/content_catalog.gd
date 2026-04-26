@@ -86,10 +86,14 @@ func get_relic(relic_id: String) -> RelicDef:
 func get_cards_for_character(character_id: String) -> Array[CardDef]:
 	var result: Array[CardDef] = []
 	var character := get_character(character_id)
+	if character != null:
+		for card_id in character.card_pool_ids:
+			var card := get_card(card_id)
+			if card != null:
+				result.append(card)
+		return result
 	for card: CardDef in cards_by_id.values():
 		if card.character_id == character_id:
-			result.append(card)
-		elif character != null and character.card_pool_ids.has(card.id):
 			result.append(card)
 	return result
 

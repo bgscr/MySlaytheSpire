@@ -1,6 +1,7 @@
 extends RefCounted
 
 const ContentCatalog := preload("res://scripts/content/content_catalog.gd")
+const CardDef := preload("res://scripts/data/card_def.gd")
 const RewardGenerator := preload("res://scripts/reward/reward_generator.gd")
 
 func test_card_rewards_are_deterministic_for_same_seed_and_context() -> bool:
@@ -94,9 +95,9 @@ func _catalog() -> ContentCatalog:
 	catalog.load_default()
 	return catalog
 
-func _ids(resources: Array) -> Array[String]:
+func _ids(resources: Array[CardDef]) -> Array[String]:
 	var ids: Array[String] = []
-	for resource in resources:
+	for resource: CardDef in resources:
 		ids.append(resource.id)
 	return ids
 
