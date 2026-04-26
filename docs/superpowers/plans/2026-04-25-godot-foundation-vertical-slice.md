@@ -1697,7 +1697,7 @@ git commit -m "feat: add debug overlay and presentation hooks"
 - Create: `tests/smoke/test_scene_flow.gd`
 - Modify: `scripts/testing/test_runner.gd`
 
-- [ ] **Step 1: Write smoke test**
+- [x] **Step 1: Write smoke test**
 
 Create `tests/smoke/test_scene_flow.gd`:
 
@@ -1706,13 +1706,16 @@ extends RefCounted
 
 const AppScene := preload("res://scenes/app/App.tscn")
 
-func test_app_scene_instantiates() -> void:
+func test_app_scene_instantiates() -> bool:
 	var app := AppScene.instantiate()
-	assert(app != null)
-	app.queue_free()
+	var passed := app != null
+	assert(passed)
+	if app != null:
+		app.queue_free()
+	return passed
 ```
 
-- [ ] **Step 2: Run smoke test**
+- [x] **Step 2: Run smoke test**
 
 Run:
 
@@ -1727,7 +1730,9 @@ RUN res://tests/smoke/test_scene_flow.gd:test_app_scene_instantiates
 TESTS PASSED
 ```
 
-- [ ] **Step 3: Run Godot scene open check**
+Verification: observed the runner execute `RUN res://tests/smoke/test_scene_flow.gd:test_app_scene_instantiates`; the runner path already existed in `scripts/testing/test_runner.gd`, so no runner edit was needed.
+
+- [x] **Step 3: Run Godot scene open check**
 
 Run:
 
@@ -1737,10 +1742,12 @@ Run:
 
 Expected: no scene load or parse errors.
 
-- [ ] **Step 4: Commit**
+Verification: Godot opened the project headlessly with no scene load or parse errors. Known exit-time cleanup warnings were not treated as Task 10 failures.
+
+- [x] **Step 4: Commit**
 
 ```powershell
-git add tests/smoke/test_scene_flow.gd scripts/testing/test_runner.gd
+git add tests/smoke/test_scene_flow.gd scripts/testing/test_runner.gd docs/superpowers/plans/2026-04-25-godot-foundation-vertical-slice.md
 git commit -m "test: add scene flow smoke coverage"
 ```
 
