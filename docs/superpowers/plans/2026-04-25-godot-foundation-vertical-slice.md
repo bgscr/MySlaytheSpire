@@ -130,7 +130,7 @@ If Godot is installed elsewhere, set `$env:GODOT4` to that executable path befor
 - Create: `scripts/app/scene_router.gd`
 - Create: `scripts/app/game.gd`
 
-- [ ] **Step 1: Write the project metadata and ignore rules**
+- [x] **Step 1: Write the project metadata and ignore rules**
 
 Create `.gitignore`:
 
@@ -165,7 +165,7 @@ $env:GODOT4="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe"
 ```
 ```
 
-- [ ] **Step 2: Create the minimal Godot project file**
+- [x] **Step 2: Create the minimal Godot project file**
 
 Create `project.godot`:
 
@@ -192,7 +192,7 @@ locale/translations=PackedStringArray("res://localization/zh_CN.po")
 renderer/rendering_method="forward_plus"
 ```
 
-- [ ] **Step 3: Create the root app scene**
+- [x] **Step 3: Create the root app scene**
 
 Create `scenes/app/App.tscn`:
 
@@ -211,7 +211,7 @@ grow_vertical = 2
 script = ExtResource("1_app")
 ```
 
-- [ ] **Step 4: Create the root app scripts**
+- [x] **Step 4: Create the root app scripts**
 
 Create `scripts/app/scene_router.gd`:
 
@@ -265,7 +265,7 @@ func _ready() -> void:
 	game.router.go_to(SceneRouter.MAIN_MENU)
 ```
 
-- [ ] **Step 5: Run Godot import check**
+- [x] **Step 5: Run Godot import check**
 
 Run:
 
@@ -281,7 +281,7 @@ Godot Engine v4.6.2.stable...
 
 No script parse errors should appear.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```powershell
 git add .gitignore README.md project.godot scenes/app/App.tscn scripts/app
@@ -296,7 +296,7 @@ git commit -m "chore: create Godot project skeleton"
 - Create: `scripts/core/rng_service.gd`
 - Create: `tests/unit/test_rng_service.gd`
 
-- [ ] **Step 1: Write the failing RNG tests**
+- [x] **Step 1: Write the failing RNG tests**
 
 Create `tests/unit/test_rng_service.gd`:
 
@@ -320,7 +320,7 @@ func test_fork_is_deterministic_by_label() -> void:
 	assert(map_a.next_int(0, 999) == map_b.next_int(0, 999))
 ```
 
-- [ ] **Step 2: Add the test runner**
+- [x] **Step 2: Add the test runner**
 
 Create `scripts/testing/test_runner.gd`:
 
@@ -364,7 +364,7 @@ func _run_method(instance, method_name: String, path: String) -> void:
 		result = await result.completed
 ```
 
-- [ ] **Step 3: Run tests and verify RED**
+- [x] **Step 3: Run tests and verify RED**
 
 Run:
 
@@ -378,7 +378,7 @@ Expected:
 SCRIPT ERROR: Parse Error: Could not preload resource file "res://scripts/core/rng_service.gd".
 ```
 
-- [ ] **Step 4: Implement RNG service**
+- [x] **Step 4: Implement RNG service**
 
 Create `scripts/core/rng_service.gd`:
 
@@ -417,7 +417,7 @@ func fork(label: String) -> RngService:
 	return RngService.new(hash(context))
 ```
 
-- [ ] **Step 5: Run tests and verify GREEN**
+- [x] **Step 5: Run tests and verify GREEN**
 
 Run:
 
@@ -433,7 +433,7 @@ RUN res://tests/unit/test_rng_service.gd:test_fork_is_deterministic_by_label
 TESTS PASSED
 ```
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```powershell
 git add scripts/testing/test_runner.gd scripts/core/rng_service.gd tests/unit/test_rng_service.gd
@@ -453,7 +453,7 @@ git commit -m "test: add local Godot test runner and seeded rng"
 - Create: `scripts/data/relic_def.gd`
 - Create: `tests/unit/test_resource_schemas.gd`
 
-- [ ] **Step 1: Write schema tests**
+- [x] **Step 1: Write schema tests**
 
 Create `tests/unit/test_resource_schemas.gd`:
 
@@ -493,7 +493,7 @@ func test_enemy_def_has_intent_sequence() -> void:
 	assert(enemy.intent_sequence[0] == "attack_5")
 ```
 
-- [ ] **Step 2: Run schema tests and verify RED**
+- [x] **Step 2: Run schema tests and verify RED**
 
 Run:
 
@@ -507,7 +507,7 @@ Expected:
 Could not preload resource file "res://scripts/data/card_def.gd"
 ```
 
-- [ ] **Step 3: Implement core event classes**
+- [x] **Step 3: Implement core event classes**
 
 Create `scripts/core/game_event.gd`:
 
@@ -535,7 +535,7 @@ func emit(event_type: String, payload: Dictionary = {}) -> void:
 	event_emitted.emit(GameEvent.new(event_type, payload))
 ```
 
-- [ ] **Step 4: Implement Resource schemas**
+- [x] **Step 4: Implement Resource schemas**
 
 Create `scripts/data/effect_def.gd`:
 
@@ -604,7 +604,7 @@ extends Resource
 @export var effects: Array[EffectDef] = []
 ```
 
-- [ ] **Step 5: Run tests and verify GREEN**
+- [x] **Step 5: Run tests and verify GREEN**
 
 Run:
 
@@ -621,7 +621,7 @@ RUN res://tests/unit/test_resource_schemas.gd:test_enemy_def_has_intent_sequence
 TESTS PASSED
 ```
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```powershell
 git add scripts/core scripts/data tests/unit/test_resource_schemas.gd
@@ -637,7 +637,7 @@ git commit -m "feat: add core events and resource schemas"
 - Create: `scripts/run/map_generator.gd`
 - Create: `tests/unit/test_map_generator.gd`
 
-- [ ] **Step 1: Write map generation tests**
+- [x] **Step 1: Write map generation tests**
 
 Create `tests/unit/test_map_generator.gd`:
 
@@ -659,7 +659,7 @@ func test_map_has_boss_at_end() -> void:
 	assert(nodes[nodes.size() - 1].node_type == "boss")
 ```
 
-- [ ] **Step 2: Run map tests and verify RED**
+- [x] **Step 2: Run map tests and verify RED**
 
 Run:
 
@@ -673,7 +673,7 @@ Expected:
 Could not preload resource file "res://scripts/run/map_generator.gd"
 ```
 
-- [ ] **Step 3: Implement map and run state classes**
+- [x] **Step 3: Implement map and run state classes**
 
 Create `scripts/run/map_node_state.gd`:
 
@@ -760,7 +760,7 @@ func generate(seed_value: int) -> Array:
 	return nodes
 ```
 
-- [ ] **Step 4: Run tests and verify GREEN**
+- [x] **Step 4: Run tests and verify GREEN**
 
 Run:
 
@@ -776,7 +776,7 @@ RUN res://tests/unit/test_map_generator.gd:test_map_has_boss_at_end
 TESTS PASSED
 ```
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```powershell
 git add scripts/run tests/unit/test_map_generator.gd
@@ -793,7 +793,7 @@ git commit -m "feat: add seeded run map generation"
 - Create: `scripts/combat/combat_engine.gd`
 - Create: `tests/unit/test_combat_engine.gd`
 
-- [ ] **Step 1: Write combat tests**
+- [x] **Step 1: Write combat tests**
 
 Create `tests/unit/test_combat_engine.gd`:
 
@@ -827,7 +827,7 @@ func test_block_prevents_damage() -> void:
 	assert(player.block == 0)
 ```
 
-- [ ] **Step 2: Run combat tests and verify RED**
+- [x] **Step 2: Run combat tests and verify RED**
 
 Run:
 
@@ -841,7 +841,7 @@ Expected:
 Could not preload resource file "res://scripts/combat/combat_engine.gd"
 ```
 
-- [ ] **Step 3: Implement combatant and combat state**
+- [x] **Step 3: Implement combatant and combat state**
 
 Create `scripts/combat/combatant_state.gd`:
 
@@ -890,7 +890,7 @@ var discard_pile: Array[String] = []
 var exhausted_pile: Array[String] = []
 ```
 
-- [ ] **Step 4: Implement effect execution**
+- [x] **Step 4: Implement effect execution**
 
 Create `scripts/combat/effect_executor.gd`:
 
@@ -930,7 +930,7 @@ func end_turn(state: CombatState) -> void:
 	state.player.block = 0
 ```
 
-- [ ] **Step 5: Run combat tests and verify GREEN**
+- [x] **Step 5: Run combat tests and verify GREEN**
 
 Run:
 
@@ -946,7 +946,7 @@ RUN res://tests/unit/test_combat_engine.gd:test_block_prevents_damage
 TESTS PASSED
 ```
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```powershell
 git add scripts/combat tests/unit/test_combat_engine.gd
@@ -962,7 +962,7 @@ git commit -m "feat: add minimal combat engine"
 - Create: `scripts/platform/local_platform_service.gd`
 - Create: `tests/unit/test_save_service.gd`
 
-- [ ] **Step 1: Write save round-trip test**
+- [x] **Step 1: Write save round-trip test**
 
 Create `tests/unit/test_save_service.gd`:
 
@@ -989,7 +989,7 @@ func test_save_round_trip_preserves_run_state() -> void:
 	service.delete_save()
 ```
 
-- [ ] **Step 2: Run save tests and verify RED**
+- [x] **Step 2: Run save tests and verify RED**
 
 Run:
 
@@ -1003,7 +1003,7 @@ Expected:
 Could not preload resource file "res://scripts/save/save_service.gd"
 ```
 
-- [ ] **Step 3: Implement save service**
+- [x] **Step 3: Implement save service**
 
 Create `scripts/save/save_service.gd`:
 
@@ -1050,7 +1050,7 @@ func delete_save() -> void:
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(save_path))
 ```
 
-- [ ] **Step 4: Implement platform abstraction**
+- [x] **Step 4: Implement platform abstraction**
 
 Create `scripts/platform/platform_service.gd`:
 
@@ -1084,7 +1084,7 @@ func set_stat(stat_id: String, value: int) -> void:
 	stats[stat_id] = value
 ```
 
-- [ ] **Step 5: Run save tests and verify GREEN**
+- [x] **Step 5: Run save tests and verify GREEN**
 
 Run:
 
@@ -1099,7 +1099,7 @@ RUN res://tests/unit/test_save_service.gd:test_save_round_trip_preserves_run_sta
 TESTS PASSED
 ```
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```powershell
 git add scripts/save scripts/platform tests/unit/test_save_service.gd
@@ -1120,7 +1120,7 @@ git commit -m "feat: add run save and local platform services"
 - Create: `resources/enemies/boss_heart_demon.tres`
 - Create: `resources/relics/jade_talisman.tres`
 
-- [ ] **Step 1: Add Chinese gettext entries**
+- [x] **Step 1: Add Chinese gettext entries**
 
 Create `localization/zh_CN.po`:
 
@@ -1174,7 +1174,7 @@ msgid "relic.jade_talisman.desc"
 msgstr "战斗开始时获得 3 点护体。"
 ```
 
-- [ ] **Step 2: Create sample `.tres` resources through the Godot editor**
+- [x] **Step 2: Create sample `.tres` resources through the Godot editor**
 
 Use the Godot editor to create each Resource with the script shown in its file path. Set these values:
 
@@ -1270,7 +1270,7 @@ trigger_event: combat_started
 effects: one EffectDef with effect_type=block, amount=3, target=player
 ```
 
-- [ ] **Step 3: Verify resources load**
+- [x] **Step 3: Verify resources load**
 
 Run:
 
@@ -1286,7 +1286,9 @@ Godot Engine v4.6.2.stable...
 
 No "Failed loading resource" messages should appear.
 
-- [ ] **Step 4: Commit**
+Verification note: Task 7 resources and `localization/zh_CN.po` load and validate cleanly. The full app import still reports the pre-existing missing `res://scenes/menu/MainMenu.tscn` from Task 8 only.
+
+- [x] **Step 4: Commit**
 
 ```powershell
 git add localization resources project.godot
@@ -1308,7 +1310,7 @@ git commit -m "feat: add sample localized game content"
 - Create: `scripts/ui/reward_screen.gd`
 - Create: `scripts/ui/run_summary_screen.gd`
 
-- [ ] **Step 1: Add main menu scene and script**
+- [x] **Step 1: Add main menu scene and script**
 
 Create `scripts/ui/main_menu.gd`:
 
@@ -1366,7 +1368,7 @@ anchor_bottom = 1.0
 script = ExtResource("1_menu")
 ```
 
-- [ ] **Step 2: Initialize services in app**
+- [x] **Step 2: Initialize services in app**
 
 Modify `scripts/app/app.gd`:
 
@@ -1386,7 +1388,7 @@ func _ready() -> void:
 	game.router.go_to(SceneRouter.MAIN_MENU)
 ```
 
-- [ ] **Step 3: Add sample map flow**
+- [x] **Step 3: Add sample map flow**
 
 Create `scripts/ui/map_screen.gd`:
 
@@ -1433,7 +1435,7 @@ anchor_bottom = 1.0
 script = ExtResource("1_map")
 ```
 
-- [ ] **Step 4: Add sample combat flow**
+- [x] **Step 4: Add sample combat flow**
 
 Create `scripts/ui/combat_screen.gd`:
 
@@ -1482,7 +1484,7 @@ anchor_bottom = 1.0
 script = ExtResource("1_combat")
 ```
 
-- [ ] **Step 5: Add reward and summary screens**
+- [x] **Step 5: Add reward and summary screens**
 
 Create `scripts/ui/reward_screen.gd`:
 
@@ -1542,7 +1544,7 @@ func _ready() -> void:
 
 Create matching `.tscn` files with the same pattern as `MapScreen.tscn`, using script ids `1_reward` and `1_summary`.
 
-- [ ] **Step 6: Run import check**
+- [x] **Step 6: Run import check**
 
 Run:
 
@@ -1552,7 +1554,9 @@ Run:
 
 Expected: no parse errors.
 
-- [ ] **Step 7: Commit**
+Verification note: Task 8 scenes and scripts import through `& $env:GODOT4 --headless --path . --quit` with exit code 0. No parse errors or missing MainMenu errors appear. Later cleanup work removed the exit-time ObjectDB/resource cleanup warnings.
+
+- [x] **Step 7: Commit**
 
 ```powershell
 git add scenes scripts/ui scripts/app/app.gd
@@ -1569,7 +1573,7 @@ git commit -m "feat: add sample run scene flow"
 - Modify: `scenes/app/App.tscn`
 - Modify: `scripts/app/app.gd`
 
-- [ ] **Step 1: Add presentation event router**
+- [x] **Step 1: Add presentation event router**
 
 Create `scripts/presentation/presentation_event_router.gd`:
 
@@ -1589,7 +1593,7 @@ func handle_event(event: GameEvent) -> void:
 			print("Presentation damage_dealt: %s" % event.payload)
 ```
 
-- [ ] **Step 2: Add debug overlay script**
+- [x] **Step 2: Add debug overlay script**
 
 Create `scripts/ui/debug_overlay.gd`:
 
@@ -1645,7 +1649,7 @@ offset_bottom = 160.0
 script = ExtResource("1_debug")
 ```
 
-- [ ] **Step 3: Add overlay to app at runtime**
+- [x] **Step 3: Add overlay to app at runtime**
 
 Modify `scripts/app/app.gd`:
 
@@ -1667,7 +1671,7 @@ func _ready() -> void:
 	add_child(DebugOverlayScene.instantiate())
 ```
 
-- [ ] **Step 4: Run import check**
+- [x] **Step 4: Run import check**
 
 Run:
 
@@ -1677,7 +1681,9 @@ Run:
 
 Expected: no parse errors.
 
-- [ ] **Step 5: Commit**
+Verification note: Task 9 imports cleanly through `& $env:GODOT4 --headless --path . --quit` with exit code 0 and no parse errors. Later cleanup work removed the exit-time ObjectDB/resource cleanup warnings. The existing test suite also passes through `& $env:GODOT4 --headless --path . --script res://scripts/testing/test_runner.gd`.
+
+- [x] **Step 5: Commit**
 
 ```powershell
 git add scenes/dev scripts/ui/debug_overlay.gd scripts/presentation scripts/app/app.gd
@@ -1691,7 +1697,7 @@ git commit -m "feat: add debug overlay and presentation hooks"
 - Create: `tests/smoke/test_scene_flow.gd`
 - Modify: `scripts/testing/test_runner.gd`
 
-- [ ] **Step 1: Write smoke test**
+- [x] **Step 1: Write smoke test**
 
 Create `tests/smoke/test_scene_flow.gd`:
 
@@ -1700,13 +1706,16 @@ extends RefCounted
 
 const AppScene := preload("res://scenes/app/App.tscn")
 
-func test_app_scene_instantiates() -> void:
+func test_app_scene_instantiates() -> bool:
 	var app := AppScene.instantiate()
-	assert(app != null)
-	app.queue_free()
+	var passed := app != null
+	assert(passed)
+	if app != null:
+		app.free()
+	return passed
 ```
 
-- [ ] **Step 2: Run smoke test**
+- [x] **Step 2: Run smoke test**
 
 Run:
 
@@ -1721,7 +1730,9 @@ RUN res://tests/smoke/test_scene_flow.gd:test_app_scene_instantiates
 TESTS PASSED
 ```
 
-- [ ] **Step 3: Run Godot scene open check**
+Verification: observed the runner execute `RUN res://tests/smoke/test_scene_flow.gd:test_app_scene_instantiates`; the runner path already existed in `scripts/testing/test_runner.gd`, so no runner edit was needed.
+
+- [x] **Step 3: Run Godot scene open check**
 
 Run:
 
@@ -1731,10 +1742,12 @@ Run:
 
 Expected: no scene load or parse errors.
 
-- [ ] **Step 4: Commit**
+Verification: Godot opened the project headlessly with no scene load or parse errors. Later cleanup work removed the exit-time ObjectDB/resource cleanup warnings.
+
+- [x] **Step 4: Commit**
 
 ```powershell
-git add tests/smoke/test_scene_flow.gd scripts/testing/test_runner.gd
+git add tests/smoke/test_scene_flow.gd scripts/testing/test_runner.gd docs/superpowers/plans/2026-04-25-godot-foundation-vertical-slice.md
 git commit -m "test: add scene flow smoke coverage"
 ```
 
@@ -1745,7 +1758,7 @@ git commit -m "test: add scene flow smoke coverage"
 - Create: `export_presets.cfg`
 - Create directory: `export/`
 
-- [ ] **Step 1: Create Windows export preset**
+- [x] **Step 1: Create Windows export preset**
 
 Create `export_presets.cfg`:
 
@@ -1790,7 +1803,7 @@ application/copyright=""
 application/trademarks=""
 ```
 
-- [ ] **Step 2: Verify export preset is visible to Godot**
+- [x] **Step 2: Verify export preset is visible to Godot**
 
 Run:
 
@@ -1806,10 +1819,34 @@ Exporting project...
 
 If export templates are missing, install Godot 4.6.2 export templates in the editor, rerun the command, and do not change project code.
 
-- [ ] **Step 3: Commit**
+Earlier verification note before templates were installed: preset exists and is recognized by Godot, but export was blocked by missing local Godot 4.6.2 Windows export templates. Command exit code was 0 and output was:
+
+```text
+WARNING: Missing .uid file for path "res://scripts/platform/local_platform_service.gd". The file was re-created from cache.
+   at: _process_file_system (editor/file_system/editor_file_system.cpp:1363)
+WARNING: Missing .uid file for path "res://scripts/platform/platform_service.gd". The file was re-created from cache.
+   at: _process_file_system (editor/file_system/editor_file_system.cpp:1363)
+WARNING: Missing .uid file for path "res://scripts/save/save_service.gd". The file was re-created from cache.
+   at: _process_file_system (editor/file_system/editor_file_system.cpp:1363)
+WARNING: Missing .uid file for path "res://tests/unit/test_save_service.gd". The file was re-created from cache.
+   at: _process_file_system (editor/file_system/editor_file_system.cpp:1363)
+ERROR: Cannot export project with preset "Windows Desktop" due to configuration errors:
+指定路径不存在导出模板：
+C:/Users/56922/AppData/Roaming/Godot/export_templates/4.6.2.stable/windows_debug_x86_64.exe
+指定路径不存在导出模板：
+C:/Users/56922/AppData/Roaming/Godot/export_templates/4.6.2.stable/windows_release_x86_64.exe
+
+   at: _fs_changed (editor/editor_node.cpp:1332)
+ERROR: Project export for preset "Windows Desktop" failed.
+   at: _fs_changed (editor/editor_node.cpp:1348)
+```
+
+Final export verification: Godot 4.6.2 Windows export templates were installed locally under `%APPDATA%\Godot\export_templates\4.6.2.stable`. Rerunning `& $env:GODOT4 --headless --path . --export-debug "Windows Desktop" export/MySlaytheSpire.exe` completed with exit 0 and generated `export/MySlaytheSpire.exe` with size 105,506,376 bytes.
+
+- [x] **Step 3: Commit**
 
 ```powershell
-git add export_presets.cfg
+git add export_presets.cfg docs/superpowers/plans/2026-04-25-godot-foundation-vertical-slice.md
 git commit -m "chore: add Windows export preset"
 ```
 
@@ -1819,7 +1856,7 @@ git commit -m "chore: add Windows export preset"
 
 - Modify: `README.md`
 
-- [ ] **Step 1: Run all local tests**
+- [x] **Step 1: Run all local tests**
 
 Run:
 
@@ -1833,7 +1870,9 @@ Expected:
 TESTS PASSED
 ```
 
-- [ ] **Step 2: Run project import check**
+Verification: rerun completed with exit 0 and `TESTS PASSED`; no exit-time ObjectDB/resource cleanup warnings are emitted after lifecycle cleanup.
+
+- [x] **Step 2: Run project import check**
 
 Run:
 
@@ -1843,7 +1882,9 @@ Run:
 
 Expected: no parse errors, no missing resources.
 
-- [ ] **Step 3: Run the game manually in editor**
+Verification: rerun completed with exit 0, no parse errors, no missing resources, and no exit-time ObjectDB/resource cleanup warnings after lifecycle cleanup.
+
+- [x] **Step 3: Run the game manually in editor**
 
 Run:
 
@@ -1863,7 +1904,9 @@ Manual acceptance:
 - Debug overlay appears in debug build.
 - Continuing a saved run returns to map.
 
-- [ ] **Step 4: Update README with Phase 1 status**
+Manual editor acceptance was completed in the GUI session. The run flow opens from main menu, reaches map/combat/reward/summary, debug overlay appears without blocking main menu actions, saved non-terminal runs can continue, and failed/completed terminal runs clear the save so `Continue` is not usable afterward.
+
+- [x] **Step 4: Update README with Phase 1 status**
 
 Modify `README.md`:
 
@@ -1877,7 +1920,9 @@ Modify `README.md`:
 - Sample scene flow: complete
 - Debug overlay: complete
 - Local tests: complete
-- Windows export preset: prepared
+- Import check: complete with no exit-time ObjectDB/resource cleanup warnings
+- Manual editor smoke: complete
+- Windows export preset: complete; `export/MySlaytheSpire.exe` generated after installing Godot 4.6.2 Windows export templates
 
 ## Next Plans
 
@@ -1887,10 +1932,10 @@ Modify `README.md`:
 4. Release readiness: CI, artifact export, changelog, release draft, Steam adapter.
 ```
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```powershell
-git add README.md
+git add README.md docs/superpowers/plans/2026-04-25-godot-foundation-vertical-slice.md
 git commit -m "docs: record phase 1 acceptance status"
 ```
 

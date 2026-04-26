@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="EnemyDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/enemy_def.gd" id="1_enemy"]
+
+[resource]
+script = ExtResource("1_enemy")
+id = "training_puppet"
+name_key = "enemy.training_puppet.name"
+max_hp = 20
+intent_sequence = Array[String](["attack_5"])
+reward_tier = "normal"
