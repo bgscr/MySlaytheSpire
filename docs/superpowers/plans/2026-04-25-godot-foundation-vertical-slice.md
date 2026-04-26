@@ -962,7 +962,7 @@ git commit -m "feat: add minimal combat engine"
 - Create: `scripts/platform/local_platform_service.gd`
 - Create: `tests/unit/test_save_service.gd`
 
-- [ ] **Step 1: Write save round-trip test**
+- [x] **Step 1: Write save round-trip test**
 
 Create `tests/unit/test_save_service.gd`:
 
@@ -989,7 +989,7 @@ func test_save_round_trip_preserves_run_state() -> void:
 	service.delete_save()
 ```
 
-- [ ] **Step 2: Run save tests and verify RED**
+- [x] **Step 2: Run save tests and verify RED**
 
 Run:
 
@@ -1003,7 +1003,7 @@ Expected:
 Could not preload resource file "res://scripts/save/save_service.gd"
 ```
 
-- [ ] **Step 3: Implement save service**
+- [x] **Step 3: Implement save service**
 
 Create `scripts/save/save_service.gd`:
 
@@ -1050,7 +1050,7 @@ func delete_save() -> void:
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(save_path))
 ```
 
-- [ ] **Step 4: Implement platform abstraction**
+- [x] **Step 4: Implement platform abstraction**
 
 Create `scripts/platform/platform_service.gd`:
 
@@ -1084,7 +1084,7 @@ func set_stat(stat_id: String, value: int) -> void:
 	stats[stat_id] = value
 ```
 
-- [ ] **Step 5: Run save tests and verify GREEN**
+- [x] **Step 5: Run save tests and verify GREEN**
 
 Run:
 
@@ -1099,7 +1099,7 @@ RUN res://tests/unit/test_save_service.gd:test_save_round_trip_preserves_run_sta
 TESTS PASSED
 ```
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```powershell
 git add scripts/save scripts/platform tests/unit/test_save_service.gd
