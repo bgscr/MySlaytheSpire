@@ -851,7 +851,7 @@ func test_card_rewards_are_deterministic_for_same_seed_and_context() -> bool:
 	var generator := RewardGenerator.new()
 	var first := generator.generate_card_reward(catalog, 77, "sword", "node_1")
 	var second := generator.generate_card_reward(catalog, 77, "sword", "node_1")
-	var passed := first == second and first.get("card_ids", []).has("sword.strike")
+	var passed: bool = first == second and first.get("card_ids", []).has("sword.strike")
 	assert(passed)
 	return passed
 
@@ -860,7 +860,16 @@ func test_card_rewards_use_character_pool() -> bool:
 	var generator := RewardGenerator.new()
 	var reward := generator.generate_card_reward(catalog, 77, "alchemy", "node_1")
 	var ids: Array = reward.get("card_ids", [])
-	var passed := ids.has("alchemy.toxic_pill") and not ids.has("sword.strike")
+	var passed: bool = ids.has("alchemy.toxic_pill") and not ids.has("sword.strike")
+	assert(passed)
+	return passed
+
+func test_card_rewards_respect_requested_count() -> bool:
+	var catalog := _catalog()
+	var generator := RewardGenerator.new()
+	var reward := generator.generate_card_reward(catalog, 77, "sword", "node_1", 0)
+	var ids: Array = reward.get("card_ids", [])
+	var passed: bool = ids.is_empty()
 	assert(passed)
 	return passed
 
@@ -869,7 +878,7 @@ func test_gold_rewards_are_deterministic_and_tiered() -> bool:
 	var normal := generator.generate_gold_reward(77, "node_1", "normal")
 	var normal_again := generator.generate_gold_reward(77, "node_1", "normal")
 	var elite := generator.generate_gold_reward(77, "node_1", "elite")
-	var passed := normal == normal_again \
+	var passed: bool = normal == normal_again \
 		and normal.get("amount", 0) >= 8 \
 		and normal.get("amount", 0) <= 14 \
 		and elite.get("amount", 0) >= 18 \
@@ -882,7 +891,18 @@ func test_relic_rewards_are_deterministic() -> bool:
 	var generator := RewardGenerator.new()
 	var first := generator.generate_relic_reward(catalog, 99, "node_2", "common")
 	var second := generator.generate_relic_reward(catalog, 99, "node_2", "common")
-	var passed := first == second and first.get("relic_id") == "jade_talisman"
+	var passed: bool = first == second and first.get("relic_id") == "jade_talisman"
+	assert(passed)
+	return passed
+
+func test_relic_rewards_return_empty_id_for_empty_pool() -> bool:
+	var catalog := _catalog()
+	catalog.relics_by_id.clear()
+	var generator := RewardGenerator.new()
+	var reward := generator.generate_relic_reward(catalog, 99, "node_2", "common")
+	var passed: bool = reward.get("type") == "relic" \
+		and reward.get("tier") == "common" \
+		and reward.get("relic_id") == ""
 	assert(passed)
 	return passed
 
@@ -917,14 +937,16 @@ class_name RewardGenerator
 extends RefCounted
 
 const ContentCatalog := preload("res://scripts/content/content_catalog.gd")
+const CardDef := preload("res://scripts/data/card_def.gd")
+const RelicDef := preload("res://scripts/data/relic_def.gd")
 const RngService := preload("res://scripts/core/rng_service.gd")
 
 func generate_card_reward(catalog: ContentCatalog, seed_value: int, character_id: String, context_key: String, count: int = 3) -> Dictionary:
 	var rng = RngService.new(seed_value).fork("reward:card:%s" % context_key)
 	var pool := catalog.get_cards_for_character(character_id)
-	var shuffled := rng.shuffle_copy(pool)
+	var shuffled: Array = rng.shuffle_copy(pool)
 	var card_ids: Array[String] = []
-	for card in shuffled:
+	for card: CardDef in shuffled:
 		if card_ids.size() >= count:
 			break
 		card_ids.append(card.id)
@@ -952,7 +974,7 @@ func generate_relic_reward(catalog: ContentCatalog, seed_value: int, context_key
 			"tier": tier,
 			"relic_id": "",
 		}
-	var relic = rng.pick(relics)
+	var relic: RelicDef = rng.pick(relics)
 	return {
 		"type": "relic",
 		"tier": tier,
@@ -985,6 +1007,7 @@ Spec review checklist:
 
 - Generator uses `RngService` forks.
 - Card reward returns only character pool cards.
+- Card reward respects requested count.
 - Gold reward ranges match the plan.
 - Relic reward handles empty pools without crashing.
 
