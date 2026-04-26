@@ -1711,7 +1711,7 @@ func test_app_scene_instantiates() -> bool:
 	var passed := app != null
 	assert(passed)
 	if app != null:
-		app.queue_free()
+		app.free()
 	return passed
 ```
 
