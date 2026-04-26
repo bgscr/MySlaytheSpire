@@ -378,6 +378,7 @@ git commit -m "feat: extend content schemas and combat effects"
 - Create: `scripts/content/content_catalog.gd`
 - Create: `tests/unit/test_content_catalog.gd`
 - Modify: `scripts/testing/test_runner.gd`
+- Modify: `resources/enemies/boss_heart_demon.tres`
 
 - [ ] **Step 1: Write failing ContentCatalog tests**
 
@@ -387,6 +388,7 @@ Create `tests/unit/test_content_catalog.gd`:
 extends RefCounted
 
 const ContentCatalog := preload("res://scripts/content/content_catalog.gd")
+const EnemyDef := preload("res://scripts/data/enemy_def.gd")
 
 func test_default_catalog_loads_existing_resources() -> bool:
 	var catalog := ContentCatalog.new()
@@ -423,6 +425,47 @@ func test_catalog_queries_enemies_and_relics_by_tier() -> bool:
 	var passed := _ids(normal_enemies).has("training_puppet") \
 		and _ids(boss_enemies).has("boss_heart_demon") \
 		and _ids(common_relics).has("jade_talisman")
+	assert(passed)
+	return passed
+
+func test_catalog_rejects_wrong_resource_type_for_card_paths() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.load_from_paths(
+		["res://resources/characters/sword_cultivator.tres"],
+		[],
+		[],
+		[]
+	)
+	var passed := catalog.cards_by_id.is_empty() \
+		and catalog.get_card("sword") == null \
+		and catalog.get_character("sword") == null \
+		and catalog.load_errors.size() == 1 \
+		and catalog.load_errors[0].contains("expected CardDef")
+	assert(passed)
+	return passed
+
+func test_enemy_tier_query_uses_enemy_tier_metadata() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.load_default()
+	var boss := catalog.get_enemy("boss_heart_demon")
+	var boss_ids := _ids(catalog.get_enemies_by_tier("boss"))
+	var passed := boss != null \
+		and boss.tier == "boss" \
+		and boss.reward_tier == "boss" \
+		and boss_ids.has("boss_heart_demon")
+	assert(passed)
+	return passed
+
+func test_enemy_tier_query_ignores_reward_tier_metadata() -> bool:
+	var catalog := ContentCatalog.new()
+	var enemy := EnemyDef.new()
+	enemy.id = "test.reward_boss_normal_tier"
+	enemy.tier = "normal"
+	enemy.reward_tier = "boss"
+	catalog.enemies_by_id[enemy.id] = enemy
+	var normal_ids := _ids(catalog.get_enemies_by_tier("normal"))
+	var boss_ids := _ids(catalog.get_enemies_by_tier("boss"))
+	var passed := normal_ids.has(enemy.id) and not boss_ids.has(enemy.id)
 	assert(passed)
 	return passed
 
@@ -486,31 +529,41 @@ var cards_by_id: Dictionary = {}
 var characters_by_id: Dictionary = {}
 var enemies_by_id: Dictionary = {}
 var relics_by_id: Dictionary = {}
+var load_errors: Array[String] = []
 
 func load_default() -> void:
+	load_from_paths(DEFAULT_CARD_PATHS, DEFAULT_CHARACTER_PATHS, DEFAULT_ENEMY_PATHS, DEFAULT_RELIC_PATHS)
+
+func load_from_paths(
+	card_paths: Array[String],
+	character_paths: Array[String],
+	enemy_paths: Array[String],
+	relic_paths: Array[String]
+) -> void:
 	clear()
-	_load_all(DEFAULT_CARD_PATHS, cards_by_id)
-	_load_all(DEFAULT_CHARACTER_PATHS, characters_by_id)
-	_load_all(DEFAULT_ENEMY_PATHS, enemies_by_id)
-	_load_all(DEFAULT_RELIC_PATHS, relics_by_id)
+	_load_cards(card_paths)
+	_load_characters(character_paths)
+	_load_enemies(enemy_paths)
+	_load_relics(relic_paths)
 
 func clear() -> void:
 	cards_by_id.clear()
 	characters_by_id.clear()
 	enemies_by_id.clear()
 	relics_by_id.clear()
+	load_errors.clear()
 
 func get_card(card_id: String) -> CardDef:
-	return cards_by_id.get(card_id)
+	return cards_by_id.get(card_id) as CardDef
 
 func get_character(character_id: String) -> CharacterDef:
-	return characters_by_id.get(character_id)
+	return characters_by_id.get(character_id) as CharacterDef
 
 func get_enemy(enemy_id: String) -> EnemyDef:
-	return enemies_by_id.get(enemy_id)
+	return enemies_by_id.get(enemy_id) as EnemyDef
 
 func get_relic(relic_id: String) -> RelicDef:
-	return relics_by_id.get(relic_id)
+	return relics_by_id.get(relic_id) as RelicDef
 
 func get_cards_for_character(character_id: String) -> Array[CardDef]:
 	var result: Array[CardDef] = []
@@ -531,7 +584,7 @@ func get_cards_by_rarity(character_id: String, rarity: String) -> Array[CardDef]
 
 func get_enemies_by_tier(tier: String) -> Array[EnemyDef]:
 	var result: Array[EnemyDef] = []
-	for enemy in enemies_by_id.values():
+	for enemy: EnemyDef in enemies_by_id.values():
 		if enemy.tier == tier:
 			result.append(enemy)
 	return result
@@ -543,16 +596,62 @@ func get_relics_by_tier(tier: String) -> Array[RelicDef]:
 			result.append(relic)
 	return result
 
-func _load_all(paths: Array[String], target: Dictionary) -> void:
+func _load_cards(paths: Array[String]) -> void:
 	for path in paths:
-		var resource = load(path)
-		if resource == null:
-			push_error("ContentCatalog could not load resource: %s" % path)
+		var card := load(path) as CardDef
+		if card == null:
+			_record_load_error("ContentCatalog expected CardDef resource: %s" % path)
 			continue
-		if resource.id.is_empty():
-			push_error("ContentCatalog resource has empty id: %s" % path)
+		if card.id.is_empty():
+			_record_load_error("ContentCatalog resource has empty id: %s" % path)
 			continue
-		target[resource.id] = resource
+		cards_by_id[card.id] = card
+
+func _load_characters(paths: Array[String]) -> void:
+	for path in paths:
+		var character := load(path) as CharacterDef
+		if character == null:
+			_record_load_error("ContentCatalog expected CharacterDef resource: %s" % path)
+			continue
+		if character.id.is_empty():
+			_record_load_error("ContentCatalog resource has empty id: %s" % path)
+			continue
+		characters_by_id[character.id] = character
+
+func _load_enemies(paths: Array[String]) -> void:
+	for path in paths:
+		var enemy := load(path) as EnemyDef
+		if enemy == null:
+			_record_load_error("ContentCatalog expected EnemyDef resource: %s" % path)
+			continue
+		if enemy.id.is_empty():
+			_record_load_error("ContentCatalog resource has empty id: %s" % path)
+			continue
+		enemies_by_id[enemy.id] = enemy
+
+func _load_relics(paths: Array[String]) -> void:
+	for path in paths:
+		var relic := load(path) as RelicDef
+		if relic == null:
+			_record_load_error("ContentCatalog expected RelicDef resource: %s" % path)
+			continue
+		if relic.id.is_empty():
+			_record_load_error("ContentCatalog resource has empty id: %s" % path)
+			continue
+		relics_by_id[relic.id] = relic
+
+func _record_load_error(message: String) -> void:
+	load_errors.append(message)
+```
+
+- [ ] **Step 3.5: Update boss sample enemy tier metadata**
+
+Modify `resources/enemies/boss_heart_demon.tres`:
+
+```ini
+tier = "boss"
+gold_reward_min = 40
+gold_reward_max = 60
 ```
 
 - [ ] **Step 4: Run tests and verify GREEN**
@@ -572,6 +671,8 @@ Spec review checklist:
 - Catalog indexes all existing sample resources.
 - Catalog query methods match the spec names.
 - Test runner includes `test_content_catalog.gd`.
+- Wrong resource types are rejected without polluting unrelated indexes.
+- Boss enemy tier query uses `EnemyDef.tier`, not `reward_tier` fallback.
 
 Code quality checklist:
 

@@ -9,3 +9,6 @@ name_key = "enemy.boss_heart_demon.name"
 max_hp = 80
 intent_sequence = Array[String](["attack_10", "block_8", "attack_14"])
 reward_tier = "boss"
+tier = "boss"
+gold_reward_min = 40
+gold_reward_max = 60
