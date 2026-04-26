@@ -82,6 +82,27 @@ func test_enemy_tier_query_ignores_reward_tier_metadata() -> bool:
 	assert(passed)
 	return passed
 
+func test_default_catalog_validation_passes() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.load_default()
+	var errors: Array[String] = catalog.validate()
+	var passed: bool = errors.is_empty()
+	if not passed:
+		push_error("Catalog validation errors: %s" % str(errors))
+	assert(passed)
+	return passed
+
+func test_validation_reports_unreadable_locale_file_once() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.load_default()
+	catalog.locale_path = "res://localization/missing_zh_CN.po"
+	var errors: Array[String] = catalog.validate()
+	var passed: bool = errors.size() == 1 \
+		and errors[0].contains("could not open localization file") \
+		and errors[0].contains("missing_zh_CN.po")
+	assert(passed)
+	return passed
+
 func _ids(resources: Array) -> Array[String]:
 	var ids: Array[String] = []
 	for resource in resources:

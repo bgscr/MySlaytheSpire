@@ -702,10 +702,21 @@ Append to `tests/unit/test_content_catalog.gd`:
 func test_default_catalog_validation_passes() -> bool:
 	var catalog := ContentCatalog.new()
 	catalog.load_default()
-	var errors := catalog.validate()
-	var passed := errors.is_empty()
+	var errors: Array[String] = catalog.validate()
+	var passed: bool = errors.is_empty()
 	if not passed:
 		push_error("Catalog validation errors: %s" % str(errors))
+	assert(passed)
+	return passed
+
+func test_validation_reports_unreadable_locale_file_once() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.load_default()
+	catalog.locale_path = "res://localization/missing_zh_CN.po"
+	var errors: Array[String] = catalog.validate()
+	var passed: bool = errors.size() == 1 \
+		and errors[0].contains("could not open localization file") \
+		and errors[0].contains("missing_zh_CN.po")
 	assert(passed)
 	return passed
 ```
@@ -725,18 +736,23 @@ Expected: failure because `ContentCatalog.validate` is not implemented.
 Add to `scripts/content/content_catalog.gd`:
 
 ```gdscript
+var locale_path := "res://localization/zh_CN.po"
+
 func validate() -> Array[String]:
-	var errors: Array[String] = []
-	var locale_keys := _load_locale_keys()
-	_validate_unique_ids("card", cards_by_id, errors)
-	_validate_unique_ids("character", characters_by_id, errors)
-	_validate_unique_ids("enemy", enemies_by_id, errors)
-	_validate_unique_ids("relic", relics_by_id, errors)
+	var errors: Array[String] = load_errors.duplicate()
+	var locale_error_count := errors.size()
+	var locale_keys := _load_locale_keys(errors)
+	var locale_loaded := errors.size() == locale_error_count
+	_validate_ids("card", cards_by_id, errors)
+	_validate_ids("character", characters_by_id, errors)
+	_validate_ids("enemy", enemies_by_id, errors)
+	_validate_ids("relic", relics_by_id, errors)
 	_validate_character_card_refs(errors)
-	_validate_locale_keys(locale_keys, errors)
+	if locale_loaded:
+		_validate_locale_keys(locale_keys, errors)
 	return errors
 
-func _validate_unique_ids(resource_type: String, resources: Dictionary, errors: Array[String]) -> void:
+func _validate_ids(resource_type: String, resources: Dictionary, errors: Array[String]) -> void:
 	for id in resources.keys():
 		if String(id).is_empty():
 			errors.append("%s has empty id" % resource_type)
@@ -768,10 +784,11 @@ func _require_locale_key(key: String, label: String, locale_keys: Dictionary, er
 	elif not locale_keys.has(key):
 		errors.append("%s missing localization key %s" % [label, key])
 
-func _load_locale_keys() -> Dictionary:
+func _load_locale_keys(errors: Array[String]) -> Dictionary:
 	var keys := {}
-	var file := FileAccess.open("res://localization/zh_CN.po", FileAccess.READ)
+	var file := FileAccess.open(locale_path, FileAccess.READ)
 	if file == null:
+		errors.append("ContentCatalog could not open localization file: %s" % locale_path)
 		return keys
 	while not file.eof_reached():
 		var line := file.get_line().strip_edges()
@@ -796,6 +813,7 @@ Expected: all tests pass.
 Spec review checklist:
 
 - Validation checks ids, character card references, and localization keys.
+- Validation includes existing `load_errors`.
 - Validation returns an array of strings and does not throw for valid defaults.
 
 Code quality checklist:

@@ -31,6 +31,7 @@ var characters_by_id: Dictionary = {}
 var enemies_by_id: Dictionary = {}
 var relics_by_id: Dictionary = {}
 var load_errors: Array[String] = []
+var locale_path := "res://localization/zh_CN.po"
 
 func load_default() -> void:
 	load_from_paths(DEFAULT_CARD_PATHS, DEFAULT_CHARACTER_PATHS, DEFAULT_ENEMY_PATHS, DEFAULT_RELIC_PATHS)
@@ -97,6 +98,20 @@ func get_relics_by_tier(tier: String) -> Array[RelicDef]:
 			result.append(relic)
 	return result
 
+func validate() -> Array[String]:
+	var errors: Array[String] = load_errors.duplicate()
+	var locale_error_count := errors.size()
+	var locale_keys := _load_locale_keys(errors)
+	var locale_loaded := errors.size() == locale_error_count
+	_validate_ids("card", cards_by_id, errors)
+	_validate_ids("character", characters_by_id, errors)
+	_validate_ids("enemy", enemies_by_id, errors)
+	_validate_ids("relic", relics_by_id, errors)
+	_validate_character_card_refs(errors)
+	if locale_loaded:
+		_validate_locale_keys(locale_keys, errors)
+	return errors
+
 func _load_cards(paths: Array[String]) -> void:
 	for path in paths:
 		var card := load(path) as CardDef
@@ -143,3 +158,48 @@ func _load_relics(paths: Array[String]) -> void:
 
 func _record_load_error(message: String) -> void:
 	load_errors.append(message)
+
+func _validate_ids(resource_type: String, resources: Dictionary, errors: Array[String]) -> void:
+	for id in resources.keys():
+		if String(id).is_empty():
+			errors.append("%s has empty id" % resource_type)
+
+func _validate_character_card_refs(errors: Array[String]) -> void:
+	for character: CharacterDef in characters_by_id.values():
+		for card_id in character.starting_deck_ids:
+			if not cards_by_id.has(card_id):
+				errors.append("Character %s starting deck references missing card %s" % [character.id, card_id])
+		for card_id in character.card_pool_ids:
+			if not cards_by_id.has(card_id):
+				errors.append("Character %s card pool references missing card %s" % [character.id, card_id])
+
+func _validate_locale_keys(locale_keys: Dictionary, errors: Array[String]) -> void:
+	for card: CardDef in cards_by_id.values():
+		_require_locale_key(card.name_key, "card %s name_key" % card.id, locale_keys, errors)
+		_require_locale_key(card.description_key, "card %s description_key" % card.id, locale_keys, errors)
+	for character: CharacterDef in characters_by_id.values():
+		_require_locale_key(character.name_key, "character %s name_key" % character.id, locale_keys, errors)
+	for enemy: EnemyDef in enemies_by_id.values():
+		_require_locale_key(enemy.name_key, "enemy %s name_key" % enemy.id, locale_keys, errors)
+	for relic: RelicDef in relics_by_id.values():
+		_require_locale_key(relic.name_key, "relic %s name_key" % relic.id, locale_keys, errors)
+		_require_locale_key(relic.description_key, "relic %s description_key" % relic.id, locale_keys, errors)
+
+func _require_locale_key(key: String, label: String, locale_keys: Dictionary, errors: Array[String]) -> void:
+	if key.is_empty():
+		errors.append("%s is empty" % label)
+	elif not locale_keys.has(key):
+		errors.append("%s missing localization key %s" % [label, key])
+
+func _load_locale_keys(errors: Array[String]) -> Dictionary:
+	var keys := {}
+	var file := FileAccess.open(locale_path, FileAccess.READ)
+	if file == null:
+		errors.append("ContentCatalog could not open localization file: %s" % locale_path)
+		return keys
+	while not file.eof_reached():
+		var line := file.get_line().strip_edges()
+		if line.begins_with("msgid \"") and line != "msgid \"\"":
+			var key := line.trim_prefix("msgid \"").trim_suffix("\"")
+			keys[key] = true
+	return keys
