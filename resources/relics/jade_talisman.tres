@@ -16,3 +16,5 @@ name_key = "relic.jade_talisman.name"
 description_key = "relic.jade_talisman.desc"
 trigger_event = "combat_started"
 effects = Array[ExtResource("2_effect")]([SubResource("Resource_block")])
+tier = "common"
+reward_weight = 100

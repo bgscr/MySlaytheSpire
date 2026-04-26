@@ -10,5 +10,6 @@ max_hp = 80
 intent_sequence = Array[String](["attack_10", "block_8", "attack_14"])
 reward_tier = "boss"
 tier = "boss"
+encounter_weight = 100
 gold_reward_min = 40
 gold_reward_max = 60

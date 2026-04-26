@@ -9,3 +9,7 @@ name_key = "enemy.forest_bandit.name"
 max_hp = 28
 intent_sequence = Array[String](["attack_6", "block_4"])
 reward_tier = "normal"
+tier = "elite"
+encounter_weight = 100
+gold_reward_min = 18
+gold_reward_max = 28

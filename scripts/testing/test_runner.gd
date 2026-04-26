@@ -5,6 +5,7 @@ const TEST_FILES := [
 	"res://tests/unit/test_resource_schemas.gd",
 	"res://tests/unit/test_content_catalog.gd",
 	"res://tests/unit/test_reward_generator.gd",
+	"res://tests/unit/test_encounter_generator.gd",
 	"res://tests/unit/test_scene_router.gd",
 	"res://tests/unit/test_map_generator.gd",
 	"res://tests/unit/test_run_state.gd",

@@ -9,3 +9,7 @@ name_key = "enemy.training_puppet.name"
 max_hp = 20
 intent_sequence = Array[String](["attack_5"])
 reward_tier = "normal"
+tier = "normal"
+encounter_weight = 100
+gold_reward_min = 8
+gold_reward_max = 14
