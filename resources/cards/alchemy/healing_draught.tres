@@ -3,21 +3,21 @@
 [ext_resource type="Script" path="res://scripts/data/card_def.gd" id="1_card"]
 [ext_resource type="Script" path="res://scripts/data/effect_def.gd" id="2_effect"]
 
-[sub_resource type="Resource" id="Resource_damage"]
+[sub_resource type="Resource" id="Resource_heal"]
 script = ExtResource("2_effect")
-effect_type = "damage"
-amount = 4
-target = "enemy"
+effect_type = "heal"
+amount = 5
+target = "player"
 
 [resource]
 script = ExtResource("1_card")
-id = "alchemy.toxic_pill"
-name_key = "card.alchemy.toxic_pill.name"
-description_key = "card.alchemy.toxic_pill.desc"
+id = "alchemy.healing_draught"
+name_key = "card.alchemy.healing_draught.name"
+description_key = "card.alchemy.healing_draught.desc"
 cost = 1
-card_type = "attack"
+card_type = "skill"
 rarity = "common"
-effects = Array[ExtResource("2_effect")]([SubResource("Resource_damage")])
+effects = Array[ExtResource("2_effect")]([SubResource("Resource_heal")])
 character_id = "alchemy"
 pool_tags = Array[String](["starter"])
 reward_weight = 100

@@ -6,18 +6,18 @@
 [sub_resource type="Resource" id="Resource_damage"]
 script = ExtResource("2_effect")
 effect_type = "damage"
-amount = 4
+amount = 8
 target = "enemy"
 
 [resource]
 script = ExtResource("1_card")
-id = "alchemy.toxic_pill"
-name_key = "card.alchemy.toxic_pill.name"
-description_key = "card.alchemy.toxic_pill.desc"
+id = "sword.focused_slash"
+name_key = "card.sword.focused_slash.name"
+description_key = "card.sword.focused_slash.desc"
 cost = 1
 card_type = "attack"
 rarity = "common"
 effects = Array[ExtResource("2_effect")]([SubResource("Resource_damage")])
-character_id = "alchemy"
+character_id = "sword"
 pool_tags = Array[String](["starter"])
 reward_weight = 100

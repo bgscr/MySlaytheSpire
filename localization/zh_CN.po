@@ -45,3 +45,99 @@ msgstr "温玉护符"
 
 msgid "relic.jade_talisman.desc"
 msgstr "战斗开始时获得 3 点护体。"
+
+msgid "card.sword.guard.name"
+msgstr "凝气护身"
+
+msgid "card.sword.guard.desc"
+msgstr "获得 7 点护体。"
+
+msgid "card.sword.flash_cut.name"
+msgstr "流光斩"
+
+msgid "card.sword.flash_cut.desc"
+msgstr "造成 4 点伤害。抽 1 张牌。"
+
+msgid "card.sword.qi_surge.name"
+msgstr "剑气回流"
+
+msgid "card.sword.qi_surge.desc"
+msgstr "获得 1 点能量。"
+
+msgid "card.sword.break_stance.name"
+msgstr "破势一剑"
+
+msgid "card.sword.break_stance.desc"
+msgstr "造成 10 点伤害。施加 1 层破势。"
+
+msgid "card.sword.cloud_step.name"
+msgstr "云身步"
+
+msgid "card.sword.cloud_step.desc"
+msgstr "获得 4 点护体。抽 1 张牌。"
+
+msgid "card.sword.focused_slash.name"
+msgstr "凝神斩"
+
+msgid "card.sword.focused_slash.desc"
+msgstr "造成 8 点伤害。"
+
+msgid "card.sword.sword_resonance.name"
+msgstr "剑鸣入体"
+
+msgid "card.sword.sword_resonance.desc"
+msgstr "获得 3 点护体。获得 2 层剑心。"
+
+msgid "card.sword.horizon_arc.name"
+msgstr "横天剑弧"
+
+msgid "card.sword.horizon_arc.desc"
+msgstr "造成 6 点伤害。获得 4 点护体。"
+
+msgid "card.alchemy.healing_draught.name"
+msgstr "回春丹露"
+
+msgid "card.alchemy.healing_draught.desc"
+msgstr "回复 5 点生命。"
+
+msgid "card.alchemy.poison_mist.name"
+msgstr "淬毒烟岚"
+
+msgid "card.alchemy.poison_mist.desc"
+msgstr "施加 3 层毒。"
+
+msgid "card.alchemy.inner_fire_pill.name"
+msgstr "内火丹"
+
+msgid "card.alchemy.inner_fire_pill.desc"
+msgstr "获得 1 点能量。抽 1 张牌。"
+
+msgid "card.alchemy.cauldron_burst.name"
+msgstr "丹炉迸火"
+
+msgid "card.alchemy.cauldron_burst.desc"
+msgstr "造成 7 点伤害。获得 4 点护体。"
+
+msgid "card.alchemy.calming_powder.name"
+msgstr "定神散"
+
+msgid "card.alchemy.calming_powder.desc"
+msgstr "获得 6 点护体。回复 2 点生命。"
+
+msgid "card.alchemy.toxin_needle.name"
+msgstr "毒针入脉"
+
+msgid "card.alchemy.toxin_needle.desc"
+msgstr "造成 3 点伤害。施加 2 层毒。"
+
+msgid "card.alchemy.spirit_distill.name"
+msgstr "灵液萃取"
+
+msgid "card.alchemy.spirit_distill.desc"
+msgstr "抽 2 张牌。"
+
+msgid "card.alchemy.cinnabar_seal.name"
+msgstr "朱砂护印"
+
+msgid "card.alchemy.cinnabar_seal.desc"
+msgstr "获得 8 点护体。获得 1 层丹护。"

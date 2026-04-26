@@ -63,7 +63,51 @@ func test_relic_rewards_return_empty_id_for_empty_pool() -> bool:
 	assert(passed)
 	return passed
 
+func test_sword_reward_draws_three_unique_cards_from_expanded_pool() -> bool:
+	var catalog := _catalog()
+	var generator := RewardGenerator.new()
+	var reward := generator.generate_card_reward(catalog, 177, "sword", "expanded_pool", 3)
+	var ids: Array = reward.get("card_ids", [])
+	var sword_pool := _ids(catalog.get_cards_for_character("sword"))
+	var passed: bool = ids.size() == 3 \
+		and _unique_count(ids) == 3 \
+		and _all_values_in_pool(ids, sword_pool) \
+		and not ids.has("alchemy.toxic_pill")
+	assert(passed)
+	return passed
+
+func test_alchemy_reward_draws_three_unique_cards_from_expanded_pool() -> bool:
+	var catalog := _catalog()
+	var generator := RewardGenerator.new()
+	var reward := generator.generate_card_reward(catalog, 177, "alchemy", "expanded_pool", 3)
+	var ids: Array = reward.get("card_ids", [])
+	var alchemy_pool := _ids(catalog.get_cards_for_character("alchemy"))
+	var passed: bool = ids.size() == 3 \
+		and _unique_count(ids) == 3 \
+		and _all_values_in_pool(ids, alchemy_pool) \
+		and not ids.has("sword.strike")
+	assert(passed)
+	return passed
+
 func _catalog() -> ContentCatalog:
 	var catalog := ContentCatalog.new()
 	catalog.load_default()
 	return catalog
+
+func _ids(resources: Array) -> Array[String]:
+	var ids: Array[String] = []
+	for resource in resources:
+		ids.append(resource.id)
+	return ids
+
+func _unique_count(values: Array) -> int:
+	var seen := {}
+	for value in values:
+		seen[value] = true
+	return seen.size()
+
+func _all_values_in_pool(values: Array, pool: Array[String]) -> bool:
+	for value in values:
+		if not pool.has(value):
+			return false
+	return true

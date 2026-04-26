@@ -103,8 +103,59 @@ func test_validation_reports_unreadable_locale_file_once() -> bool:
 	assert(passed)
 	return passed
 
+func test_default_catalog_loads_dual_starter_card_pool_counts() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.load_default()
+	var sword_ids := _ids(catalog.get_cards_for_character("sword"))
+	var alchemy_ids := _ids(catalog.get_cards_for_character("alchemy"))
+	var passed: bool = catalog.cards_by_id.size() == 18 \
+		and sword_ids.size() == 9 \
+		and alchemy_ids.size() == 9
+	assert(passed)
+	return passed
+
+func test_dual_starter_card_pools_are_character_isolated() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.load_default()
+	var sword_ids := _ids(catalog.get_cards_for_character("sword"))
+	var alchemy_ids := _ids(catalog.get_cards_for_character("alchemy"))
+	var expected_sword: Array[String] = [
+		"sword.strike",
+		"sword.guard",
+		"sword.flash_cut",
+		"sword.qi_surge",
+		"sword.break_stance",
+		"sword.cloud_step",
+		"sword.focused_slash",
+		"sword.sword_resonance",
+		"sword.horizon_arc",
+	]
+	var expected_alchemy: Array[String] = [
+		"alchemy.toxic_pill",
+		"alchemy.healing_draught",
+		"alchemy.poison_mist",
+		"alchemy.inner_fire_pill",
+		"alchemy.cauldron_burst",
+		"alchemy.calming_powder",
+		"alchemy.toxin_needle",
+		"alchemy.spirit_distill",
+		"alchemy.cinnabar_seal",
+	]
+	var passed := _contains_all(sword_ids, expected_sword) \
+		and _contains_all(alchemy_ids, expected_alchemy) \
+		and not sword_ids.has("alchemy.toxic_pill") \
+		and not alchemy_ids.has("sword.strike")
+	assert(passed)
+	return passed
+
 func _ids(resources: Array) -> Array[String]:
 	var ids: Array[String] = []
 	for resource in resources:
 		ids.append(resource.id)
 	return ids
+
+func _contains_all(values: Array[String], expected: Array[String]) -> bool:
+	for value in expected:
+		if not values.has(value):
+			return false
+	return true

@@ -8,7 +8,23 @@ const RelicDef := preload("res://scripts/data/relic_def.gd")
 
 const DEFAULT_CARD_PATHS: Array[String] = [
 	"res://resources/cards/sword/strike_sword.tres",
+	"res://resources/cards/sword/guard.tres",
+	"res://resources/cards/sword/flash_cut.tres",
+	"res://resources/cards/sword/qi_surge.tres",
+	"res://resources/cards/sword/break_stance.tres",
+	"res://resources/cards/sword/cloud_step.tres",
+	"res://resources/cards/sword/focused_slash.tres",
+	"res://resources/cards/sword/sword_resonance.tres",
+	"res://resources/cards/sword/horizon_arc.tres",
 	"res://resources/cards/alchemy/toxic_pill.tres",
+	"res://resources/cards/alchemy/healing_draught.tres",
+	"res://resources/cards/alchemy/poison_mist.tres",
+	"res://resources/cards/alchemy/inner_fire_pill.tres",
+	"res://resources/cards/alchemy/cauldron_burst.tres",
+	"res://resources/cards/alchemy/calming_powder.tres",
+	"res://resources/cards/alchemy/toxin_needle.tres",
+	"res://resources/cards/alchemy/spirit_distill.tres",
+	"res://resources/cards/alchemy/cinnabar_seal.tres",
 ]
 
 const DEFAULT_CHARACTER_PATHS: Array[String] = [
