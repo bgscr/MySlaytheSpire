@@ -37,6 +37,7 @@ $env:GODOT4="C:\Tools\Godot\Godot_v4.6.2-stable_win64_console.exe"
 - Resource consistency tests: complete
 - Minimal extended combat effects: complete
 - Dual starter card pools: complete; sword and alchemy each have 9 catalog cards
+- Multi-enemy encounter foundation: complete; combat, elite, and boss nodes now generate deterministic primary/support enemy groups
 
 ## Next Plans
 

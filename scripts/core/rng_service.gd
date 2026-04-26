@@ -27,6 +27,6 @@ func shuffle_copy(items: Array) -> Array:
 		copy[j] = tmp
 	return copy
 
-func fork(label: String):
+func fork(label: String) -> RngService:
 	var context := "%s:%s" % [seed_value, label]
-	return get_script().new(hash(context))
+	return get_script().new(hash(context)) as RngService
