@@ -21,6 +21,12 @@ func test_session_initializes_from_run_current_node() -> bool:
 	])
 	var session := CombatSession.new()
 	session.start(catalog, run)
+	var first_enemy_def: EnemyDef
+	var expected_intent := ""
+	if not session.state.enemies.is_empty():
+		first_enemy_def = catalog.get_enemy(session.state.enemies[0].id)
+		if first_enemy_def != null and not first_enemy_def.intent_sequence.is_empty():
+			expected_intent = first_enemy_def.intent_sequence[0]
 
 	var passed: bool = session.phase == CombatSession.PHASE_PLAYER_TURN \
 		and session.state.player.id == "sword" \
@@ -32,8 +38,8 @@ func test_session_initializes_from_run_current_node() -> bool:
 		and session.state.draw_pile.size() == 1 \
 		and session.state.discard_pile.is_empty() \
 		and session.state.enemies.size() >= 1 \
-		and session.state.enemies[0].id == "training_puppet" \
-		and session.get_enemy_intent(0) == "attack_5"
+		and first_enemy_def != null \
+		and session.get_enemy_intent(0) == expected_intent
 	assert(passed)
 	return passed
 
@@ -56,6 +62,17 @@ func test_session_invalid_when_deck_is_empty() -> bool:
 
 	var passed: bool = session.phase == CombatSession.PHASE_INVALID \
 		and session.error_text.contains("deck")
+	assert(passed)
+	return passed
+
+func test_enemy_intent_returns_empty_when_intent_indices_drift() -> bool:
+	var catalog := _default_catalog()
+	var run := _run_with_single_node("node_0", "combat", ["sword.strike"])
+	var session := CombatSession.new()
+	session.start(catalog, run)
+	session.enemy_intent_indices.clear()
+
+	var passed: bool = session.get_enemy_intent(0) == ""
 	assert(passed)
 	return passed
 

@@ -8,7 +8,9 @@ const CombatantState := preload("res://scripts/combat/combatant_state.gd")
 const ContentCatalog := preload("res://scripts/content/content_catalog.gd")
 const EncounterGenerator := preload("res://scripts/run/encounter_generator.gd")
 const EnemyDef := preload("res://scripts/data/enemy_def.gd")
+const MapNodeState := preload("res://scripts/run/map_node_state.gd")
 const RngService := preload("res://scripts/core/rng_service.gd")
+const RunState := preload("res://scripts/run/run_state.gd")
 
 const PHASE_INVALID := "invalid"
 const PHASE_PLAYER_TURN := "player_turn"
@@ -19,7 +21,7 @@ const PHASE_WON := "won"
 const PHASE_LOST := "lost"
 
 var catalog: ContentCatalog
-var run
+var run: RunState
 var state := CombatState.new()
 var engine := CombatEngine.new()
 var phase := PHASE_INVALID
@@ -31,7 +33,7 @@ var enemy_intent_indices: Array[int] = []
 var rng := RngService.new(1)
 var terminal_rewards_applied := false
 
-func start(input_catalog: ContentCatalog, input_run) -> void:
+func start(input_catalog: ContentCatalog, input_run: RunState) -> void:
 	catalog = input_catalog
 	run = input_run
 	state = CombatState.new()
@@ -55,6 +57,8 @@ func start(input_catalog: ContentCatalog, input_run) -> void:
 
 func get_enemy_intent(enemy_index: int) -> String:
 	if enemy_index < 0 or enemy_index >= state.enemies.size():
+		return ""
+	if enemy_index >= enemy_intent_indices.size():
 		return ""
 	var enemy := state.enemies[enemy_index]
 	var enemy_def := enemy_defs_by_id.get(enemy.id) as EnemyDef
@@ -107,8 +111,11 @@ func _initialize_from_run() -> void:
 	draw_cards(5)
 	phase = PHASE_PLAYER_TURN
 
-func _find_current_node():
-	for node in run.map_nodes:
+func _find_current_node() -> MapNodeState:
+	for candidate in run.map_nodes:
+		var node := candidate as MapNodeState
+		if node == null:
+			continue
 		if node.id == run.current_node_id:
 			return node
 	return null
