@@ -1310,7 +1310,7 @@ git commit -m "feat: add sample localized game content"
 - Create: `scripts/ui/reward_screen.gd`
 - Create: `scripts/ui/run_summary_screen.gd`
 
-- [ ] **Step 1: Add main menu scene and script**
+- [x] **Step 1: Add main menu scene and script**
 
 Create `scripts/ui/main_menu.gd`:
 
@@ -1368,7 +1368,7 @@ anchor_bottom = 1.0
 script = ExtResource("1_menu")
 ```
 
-- [ ] **Step 2: Initialize services in app**
+- [x] **Step 2: Initialize services in app**
 
 Modify `scripts/app/app.gd`:
 
@@ -1388,7 +1388,7 @@ func _ready() -> void:
 	game.router.go_to(SceneRouter.MAIN_MENU)
 ```
 
-- [ ] **Step 3: Add sample map flow**
+- [x] **Step 3: Add sample map flow**
 
 Create `scripts/ui/map_screen.gd`:
 
@@ -1435,7 +1435,7 @@ anchor_bottom = 1.0
 script = ExtResource("1_map")
 ```
 
-- [ ] **Step 4: Add sample combat flow**
+- [x] **Step 4: Add sample combat flow**
 
 Create `scripts/ui/combat_screen.gd`:
 
@@ -1484,7 +1484,7 @@ anchor_bottom = 1.0
 script = ExtResource("1_combat")
 ```
 
-- [ ] **Step 5: Add reward and summary screens**
+- [x] **Step 5: Add reward and summary screens**
 
 Create `scripts/ui/reward_screen.gd`:
 
@@ -1544,7 +1544,7 @@ func _ready() -> void:
 
 Create matching `.tscn` files with the same pattern as `MapScreen.tscn`, using script ids `1_reward` and `1_summary`.
 
-- [ ] **Step 6: Run import check**
+- [x] **Step 6: Run import check**
 
 Run:
 
@@ -1554,7 +1554,9 @@ Run:
 
 Expected: no parse errors.
 
-- [ ] **Step 7: Commit**
+Verification note: Task 8 scenes and scripts import through `& $env:GODOT4 --headless --path . --quit` with exit code 0. No parse errors or missing MainMenu errors appear; Godot still prints exit-time ObjectDB/resource cleanup warnings.
+
+- [x] **Step 7: Commit**
 
 ```powershell
 git add scenes scripts/ui scripts/app/app.gd
