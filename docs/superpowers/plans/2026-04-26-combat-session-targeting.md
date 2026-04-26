@@ -444,7 +444,7 @@ func test_player_target_card_requires_confirmation_and_can_cancel() -> bool:
 		and canceled \
 		and confirmed \
 		and session.phase == CombatSession.PHASE_PLAYER_TURN \
-		and session.state.player.block == 5 \
+		and session.state.player.block == 7 \
 		and session.state.energy == 2 \
 		and session.state.hand.is_empty() \
 		and session.state.discard_pile == ["sword.guard"]
@@ -465,7 +465,7 @@ func test_mixed_target_card_affects_enemy_and_player() -> bool:
 
 	var passed: bool = selected \
 		and confirmed \
-		and session.state.enemies[0].current_hp == enemy_hp_before - 10 \
+		and session.state.enemies[0].current_hp == enemy_hp_before - 6 \
 		and session.state.player.block == 4 \
 		and session.state.energy == 1
 	assert(passed)
