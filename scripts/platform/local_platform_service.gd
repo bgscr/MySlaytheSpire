@@ -1,8 +1,8 @@
 class_name LocalPlatformService
 extends "res://scripts/platform/platform_service.gd"
 
-var achievements := {}
-var stats := {}
+var achievements: Dictionary[String, bool] = {}
+var stats: Dictionary[String, int] = {}
 
 func unlock_achievement(achievement_id: String) -> void:
 	achievements[achievement_id] = true
