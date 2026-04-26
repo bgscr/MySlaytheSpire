@@ -237,6 +237,103 @@ func test_draw_reshuffles_discard_when_draw_pile_is_empty() -> bool:
 	assert(passed)
 	return passed
 
+func test_end_turn_discards_hand_and_enemies_act_in_order() -> bool:
+	var catalog := _catalog_with_ordered_enemies()
+	var run := _run_with_single_node("node_0", "boss", [
+		"sword.strike",
+		"sword.guard",
+		"sword.qi_surge",
+		"sword.cloud_step",
+		"sword.focused_slash",
+	])
+	var session := CombatSession.new()
+	session.start(catalog, run)
+	session.state.hand = ["sword.guard", "sword.qi_surge"]
+	session.state.draw_pile = [
+		"sword.strike",
+		"sword.flash_cut",
+		"sword.cloud_step",
+		"sword.focused_slash",
+		"sword.guard",
+	]
+	session.state.player.block = 3
+	var enemies: Array[CombatantState] = [
+		CombatantState.new("first_attacker", 20),
+		CombatantState.new("second_attacker", 20),
+	]
+	session.state.enemies = enemies
+	session.enemy_defs_by_id.clear()
+	session.enemy_defs_by_id["first_attacker"] = _enemy("first_attacker", "normal", 20, ["attack_5"])
+	session.enemy_defs_by_id["second_attacker"] = _enemy("second_attacker", "normal", 20, ["attack_6"])
+	var intent_indices: Array[int] = [0, 0]
+	session.enemy_intent_indices = intent_indices
+	var hp_before := session.state.player.current_hp
+
+	var ended: bool = session.end_player_turn()
+
+	var passed: bool = ended \
+		and session.phase == CombatSession.PHASE_PLAYER_TURN \
+		and session.state.turn == 2 \
+		and session.state.energy == 3 \
+		and session.state.player.block == 0 \
+		and session.state.player.current_hp == hp_before - 11 \
+		and session.state.discard_pile.has("sword.guard") \
+		and session.state.discard_pile.has("sword.qi_surge")
+	assert(passed)
+	return passed
+
+func test_enemy_block_clears_at_start_of_next_enemy_turn() -> bool:
+	var catalog := _catalog_with_blocking_enemy()
+	var run := _run_with_single_node("node_0", "boss", ["sword.guard"])
+	var session := CombatSession.new()
+	session.start(catalog, run)
+
+	session.end_player_turn()
+	var block_after_first_enemy_turn := session.state.enemies[0].block
+	session.end_player_turn()
+	var block_after_second_enemy_turn := session.state.enemies[0].block
+
+	var passed: bool = block_after_first_enemy_turn == 8 \
+		and block_after_second_enemy_turn == 8
+	assert(passed)
+	return passed
+
+func test_defeating_all_enemies_sets_won_and_writes_run() -> bool:
+	var catalog := _catalog_with_low_hp_enemy()
+	var run := _run_with_single_node("node_0", "combat", ["test.execute"])
+	run.gold = 5
+	var session := CombatSession.new()
+	session.start(catalog, run)
+	session.state.hand = ["test.execute"]
+	session.state.draw_pile.clear()
+
+	var selected := session.select_card(0)
+	var confirmed := session.confirm_enemy_target(0)
+
+	var passed: bool = selected \
+		and confirmed \
+		and session.phase == CombatSession.PHASE_WON \
+		and run.current_hp == session.state.player.current_hp \
+		and run.gold == 5
+	assert(passed)
+	return passed
+
+func test_player_death_sets_lost_and_failed_run() -> bool:
+	var catalog := _catalog_with_lethal_enemy()
+	var run := _run_with_single_node("node_0", "boss", ["sword.guard"])
+	run.current_hp = 4
+	var session := CombatSession.new()
+	session.start(catalog, run)
+
+	var ended: bool = session.end_player_turn()
+
+	var passed: bool = ended \
+		and session.phase == CombatSession.PHASE_LOST \
+		and run.failed \
+		and run.current_hp == 0
+	assert(passed)
+	return passed
+
 func _default_catalog() -> ContentCatalog:
 	var catalog := ContentCatalog.new()
 	catalog.load_default()
@@ -288,3 +385,53 @@ func _same_string_set(values: Array[String], expected: Array[String]) -> bool:
 		if not values.has(expected_value):
 			return false
 	return true
+
+func _catalog_with_ordered_enemies() -> ContentCatalog:
+	var catalog := _default_catalog()
+	catalog.enemies_by_id.clear()
+	var boss := _enemy("test_boss", "boss", 50, ["attack_5"])
+	var elite := _enemy("test_elite", "elite", 40, ["attack_6"])
+	catalog.enemies_by_id[boss.id] = boss
+	catalog.enemies_by_id[elite.id] = elite
+	return catalog
+
+func _catalog_with_blocking_enemy() -> ContentCatalog:
+	var catalog := _default_catalog()
+	catalog.enemies_by_id.clear()
+	var boss := _enemy("test_block_boss", "boss", 50, ["block_8"])
+	catalog.enemies_by_id[boss.id] = boss
+	return catalog
+
+func _catalog_with_low_hp_enemy() -> ContentCatalog:
+	var catalog := _default_catalog()
+	catalog.enemies_by_id.clear()
+	var enemy := _enemy("test_low_hp", "normal", 3, [])
+	catalog.enemies_by_id[enemy.id] = enemy
+	var card := CardDef.new()
+	card.id = "test.execute"
+	card.cost = 1
+	card.effects = [_effect("damage", 99, "enemy")]
+	catalog.cards_by_id[card.id] = card
+	return catalog
+
+func _catalog_with_lethal_enemy() -> ContentCatalog:
+	var catalog := _default_catalog()
+	catalog.enemies_by_id.clear()
+	var boss := _enemy("test_lethal_boss", "boss", 50, ["attack_99"])
+	catalog.enemies_by_id[boss.id] = boss
+	return catalog
+
+func _enemy(enemy_id: String, tier: String, hp: int, intents: Array[String]) -> EnemyDef:
+	var enemy := EnemyDef.new()
+	enemy.id = enemy_id
+	enemy.tier = tier
+	enemy.max_hp = hp
+	enemy.intent_sequence = intents
+	return enemy
+
+func _effect(effect_type: String, amount: int, target: String) -> EffectDef:
+	var effect := EffectDef.new()
+	effect.effect_type = effect_type
+	effect.amount = amount
+	effect.target = target
+	return effect

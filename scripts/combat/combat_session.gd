@@ -122,6 +122,24 @@ func confirm_player_target() -> bool:
 		return false
 	return _play_pending_card(state.player)
 
+func end_player_turn() -> bool:
+	error_text = ""
+	if phase != PHASE_PLAYER_TURN:
+		error_text = "Cannot end turn outside the player turn."
+		return false
+	state.discard_pile.append_array(state.hand)
+	state.hand.clear()
+	engine.end_turn(state)
+	phase = PHASE_ENEMY_TURN
+	_run_enemy_turn()
+	if phase == PHASE_LOST:
+		return true
+	draw_cards(5)
+	_update_terminal_phase()
+	if phase != PHASE_WON and phase != PHASE_LOST:
+		phase = PHASE_PLAYER_TURN
+	return true
+
 func draw_cards(count: int) -> void:
 	for _i in range(max(0, count)):
 		if state.draw_pile.is_empty():
@@ -130,6 +148,47 @@ func draw_cards(count: int) -> void:
 			state.draw_pile = _shuffle_card_ids(state.discard_pile)
 			state.discard_pile.clear()
 		state.hand.append(state.draw_pile.pop_back())
+
+func _run_enemy_turn() -> void:
+	_clear_enemy_blocks()
+	for enemy_index in range(state.enemies.size()):
+		var enemy := state.enemies[enemy_index]
+		if enemy.is_defeated():
+			continue
+		_execute_enemy_intent(enemy_index)
+		if state.player.is_defeated():
+			_finish_loss()
+			return
+
+func _clear_enemy_blocks() -> void:
+	for enemy in state.enemies:
+		if not enemy.is_defeated():
+			enemy.block = 0
+
+func _execute_enemy_intent(enemy_index: int) -> void:
+	var enemy: CombatantState = state.enemies[enemy_index]
+	var intent := get_enemy_intent(enemy_index)
+	if intent.is_empty():
+		_advance_enemy_intent(enemy_index)
+		return
+	var parts := intent.split("_")
+	if parts.size() != 2:
+		push_error("Unknown enemy intent format: %s" % intent)
+		_advance_enemy_intent(enemy_index)
+		return
+	var amount: int = max(0, int(parts[1]))
+	match String(parts[0]).to_lower():
+		"attack":
+			state.player.take_damage(amount)
+		"block":
+			enemy.gain_block(amount)
+		_:
+			push_error("Unknown enemy intent action: %s" % intent)
+	_advance_enemy_intent(enemy_index)
+
+func _advance_enemy_intent(enemy_index: int) -> void:
+	if enemy_index >= 0 and enemy_index < enemy_intent_indices.size():
+		enemy_intent_indices[enemy_index] += 1
 
 func _card_requires_enemy_target(card: CardDef) -> bool:
 	for effect in card.effects:
