@@ -9,24 +9,45 @@ func test_save_round_trip_preserves_run_state() -> bool:
 	var save_path := "user://test_run_save.json"
 	_delete_test_save(save_path)
 	var run := RunState.new()
+	run.version = 2
 	run.seed_value = 42
 	run.character_id = "sword"
 	run.current_hp = 55
 	run.max_hp = 72
 	run.gold = 99
 	run.deck_ids = ["sword.strike"]
+	run.relic_ids = ["burning_blood"]
+	run.completed = true
+	run.failed = false
 	var service := SaveService.new(save_path)
 	service.save_run(run)
 
 	var loaded := service.load_run()
 	var passed: bool = loaded != null \
+		and loaded.version == 2 \
 		and loaded.seed_value == 42 \
 		and loaded.character_id == "sword" \
 		and loaded.current_hp == 55 \
 		and loaded.max_hp == 72 \
 		and loaded.gold == 99 \
 		and loaded.deck_ids.size() == 1 \
-		and loaded.deck_ids[0] == "sword.strike"
+		and loaded.deck_ids[0] == "sword.strike" \
+		and loaded.relic_ids.size() == 1 \
+		and loaded.relic_ids[0] == "burning_blood" \
+		and loaded.completed == true \
+		and loaded.failed == false
+
+	run.completed = false
+	run.failed = true
+	service.save_run(run)
+	loaded = service.load_run()
+	passed = passed \
+		and loaded != null \
+		and loaded.version == 2 \
+		and loaded.relic_ids.size() == 1 \
+		and loaded.relic_ids[0] == "burning_blood" \
+		and loaded.completed == false \
+		and loaded.failed == true
 	assert(passed)
 	service.delete_save()
 	return passed
