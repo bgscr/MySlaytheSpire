@@ -1120,7 +1120,7 @@ git commit -m "feat: add run save and local platform services"
 - Create: `resources/enemies/boss_heart_demon.tres`
 - Create: `resources/relics/jade_talisman.tres`
 
-- [ ] **Step 1: Add Chinese gettext entries**
+- [x] **Step 1: Add Chinese gettext entries**
 
 Create `localization/zh_CN.po`:
 
@@ -1174,7 +1174,7 @@ msgid "relic.jade_talisman.desc"
 msgstr "战斗开始时获得 3 点护体。"
 ```
 
-- [ ] **Step 2: Create sample `.tres` resources through the Godot editor**
+- [x] **Step 2: Create sample `.tres` resources through the Godot editor**
 
 Use the Godot editor to create each Resource with the script shown in its file path. Set these values:
 
@@ -1270,7 +1270,7 @@ trigger_event: combat_started
 effects: one EffectDef with effect_type=block, amount=3, target=player
 ```
 
-- [ ] **Step 3: Verify resources load**
+- [x] **Step 3: Verify resources load**
 
 Run:
 
@@ -1286,7 +1286,9 @@ Godot Engine v4.6.2.stable...
 
 No "Failed loading resource" messages should appear.
 
-- [ ] **Step 4: Commit**
+Verification note: Task 7 resources and `localization/zh_CN.po` load and validate cleanly. The full app import still reports the pre-existing missing `res://scenes/menu/MainMenu.tscn` from Task 8 only.
+
+- [x] **Step 4: Commit**
 
 ```powershell
 git add localization resources project.godot

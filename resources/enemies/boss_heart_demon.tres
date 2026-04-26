@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="EnemyDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/enemy_def.gd" id="1_enemy"]
+
+[resource]
+script = ExtResource("1_enemy")
+id = "boss_heart_demon"
+name_key = "enemy.boss_heart_demon.name"
+max_hp = 80
+intent_sequence = Array[String](["attack_10", "block_8", "attack_14"])
+reward_tier = "boss"

@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="CharacterDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/character_def.gd" id="1_character"]
+
+[resource]
+script = ExtResource("1_character")
+id = "sword"
+name_key = "character.sword.name"
+max_hp = 72
+starting_deck_ids = Array[String](["sword.strike", "sword.strike", "sword.strike"])
+card_pool_ids = Array[String](["sword.strike"])

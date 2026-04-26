@@ -1,0 +1,47 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: MySlaytheSpire\n"
+"Language: zh_CN\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "ui.new_run"
+msgstr "新局"
+
+msgid "ui.continue"
+msgstr "继续"
+
+msgid "ui.end_turn"
+msgstr "结束回合"
+
+msgid "character.sword.name"
+msgstr "剑修"
+
+msgid "character.alchemy.name"
+msgstr "丹修"
+
+msgid "card.sword.strike.name"
+msgstr "试剑"
+
+msgid "card.sword.strike.desc"
+msgstr "造成 6 点伤害。"
+
+msgid "card.alchemy.toxic_pill.name"
+msgstr "淬毒丹"
+
+msgid "card.alchemy.toxic_pill.desc"
+msgstr "造成 4 点伤害。"
+
+msgid "enemy.training_puppet.name"
+msgstr "试炼木人"
+
+msgid "enemy.forest_bandit.name"
+msgstr "山道劫修"
+
+msgid "enemy.boss_heart_demon.name"
+msgstr "心魔化身"
+
+msgid "relic.jade_talisman.name"
+msgstr "温玉护符"
+
+msgid "relic.jade_talisman.desc"
+msgstr "战斗开始时获得 3 点护体。"

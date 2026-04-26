@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="EnemyDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/enemy_def.gd" id="1_enemy"]
+
+[resource]
+script = ExtResource("1_enemy")
+id = "forest_bandit"
+name_key = "enemy.forest_bandit.name"
+max_hp = 28
+intent_sequence = Array[String](["attack_6", "block_4"])
+reward_tier = "normal"
