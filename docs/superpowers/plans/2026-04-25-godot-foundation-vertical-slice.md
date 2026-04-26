@@ -1819,7 +1819,7 @@ Exporting project...
 
 If export templates are missing, install Godot 4.6.2 export templates in the editor, rerun the command, and do not change project code.
 
-Verification note: preset exists and is recognized by Godot, but export is blocked by missing local Godot 4.6.2 Windows export templates. Command exit code was 0 and output was:
+Earlier verification note before templates were installed: preset exists and is recognized by Godot, but export was blocked by missing local Godot 4.6.2 Windows export templates. Command exit code was 0 and output was:
 
 ```text
 WARNING: Missing .uid file for path "res://scripts/platform/local_platform_service.gd". The file was re-created from cache.
@@ -1840,6 +1840,8 @@ C:/Users/56922/AppData/Roaming/Godot/export_templates/4.6.2.stable/windows_relea
 ERROR: Project export for preset "Windows Desktop" failed.
    at: _fs_changed (editor/editor_node.cpp:1348)
 ```
+
+Final export verification: Godot 4.6.2 Windows export templates were installed locally under `%APPDATA%\Godot\export_templates\4.6.2.stable`. Rerunning `& $env:GODOT4 --headless --path . --export-debug "Windows Desktop" export/MySlaytheSpire.exe` completed with exit 0 and generated `export/MySlaytheSpire.exe` with size 105,506,376 bytes.
 
 - [x] **Step 3: Commit**
 
@@ -1882,7 +1884,7 @@ Expected: no parse errors, no missing resources.
 
 Verification: rerun completed with exit 0, no parse errors, and no missing resources; known exit-time ObjectDB/resource cleanup warning remains.
 
-- [ ] **Step 3: Run the game manually in editor**
+- [x] **Step 3: Run the game manually in editor**
 
 Run:
 
@@ -1902,7 +1904,7 @@ Manual acceptance:
 - Debug overlay appears in debug build.
 - Continuing a saved run returns to map.
 
-Manual editor acceptance was not run in this noninteractive implementer session. The checklist above remains pending GUI verification.
+Manual editor acceptance was completed in the GUI session. The run flow opens from main menu, reaches map/combat/reward/summary, debug overlay appears without blocking main menu actions, saved non-terminal runs can continue, and failed/completed terminal runs clear the save so `Continue` is not usable afterward.
 
 - [x] **Step 4: Update README with Phase 1 status**
 
@@ -1919,8 +1921,8 @@ Modify `README.md`:
 - Debug overlay: complete
 - Local tests: complete
 - Import check: complete with known exit-time cleanup warnings
-- Manual editor smoke: pending
-- Windows export preset: prepared; export artifact requires Godot 4.6.2 Windows export templates
+- Manual editor smoke: complete
+- Windows export preset: complete; `export/MySlaytheSpire.exe` generated after installing Godot 4.6.2 Windows export templates
 
 ## Next Plans
 
