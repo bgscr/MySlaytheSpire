@@ -10,6 +10,7 @@ const TEST_FILES := [
 	"res://tests/unit/test_map_generator.gd",
 	"res://tests/unit/test_run_state.gd",
 	"res://tests/unit/test_combat_engine.gd",
+	"res://tests/unit/test_combat_session.gd",
 	"res://tests/unit/test_save_service.gd",
 	"res://tests/smoke/test_scene_flow.gd",
 ]
