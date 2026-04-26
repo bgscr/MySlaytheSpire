@@ -24,7 +24,12 @@ func _on_new_run_pressed() -> void:
 func _on_continue_pressed() -> void:
 	var app = get_tree().root.get_node("App")
 	if app.game.save_service and app.game.save_service.has_save():
-		app.game.current_run = app.game.save_service.load_run()
+		var loaded_run = app.game.save_service.load_run()
+		if loaded_run == null:
+			app.game.save_service.delete_save()
+			push_error("Failed to load saved run; invalid save deleted.")
+			return
+		app.game.current_run = loaded_run
 		app.game.router.go_to(SceneRouterScript.MAP)
 
 func _create_minimal_run(character_id: String, seed_value: int):

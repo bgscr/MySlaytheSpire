@@ -8,8 +8,8 @@ const LocalPlatformServiceScript := preload("res://scripts/platform/local_platfo
 var game := GameScript.new()
 
 func _ready() -> void:
-	add_child(game)
 	game.save_service = SaveServiceScript.new()
 	game.platform_service = LocalPlatformServiceScript.new()
+	add_child(game)
 	game.router.setup(self)
 	game.router.go_to(SceneRouterScript.MAIN_MENU)

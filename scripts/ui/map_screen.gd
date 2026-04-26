@@ -13,7 +13,7 @@ func _ready() -> void:
 		var button := Button.new()
 		button.text = "%s: %s" % [node.id, node.node_type]
 		button.position.y = y
-		button.disabled = not node.unlocked
+		button.disabled = node.visited or not node.unlocked
 		button.pressed.connect(func(): _enter_node(node))
 		add_child(button)
 		y += 40
