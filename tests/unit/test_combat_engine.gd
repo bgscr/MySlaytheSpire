@@ -149,3 +149,40 @@ func test_combat_instances_do_not_share_mutable_state() -> bool:
 		and first_engine.executor != second_engine.executor
 	assert(passed)
 	return passed
+
+func test_stateful_effects_update_combat_state() -> bool:
+	var draw := _make_effect("draw_card", 2, "player")
+	var energy := _make_effect("gain_energy", 1, "player")
+	var gold := _make_effect("gain_gold", 9, "player")
+	var effects: Array[EffectDef] = [draw, energy, gold]
+	var card := _make_card(effects)
+	var state := CombatState.new()
+	state.player = CombatantState.new("player", 30)
+	state.energy = 0
+	var enemy := CombatantState.new("enemy", 20)
+	var engine := CombatEngine.new()
+	engine.play_card_in_state(card, state, state.player, enemy)
+	var passed: bool = state.pending_draw_count == 2 \
+		and state.energy == 1 \
+		and state.gold_delta == 9
+	assert(passed)
+	return passed
+
+func test_apply_status_stacks_positive_amounts() -> bool:
+	var poison := _make_effect("apply_status", 3, "enemy")
+	poison.status_id = "poison"
+	var repeat_poison := _make_effect("apply_status", 2, "target")
+	repeat_poison.status_id = "poison"
+	var ignored := _make_effect("apply_status", 0, "enemy")
+	ignored.status_id = "burn"
+	var effects: Array[EffectDef] = [poison, repeat_poison, ignored]
+	var card := _make_card(effects)
+	var state := CombatState.new()
+	state.player = CombatantState.new("player", 30)
+	var enemy := CombatantState.new("enemy", 20)
+	var engine := CombatEngine.new()
+	engine.play_card_in_state(card, state, state.player, enemy)
+	var passed: bool = enemy.statuses.get("poison", 0) == 5 \
+		and not enemy.statuses.has("burn")
+	assert(passed)
+	return passed

@@ -12,6 +12,10 @@ func play_card(card: CardDef, source: CombatantState, target: CombatantState) ->
 	for effect in card.effects:
 		executor.execute(effect, source, target)
 
+func play_card_in_state(card: CardDef, state: CombatState, source: CombatantState, target: CombatantState) -> void:
+	for effect in card.effects:
+		executor.execute_in_state(effect, state, source, target)
+
 func end_turn(state: CombatState) -> void:
 	state.turn += 1
 	state.energy = 3

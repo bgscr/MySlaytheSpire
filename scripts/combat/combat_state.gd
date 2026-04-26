@@ -11,3 +11,5 @@ var draw_pile: Array[String] = []
 var hand: Array[String] = []
 var discard_pile: Array[String] = []
 var exhausted_pile: Array[String] = []
+var pending_draw_count := 0
+var gold_delta := 0

@@ -11,3 +11,6 @@ const EffectDef := preload("res://scripts/data/effect_def.gd")
 @export_enum("common", "uncommon", "rare") var rarity: String = "common"
 @export var tags: Array[String] = []
 @export var effects: Array[EffectDef] = []
+@export var character_id: String = ""
+@export var pool_tags: Array[String] = []
+@export var reward_weight: int = 100

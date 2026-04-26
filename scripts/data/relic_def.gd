@@ -8,3 +8,5 @@ const EffectDef := preload("res://scripts/data/effect_def.gd")
 @export var description_key: String = ""
 @export var trigger_event: String = ""
 @export var effects: Array[EffectDef] = []
+@export_enum("common", "uncommon", "rare", "boss") var tier: String = "common"
+@export var reward_weight: int = 100

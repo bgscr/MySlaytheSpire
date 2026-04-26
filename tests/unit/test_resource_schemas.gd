@@ -76,5 +76,27 @@ func test_event_bus_emits_game_event_payload() -> bool:
 	assert(passed)
 	return passed
 
+func test_content_schema_exports_pool_metadata() -> bool:
+	var card := CardDef.new()
+	var enemy := EnemyDef.new()
+	var relic := RelicDef.new()
+	var passed := _has_property(card, "character_id") \
+		and _has_property(card, "pool_tags") \
+		and _has_property(card, "reward_weight") \
+		and _has_property(enemy, "tier") \
+		and _has_property(enemy, "encounter_weight") \
+		and _has_property(enemy, "gold_reward_min") \
+		and _has_property(enemy, "gold_reward_max") \
+		and _has_property(relic, "tier") \
+		and _has_property(relic, "reward_weight")
+	assert(passed)
+	return passed
+
 func _record_emitted_event(event: GameEvent) -> void:
 	_received_event = event
+
+func _has_property(object: Object, property_name: String) -> bool:
+	for property in object.get_property_list():
+		if String(property.name) == property_name:
+			return true
+	return false
