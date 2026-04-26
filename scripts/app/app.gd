@@ -14,4 +14,9 @@ func _ready() -> void:
 	add_child(game)
 	game.router.setup(self)
 	game.router.go_to(SceneRouterScript.MAIN_MENU)
-	add_child(DebugOverlayScene.instantiate())
+	if OS.is_debug_build():
+		var debug_layer := CanvasLayer.new()
+		debug_layer.name = "DebugLayer"
+		debug_layer.layer = 100
+		add_child(debug_layer)
+		debug_layer.add_child(DebugOverlayScene.instantiate())
