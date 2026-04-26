@@ -81,6 +81,7 @@ func test_enemy_target_card_waits_for_enemy_and_can_cancel() -> bool:
 	var run := _run_with_single_node("node_0", "combat", ["sword.strike"])
 	var session := CombatSession.new()
 	session.start(catalog, run)
+	var enemy_hp_before := session.state.enemies[0].current_hp
 	var selected := session.select_card(0)
 	var canceled := session.cancel_selection()
 
@@ -88,15 +89,18 @@ func test_enemy_target_card_waits_for_enemy_and_can_cancel() -> bool:
 		and canceled \
 		and session.phase == CombatSession.PHASE_PLAYER_TURN \
 		and session.pending_hand_index == -1 \
+		and session.pending_card == null \
 		and session.state.energy == 3 \
 		and session.state.hand == ["sword.strike"] \
 		and session.state.discard_pile.is_empty() \
-		and session.state.enemies[0].current_hp == 20
+		and session.state.enemies[0].current_hp == enemy_hp_before
 	assert(passed)
 	return passed
 
 func test_enemy_target_card_damages_selected_enemy_and_discards() -> bool:
 	var catalog := _default_catalog()
+	var strike_damage := _effect_amount(catalog, "sword.strike", "damage", ["enemy", "target"])
+	var strike_cost := _card_cost(catalog, "sword.strike")
 	var run := _run_with_single_node("node_0", "combat", ["sword.strike"])
 	var session := CombatSession.new()
 	session.start(catalog, run)
@@ -118,36 +122,45 @@ func test_enemy_target_card_damages_selected_enemy_and_discards() -> bool:
 		and confirmed \
 		and session.phase == CombatSession.PHASE_PLAYER_TURN \
 		and first_enemy_hp == session.state.enemies[0].max_hp \
-		and second_enemy_hp == session.state.enemies[1].max_hp - 6 \
-		and session.state.energy == 2 \
+		and second_enemy_hp == session.state.enemies[1].max_hp - strike_damage \
+		and session.state.energy == 3 - strike_cost \
 		and session.state.hand.is_empty() \
-		and session.state.discard_pile == ["sword.strike"]
+		and session.state.discard_pile == ["sword.strike"] \
+		and session.pending_card == null
 	assert(passed)
 	return passed
 
 func test_player_target_card_requires_confirmation_and_can_cancel() -> bool:
 	var catalog := _default_catalog()
+	var guard_block := _effect_amount(catalog, "sword.guard", "block", ["player", "self", "source"])
+	var guard_cost := _card_cost(catalog, "sword.guard")
 	var run := _run_with_single_node("node_0", "combat", ["sword.guard"])
 	var session := CombatSession.new()
 	session.start(catalog, run)
 	var selected := session.select_card(0)
 	var canceled := session.cancel_selection()
+	var cancel_cleared_pending := session.pending_hand_index == -1 and session.pending_card == null
 	selected = selected and session.select_card(0)
 	var confirmed := session.confirm_player_target()
 
 	var passed: bool = selected \
 		and canceled \
+		and cancel_cleared_pending \
 		and confirmed \
 		and session.phase == CombatSession.PHASE_PLAYER_TURN \
-		and session.state.player.block == 7 \
-		and session.state.energy == 2 \
+		and session.state.player.block == guard_block \
+		and session.state.energy == 3 - guard_cost \
 		and session.state.hand.is_empty() \
-		and session.state.discard_pile == ["sword.guard"]
+		and session.state.discard_pile == ["sword.guard"] \
+		and session.pending_card == null
 	assert(passed)
 	return passed
 
 func test_mixed_target_card_affects_enemy_and_player() -> bool:
 	var catalog := _default_catalog()
+	var horizon_damage := _effect_amount(catalog, "sword.horizon_arc", "damage", ["enemy", "target"])
+	var horizon_block := _effect_amount(catalog, "sword.horizon_arc", "block", ["player", "self", "source"])
+	var horizon_cost := _card_cost(catalog, "sword.horizon_arc")
 	var run := _run_with_single_node("node_0", "combat", ["sword.horizon_arc"])
 	var session := CombatSession.new()
 	session.start(catalog, run)
@@ -160,9 +173,10 @@ func test_mixed_target_card_affects_enemy_and_player() -> bool:
 
 	var passed: bool = selected \
 		and confirmed \
-		and session.state.enemies[0].current_hp == enemy_hp_before - 6 \
-		and session.state.player.block == 4 \
-		and session.state.energy == 1
+		and session.state.enemies[0].current_hp == enemy_hp_before - horizon_damage \
+		and session.state.player.block == horizon_block \
+		and session.state.energy == 3 - horizon_cost \
+		and session.pending_card == null
 	assert(passed)
 	return passed
 
@@ -181,22 +195,25 @@ func test_draw_effect_resolves_before_played_card_enters_discard() -> bool:
 	var passed: bool = selected \
 		and confirmed \
 		and session.state.hand.is_empty() \
-		and session.state.discard_pile == ["sword.flash_cut"]
+		and session.state.discard_pile == ["sword.flash_cut"] \
+		and session.pending_card == null
 	assert(passed)
 	return passed
 
 func test_insufficient_energy_keeps_card_in_hand() -> bool:
 	var catalog := _default_catalog()
+	var horizon_cost := _card_cost(catalog, "sword.horizon_arc")
+	var energy_before := horizon_cost - 1
 	var run := _run_with_single_node("node_0", "combat", ["sword.horizon_arc"])
 	var session := CombatSession.new()
 	session.start(catalog, run)
-	session.state.energy = 1
+	session.state.energy = energy_before
 	var selected := session.select_card(0)
 
 	var passed: bool = not selected \
 		and session.phase == CombatSession.PHASE_PLAYER_TURN \
 		and session.error_text.contains("energy") \
-		and session.state.energy == 1 \
+		and session.state.energy == energy_before \
 		and session.state.hand == ["sword.horizon_arc"] \
 		and session.state.discard_pile.is_empty()
 	assert(passed)
@@ -216,7 +233,7 @@ func test_draw_reshuffles_discard_when_draw_pile_is_empty() -> bool:
 	var passed: bool = session.state.hand.size() == 2 \
 		and session.state.draw_pile.is_empty() \
 		and session.state.discard_pile.is_empty() \
-		and _all_values_in_pool(session.state.hand, ["sword.guard", "sword.qi_surge"])
+		and _same_string_set(session.state.hand, ["sword.guard", "sword.qi_surge"])
 	assert(passed)
 	return passed
 
@@ -238,8 +255,36 @@ func _run_with_single_node(current_node_id: String, node_type: String, deck_ids:
 	run.map_nodes = [node]
 	return run
 
-func _all_values_in_pool(values: Array[String], pool: Array[String]) -> bool:
+func _card_cost(catalog: ContentCatalog, card_id: String) -> int:
+	var card := catalog.get_card(card_id)
+	assert(card != null)
+	if card == null:
+		return 0
+	return card.cost
+
+func _effect_amount(
+	catalog: ContentCatalog,
+	card_id: String,
+	effect_type: String,
+	targets: Array[String]
+) -> int:
+	var card := catalog.get_card(card_id)
+	assert(card != null)
+	if card == null:
+		return 0
+	var total := 0
+	for effect: EffectDef in card.effects:
+		if effect.effect_type == effect_type and targets.has(effect.target.to_lower()):
+			total += effect.amount
+	return total
+
+func _same_string_set(values: Array[String], expected: Array[String]) -> bool:
+	if values.size() != expected.size():
+		return false
 	for value in values:
-		if not pool.has(value):
+		if not expected.has(value):
+			return false
+	for expected_value in expected:
+		if not values.has(expected_value):
 			return false
 	return true
