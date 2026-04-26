@@ -3,6 +3,7 @@ extends SceneTree
 const TEST_FILES := [
 	"res://tests/unit/test_rng_service.gd",
 	"res://tests/unit/test_resource_schemas.gd",
+	"res://tests/unit/test_scene_router.gd",
 	"res://tests/unit/test_map_generator.gd",
 	"res://tests/unit/test_run_state.gd",
 	"res://tests/unit/test_combat_engine.gd",

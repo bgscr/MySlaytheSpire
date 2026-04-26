@@ -24,7 +24,7 @@ $env:GODOT4="C:\Tools\Godot\Godot_v4.6.2-stable_win64_console.exe"
 - Sample scene flow: complete
 - Debug overlay: complete
 - Local tests: complete (`TESTS PASSED`)
-- Import check: complete; Godot exits 0 with known exit-time ObjectDB/resource cleanup warnings
+- Import check: complete; Godot exits 0 with no exit-time ObjectDB/resource cleanup warnings
 - Manual editor smoke: complete
 - Windows export preset: complete; `export/MySlaytheSpire.exe` generated after installing Godot 4.6.2 Windows export templates
 

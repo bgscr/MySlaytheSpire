@@ -1,5 +1,5 @@
 class_name SceneRouter
-extends Node
+extends RefCounted
 
 const MAIN_MENU := "res://scenes/menu/MainMenu.tscn"
 const MAP := "res://scenes/map/MapScreen.tscn"

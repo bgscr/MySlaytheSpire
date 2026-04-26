@@ -1554,7 +1554,7 @@ Run:
 
 Expected: no parse errors.
 
-Verification note: Task 8 scenes and scripts import through `& $env:GODOT4 --headless --path . --quit` with exit code 0. No parse errors or missing MainMenu errors appear; Godot still prints exit-time ObjectDB/resource cleanup warnings.
+Verification note: Task 8 scenes and scripts import through `& $env:GODOT4 --headless --path . --quit` with exit code 0. No parse errors or missing MainMenu errors appear. Later cleanup work removed the exit-time ObjectDB/resource cleanup warnings.
 
 - [x] **Step 7: Commit**
 
@@ -1681,7 +1681,7 @@ Run:
 
 Expected: no parse errors.
 
-Verification note: Task 9 imports cleanly through `& $env:GODOT4 --headless --path . --quit` with exit code 0 and no parse errors. The existing exit-time ObjectDB/resource cleanup warning still appears. The existing test suite also passes through `& $env:GODOT4 --headless --path . --script res://scripts/testing/test_runner.gd`.
+Verification note: Task 9 imports cleanly through `& $env:GODOT4 --headless --path . --quit` with exit code 0 and no parse errors. Later cleanup work removed the exit-time ObjectDB/resource cleanup warnings. The existing test suite also passes through `& $env:GODOT4 --headless --path . --script res://scripts/testing/test_runner.gd`.
 
 - [x] **Step 5: Commit**
 
@@ -1742,7 +1742,7 @@ Run:
 
 Expected: no scene load or parse errors.
 
-Verification: Godot opened the project headlessly with no scene load or parse errors. Known exit-time cleanup warnings were not treated as Task 10 failures.
+Verification: Godot opened the project headlessly with no scene load or parse errors. Later cleanup work removed the exit-time ObjectDB/resource cleanup warnings.
 
 - [x] **Step 4: Commit**
 
@@ -1870,7 +1870,7 @@ Expected:
 TESTS PASSED
 ```
 
-Verification: rerun completed with exit 0 and `TESTS PASSED`; known exit-time ObjectDB/resource cleanup warnings remain.
+Verification: rerun completed with exit 0 and `TESTS PASSED`; no exit-time ObjectDB/resource cleanup warnings are emitted after lifecycle cleanup.
 
 - [x] **Step 2: Run project import check**
 
@@ -1882,7 +1882,7 @@ Run:
 
 Expected: no parse errors, no missing resources.
 
-Verification: rerun completed with exit 0, no parse errors, and no missing resources; known exit-time ObjectDB/resource cleanup warning remains.
+Verification: rerun completed with exit 0, no parse errors, no missing resources, and no exit-time ObjectDB/resource cleanup warnings after lifecycle cleanup.
 
 - [x] **Step 3: Run the game manually in editor**
 
@@ -1920,7 +1920,7 @@ Modify `README.md`:
 - Sample scene flow: complete
 - Debug overlay: complete
 - Local tests: complete
-- Import check: complete with known exit-time cleanup warnings
+- Import check: complete with no exit-time ObjectDB/resource cleanup warnings
 - Manual editor smoke: complete
 - Windows export preset: complete; `export/MySlaytheSpire.exe` generated after installing Godot 4.6.2 Windows export templates
 

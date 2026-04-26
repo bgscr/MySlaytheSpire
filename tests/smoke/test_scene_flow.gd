@@ -6,8 +6,9 @@ const RunStateScript := preload("res://scripts/run/run_state.gd")
 const SaveServiceScript := preload("res://scripts/save/save_service.gd")
 const SceneRouterScript := preload("res://scripts/app/scene_router.gd")
 
-func test_app_scene_instantiates() -> bool:
+func test_app_scene_instantiates(tree: SceneTree) -> bool:
 	var app := AppScene.instantiate()
+	tree.root.add_child(app)
 	var passed := app != null
 	assert(passed)
 	if app != null:
