@@ -1758,7 +1758,7 @@ git commit -m "test: add scene flow smoke coverage"
 - Create: `export_presets.cfg`
 - Create directory: `export/`
 
-- [ ] **Step 1: Create Windows export preset**
+- [x] **Step 1: Create Windows export preset**
 
 Create `export_presets.cfg`:
 
@@ -1803,7 +1803,7 @@ application/copyright=""
 application/trademarks=""
 ```
 
-- [ ] **Step 2: Verify export preset is visible to Godot**
+- [x] **Step 2: Verify export preset is visible to Godot**
 
 Run:
 
@@ -1819,10 +1819,32 @@ Exporting project...
 
 If export templates are missing, install Godot 4.6.2 export templates in the editor, rerun the command, and do not change project code.
 
-- [ ] **Step 3: Commit**
+Verification note: preset exists and is recognized by Godot, but export is blocked by missing local Godot 4.6.2 Windows export templates. Command exit code was 0 and output was:
+
+```text
+WARNING: Missing .uid file for path "res://scripts/platform/local_platform_service.gd". The file was re-created from cache.
+   at: _process_file_system (editor/file_system/editor_file_system.cpp:1363)
+WARNING: Missing .uid file for path "res://scripts/platform/platform_service.gd". The file was re-created from cache.
+   at: _process_file_system (editor/file_system/editor_file_system.cpp:1363)
+WARNING: Missing .uid file for path "res://scripts/save/save_service.gd". The file was re-created from cache.
+   at: _process_file_system (editor/file_system/editor_file_system.cpp:1363)
+WARNING: Missing .uid file for path "res://tests/unit/test_save_service.gd". The file was re-created from cache.
+   at: _process_file_system (editor/file_system/editor_file_system.cpp:1363)
+ERROR: Cannot export project with preset "Windows Desktop" due to configuration errors:
+指定路径不存在导出模板：
+C:/Users/56922/AppData/Roaming/Godot/export_templates/4.6.2.stable/windows_debug_x86_64.exe
+指定路径不存在导出模板：
+C:/Users/56922/AppData/Roaming/Godot/export_templates/4.6.2.stable/windows_release_x86_64.exe
+
+   at: _fs_changed (editor/editor_node.cpp:1332)
+ERROR: Project export for preset "Windows Desktop" failed.
+   at: _fs_changed (editor/editor_node.cpp:1348)
+```
+
+- [x] **Step 3: Commit**
 
 ```powershell
-git add export_presets.cfg
+git add export_presets.cfg docs/superpowers/plans/2026-04-25-godot-foundation-vertical-slice.md
 git commit -m "chore: add Windows export preset"
 ```
 
