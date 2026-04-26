@@ -1573,7 +1573,7 @@ git commit -m "feat: add sample run scene flow"
 - Modify: `scenes/app/App.tscn`
 - Modify: `scripts/app/app.gd`
 
-- [ ] **Step 1: Add presentation event router**
+- [x] **Step 1: Add presentation event router**
 
 Create `scripts/presentation/presentation_event_router.gd`:
 
@@ -1593,7 +1593,7 @@ func handle_event(event: GameEvent) -> void:
 			print("Presentation damage_dealt: %s" % event.payload)
 ```
 
-- [ ] **Step 2: Add debug overlay script**
+- [x] **Step 2: Add debug overlay script**
 
 Create `scripts/ui/debug_overlay.gd`:
 
@@ -1649,7 +1649,7 @@ offset_bottom = 160.0
 script = ExtResource("1_debug")
 ```
 
-- [ ] **Step 3: Add overlay to app at runtime**
+- [x] **Step 3: Add overlay to app at runtime**
 
 Modify `scripts/app/app.gd`:
 
@@ -1671,7 +1671,7 @@ func _ready() -> void:
 	add_child(DebugOverlayScene.instantiate())
 ```
 
-- [ ] **Step 4: Run import check**
+- [x] **Step 4: Run import check**
 
 Run:
 
@@ -1681,7 +1681,9 @@ Run:
 
 Expected: no parse errors.
 
-- [ ] **Step 5: Commit**
+Verification note: Task 9 imports cleanly through `& $env:GODOT4 --headless --path . --quit` with exit code 0 and no parse errors. The existing exit-time ObjectDB/resource cleanup warning still appears. The existing test suite also passes through `& $env:GODOT4 --headless --path . --script res://scripts/testing/test_runner.gd`.
+
+- [x] **Step 5: Commit**
 
 ```powershell
 git add scenes/dev scripts/ui/debug_overlay.gd scripts/presentation scripts/app/app.gd
