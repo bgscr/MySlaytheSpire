@@ -1,5 +1,14 @@
 # Combat Session Targeting Implementation Plan
 
+## Execution Status
+
+- Completed Task 1: CombatSession initialization.
+- Completed Task 2: Player card targeting and deck flow.
+- Completed Task 3: Enemy turns and terminal outcomes.
+- Completed Task 4: CombatScreen session UI wiring.
+- Completed Task 5: Final acceptance and documentation.
+- Final verification: Godot tests passed and import check exited 0.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Build the first complete, testable combat loop: encounter-backed multi-enemy fights, real draw/hand/discard piles, card-first target selection, cancellable confirmations, enemy turns, and win/loss routing.

@@ -38,6 +38,7 @@ $env:GODOT4="C:\Tools\Godot\Godot_v4.6.2-stable_win64_console.exe"
 - Minimal extended combat effects: complete
 - Dual starter card pools: complete; sword and alchemy each have 9 catalog cards
 - Multi-enemy encounter foundation: complete; combat, elite, and boss nodes now generate deterministic primary/support enemy groups
+- Combat session targeting loop: complete; map encounters now create multi-enemy combat sessions with real hand, energy, target selection, enemy turns, and win/loss routing
 
 ## Next Plans
 
