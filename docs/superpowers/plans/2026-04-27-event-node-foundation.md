@@ -1,6 +1,6 @@
 # Event Node Foundation Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Make map `event` nodes enter a data-driven event screen where one deterministic event option can be selected, applied to the run, saved, and advanced back to the map or summary.
 
@@ -117,7 +117,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 - Modify: `tests/unit/test_content_catalog.gd`
 - Modify: `localization/zh_CN.po`
 
-- [ ] **Step 1: Add failing event schema tests**
+- [x] **Step 1: Add failing event schema tests**
 
 Append to `tests/unit/test_resource_schemas.gd`:
 
@@ -160,7 +160,7 @@ func test_event_def_stores_localization_weight_and_options() -> bool:
 	return passed
 ```
 
-- [ ] **Step 2: Add failing ContentCatalog event tests**
+- [x] **Step 2: Add failing ContentCatalog event tests**
 
 Append to `tests/unit/test_content_catalog.gd`:
 
@@ -211,7 +211,7 @@ func _any_contains(values: Array[String], text: String) -> bool:
 	return false
 ```
 
-- [ ] **Step 3: Run tests and verify RED**
+- [x] **Step 3: Run tests and verify RED**
 
 Run:
 
@@ -221,7 +221,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: tests fail because `res://scripts/data/event_def.gd` and `res://scripts/data/event_option_def.gd` do not exist.
 
-- [ ] **Step 4: Implement event resource scripts**
+- [x] **Step 4: Implement event resource scripts**
 
 Create `scripts/data/event_option_def.gd`:
 
@@ -253,7 +253,7 @@ const EventOptionDef := preload("res://scripts/data/event_option_def.gd")
 @export var options: Array[EventOptionDef] = []
 ```
 
-- [ ] **Step 5: Extend ContentCatalog for events**
+- [x] **Step 5: Extend ContentCatalog for events**
 
 Modify `scripts/content/content_catalog.gd`:
 
@@ -353,7 +353,7 @@ func _validate_event_options(errors: Array[String]) -> void:
 				errors.append("Event %s has option with empty id" % event.id)
 ```
 
-- [ ] **Step 6: Add default event resources**
+- [x] **Step 6: Add default event resources**
 
 Create `resources/events/wandering_physician.tres`:
 
@@ -450,7 +450,7 @@ event_weight = 100
 options = Array[ExtResource("2_option")]([SubResource("Resource_meditate"), SubResource("Resource_coin")])
 ```
 
-- [ ] **Step 7: Add event localization keys**
+- [x] **Step 7: Add event localization keys**
 
 Append to `localization/zh_CN.po`:
 
@@ -510,11 +510,11 @@ msgid "event.quiet_shrine.option.coin.desc"
 msgstr "获得少量金币。"
 ```
 
-- [ ] **Step 8: Run tests and verify GREEN for Task 1**
+- [x] **Step 8: Run tests and verify GREEN for Task 1**
 
 Run full tests. Expected: event schema and catalog tests pass, full suite ends with `TESTS PASSED`.
 
-- [ ] **Step 9: Run Task 1 review gates**
+- [x] **Step 9: Run Task 1 review gates**
 
 Stage 1 Spec Compliance Review:
 
@@ -530,7 +530,7 @@ Stage 2 Code Quality Review:
 - Check validation errors are specific.
 - Classify issues as Critical, Important, or Minor.
 
-- [ ] **Step 10: Commit Task 1**
+- [x] **Step 10: Commit Task 1**
 
 ```powershell
 rtk git add scripts/data/event_option_def.gd scripts/data/event_def.gd scripts/content/content_catalog.gd resources/events localization/zh_CN.po tests/unit/test_resource_schemas.gd tests/unit/test_content_catalog.gd
@@ -549,7 +549,7 @@ rtk git commit -m "feat: add event resources to catalog"
 - Create: `tests/unit/test_run_progression.gd`
 - Modify: `scripts/testing/test_runner.gd`
 
-- [ ] **Step 1: Register new unit tests**
+- [x] **Step 1: Register new unit tests**
 
 Modify `scripts/testing/test_runner.gd` and insert after `test_reward_resolver.gd`:
 
@@ -559,7 +559,7 @@ Modify `scripts/testing/test_runner.gd` and insert after `test_reward_resolver.g
 "res://tests/unit/test_run_progression.gd",
 ```
 
-- [ ] **Step 2: Write failing EventResolver tests**
+- [x] **Step 2: Write failing EventResolver tests**
 
 Create `tests/unit/test_event_resolver.gd`:
 
@@ -620,7 +620,7 @@ func _run_for_node(node_type: String, seed_value: int, node_id: String) -> RunSt
 	return run
 ```
 
-- [ ] **Step 3: Write failing EventRunner tests**
+- [x] **Step 3: Write failing EventRunner tests**
 
 Create `tests/unit/test_event_runner.gd`:
 
@@ -677,7 +677,7 @@ func _option(min_hp: int, min_gold: int, hp_delta: int, gold_delta: int) -> Even
 	return option
 ```
 
-- [ ] **Step 4: Write failing RunProgression tests**
+- [x] **Step 4: Write failing RunProgression tests**
 
 Create `tests/unit/test_run_progression.gd`:
 
@@ -725,11 +725,11 @@ func _run_with_nodes(current_index: int) -> RunState:
 	return run
 ```
 
-- [ ] **Step 5: Run tests and verify RED**
+- [x] **Step 5: Run tests and verify RED**
 
 Run full tests. Expected: the new unit test files fail to load because event runtime and progression scripts do not exist.
 
-- [ ] **Step 6: Implement EventResolver**
+- [x] **Step 6: Implement EventResolver**
 
 Create `scripts/event/event_resolver.gd`:
 
@@ -777,7 +777,7 @@ func _current_node(run: RunState) -> MapNodeState:
 	return null
 ```
 
-- [ ] **Step 7: Implement EventRunner**
+- [x] **Step 7: Implement EventRunner**
 
 Create `scripts/event/event_runner.gd`:
 
@@ -810,7 +810,7 @@ func apply_option(run: RunState, option: EventOptionDef) -> bool:
 	return true
 ```
 
-- [ ] **Step 8: Implement RunProgression**
+- [x] **Step 8: Implement RunProgression**
 
 Create `scripts/run/run_progression.gd`:
 
@@ -838,11 +838,11 @@ func advance_current_node(run: RunState) -> bool:
 	return true
 ```
 
-- [ ] **Step 9: Run tests and verify GREEN for Task 2**
+- [x] **Step 9: Run tests and verify GREEN for Task 2**
 
 Run full tests. Expected: new resolver, runner, and progression tests pass, full suite ends with `TESTS PASSED`.
 
-- [ ] **Step 10: Run Task 2 review gates**
+- [x] **Step 10: Run Task 2 review gates**
 
 Stage 1 Spec Compliance Review:
 
@@ -859,7 +859,7 @@ Stage 2 Code Quality Review:
 - Check progression helper is reusable by reward and event scenes.
 - Classify issues as Critical, Important, or Minor.
 
-- [ ] **Step 11: Commit Task 2**
+- [x] **Step 11: Commit Task 2**
 
 ```powershell
 rtk git add scripts/event scripts/run/run_progression.gd tests/unit/test_event_resolver.gd tests/unit/test_event_runner.gd tests/unit/test_run_progression.gd scripts/testing/test_runner.gd
@@ -877,7 +877,7 @@ rtk git commit -m "feat: add event runtime foundation"
 - Modify: `scripts/ui/reward_screen.gd`
 - Modify: `tests/smoke/test_scene_flow.gd`
 
-- [ ] **Step 1: Add failing event scene smoke tests**
+- [x] **Step 1: Add failing event scene smoke tests**
 
 Append to `tests/smoke/test_scene_flow.gd`:
 
@@ -963,11 +963,11 @@ func _first_disabled_event_option(root: Node) -> Button:
 	return null
 ```
 
-- [ ] **Step 2: Run tests and verify RED**
+- [x] **Step 2: Run tests and verify RED**
 
 Run full tests. Expected: smoke tests fail because `SceneRouter.EVENT` and `EventScreen` do not exist.
 
-- [ ] **Step 3: Add event route**
+- [x] **Step 3: Add event route**
 
 Modify `scripts/app/scene_router.gd`:
 
@@ -986,7 +986,7 @@ else:
 	app.game.router.go_to(SceneRouterScript.REWARD)
 ```
 
-- [ ] **Step 4: Refactor RewardScreen to use RunProgression**
+- [x] **Step 4: Refactor RewardScreen to use RunProgression**
 
 Modify `scripts/ui/reward_screen.gd`:
 
@@ -1008,7 +1008,7 @@ if not RunProgression.new().advance_current_node(app.game.current_run):
 
 Remove the private `_unlock_next_node(run)` function from `reward_screen.gd`.
 
-- [ ] **Step 5: Implement EventScreen**
+- [x] **Step 5: Implement EventScreen**
 
 Create `scripts/ui/event_screen.gd`:
 
@@ -1149,15 +1149,15 @@ anchor_bottom = 1.0
 script = ExtResource("1_event")
 ```
 
-- [ ] **Step 6: Run tests and verify GREEN for Task 3**
+- [x] **Step 6: Run tests and verify GREEN for Task 3**
 
 Run full tests. Expected: event smoke tests pass, reward smoke tests still pass, full suite ends with `TESTS PASSED`.
 
-- [ ] **Step 7: Run Godot import check**
+- [x] **Step 7: Run Godot import check**
 
 Run import check. Expected: exit 0 with no parse errors or missing resources.
 
-- [ ] **Step 8: Run Task 3 review gates**
+- [x] **Step 8: Run Task 3 review gates**
 
 Stage 1 Spec Compliance Review:
 
@@ -1175,7 +1175,7 @@ Stage 2 Code Quality Review:
 - Check UI code does not own event selection rules.
 - Classify issues as Critical, Important, or Minor.
 
-- [ ] **Step 9: Commit Task 3**
+- [x] **Step 9: Commit Task 3**
 
 ```powershell
 rtk git add scripts/ui/event_screen.gd scenes/event/EventScreen.tscn scripts/app/scene_router.gd scripts/ui/map_screen.gd scripts/ui/reward_screen.gd tests/smoke/test_scene_flow.gd
@@ -1189,7 +1189,7 @@ rtk git commit -m "feat: add event node scene flow"
 - Modify: `README.md`
 - Modify: `docs/superpowers/plans/2026-04-27-event-node-foundation.md`
 
-- [ ] **Step 1: Update README Phase 2 progress**
+- [x] **Step 1: Update README Phase 2 progress**
 
 Add this bullet under `## Phase 2 Progress` in `README.md`:
 
@@ -1197,21 +1197,21 @@ Add this bullet under `## Phase 2 Progress` in `README.md`:
 - Event node foundation: complete; map event nodes now resolve data-driven events with selectable HP/gold options, save, and advance run progress
 ```
 
-- [ ] **Step 2: Mark completed plan steps**
+- [x] **Step 2: Mark completed plan steps**
 
 Update completed checkboxes in `docs/superpowers/plans/2026-04-27-event-node-foundation.md` from `[ ]` to `[x]`.
 
 Only mark a step complete after its command, review, or commit has actually happened.
 
-- [ ] **Step 3: Run final full tests**
+- [x] **Step 3: Run final full tests**
 
 Run full tests. Expected: `TESTS PASSED`.
 
-- [ ] **Step 4: Run final import check**
+- [x] **Step 4: Run final import check**
 
 Run import check. Expected: exit 0 with no parse errors or missing resources.
 
-- [ ] **Step 5: Run final two-stage review**
+- [x] **Step 5: Run final two-stage review**
 
 Stage 1 Spec Compliance Review:
 
@@ -1223,7 +1223,7 @@ Stage 2 Code Quality Review:
 - Check GDScript typing, event resource boundaries, deterministic RNG, save boundaries, shared progression, scene routing, and maintainability.
 - Classify issues as Critical, Important, or Minor.
 
-- [ ] **Step 6: Commit acceptance docs**
+- [x] **Step 6: Commit acceptance docs**
 
 ```powershell
 rtk git add README.md docs/superpowers/plans/2026-04-27-event-node-foundation.md
