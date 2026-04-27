@@ -123,7 +123,7 @@ Relics:
 - Modify: `tests/unit/test_reward_generator.gd`
 - Modify: `tests/unit/test_encounter_generator.gd`
 
-- [ ] **Step 1: Update catalog count and id tests**
+- [x] **Step 1: Update catalog count and id tests**
 
 Change `test_default_catalog_loads_dual_starter_card_pool_counts` to expect 30 total cards, 15 sword cards, and 15 alchemy cards.
 
@@ -194,7 +194,7 @@ func test_wave_1_catalog_loads_expanded_enemy_and_relic_counts() -> bool:
 	return passed
 ```
 
-- [ ] **Step 2: Update reward tests**
+- [x] **Step 2: Update reward tests**
 
 Add a relic tier coverage test to `tests/unit/test_reward_generator.gd`:
 
@@ -212,7 +212,7 @@ func test_relic_rewards_draw_from_each_populated_wave_1_tier() -> bool:
 	return passed
 ```
 
-- [ ] **Step 3: Update encounter tests**
+- [x] **Step 3: Update encounter tests**
 
 Add a default tier composition test to `tests/unit/test_encounter_generator.gd`:
 
@@ -243,7 +243,7 @@ func _ids(resources: Array) -> Array[String]:
 	return ids
 ```
 
-- [ ] **Step 4: Run tests and verify RED**
+- [x] **Step 4: Run tests and verify RED**
 
 Run:
 
@@ -253,7 +253,7 @@ Run:
 
 Expected: failures from expected card/enemy/relic counts and missing Wave 1 ids.
 
-- [ ] **Step 5: Commit is not allowed**
+- [x] **Step 5: Commit is not allowed**
 
 Do not commit the failing tests by themselves.
 
@@ -267,7 +267,7 @@ Do not commit the failing tests by themselves.
 - Modify: `resources/characters/alchemy_cultivator.tres`
 - Modify: `localization/zh_CN.po`
 
-- [ ] **Step 1: Create sword card resources**
+- [x] **Step 1: Create sword card resources**
 
 Create the six sword card resources from the Resource Data table. Each file must use:
 
@@ -298,11 +298,11 @@ pool_tags = Array[String](["wave_1"])
 reward_weight = 100
 ```
 
-- [ ] **Step 2: Create alchemy card resources**
+- [x] **Step 2: Create alchemy card resources**
 
 Create the six alchemy card resources from the Resource Data table using the same style as Step 1.
 
-- [ ] **Step 3: Register card paths**
+- [x] **Step 3: Register card paths**
 
 Append these paths to `ContentCatalog.DEFAULT_CARD_PATHS` after the existing sword/alchemy groups:
 
@@ -321,15 +321,15 @@ Append these paths to `ContentCatalog.DEFAULT_CARD_PATHS` after the existing swo
 "res://resources/cards/alchemy/ninefold_refine.tres",
 ```
 
-- [ ] **Step 4: Append character card pool ids**
+- [x] **Step 4: Append character card pool ids**
 
 Append only the new sword ids to `resources/characters/sword_cultivator.tres` and only the new alchemy ids to `resources/characters/alchemy_cultivator.tres`. Do not change `starting_deck_ids`.
 
-- [ ] **Step 5: Add card localization keys**
+- [x] **Step 5: Add card localization keys**
 
 Add `name` and `desc` keys for all 12 new cards to `localization/zh_CN.po`.
 
-- [ ] **Step 6: Run tests and verify partial GREEN**
+- [x] **Step 6: Run tests and verify partial GREEN**
 
 Run:
 
@@ -339,7 +339,7 @@ Run:
 
 Expected: card count and card id tests pass; enemy/relic count tests still fail until Task 3.
 
-- [ ] **Step 7: Do not commit partial feature**
+- [x] **Step 7: Do not commit partial feature**
 
 Do not commit until all Wave 1 data and tests are green.
 
@@ -352,15 +352,15 @@ Do not commit until all Wave 1 data and tests are green.
 - Modify: `scripts/content/content_catalog.gd`
 - Modify: `localization/zh_CN.po`
 
-- [ ] **Step 1: Create enemy resources**
+- [x] **Step 1: Create enemy resources**
 
 Create the six enemy resources from the Resource Data table. Use `encounter_weight = 100` for each, and use the tier-specific gold bounds from the table.
 
-- [ ] **Step 2: Create relic resources**
+- [x] **Step 2: Create relic resources**
 
 Create the five relic resources from the Resource Data table using inline `EffectDef` sub-resources. Do not add any relic runtime behavior.
 
-- [ ] **Step 3: Register enemy and relic paths**
+- [x] **Step 3: Register enemy and relic paths**
 
 Append these paths to `ContentCatalog.DEFAULT_ENEMY_PATHS`:
 
@@ -383,11 +383,11 @@ Append these paths to `ContentCatalog.DEFAULT_RELIC_PATHS`:
 "res://resources/relics/dragon_bone_flute.tres",
 ```
 
-- [ ] **Step 4: Add enemy and relic localization keys**
+- [x] **Step 4: Add enemy and relic localization keys**
 
 Add `enemy.<id>.name`, `relic.<id>.name`, and `relic.<id>.desc` keys for all new resources to `localization/zh_CN.po`.
 
-- [ ] **Step 5: Run tests and verify GREEN**
+- [x] **Step 5: Run tests and verify GREEN**
 
 Run:
 
@@ -397,7 +397,7 @@ Run:
 
 Expected: `TESTS PASSED`.
 
-- [ ] **Step 6: Run Godot import check**
+- [x] **Step 6: Run Godot import check**
 
 Run:
 
@@ -407,7 +407,7 @@ Run:
 
 Expected: exit 0 with no parse errors or missing resources.
 
-- [ ] **Step 7: Run Task 1-3 review gates**
+- [x] **Step 7: Run Task 1-3 review gates**
 
 Stage 1 Spec Compliance Review must confirm:
 
@@ -425,7 +425,7 @@ Only if Stage 1 passes, run Stage 2 Code Quality Review for:
 - No duplicated or wrong localization keys.
 - No unsupported effect types or enemy intents.
 
-- [ ] **Step 8: Commit Wave 1 resource expansion**
+- [x] **Step 8: Commit Wave 1 resource expansion**
 
 ```powershell
 git add scripts/content/content_catalog.gd resources/cards resources/enemies resources/relics resources/characters localization/zh_CN.po tests/unit/test_content_catalog.gd tests/unit/test_reward_generator.gd tests/unit/test_encounter_generator.gd docs/superpowers/plans/2026-04-27-content-expansion-wave-1.md
@@ -439,7 +439,7 @@ git commit -m "feat: add content expansion wave 1 resources"
 - Modify: `README.md`
 - Modify: `docs/superpowers/plans/2026-04-27-content-expansion-wave-1.md`
 
-- [ ] **Step 1: Update README Phase 2 progress**
+- [x] **Step 1: Update README Phase 2 progress**
 
 Add this bullet under `## Phase 2 Progress`:
 
@@ -447,11 +447,11 @@ Add this bullet under `## Phase 2 Progress`:
 - Content expansion wave 1: complete; sword and alchemy each have 15 cards, default encounters have 4 normal / 3 elite / 2 boss enemies, and relic rewards draw from 6 registered relics
 ```
 
-- [ ] **Step 2: Mark plan checkboxes complete**
+- [x] **Step 2: Mark plan checkboxes complete**
 
 Update this plan's completed steps from `[ ]` to `[x]` after verifying the implementation and reviews.
 
-- [ ] **Step 3: Run final full tests**
+- [x] **Step 3: Run final full tests**
 
 Run:
 
@@ -461,7 +461,7 @@ Run:
 
 Expected: `TESTS PASSED`.
 
-- [ ] **Step 4: Run final import check**
+- [x] **Step 4: Run final import check**
 
 Run:
 
@@ -471,11 +471,11 @@ Run:
 
 Expected: exit 0 with no parse errors or missing resources.
 
-- [ ] **Step 5: Run final two-stage review**
+- [x] **Step 5: Run final two-stage review**
 
 Stage 1 must verify this plan and the design spec are fully satisfied. Stage 2 must classify any quality issues as Critical, Important, or Minor.
 
-- [ ] **Step 6: Commit acceptance docs**
+- [x] **Step 6: Commit acceptance docs**
 
 ```powershell
 git add README.md docs/superpowers/plans/2026-04-27-content-expansion-wave-1.md

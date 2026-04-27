@@ -39,6 +39,7 @@ $env:GODOT4="C:\Tools\Godot\Godot_v4.6.2-stable_win64_console.exe"
 - Dual starter card pools: complete; sword and alchemy each have 9 catalog cards
 - Multi-enemy encounter foundation: complete; combat, elite, and boss nodes now generate deterministic primary/support enemy groups
 - Combat session targeting loop: complete; map encounters now create multi-enemy combat sessions with real hand, energy, target selection, enemy turns, and win/loss routing
+- Content expansion wave 1: complete; sword and alchemy each have 15 cards, default encounters have 4 normal / 3 elite / 2 boss enemies, and relic rewards draw from 6 registered relics
 
 ## Next Plans
 
