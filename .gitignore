@@ -5,3 +5,4 @@ export/
 *.tmp
 *.bak
 *.log
+.superpowers/
