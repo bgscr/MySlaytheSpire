@@ -261,3 +261,57 @@ msgstr "龙骨笛"
 
 msgid "relic.dragon_bone_flute.desc"
 msgstr "战斗开始时，获得 2 层剑心。"
+
+msgid "event.wandering_physician.title"
+msgstr "云游医修"
+
+msgid "event.wandering_physician.body"
+msgstr "一位背着药箱的医修在路旁歇脚，愿用灵草为你调息经脉。"
+
+msgid "event.wandering_physician.option.pay"
+msgstr "支付 25 金，恢复 12 生命"
+
+msgid "event.wandering_physician.option.pay.desc"
+msgstr "花费金币换取治疗。"
+
+msgid "event.wandering_physician.option.decline"
+msgstr "谢绝"
+
+msgid "event.wandering_physician.option.decline.desc"
+msgstr "不改变当前状态。"
+
+msgid "event.spirit_toll.title"
+msgstr "灵桥索渡"
+
+msgid "event.spirit_toll.body"
+msgstr "幽蓝灵桥横在峡谷之间，守桥残影索要一缕气血作为过路贡礼。"
+
+msgid "event.spirit_toll.option.offer"
+msgstr "失去 6 生命，获得 35 金"
+
+msgid "event.spirit_toll.option.offer.desc"
+msgstr "以气血换取灵桥馈赠。"
+
+msgid "event.spirit_toll.option.walk"
+msgstr "绕路离开"
+
+msgid "event.spirit_toll.option.walk.desc"
+msgstr "不改变当前状态。"
+
+msgid "event.quiet_shrine.title"
+msgstr "静心古龛"
+
+msgid "event.quiet_shrine.body"
+msgstr "藤蔓掩映下，一座古龛仍有淡淡香火。"
+
+msgid "event.quiet_shrine.option.meditate"
+msgstr "打坐调息，恢复 6 生命"
+
+msgid "event.quiet_shrine.option.meditate.desc"
+msgstr "借古龛灵息恢复生命。"
+
+msgid "event.quiet_shrine.option.coin"
+msgstr "取走香炉铜钱，获得 12 金"
+
+msgid "event.quiet_shrine.option.coin.desc"
+msgstr "获得少量金币。"

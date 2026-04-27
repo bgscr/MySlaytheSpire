@@ -4,6 +4,7 @@ const ContentCatalog := preload("res://scripts/content/content_catalog.gd")
 const CardDef := preload("res://scripts/data/card_def.gd")
 const CharacterDef := preload("res://scripts/data/character_def.gd")
 const EnemyDef := preload("res://scripts/data/enemy_def.gd")
+const EventDef := preload("res://scripts/data/event_def.gd")
 
 func test_default_catalog_loads_existing_resources() -> bool:
 	var catalog := ContentCatalog.new()
@@ -186,6 +187,39 @@ func test_wave_1_catalog_loads_expanded_enemy_and_relic_counts() -> bool:
 	assert(passed)
 	return passed
 
+func test_default_catalog_loads_event_pool() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.load_default()
+	var event_ids := _ids(catalog.get_events())
+	var passed: bool = catalog.events_by_id.size() == 3 \
+		and event_ids.has("wandering_physician") \
+		and event_ids.has("spirit_toll") \
+		and event_ids.has("quiet_shrine") \
+		and catalog.get_event("quiet_shrine") != null
+	assert(passed)
+	return passed
+
+func test_catalog_rejects_wrong_resource_type_for_event_paths() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.load_from_paths([], [], [], [], ["res://resources/relics/jade_talisman.tres"])
+	var passed := catalog.events_by_id.is_empty() \
+		and catalog.load_errors.size() == 1 \
+		and catalog.load_errors[0].contains("expected EventDef")
+	assert(passed)
+	return passed
+
+func test_validation_reports_event_without_options() -> bool:
+	var catalog := ContentCatalog.new()
+	var event := EventDef.new()
+	event.id = "empty_event"
+	event.title_key = "event.empty.title"
+	event.body_key = "event.empty.body"
+	catalog.events_by_id[event.id] = event
+	var errors := catalog.validate()
+	var passed := _any_contains(errors, "empty_event has no options")
+	assert(passed)
+	return passed
+
 func test_loaded_character_card_pool_ids_exclude_unlisted_same_character_cards() -> bool:
 	var catalog := ContentCatalog.new()
 	var character := CharacterDef.new()
@@ -221,3 +255,9 @@ func _contains_all(values: Array[String], expected: Array[String]) -> bool:
 		if not values.has(value):
 			return false
 	return true
+
+func _any_contains(values: Array[String], text: String) -> bool:
+	for value in values:
+		if value.contains(text):
+			return true
+	return false

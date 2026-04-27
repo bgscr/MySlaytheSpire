@@ -5,6 +5,8 @@ const CharacterDef := preload("res://scripts/data/character_def.gd")
 const EnemyDef := preload("res://scripts/data/enemy_def.gd")
 const EffectDef := preload("res://scripts/data/effect_def.gd")
 const EventBus := preload("res://scripts/core/event_bus.gd")
+const EventDef := preload("res://scripts/data/event_def.gd")
+const EventOptionDef := preload("res://scripts/data/event_option_def.gd")
 const GameEvent := preload("res://scripts/core/game_event.gd")
 const RelicDef := preload("res://scripts/data/relic_def.gd")
 
@@ -73,6 +75,40 @@ func test_event_bus_emits_game_event_payload() -> bool:
 		and _received_event.type == "card_played" \
 		and _received_event.payload.get("card_id") == "sword.strike"
 	bus.free()
+	assert(passed)
+	return passed
+
+func test_event_option_def_stores_requirements_and_run_deltas() -> bool:
+	var option := EventOptionDef.new()
+	option.id = "pay_for_treatment"
+	option.label_key = "event.wandering_physician.option.pay"
+	option.description_key = "event.wandering_physician.option.pay.desc"
+	option.min_hp = 0
+	option.min_gold = 25
+	option.hp_delta = 12
+	option.gold_delta = -25
+	var passed: bool = option.id == "pay_for_treatment" \
+		and option.min_gold == 25 \
+		and option.hp_delta == 12 \
+		and option.gold_delta == -25
+	assert(passed)
+	return passed
+
+func test_event_def_stores_localization_weight_and_options() -> bool:
+	var option := EventOptionDef.new()
+	option.id = "decline"
+	var event := EventDef.new()
+	event.id = "wandering_physician"
+	event.title_key = "event.wandering_physician.title"
+	event.body_key = "event.wandering_physician.body"
+	event.event_weight = 10
+	event.options = [option]
+	var passed: bool = event.id == "wandering_physician" \
+		and event.title_key == "event.wandering_physician.title" \
+		and event.body_key == "event.wandering_physician.body" \
+		and event.event_weight == 10 \
+		and event.options.size() == 1 \
+		and event.options[0].id == "decline"
 	assert(passed)
 	return passed
 

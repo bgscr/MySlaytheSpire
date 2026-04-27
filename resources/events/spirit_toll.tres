@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="EventDef" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/event_def.gd" id="1_event"]
+[ext_resource type="Script" path="res://scripts/data/event_option_def.gd" id="2_option"]
+
+[sub_resource type="Resource" id="Resource_offer"]
+script = ExtResource("2_option")
+id = "offer_vitality"
+label_key = "event.spirit_toll.option.offer"
+description_key = "event.spirit_toll.option.offer.desc"
+min_hp = 7
+hp_delta = -6
+gold_delta = 35
+
+[sub_resource type="Resource" id="Resource_walk"]
+script = ExtResource("2_option")
+id = "walk_away"
+label_key = "event.spirit_toll.option.walk"
+description_key = "event.spirit_toll.option.walk.desc"
+
+[resource]
+script = ExtResource("1_event")
+id = "spirit_toll"
+title_key = "event.spirit_toll.title"
+body_key = "event.spirit_toll.body"
+event_weight = 100
+options = Array[ExtResource("2_option")]([SubResource("Resource_offer"), SubResource("Resource_walk")])

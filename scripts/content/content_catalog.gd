@@ -4,6 +4,7 @@ extends RefCounted
 const CardDef := preload("res://scripts/data/card_def.gd")
 const CharacterDef := preload("res://scripts/data/character_def.gd")
 const EnemyDef := preload("res://scripts/data/enemy_def.gd")
+const EventDef := preload("res://scripts/data/event_def.gd")
 const RelicDef := preload("res://scripts/data/relic_def.gd")
 
 const DEFAULT_CARD_PATHS: Array[String] = [
@@ -65,33 +66,49 @@ const DEFAULT_RELIC_PATHS: Array[String] = [
 	"res://resources/relics/dragon_bone_flute.tres",
 ]
 
+const DEFAULT_EVENT_PATHS: Array[String] = [
+	"res://resources/events/wandering_physician.tres",
+	"res://resources/events/spirit_toll.tres",
+	"res://resources/events/quiet_shrine.tres",
+]
+
 var cards_by_id: Dictionary = {}
 var characters_by_id: Dictionary = {}
 var enemies_by_id: Dictionary = {}
 var relics_by_id: Dictionary = {}
+var events_by_id: Dictionary = {}
 var load_errors: Array[String] = []
 var locale_path := "res://localization/zh_CN.po"
 
 func load_default() -> void:
-	load_from_paths(DEFAULT_CARD_PATHS, DEFAULT_CHARACTER_PATHS, DEFAULT_ENEMY_PATHS, DEFAULT_RELIC_PATHS)
+	load_from_paths(
+		DEFAULT_CARD_PATHS,
+		DEFAULT_CHARACTER_PATHS,
+		DEFAULT_ENEMY_PATHS,
+		DEFAULT_RELIC_PATHS,
+		DEFAULT_EVENT_PATHS
+	)
 
 func load_from_paths(
 	card_paths: Array[String],
 	character_paths: Array[String],
 	enemy_paths: Array[String],
-	relic_paths: Array[String]
+	relic_paths: Array[String],
+	event_paths: Array[String] = []
 ) -> void:
 	clear()
 	_load_cards(card_paths)
 	_load_characters(character_paths)
 	_load_enemies(enemy_paths)
 	_load_relics(relic_paths)
+	_load_events(event_paths)
 
 func clear() -> void:
 	cards_by_id.clear()
 	characters_by_id.clear()
 	enemies_by_id.clear()
 	relics_by_id.clear()
+	events_by_id.clear()
 	load_errors.clear()
 
 func get_card(card_id: String) -> CardDef:
@@ -105,6 +122,15 @@ func get_enemy(enemy_id: String) -> EnemyDef:
 
 func get_relic(relic_id: String) -> RelicDef:
 	return relics_by_id.get(relic_id) as RelicDef
+
+func get_event(event_id: String) -> EventDef:
+	return events_by_id.get(event_id) as EventDef
+
+func get_events() -> Array[EventDef]:
+	var result: Array[EventDef] = []
+	for event: EventDef in events_by_id.values():
+		result.append(event)
+	return result
 
 func get_cards_for_character(character_id: String) -> Array[CardDef]:
 	var result: Array[CardDef] = []
@@ -150,7 +176,9 @@ func validate() -> Array[String]:
 	_validate_ids("character", characters_by_id, errors)
 	_validate_ids("enemy", enemies_by_id, errors)
 	_validate_ids("relic", relics_by_id, errors)
+	_validate_ids("event", events_by_id, errors)
 	_validate_character_card_refs(errors)
+	_validate_event_options(errors)
 	if locale_loaded:
 		_validate_locale_keys(locale_keys, errors)
 	return errors
@@ -199,6 +227,17 @@ func _load_relics(paths: Array[String]) -> void:
 			continue
 		relics_by_id[relic.id] = relic
 
+func _load_events(paths: Array[String]) -> void:
+	for path in paths:
+		var event := load(path) as EventDef
+		if event == null:
+			_record_load_error("ContentCatalog expected EventDef resource: %s" % path)
+			continue
+		if event.id.is_empty():
+			_record_load_error("ContentCatalog resource has empty id: %s" % path)
+			continue
+		events_by_id[event.id] = event
+
 func _record_load_error(message: String) -> void:
 	load_errors.append(message)
 
@@ -227,6 +266,28 @@ func _validate_locale_keys(locale_keys: Dictionary, errors: Array[String]) -> vo
 	for relic: RelicDef in relics_by_id.values():
 		_require_locale_key(relic.name_key, "relic %s name_key" % relic.id, locale_keys, errors)
 		_require_locale_key(relic.description_key, "relic %s description_key" % relic.id, locale_keys, errors)
+	for event: EventDef in events_by_id.values():
+		_require_locale_key(event.title_key, "event %s title_key" % event.id, locale_keys, errors)
+		_require_locale_key(event.body_key, "event %s body_key" % event.id, locale_keys, errors)
+		for option in event.options:
+			_require_locale_key(option.label_key, "event %s option %s label_key" % [event.id, option.id], locale_keys, errors)
+			if not option.description_key.is_empty():
+				_require_locale_key(
+					option.description_key,
+					"event %s option %s description_key" % [event.id, option.id],
+					locale_keys,
+					errors
+				)
+
+func _validate_event_options(errors: Array[String]) -> void:
+	for event: EventDef in events_by_id.values():
+		if event.options.is_empty():
+			errors.append("Event %s has no options" % event.id)
+		for option in event.options:
+			if option == null:
+				errors.append("Event %s has null option" % event.id)
+			elif option.id.is_empty():
+				errors.append("Event %s has option with empty id" % event.id)
 
 func _require_locale_key(key: String, label: String, locale_keys: Dictionary, errors: Array[String]) -> void:
 	if key.is_empty():

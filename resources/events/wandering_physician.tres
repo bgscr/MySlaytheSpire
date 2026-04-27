@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="EventDef" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/event_def.gd" id="1_event"]
+[ext_resource type="Script" path="res://scripts/data/event_option_def.gd" id="2_option"]
+
+[sub_resource type="Resource" id="Resource_pay"]
+script = ExtResource("2_option")
+id = "pay_for_treatment"
+label_key = "event.wandering_physician.option.pay"
+description_key = "event.wandering_physician.option.pay.desc"
+min_gold = 25
+hp_delta = 12
+gold_delta = -25
+
+[sub_resource type="Resource" id="Resource_decline"]
+script = ExtResource("2_option")
+id = "decline"
+label_key = "event.wandering_physician.option.decline"
+description_key = "event.wandering_physician.option.decline.desc"
+
+[resource]
+script = ExtResource("1_event")
+id = "wandering_physician"
+title_key = "event.wandering_physician.title"
+body_key = "event.wandering_physician.body"
+event_weight = 100
+options = Array[ExtResource("2_option")]([SubResource("Resource_pay"), SubResource("Resource_decline")])
