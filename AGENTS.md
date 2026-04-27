@@ -20,3 +20,6 @@ After each completed Godot feature, run code review in two strict stages.
 ## 3. Feedback Handling
 When receiving review feedback (from a user or another agent), verify each item against the actual code before applying it. 
 - **Do not blindly agree with feedback.** - If the code is already correct according to the spec, defend the implementation and point out why the feedback might be incorrect.
+
+## 4.Use Rust Token Killer
+@RTK.md
