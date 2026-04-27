@@ -43,6 +43,7 @@ $env:GODOT4="C:\Tools\Godot\Godot_v4.6.2-stable_win64_console.exe"
 - Relic trigger runtime: complete; owned relics now react to combat start, player turn start, and combat win events through an event-shaped runtime
 - Reward claim loop: complete; combat rewards now generate card, gold, and relic choices that can be claimed or skipped before map advancement
 - Event node foundation: complete; map event nodes now resolve data-driven events with selectable HP/gold options, save, and advance run progress
+- Shop node foundation: complete; map shop nodes now offer transaction-saved cards, relics, healing, removal, and one paid refresh before map advancement
 
 ## Next Plans
 

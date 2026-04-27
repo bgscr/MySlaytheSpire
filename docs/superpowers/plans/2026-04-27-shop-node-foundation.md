@@ -104,7 +104,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 - Modify: `tests/unit/test_run_state.gd`
 - Modify: `tests/unit/test_save_service.gd`
 
-- [ ] **Step 1: Add failing RunState shop serialization tests**
+- [x] **Step 1: Add failing RunState shop serialization tests**
 
 Append to `tests/unit/test_run_state.gd`:
 
@@ -140,7 +140,7 @@ func test_to_dict_serializes_current_shop_state_without_aliasing() -> bool:
 	return passed
 ```
 
-- [ ] **Step 2: Add failing SaveService shop-state tests**
+- [x] **Step 2: Add failing SaveService shop-state tests**
 
 Append to `tests/unit/test_save_service.gd`:
 
@@ -233,13 +233,13 @@ func test_load_run_returns_null_for_invalid_shop_state_type() -> bool:
 	return passed
 ```
 
-- [ ] **Step 3: Run tests and verify RED**
+- [x] **Step 3: Run tests and verify RED**
 
 Run full tests.
 
 Expected: tests fail because `RunState` does not have `current_shop_state` and `SaveService` does not load it.
 
-- [ ] **Step 4: Implement RunState shop state**
+- [x] **Step 4: Implement RunState shop state**
 
 Modify `scripts/run/run_state.gd`:
 
@@ -288,7 +288,7 @@ func to_dict() -> Dictionary:
 	}
 ```
 
-- [ ] **Step 5: Implement SaveService shop state loading and validation**
+- [x] **Step 5: Implement SaveService shop state loading and validation**
 
 Modify `scripts/save/save_service.gd`:
 
@@ -349,11 +349,11 @@ func _has_optional_dictionary(payload: Dictionary, key: String) -> bool:
 
 Keep all other existing functions unchanged.
 
-- [ ] **Step 6: Run tests and verify GREEN for Task 1**
+- [x] **Step 6: Run tests and verify GREEN for Task 1**
 
 Run full tests. Expected: new RunState and SaveService tests pass, full suite ends with `TESTS PASSED`.
 
-- [ ] **Step 7: Run Task 1 review gates**
+- [x] **Step 7: Run Task 1 review gates**
 
 Stage 1 Spec Compliance Review:
 
@@ -368,7 +368,7 @@ Stage 2 Code Quality Review:
 - Check validation remains explicit and does not weaken existing save checks.
 - Classify issues as Critical, Important, or Minor.
 
-- [ ] **Step 8: Commit Task 1**
+- [x] **Step 8: Commit Task 1**
 
 ```powershell
 rtk proxy git add scripts/run/run_state.gd scripts/save/save_service.gd tests/unit/test_run_state.gd tests/unit/test_save_service.gd
@@ -383,7 +383,7 @@ rtk proxy git commit -m "feat: persist shop state"
 - Create: `tests/unit/test_shop_resolver.gd`
 - Modify: `scripts/testing/test_runner.gd`
 
-- [ ] **Step 1: Register shop unit tests**
+- [x] **Step 1: Register shop unit tests**
 
 Modify `scripts/testing/test_runner.gd` and insert after `test_run_progression.gd`:
 
@@ -394,7 +394,7 @@ Modify `scripts/testing/test_runner.gd` and insert after `test_run_progression.g
 
 `test_shop_runner.gd` is created in Task 3. Registering both now intentionally causes RED until both scripts exist.
 
-- [ ] **Step 2: Write failing ShopResolver tests**
+- [x] **Step 2: Write failing ShopResolver tests**
 
 Create `tests/unit/test_shop_resolver.gd`:
 
@@ -522,13 +522,13 @@ func _offers_of_type(state: Dictionary, offer_type: String) -> Array:
 	return result
 ```
 
-- [ ] **Step 3: Run tests and verify RED**
+- [x] **Step 3: Run tests and verify RED**
 
 Run full tests.
 
 Expected: tests fail because `scripts/shop/shop_resolver.gd` and `tests/unit/test_shop_runner.gd` do not exist.
 
-- [ ] **Step 4: Implement ShopResolver**
+- [x] **Step 4: Implement ShopResolver**
 
 Create `scripts/shop/shop_resolver.gd`:
 
@@ -660,7 +660,7 @@ func _current_node(run: RunState) -> MapNodeState:
 	return null
 ```
 
-- [ ] **Step 5: Add temporary empty ShopRunner test file for GREEN**
+- [x] **Step 5: Add temporary empty ShopRunner test file for GREEN**
 
 Create `tests/unit/test_shop_runner.gd`:
 
@@ -670,11 +670,11 @@ extends RefCounted
 
 Task 3 replaces this file with real failing tests.
 
-- [ ] **Step 6: Run tests and verify GREEN for Task 2**
+- [x] **Step 6: Run tests and verify GREEN for Task 2**
 
 Run full tests. Expected: resolver tests pass, full suite ends with `TESTS PASSED`.
 
-- [ ] **Step 7: Run Task 2 review gates**
+- [x] **Step 7: Run Task 2 review gates**
 
 Stage 1 Spec Compliance Review:
 
@@ -691,7 +691,7 @@ Stage 2 Code Quality Review:
 - Check returned state shape matches the spec.
 - Classify issues as Critical, Important, or Minor.
 
-- [ ] **Step 8: Commit Task 2**
+- [x] **Step 8: Commit Task 2**
 
 ```powershell
 rtk proxy git add scripts/shop/shop_resolver.gd tests/unit/test_shop_resolver.gd tests/unit/test_shop_runner.gd scripts/testing/test_runner.gd
@@ -705,7 +705,7 @@ rtk proxy git commit -m "feat: add shop resolver"
 - Create: `scripts/shop/shop_runner.gd`
 - Modify: `tests/unit/test_shop_runner.gd`
 
-- [ ] **Step 1: Replace ShopRunner tests with failing behavior tests**
+- [x] **Step 1: Replace ShopRunner tests with failing behavior tests**
 
 Replace `tests/unit/test_shop_runner.gd`:
 
@@ -881,13 +881,13 @@ func _offer(run: RunState, offer_id: String) -> Dictionary:
 	return {}
 ```
 
-- [ ] **Step 2: Run tests and verify RED**
+- [x] **Step 2: Run tests and verify RED**
 
 Run full tests.
 
 Expected: tests fail because `scripts/shop/shop_runner.gd` does not exist.
 
-- [ ] **Step 3: Implement ShopRunner**
+- [x] **Step 3: Implement ShopRunner**
 
 Create `scripts/shop/shop_runner.gd`:
 
@@ -1055,15 +1055,15 @@ func _current_node(run: RunState) -> MapNodeState:
 	return null
 ```
 
-- [ ] **Step 4: Run tests and verify GREEN for Task 3**
+- [x] **Step 4: Run tests and verify GREEN for Task 3**
 
 Run full tests. Expected: shop runner tests pass, full suite ends with `TESTS PASSED`.
 
-- [ ] **Step 5: Run Godot import check**
+- [x] **Step 5: Run Godot import check**
 
 Run import check. Expected: exit 0 with no parse errors or missing resources.
 
-- [ ] **Step 6: Run Task 3 review gates**
+- [x] **Step 6: Run Task 3 review gates**
 
 Stage 1 Spec Compliance Review:
 
@@ -1079,7 +1079,7 @@ Stage 2 Code Quality Review:
 - Check constants are reused from `ShopResolver`.
 - Classify issues as Critical, Important, or Minor.
 
-- [ ] **Step 7: Commit Task 3**
+- [x] **Step 7: Commit Task 3**
 
 ```powershell
 rtk proxy git add scripts/shop/shop_runner.gd tests/unit/test_shop_runner.gd
@@ -1097,7 +1097,7 @@ rtk proxy git commit -m "feat: add shop transactions"
 - Modify: `scripts/ui/main_menu.gd`
 - Modify: `tests/smoke/test_scene_flow.gd`
 
-- [ ] **Step 1: Add failing shop smoke tests**
+- [x] **Step 1: Add failing shop smoke tests**
 
 Modify `tests/smoke/test_scene_flow.gd`:
 
@@ -1264,13 +1264,13 @@ func _offer_sold(shop_state: Dictionary, offer_id: String) -> bool:
 	return false
 ```
 
-- [ ] **Step 2: Run tests and verify RED**
+- [x] **Step 2: Run tests and verify RED**
 
 Run full tests.
 
 Expected: smoke tests fail because `SceneRouter.SHOP` and `ShopScreen` do not exist.
 
-- [ ] **Step 3: Add shop route**
+- [x] **Step 3: Add shop route**
 
 Modify `scripts/app/scene_router.gd`:
 
@@ -1294,7 +1294,7 @@ func _enter_node(node) -> void:
 		app.game.router.go_to(SceneRouterScript.REWARD)
 ```
 
-- [ ] **Step 4: Update main menu continue routing**
+- [x] **Step 4: Update main menu continue routing**
 
 Modify `scripts/ui/main_menu.gd`:
 
@@ -1322,7 +1322,7 @@ func _should_resume_shop(run) -> bool:
 	return false
 ```
 
-- [ ] **Step 5: Implement ShopScreen**
+- [x] **Step 5: Implement ShopScreen**
 
 Create `scripts/ui/shop_screen.gd`:
 
@@ -1591,15 +1591,15 @@ anchor_bottom = 1.0
 script = ExtResource("1_shop")
 ```
 
-- [ ] **Step 6: Run tests and verify GREEN for Task 4**
+- [x] **Step 6: Run tests and verify GREEN for Task 4**
 
 Run full tests. Expected: shop smoke tests pass, reward/event smoke tests still pass, full suite ends with `TESTS PASSED`.
 
-- [ ] **Step 7: Run Godot import check**
+- [x] **Step 7: Run Godot import check**
 
 Run import check. Expected: exit 0 with no parse errors or missing resources.
 
-- [ ] **Step 8: Run Task 4 review gates**
+- [x] **Step 8: Run Task 4 review gates**
 
 Stage 1 Spec Compliance Review:
 
@@ -1618,7 +1618,7 @@ Stage 2 Code Quality Review:
 - Check map advancement logic is not duplicated.
 - Classify issues as Critical, Important, or Minor.
 
-- [ ] **Step 9: Commit Task 4**
+- [x] **Step 9: Commit Task 4**
 
 ```powershell
 rtk proxy git add scripts/ui/shop_screen.gd scenes/shop/ShopScreen.tscn scripts/app/scene_router.gd scripts/ui/map_screen.gd scripts/ui/main_menu.gd tests/smoke/test_scene_flow.gd
@@ -1632,7 +1632,7 @@ rtk proxy git commit -m "feat: add shop node scene flow"
 - Modify: `README.md`
 - Modify: `docs/superpowers/plans/2026-04-27-shop-node-foundation.md`
 
-- [ ] **Step 1: Update README Phase 2 progress**
+- [x] **Step 1: Update README Phase 2 progress**
 
 Add this bullet under `## Phase 2 Progress` in `README.md`:
 
@@ -1640,21 +1640,21 @@ Add this bullet under `## Phase 2 Progress` in `README.md`:
 - Shop node foundation: complete; map shop nodes now offer transaction-saved cards, relics, healing, removal, and one paid refresh before map advancement
 ```
 
-- [ ] **Step 2: Mark completed plan steps**
+- [x] **Step 2: Mark completed plan steps**
 
 Update completed checkboxes in `docs/superpowers/plans/2026-04-27-shop-node-foundation.md` from `[ ]` to `[x]`.
 
 Only mark a step complete after its command, review, or commit has actually happened.
 
-- [ ] **Step 3: Run final full tests**
+- [x] **Step 3: Run final full tests**
 
 Run full tests. Expected: `TESTS PASSED`.
 
-- [ ] **Step 4: Run final import check**
+- [x] **Step 4: Run final import check**
 
 Run import check. Expected: exit 0 with no parse errors or missing resources.
 
-- [ ] **Step 5: Run final two-stage review**
+- [x] **Step 5: Run final two-stage review**
 
 Stage 1 Spec Compliance Review:
 
@@ -1666,7 +1666,7 @@ Stage 2 Code Quality Review:
 - Check GDScript typing, transaction boundaries, save compatibility, deterministic RNG, UI routing, and maintainability.
 - Classify issues as Critical, Important, or Minor.
 
-- [ ] **Step 6: Commit acceptance docs**
+- [x] **Step 6: Commit acceptance docs**
 
 ```powershell
 rtk proxy git add README.md docs/superpowers/plans/2026-04-27-shop-node-foundation.md
