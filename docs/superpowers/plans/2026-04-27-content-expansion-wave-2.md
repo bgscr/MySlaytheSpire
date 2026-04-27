@@ -163,7 +163,7 @@ Events:
 - Modify: `scripts/testing/test_runner.gd`
 - Create: `scripts/combat/combat_status_runtime.gd`
 
-- [ ] **Step 1: Register the status runtime test**
+- [x] **Step 1: Register the status runtime test**
 
 Modify `scripts/testing/test_runner.gd` and insert `test_combat_status_runtime.gd` before `test_combat_engine.gd`:
 
@@ -174,7 +174,7 @@ Modify `scripts/testing/test_runner.gd` and insert `test_combat_status_runtime.g
 	"res://tests/unit/test_combat_session.gd",
 ```
 
-- [ ] **Step 2: Write failing status runtime tests**
+- [x] **Step 2: Write failing status runtime tests**
 
 Create `tests/unit/test_combat_status_runtime.gd`:
 
@@ -264,7 +264,7 @@ func _state() -> CombatState:
 	return state
 ```
 
-- [ ] **Step 3: Run the new tests and confirm red**
+- [x] **Step 3: Run the new tests and confirm red**
 
 Run:
 
@@ -274,7 +274,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: FAIL because `scripts/combat/combat_status_runtime.gd` does not exist.
 
-- [ ] **Step 4: Implement `CombatStatusRuntime`**
+- [x] **Step 4: Implement `CombatStatusRuntime`**
 
 Create `scripts/combat/combat_status_runtime.gd`:
 
@@ -361,7 +361,7 @@ func _decay(combatant: CombatantState, status_id: String) -> void:
 		combatant.statuses[status_id] = remaining
 ```
 
-- [ ] **Step 5: Run tests and confirm green for Task 1**
+- [x] **Step 5: Run tests and confirm green for Task 1**
 
 Run:
 
@@ -371,7 +371,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: `TESTS PASSED`.
 
-- [ ] **Step 6: Commit Task 1**
+- [x] **Step 6: Commit Task 1**
 
 Run:
 
