@@ -390,7 +390,7 @@ rtk proxy git commit -m "feat: add combat status runtime"
 - Modify: `scripts/combat/combat_session.gd`
 - Modify: `scripts/ui/combat_screen.gd`
 
-- [ ] **Step 1: Add failing `EffectExecutor` integration tests**
+- [x] **Step 1: Add failing `EffectExecutor` integration tests**
 
 Append these tests to `tests/unit/test_combat_engine.gd` near the existing stateful effect tests:
 
@@ -427,7 +427,7 @@ func test_stateless_damage_does_not_use_status_runtime() -> bool:
 	return passed
 ```
 
-- [ ] **Step 2: Add failing poison flow tests**
+- [x] **Step 2: Add failing poison flow tests**
 
 Append these tests to `tests/unit/test_combat_session.gd` near the enemy turn tests:
 
@@ -484,7 +484,7 @@ func test_player_poison_at_turn_start_can_lose_combat() -> bool:
 	return passed
 ```
 
-- [ ] **Step 3: Run tests and confirm red**
+- [x] **Step 3: Run tests and confirm red**
 
 Run:
 
@@ -494,7 +494,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: FAIL because damage ignores status modifiers and turn-start poison is not called.
 
-- [ ] **Step 4: Wire status-aware damage in `EffectExecutor`**
+- [x] **Step 4: Wire status-aware damage in `EffectExecutor`**
 
 Modify the top of `scripts/combat/effect_executor.gd`:
 
@@ -524,7 +524,7 @@ Keep the existing `"apply_status"` branch generic:
 				recipient.statuses[effect.status_id] = recipient.statuses.get(effect.status_id, 0) + amount
 ```
 
-- [ ] **Step 5: Wire turn-start poison in `CombatSession`**
+- [x] **Step 5: Wire turn-start poison in `CombatSession`**
 
 Modify the preload section of `scripts/combat/combat_session.gd`:
 
@@ -580,7 +580,7 @@ func _start_player_turn() -> void:
 	phase = PHASE_PLAYER_TURN
 ```
 
-- [ ] **Step 6: Append compact status text in combat UI**
+- [x] **Step 6: Append compact status text in combat UI**
 
 Modify `_player_status_text()` in `scripts/ui/combat_screen.gd`:
 
@@ -618,7 +618,7 @@ Modify enemy button text construction in `_refresh_enemies()`:
 		button.text = text
 ```
 
-- [ ] **Step 7: Run tests and confirm green for Task 2**
+- [x] **Step 7: Run tests and confirm green for Task 2**
 
 Run:
 
@@ -628,7 +628,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: `TESTS PASSED`.
 
-- [ ] **Step 8: Commit Task 2**
+- [x] **Step 8: Commit Task 2**
 
 Run:
 
