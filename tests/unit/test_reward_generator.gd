@@ -110,6 +110,77 @@ func test_alchemy_reward_draws_three_unique_cards_from_expanded_pool() -> bool:
 	assert(passed)
 	return passed
 
+func test_weighted_card_rewards_are_deterministic_and_character_scoped() -> bool:
+	var catalog := _catalog()
+	var generator := RewardGenerator.new()
+	var weights := {
+		"common": 75,
+		"uncommon": 20,
+		"rare": 5,
+	}
+	var first: Dictionary = generator.generate_weighted_card_reward(catalog, 501, "sword", "weighted_node", weights, 3)
+	var second: Dictionary = generator.generate_weighted_card_reward(catalog, 501, "sword", "weighted_node", weights, 3)
+	var ids: Array = first.get("card_ids", [])
+	var sword_pool := _ids(catalog.get_cards_for_character("sword"))
+	var passed: bool = first == second \
+		and ids.size() == 3 \
+		and _unique_count(ids) == 3 \
+		and _all_values_in_pool(ids, sword_pool) \
+		and not ids.has("alchemy.toxic_pill")
+	assert(passed)
+	return passed
+
+func test_weighted_card_rewards_ignore_rarity_weight_dictionary_insertion_order() -> bool:
+	var catalog := _catalog()
+	var generator := RewardGenerator.new()
+	var canonical_weights := {}
+	canonical_weights["common"] = 1
+	canonical_weights["uncommon"] = 1
+	canonical_weights["rare"] = 1
+	var reordered_weights := {}
+	reordered_weights["rare"] = 1
+	reordered_weights["uncommon"] = 1
+	reordered_weights["common"] = 1
+	var passed := true
+	for seed_value in range(520, 540):
+		var canonical: Dictionary = generator.generate_weighted_card_reward(catalog, seed_value, "sword", "order_stable", canonical_weights, 3)
+		var reordered: Dictionary = generator.generate_weighted_card_reward(catalog, seed_value, "sword", "order_stable", reordered_weights, 3)
+		if canonical != reordered:
+			passed = false
+			break
+	assert(passed)
+	return passed
+
+func test_weighted_card_rewards_honor_requested_rarity_when_available() -> bool:
+	var catalog := _catalog()
+	var generator := RewardGenerator.new()
+	var reward: Dictionary = generator.generate_weighted_card_reward(catalog, 502, "sword", "rare_only", {
+		"rare": 100,
+	}, 1)
+	var ids: Array = reward.get("card_ids", [])
+	var card := catalog.get_card(String(ids[0])) if ids.size() > 0 else null
+	var passed: bool = ids.size() == 1 \
+		and card != null \
+		and card.rarity == "rare"
+	assert(passed)
+	return passed
+
+func test_rare_preferred_card_reward_uses_rare_first_and_fills_lower_rarities() -> bool:
+	var catalog := _catalog()
+	var generator := RewardGenerator.new()
+	var reward: Dictionary = generator.generate_rare_preferred_card_reward(catalog, 503, "sword", "boss_node", 3)
+	var ids: Array = reward.get("card_ids", [])
+	var rarities := _rarities_for_ids(catalog, ids)
+	var sword_pool := _ids(catalog.get_cards_for_character("sword"))
+	var passed: bool = ids.size() == 3 \
+		and _unique_count(ids) == 3 \
+		and _all_values_in_pool(ids, sword_pool) \
+		and rarities.size() == 3 \
+		and rarities[0] == "rare" \
+		and rarities.has("uncommon")
+	assert(passed)
+	return passed
+
 func _catalog() -> ContentCatalog:
 	var catalog := ContentCatalog.new()
 	catalog.load_default()
@@ -120,6 +191,14 @@ func _ids(resources: Array[CardDef]) -> Array[String]:
 	for resource: CardDef in resources:
 		ids.append(resource.id)
 	return ids
+
+func _rarities_for_ids(catalog: ContentCatalog, card_ids: Array) -> Array[String]:
+	var rarities: Array[String] = []
+	for card_id in card_ids:
+		var card := catalog.get_card(String(card_id))
+		if card != null:
+			rarities.append(card.rarity)
+	return rarities
 
 func _unique_count(values: Array) -> int:
 	var seen := {}
