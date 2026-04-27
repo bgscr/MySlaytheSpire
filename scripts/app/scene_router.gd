@@ -4,6 +4,7 @@ extends RefCounted
 const MAIN_MENU := "res://scenes/menu/MainMenu.tscn"
 const MAP := "res://scenes/map/MapScreen.tscn"
 const COMBAT := "res://scenes/combat/CombatScreen.tscn"
+const EVENT := "res://scenes/event/EventScreen.tscn"
 const REWARD := "res://scenes/reward/RewardScreen.tscn"
 const SUMMARY := "res://scenes/summary/RunSummaryScreen.tscn"
 

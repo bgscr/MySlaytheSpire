@@ -3,6 +3,8 @@ extends RefCounted
 const AppScene := preload("res://scenes/app/App.tscn")
 const DebugOverlayScene := preload("res://scenes/dev/DebugOverlay.tscn")
 const CardDefScript := preload("res://scripts/data/card_def.gd")
+const ContentCatalogScript := preload("res://scripts/content/content_catalog.gd")
+const EventResolverScript := preload("res://scripts/event/event_resolver.gd")
 const MapNodeStateScript := preload("res://scripts/run/map_node_state.gd")
 const RunStateScript := preload("res://scripts/run/run_state.gd")
 const SaveServiceScript := preload("res://scripts/save/save_service.gd")
@@ -166,6 +168,61 @@ func test_reward_screen_can_claim_boss_relic_and_skip_remaining_rewards(tree: Sc
 	_delete_test_save(save_path)
 	return passed
 
+func test_map_event_node_routes_to_event_screen(tree: SceneTree) -> bool:
+	var save_path := "user://test_event_route_save.json"
+	var app = _create_app_with_save_service(tree, save_path)
+	var run := _reward_run("event", true)
+	app.game.current_run = run
+	var map_screen = app.game.router.go_to(SceneRouterScript.MAP)
+	var event_button := _find_node_by_text(map_screen, "node_0: event") as Button
+	if event_button != null:
+		event_button.pressed.emit()
+	var passed: bool = event_button != null \
+		and app.game.router.current_scene != null \
+		and app.game.router.current_scene.name == "EventScreen"
+	app.free()
+	_delete_test_save(save_path)
+	return passed
+
+func test_event_screen_option_applies_saves_and_advances(tree: SceneTree) -> bool:
+	var save_path := "user://test_event_screen_apply_save.json"
+	var app = _create_app_with_save_service(tree, save_path)
+	var run := _reward_run("event", true)
+	run.seed_value = 1
+	run.current_hp = 20
+	run.max_hp = 40
+	run.gold = 50
+	app.game.current_run = run
+	var event_screen = app.game.router.go_to(SceneRouterScript.EVENT)
+	var option_button := _find_node_by_name(event_screen, "EventOption_0") as Button
+	if option_button != null:
+		option_button.pressed.emit()
+	var loaded_run = app.game.save_service.load_run()
+	var passed: bool = option_button != null \
+		and loaded_run != null \
+		and loaded_run.map_nodes[0].visited \
+		and loaded_run.map_nodes[1].unlocked \
+		and app.game.router.current_scene != event_screen
+	app.free()
+	_delete_test_save(save_path)
+	return passed
+
+func test_event_screen_disables_unavailable_option(tree: SceneTree) -> bool:
+	var save_path := "user://test_event_screen_disabled_save.json"
+	var app = _create_app_with_save_service(tree, save_path)
+	var run := _reward_run("event", true)
+	run.seed_value = _seed_for_event_with_unavailable_option()
+	run.current_hp = 1
+	run.max_hp = 40
+	run.gold = 0
+	app.game.current_run = run
+	var event_screen = app.game.router.go_to(SceneRouterScript.EVENT)
+	var disabled_button := _first_disabled_event_option(event_screen)
+	var passed: bool = disabled_button != null and disabled_button.disabled
+	app.free()
+	_delete_test_save(save_path)
+	return passed
+
 func _main_menu_rejects_terminal_save(tree: SceneTree, failed: bool, completed: bool, save_path: String) -> bool:
 	var app = _create_app_with_save_service(tree, save_path)
 
@@ -242,6 +299,44 @@ func _find_node_by_name(root: Node, node_name: String) -> Node:
 		if found != null:
 			return found
 	return null
+
+func _find_node_by_text(root: Node, text: String) -> Node:
+	if root == null:
+		return null
+	if root is Button and (root as Button).text == text:
+		return root
+	for child in root.get_children():
+		var found := _find_node_by_text(child, text)
+		if found != null:
+			return found
+	return null
+
+func _first_disabled_event_option(root: Node) -> Button:
+	if root == null:
+		return null
+	if root is Button and root.name.begins_with("EventOption_") and (root as Button).disabled:
+		return root as Button
+	for child in root.get_children():
+		var found := _first_disabled_event_option(child)
+		if found != null:
+			return found
+	return null
+
+func _seed_for_event_with_unavailable_option() -> int:
+	var catalog := ContentCatalogScript.new()
+	catalog.load_default()
+	for seed in range(1, 100):
+		var run := _reward_run("event", true)
+		run.seed_value = seed
+		run.current_hp = 1
+		run.gold = 0
+		var event = EventResolverScript.new().resolve(catalog, run)
+		if event == null:
+			continue
+		for option in event.options:
+			if option.min_hp > run.current_hp or option.min_gold > run.gold:
+				return seed
+	return 1
 
 func _delete_test_save(path: String) -> void:
 	if FileAccess.file_exists(path):

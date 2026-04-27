@@ -23,5 +23,7 @@ func _enter_node(node) -> void:
 	app.game.current_run.current_node_id = node.id
 	if node.node_type == "combat" or node.node_type == "elite" or node.node_type == "boss":
 		app.game.router.go_to(SceneRouterScript.COMBAT)
+	elif node.node_type == "event":
+		app.game.router.go_to(SceneRouterScript.EVENT)
 	else:
 		app.game.router.go_to(SceneRouterScript.REWARD)

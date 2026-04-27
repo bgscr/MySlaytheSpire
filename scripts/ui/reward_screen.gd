@@ -2,6 +2,7 @@ extends Control
 
 const ContentCatalog := preload("res://scripts/content/content_catalog.gd")
 const RewardResolver := preload("res://scripts/reward/reward_resolver.gd")
+const RunProgression := preload("res://scripts/run/run_progression.gd")
 const SceneRouterScript := preload("res://scripts/app/scene_router.gd")
 
 const STATE_AVAILABLE := "available"
@@ -195,7 +196,7 @@ func _on_continue_pressed() -> void:
 	advance_requested = true
 	if continue_button != null:
 		continue_button.disabled = true
-	if not _unlock_next_node(app.game.current_run):
+	if not RunProgression.new().advance_current_node(app.game.current_run):
 		push_error("Cannot advance run; current map node is missing.")
 		return
 	if app.game.save_service:
@@ -261,18 +262,3 @@ func _clear_children(node: Node) -> void:
 
 func _app():
 	return get_tree().root.get_node_or_null("App")
-
-func _unlock_next_node(run) -> bool:
-	var current_index := -1
-	for i in range(run.map_nodes.size()):
-		if run.map_nodes[i].id == run.current_node_id:
-			current_index = i
-			run.map_nodes[i].visited = true
-			break
-	if current_index == -1:
-		return false
-	if current_index + 1 < run.map_nodes.size():
-		run.map_nodes[current_index + 1].unlocked = true
-	else:
-		run.completed = true
-	return true
