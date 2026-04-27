@@ -74,7 +74,7 @@ Modify:
 - Modify: `scripts/testing/test_runner.gd`
 - Create: `scripts/relic/relic_runtime.gd`
 
-- [ ] **Step 1: Register the new test file**
+- [x] **Step 1: Register the new test file**
 
 Modify `scripts/testing/test_runner.gd` and insert the relic runtime test after `test_reward_generator.gd`:
 
@@ -96,7 +96,7 @@ const TEST_FILES := [
 ]
 ```
 
-- [ ] **Step 2: Write failing RelicRuntime tests**
+- [x] **Step 2: Write failing RelicRuntime tests**
 
 Create `tests/unit/test_relic_runtime.gd`:
 
@@ -231,7 +231,7 @@ func _effect(effect_type: String, amount: int, target: String) -> EffectDef:
 	return effect
 ```
 
-- [ ] **Step 3: Run tests and verify RED**
+- [x] **Step 3: Run tests and verify RED**
 
 Run:
 
@@ -241,7 +241,7 @@ Run:
 
 Expected: the new test file fails to load because `res://scripts/relic/relic_runtime.gd` does not exist.
 
-- [ ] **Step 4: Implement RelicRuntime**
+- [x] **Step 4: Implement RelicRuntime**
 
 Create `scripts/relic/relic_runtime.gd`:
 
@@ -293,7 +293,7 @@ func _mark_once_event_applied(event_type: String) -> void:
 		applied_once_events[event_type] = true
 ```
 
-- [ ] **Step 5: Run tests and verify GREEN for RelicRuntime**
+- [x] **Step 5: Run tests and verify GREEN for RelicRuntime**
 
 Run:
 
@@ -303,7 +303,7 @@ Run:
 
 Expected: `test_relic_runtime.gd` runs and passes. Other tests should remain green.
 
-- [ ] **Step 6: Run Task 1 review gates**
+- [x] **Step 6: Run Task 1 review gates**
 
 Stage 1 Spec Compliance Review:
 
@@ -320,7 +320,7 @@ Stage 2 Code Quality Review:
 - Check helper variables and function returns are typed.
 - Classify issues as Critical, Important, or Minor.
 
-- [ ] **Step 7: Commit Task 1**
+- [x] **Step 7: Commit Task 1**
 
 ```powershell
 git add scripts/relic/relic_runtime.gd scripts/testing/test_runner.gd tests/unit/test_relic_runtime.gd
@@ -334,7 +334,7 @@ git commit -m "feat: add event-shaped relic runtime"
 - Modify: `scripts/combat/combat_session.gd`
 - Modify: `tests/unit/test_combat_session.gd`
 
-- [ ] **Step 1: Add failing CombatSession relic integration tests**
+- [x] **Step 1: Add failing CombatSession relic integration tests**
 
 Append these tests to `tests/unit/test_combat_session.gd` after `test_player_death_sets_lost_and_failed_run`:
 
@@ -428,7 +428,7 @@ func test_combat_won_relic_adds_gold_once() -> bool:
 	return passed
 ```
 
-- [ ] **Step 2: Run tests and verify RED**
+- [x] **Step 2: Run tests and verify RED**
 
 Run:
 
@@ -438,7 +438,7 @@ Run:
 
 Expected: the new CombatSession tests fail because relic triggers are not integrated into combat yet.
 
-- [ ] **Step 3: Add relic runtime dependencies to CombatSession**
+- [x] **Step 3: Add relic runtime dependencies to CombatSession**
 
 Modify the preload section of `scripts/combat/combat_session.gd` to include:
 
@@ -459,7 +459,7 @@ In `start(...)`, after `engine = CombatEngine.new()`, reset the runtime:
 relic_runtime.reset()
 ```
 
-- [ ] **Step 4: Add CombatSession relic event helper and player turn helper**
+- [x] **Step 4: Add CombatSession relic event helper and player turn helper**
 
 Add these functions to `scripts/combat/combat_session.gd` near `_resolve_pending_draws()`:
 
@@ -476,7 +476,7 @@ func _handle_relic_event(event_type: String) -> void:
 	relic_runtime.handle_event(GameEvent.new(event_type), catalog, run, state)
 ```
 
-- [ ] **Step 5: Trigger relics during combat initialization**
+- [x] **Step 5: Trigger relics during combat initialization**
 
 In `_initialize_from_run()`, replace the final lines:
 
@@ -495,7 +495,7 @@ with:
 
 This applies combat-start relics after player and enemies exist, then applies the first turn-start relics before the initial 5-card draw.
 
-- [ ] **Step 6: Trigger turn-start relics after enemy turns**
+- [x] **Step 6: Trigger turn-start relics after enemy turns**
 
 In `end_player_turn()`, replace:
 
@@ -514,7 +514,7 @@ with:
 	return true
 ```
 
-- [ ] **Step 7: Trigger combat-won relics before terminal gold is applied**
+- [x] **Step 7: Trigger combat-won relics before terminal gold is applied**
 
 In `_finish_win()`, replace:
 
@@ -534,7 +534,7 @@ with:
 		terminal_rewards_applied = true
 ```
 
-- [ ] **Step 8: Run tests and verify GREEN**
+- [x] **Step 8: Run tests and verify GREEN**
 
 Run:
 
@@ -544,7 +544,7 @@ Run:
 
 Expected: all tests pass, including the new CombatSession relic integration tests.
 
-- [ ] **Step 9: Run Godot import check**
+- [x] **Step 9: Run Godot import check**
 
 Run:
 
@@ -554,7 +554,7 @@ Run:
 
 Expected: exit 0 with no parse errors or missing resources.
 
-- [ ] **Step 10: Run Task 2 review gates**
+- [x] **Step 10: Run Task 2 review gates**
 
 Stage 1 Spec Compliance Review:
 
@@ -571,7 +571,7 @@ Stage 2 Code Quality Review:
 - Check tests are deterministic and use actual Wave 1 relic resources for jade, bronze incense, moonwell, dragon flute, thunderseal, and cracked coin behavior.
 - Classify issues as Critical, Important, or Minor.
 
-- [ ] **Step 11: Commit Task 2**
+- [x] **Step 11: Commit Task 2**
 
 ```powershell
 git add scripts/combat/combat_session.gd tests/unit/test_combat_session.gd
@@ -585,7 +585,7 @@ git commit -m "feat: trigger owned relics during combat"
 - Modify: `README.md`
 - Modify: `docs/superpowers/plans/2026-04-27-relic-trigger-runtime.md`
 
-- [ ] **Step 1: Update README Phase 2 progress**
+- [x] **Step 1: Update README Phase 2 progress**
 
 Add this bullet under `## Phase 2 Progress` in `README.md`:
 
@@ -593,13 +593,13 @@ Add this bullet under `## Phase 2 Progress` in `README.md`:
 - Relic trigger runtime: complete; owned relics now react to combat start, player turn start, and combat win events through an event-shaped runtime
 ```
 
-- [ ] **Step 2: Mark plan steps complete**
+- [x] **Step 2: Mark plan steps complete**
 
 Update completed checkboxes in `docs/superpowers/plans/2026-04-27-relic-trigger-runtime.md` from `[ ]` to `[x]`.
 
 Only mark a step complete after its command or review has actually happened.
 
-- [ ] **Step 3: Run final full tests**
+- [x] **Step 3: Run final full tests**
 
 Run:
 
@@ -613,7 +613,7 @@ Expected:
 TESTS PASSED
 ```
 
-- [ ] **Step 4: Run final import check**
+- [x] **Step 4: Run final import check**
 
 Run:
 
@@ -623,7 +623,7 @@ Run:
 
 Expected: exit 0 with no parse errors or missing resources.
 
-- [ ] **Step 5: Run final two-stage review**
+- [x] **Step 5: Run final two-stage review**
 
 Stage 1 Spec Compliance Review:
 
@@ -635,7 +635,7 @@ Stage 2 Code Quality Review:
 - Check GDScript typing, signal boundaries, node independence, resource loading, duplication, and maintainability.
 - Classify all issues as Critical, Important, or Minor.
 
-- [ ] **Step 6: Commit acceptance docs**
+- [x] **Step 6: Commit acceptance docs**
 
 ```powershell
 git add README.md docs/superpowers/plans/2026-04-27-relic-trigger-runtime.md
