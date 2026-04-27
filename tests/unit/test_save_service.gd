@@ -202,6 +202,93 @@ func test_local_platform_service_records_achievements_and_stats() -> bool:
 	assert(passed)
 	return passed
 
+func test_save_round_trip_preserves_current_shop_state() -> bool:
+	var save_path := "user://test_shop_state_save.json"
+	_delete_test_save(save_path)
+	var run := RunState.new()
+	run.current_shop_state = {
+		"node_id": "node_shop",
+		"refresh_used": true,
+		"offers": [
+			{
+				"id": "relic_0",
+				"type": "relic",
+				"item_id": "jade_talisman",
+				"price": 120,
+				"sold": true,
+			},
+		],
+	}
+	var service := SaveService.new(save_path)
+	service.save_run(run)
+
+	var loaded := service.load_run()
+	var loaded_shop_state: Dictionary = loaded.current_shop_state if loaded != null else {}
+	var offers: Array = loaded_shop_state.get("offers", [])
+	var passed: bool = loaded != null \
+		and loaded_shop_state.get("node_id") == "node_shop" \
+		and loaded_shop_state.get("refresh_used") == true \
+		and offers.size() == 1 \
+		and (offers[0] as Dictionary).get("id") == "relic_0" \
+		and (offers[0] as Dictionary).get("sold") == true
+	assert(passed)
+	service.delete_save()
+	return passed
+
+func test_load_run_accepts_legacy_save_without_shop_state() -> bool:
+	var save_path := "user://test_legacy_without_shop_state.json"
+	_delete_test_save(save_path)
+	if not _write_test_save(save_path, JSON.stringify({
+		"version": 1,
+		"seed_value": 42,
+		"character_id": "sword",
+		"current_hp": 55,
+		"max_hp": 72,
+		"gold": 99,
+		"deck_ids": [],
+		"relic_ids": [],
+		"map_nodes": [],
+		"current_node_id": "",
+		"completed": false,
+		"failed": false,
+	})):
+		assert(false)
+		return false
+
+	var service := SaveService.new(save_path)
+	var loaded := service.load_run()
+	var passed: bool = loaded != null and loaded.current_shop_state.is_empty()
+	assert(passed)
+	service.delete_save()
+	return passed
+
+func test_load_run_returns_null_for_invalid_shop_state_type() -> bool:
+	var save_path := "user://test_invalid_shop_state_type.json"
+	_delete_test_save(save_path)
+	if not _write_test_save(save_path, JSON.stringify({
+		"version": 1,
+		"seed_value": 42,
+		"character_id": "sword",
+		"current_hp": 55,
+		"max_hp": 72,
+		"gold": 99,
+		"deck_ids": [],
+		"relic_ids": [],
+		"map_nodes": [],
+		"current_node_id": "",
+		"completed": false,
+		"failed": false,
+		"current_shop_state": "bad",
+	})):
+		assert(false)
+		return false
+
+	var service := SaveService.new(save_path)
+	var passed: bool = service.load_run() == null
+	assert(passed)
+	service.delete_save()
+	return passed
+
 func _delete_test_save(path: String) -> void:
 	if FileAccess.file_exists(path):
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(path))

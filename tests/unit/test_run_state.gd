@@ -68,3 +68,33 @@ func test_to_dict_does_not_alias_deck_or_relic_arrays() -> bool:
 		and run.relic_ids == ["burning_blood"]
 	assert(passed)
 	return passed
+
+func test_to_dict_serializes_current_shop_state_without_aliasing() -> bool:
+	var run := RunState.new()
+	run.current_shop_state = {
+		"node_id": "node_shop",
+		"refresh_used": false,
+		"offers": [
+			{
+				"id": "card_0",
+				"type": "card",
+				"item_id": "sword.flash_cut",
+				"price": 40,
+				"sold": false,
+			},
+		],
+	}
+
+	var payload := run.to_dict()
+	var shop_state: Dictionary = payload.get("current_shop_state", {})
+	var offers: Array = shop_state.get("offers", [])
+	if not offers.is_empty():
+		(offers[0] as Dictionary)["sold"] = true
+
+	var run_offers: Array = run.current_shop_state.get("offers", [])
+	var passed: bool = payload.has("current_shop_state") \
+		and shop_state.get("node_id") == "node_shop" \
+		and not run_offers.is_empty() \
+		and (run_offers[0] as Dictionary).get("sold") == false
+	assert(passed)
+	return passed

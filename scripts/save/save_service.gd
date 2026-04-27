@@ -45,6 +45,8 @@ func load_run() -> RunState:
 	run.relic_ids.assign(payload["relic_ids"])
 	run.map_nodes = _load_map_nodes(payload["map_nodes"])
 	run.current_node_id = payload["current_node_id"]
+	var shop_state: Dictionary = payload.get("current_shop_state", {})
+	run.current_shop_state = shop_state.duplicate(true)
 	run.completed = payload["completed"]
 	run.failed = payload["failed"]
 	return run
@@ -67,6 +69,7 @@ func _is_valid_run_payload(payload: Dictionary) -> bool:
 		and _has_string_array(payload, "relic_ids") \
 		and _has_valid_map_nodes(payload, "map_nodes") \
 		and _has_string(payload, "current_node_id") \
+		and _has_optional_dictionary(payload, "current_shop_state") \
 		and _has_bool(payload, "completed") \
 		and _has_bool(payload, "failed")
 
@@ -75,6 +78,9 @@ func _has_int(payload: Dictionary, key: String) -> bool:
 
 func _has_string(payload: Dictionary, key: String) -> bool:
 	return payload.has(key) and payload[key] is String
+
+func _has_optional_dictionary(payload: Dictionary, key: String) -> bool:
+	return not payload.has(key) or payload[key] is Dictionary
 
 func _has_bool(payload: Dictionary, key: String) -> bool:
 	return payload.has(key) and payload[key] is bool
