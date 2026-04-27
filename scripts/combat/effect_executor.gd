@@ -3,7 +3,10 @@ extends RefCounted
 
 const EffectDef := preload("res://scripts/data/effect_def.gd")
 const CombatState := preload("res://scripts/combat/combat_state.gd")
+const CombatStatusRuntime := preload("res://scripts/combat/combat_status_runtime.gd")
 const CombatantState := preload("res://scripts/combat/combatant_state.gd")
+
+var status_runtime := CombatStatusRuntime.new()
 
 func execute(effect: EffectDef, source: CombatantState, target: CombatantState) -> void:
 	_execute_effect(effect, null, source, target)
@@ -16,7 +19,12 @@ func _execute_effect(effect: EffectDef, state: CombatState, source: CombatantSta
 	var amount: int = max(0, effect.amount)
 	match effect.effect_type:
 		"damage":
-			recipient.take_damage(amount)
+			var damage_amount := amount
+			if state != null:
+				damage_amount = status_runtime.modify_damage(state, source, recipient, amount)
+			var hp_lost := recipient.take_damage(damage_amount)
+			if state != null:
+				status_runtime.after_damage(state, source, recipient, damage_amount, hp_lost)
 		"block":
 			recipient.gain_block(amount)
 		"heal":

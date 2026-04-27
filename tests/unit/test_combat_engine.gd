@@ -187,6 +187,37 @@ func test_apply_status_stacks_positive_amounts() -> bool:
 	assert(passed)
 	return passed
 
+func test_stateful_damage_uses_sword_focus_and_broken_stance() -> bool:
+	var damage := _make_effect("damage", 10, "enemy")
+	var effects: Array[EffectDef] = [damage]
+	var card := _make_card(effects)
+	var state := CombatState.new()
+	state.player = CombatantState.new("sword", 30)
+	state.player.statuses["sword_focus"] = 2
+	var enemy := CombatantState.new("enemy", 30)
+	enemy.statuses["broken_stance"] = 3
+	CombatEngine.new().play_card_in_state(card, state, state.player, enemy)
+	var passed: bool = enemy.current_hp == 15 \
+		and state.player.statuses.get("sword_focus", 0) == 1 \
+		and enemy.statuses.get("broken_stance", 0) == 2
+	assert(passed)
+	return passed
+
+func test_stateless_damage_does_not_use_status_runtime() -> bool:
+	var damage := _make_effect("damage", 10, "enemy")
+	var effects: Array[EffectDef] = [damage]
+	var card := _make_card(effects)
+	var player := CombatantState.new("sword", 30)
+	player.statuses["sword_focus"] = 2
+	var enemy := CombatantState.new("enemy", 30)
+	enemy.statuses["broken_stance"] = 3
+	CombatEngine.new().play_card(card, player, enemy)
+	var passed: bool = enemy.current_hp == 20 \
+		and player.statuses.get("sword_focus", 0) == 2 \
+		and enemy.statuses.get("broken_stance", 0) == 3
+	assert(passed)
+	return passed
+
 func test_sword_flash_cut_resource_deals_damage_and_draws() -> bool:
 	var card := load("res://resources/cards/sword/flash_cut.tres") as CardDef
 	var state := CombatState.new()

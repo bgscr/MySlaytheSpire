@@ -4,6 +4,7 @@ extends RefCounted
 const CardDef := preload("res://scripts/data/card_def.gd")
 const CombatEngine := preload("res://scripts/combat/combat_engine.gd")
 const CombatState := preload("res://scripts/combat/combat_state.gd")
+const CombatStatusRuntime := preload("res://scripts/combat/combat_status_runtime.gd")
 const CombatantState := preload("res://scripts/combat/combatant_state.gd")
 const ContentCatalog := preload("res://scripts/content/content_catalog.gd")
 const EncounterGenerator := preload("res://scripts/run/encounter_generator.gd")
@@ -26,6 +27,7 @@ var catalog: ContentCatalog
 var run: RunState
 var state := CombatState.new()
 var engine := CombatEngine.new()
+var status_runtime := CombatStatusRuntime.new()
 var relic_runtime := RelicRuntime.new()
 var phase := PHASE_INVALID
 var error_text := ""
@@ -41,6 +43,8 @@ func start(input_catalog: ContentCatalog, input_run: RunState) -> void:
 	run = input_run
 	state = CombatState.new()
 	engine = CombatEngine.new()
+	status_runtime = CombatStatusRuntime.new()
+	engine.executor.status_runtime = status_runtime
 	relic_runtime.reset()
 	phase = PHASE_INVALID
 	error_text = ""
@@ -136,7 +140,7 @@ func end_player_turn() -> bool:
 	engine.end_turn(state)
 	phase = PHASE_ENEMY_TURN
 	_run_enemy_turn()
-	if phase == PHASE_LOST:
+	if phase == PHASE_LOST or phase == PHASE_WON:
 		return true
 	_start_player_turn()
 	return true
@@ -154,6 +158,11 @@ func _run_enemy_turn() -> void:
 	_clear_enemy_blocks()
 	for enemy_index in range(state.enemies.size()):
 		var enemy := state.enemies[enemy_index]
+		if enemy.is_defeated():
+			continue
+		status_runtime.on_turn_started(enemy, state)
+		if _update_terminal_phase():
+			return
 		if enemy.is_defeated():
 			continue
 		_execute_enemy_intent(enemy_index)
@@ -230,6 +239,9 @@ func _resolve_pending_draws() -> void:
 	draw_cards(draw_count)
 
 func _start_player_turn() -> void:
+	status_runtime.on_turn_started(state.player, state)
+	if _update_terminal_phase():
+		return
 	_handle_relic_event("turn_started")
 	_resolve_pending_draws()
 	if _update_terminal_phase():

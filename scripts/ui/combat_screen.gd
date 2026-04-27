@@ -103,7 +103,7 @@ func _refresh() -> void:
 func _player_status_text() -> String:
 	if session.state.player == null:
 		return "No player"
-	return "Player %s HP %s/%s Block %s Energy %s Turn %s" % [
+	var text := "Player %s HP %s/%s Block %s Energy %s Turn %s" % [
 		session.state.player.id,
 		session.state.player.current_hp,
 		session.state.player.max_hp,
@@ -111,6 +111,10 @@ func _player_status_text() -> String:
 		session.state.energy,
 		session.state.turn,
 	]
+	var statuses := session.status_runtime.status_text(session.state.player)
+	if not statuses.is_empty():
+		text += " Status %s" % statuses
+	return text
 
 func _refresh_enemies() -> void:
 	_clear_children(enemy_container)
@@ -118,13 +122,17 @@ func _refresh_enemies() -> void:
 		var enemy = session.state.enemies[enemy_index]
 		var button := Button.new()
 		button.name = "EnemyButton_%s" % enemy_index
-		button.text = "%s HP %s/%s Block %s Intent %s" % [
+		var text := "%s HP %s/%s Block %s Intent %s" % [
 			enemy.id,
 			enemy.current_hp,
 			enemy.max_hp,
 			enemy.block,
 			session.get_enemy_intent(enemy_index),
 		]
+		var statuses := session.status_runtime.status_text(enemy)
+		if not statuses.is_empty():
+			text += " Status %s" % statuses
+		button.text = text
 		button.disabled = enemy.is_defeated()
 		button.pressed.connect(func(): _on_enemy_pressed(enemy_index))
 		enemy_container.add_child(button)

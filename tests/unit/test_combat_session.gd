@@ -298,6 +298,57 @@ func test_enemy_block_clears_at_start_of_next_enemy_turn() -> bool:
 	assert(passed)
 	return passed
 
+func test_enemy_poison_triggers_before_enemy_intent_and_can_win() -> bool:
+	var catalog := _default_catalog()
+	var run := _run_with_single_node("node_0", "combat", ["sword.guard"])
+	var session := CombatSession.new()
+	session.start(catalog, run)
+	session.state.hand = ["sword.guard"]
+	session.state.draw_pile.clear()
+	session.state.discard_pile.clear()
+	var enemies: Array[CombatantState] = [CombatantState.new("first_attacker", 3)]
+	session.state.enemies = enemies
+	session.state.enemies[0].statuses["poison"] = 3
+	session.enemy_defs_by_id.clear()
+	session.enemy_defs_by_id["first_attacker"] = _enemy("first_attacker", "normal", 3, ["attack_99"])
+	var intent_indices: Array[int] = [0]
+	session.enemy_intent_indices = intent_indices
+	var hp_before := session.state.player.current_hp
+
+	var ended := session.end_player_turn()
+
+	var passed: bool = ended \
+		and session.phase == CombatSession.PHASE_WON \
+		and session.state.player.current_hp == hp_before \
+		and session.state.enemies[0].is_defeated()
+	assert(passed)
+	return passed
+
+func test_player_poison_at_turn_start_can_lose_combat() -> bool:
+	var catalog := _default_catalog()
+	var run := _run_with_single_node("node_0", "combat", ["sword.guard"])
+	run.current_hp = 4
+	var session := CombatSession.new()
+	session.start(catalog, run)
+	session.state.hand = ["sword.guard"]
+	session.state.draw_pile = ["sword.strike"]
+	session.state.player.statuses["poison"] = 4
+	var enemies: Array[CombatantState] = [CombatantState.new("test_block_boss", 50)]
+	session.state.enemies = enemies
+	session.enemy_defs_by_id.clear()
+	session.enemy_defs_by_id["test_block_boss"] = _enemy("test_block_boss", "boss", 50, ["block_0"])
+	var intent_indices: Array[int] = [0]
+	session.enemy_intent_indices = intent_indices
+
+	var ended := session.end_player_turn()
+
+	var passed: bool = ended \
+		and session.phase == CombatSession.PHASE_LOST \
+		and run.failed \
+		and run.current_hp == 0
+	assert(passed)
+	return passed
+
 func test_defeating_all_enemies_sets_won_and_writes_run() -> bool:
 	var catalog := _catalog_with_low_hp_enemy()
 	var run := _run_with_single_node("node_0", "combat", ["test.execute"])
