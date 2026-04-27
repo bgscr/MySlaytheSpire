@@ -9,6 +9,7 @@ const MapNodeStateScript := preload("res://scripts/run/map_node_state.gd")
 const RunStateScript := preload("res://scripts/run/run_state.gd")
 const SaveServiceScript := preload("res://scripts/save/save_service.gd")
 const SceneRouterScript := preload("res://scripts/app/scene_router.gd")
+const ShopResolverScript := preload("res://scripts/shop/shop_resolver.gd")
 
 func test_app_scene_instantiates(tree: SceneTree) -> bool:
 	var app := AppScene.instantiate()
@@ -223,6 +224,153 @@ func test_event_screen_disables_unavailable_option(tree: SceneTree) -> bool:
 	_delete_test_save(save_path)
 	return passed
 
+func test_map_shop_node_routes_to_shop_screen(tree: SceneTree) -> bool:
+	var save_path := "user://test_shop_route_save.json"
+	var app = _create_app_with_save_service(tree, save_path)
+	var run := _reward_run("shop", true)
+	app.game.current_run = run
+	var map_screen = app.game.router.go_to(SceneRouterScript.MAP)
+	var shop_button := _find_node_by_text(map_screen, "node_0: shop") as Button
+	if shop_button != null:
+		shop_button.pressed.emit()
+	var loaded_run = app.game.save_service.load_run()
+	var passed: bool = shop_button != null \
+		and app.game.router.current_scene != null \
+		and app.game.router.current_scene.name == "ShopScreen" \
+		and loaded_run != null \
+		and not loaded_run.current_shop_state.is_empty()
+	app.free()
+	_delete_test_save(save_path)
+	return passed
+
+func test_shop_screen_buy_card_saves_immediately(tree: SceneTree) -> bool:
+	var save_path := "user://test_shop_buy_card_save.json"
+	var app = _create_app_with_save_service(tree, save_path)
+	var run := _reward_run("shop", true)
+	run.gold = 300
+	app.game.current_run = run
+	var shop_screen = app.game.router.go_to(SceneRouterScript.SHOP)
+	var card_button := _first_button_with_prefix(shop_screen, "BuyOffer_card_")
+	var deck_size_before := run.deck_ids.size()
+	if card_button != null:
+		card_button.pressed.emit()
+	var loaded_run = app.game.save_service.load_run()
+	var passed: bool = card_button != null \
+		and loaded_run != null \
+		and loaded_run.deck_ids.size() == deck_size_before + 1 \
+		and not loaded_run.current_shop_state.is_empty() \
+		and _has_sold_offer(loaded_run.current_shop_state, "card")
+	app.free()
+	_delete_test_save(save_path)
+	return passed
+
+func test_shop_screen_buy_relic_saves_immediately(tree: SceneTree) -> bool:
+	var save_path := "user://test_shop_buy_relic_save.json"
+	var app = _create_app_with_save_service(tree, save_path)
+	var run := _reward_run("shop", true)
+	run.gold = 300
+	app.game.current_run = run
+	var shop_screen = app.game.router.go_to(SceneRouterScript.SHOP)
+	var relic_button := _first_button_with_prefix(shop_screen, "BuyOffer_relic_")
+	if relic_button != null:
+		relic_button.pressed.emit()
+	var loaded_run = app.game.save_service.load_run()
+	var passed: bool = relic_button != null \
+		and loaded_run != null \
+		and loaded_run.relic_ids.size() == 1 \
+		and not loaded_run.relic_ids[0].is_empty() \
+		and _has_sold_offer(loaded_run.current_shop_state, "relic")
+	app.free()
+	_delete_test_save(save_path)
+	return passed
+
+func test_shop_screen_refresh_is_one_use_and_saved(tree: SceneTree) -> bool:
+	var save_path := "user://test_shop_refresh_save.json"
+	var app = _create_app_with_save_service(tree, save_path)
+	var run := _reward_run("shop", true)
+	run.gold = 300
+	app.game.current_run = run
+	var shop_screen = app.game.router.go_to(SceneRouterScript.SHOP)
+	var refresh_button := _find_node_by_name(shop_screen, "RefreshButton") as Button
+	if refresh_button != null:
+		refresh_button.pressed.emit()
+	var loaded_run = app.game.save_service.load_run()
+	var refreshed_once: bool = loaded_run != null and loaded_run.current_shop_state.get("refresh_used") == true
+	refresh_button = _find_node_by_name(app.game.router.current_scene, "RefreshButton") as Button
+	var disabled_after_refresh := refresh_button != null and refresh_button.disabled
+	var passed: bool = refreshed_once and disabled_after_refresh
+	app.free()
+	_delete_test_save(save_path)
+	return passed
+
+func test_shop_screen_remove_card_and_heal_services_sell_out(tree: SceneTree) -> bool:
+	var save_path := "user://test_shop_services_save.json"
+	var app = _create_app_with_save_service(tree, save_path)
+	var run := _reward_run("shop", true)
+	run.gold = 300
+	run.current_hp = 40
+	run.max_hp = 72
+	app.game.current_run = run
+	var shop_screen = app.game.router.go_to(SceneRouterScript.SHOP)
+	var heal_button := _find_node_by_name(shop_screen, "BuyOffer_heal_0") as Button
+	if heal_button != null:
+		heal_button.pressed.emit()
+	var remove_button := _find_node_by_name(app.game.router.current_scene, "BuyOffer_remove_0") as Button
+	if remove_button != null:
+		remove_button.pressed.emit()
+	var remove_card := _find_node_by_name(app.game.router.current_scene, "RemoveCard_0") as Button
+	if remove_card != null:
+		remove_card.pressed.emit()
+	var loaded_run = app.game.save_service.load_run()
+	var passed: bool = loaded_run != null \
+		and loaded_run.current_hp > 40 \
+		and loaded_run.deck_ids.size() == 2 \
+		and _offer_sold(loaded_run.current_shop_state, "heal_0") \
+		and _offer_sold(loaded_run.current_shop_state, "remove_0")
+	app.free()
+	_delete_test_save(save_path)
+	return passed
+
+func test_main_menu_continue_resumes_in_progress_shop(tree: SceneTree) -> bool:
+	var save_path := "user://test_shop_continue_save.json"
+	var app = _create_app_with_save_service(tree, save_path)
+	var run := _reward_run("shop", true)
+	run.gold = 300
+	var catalog := ContentCatalogScript.new()
+	catalog.load_default()
+	ShopResolverScript.new().resolve(catalog, run)
+	app.game.save_service.save_run(run)
+	var main_menu = app.game.router.go_to(SceneRouterScript.MAIN_MENU)
+	var continue_button := _find_continue_button(main_menu)
+	if continue_button != null:
+		continue_button.pressed.emit()
+	var passed: bool = app.game.router.current_scene != null \
+		and app.game.router.current_scene.name == "ShopScreen"
+	app.free()
+	_delete_test_save(save_path)
+	return passed
+
+func test_shop_screen_leave_clears_state_saves_and_advances(tree: SceneTree) -> bool:
+	var save_path := "user://test_shop_leave_save.json"
+	var app = _create_app_with_save_service(tree, save_path)
+	var run := _reward_run("shop", true)
+	run.gold = 300
+	app.game.current_run = run
+	var shop_screen = app.game.router.go_to(SceneRouterScript.SHOP)
+	var leave_button := _find_node_by_name(shop_screen, "LeaveShopButton") as Button
+	if leave_button != null:
+		leave_button.pressed.emit()
+	var loaded_run = app.game.save_service.load_run()
+	var passed: bool = leave_button != null \
+		and loaded_run != null \
+		and loaded_run.current_shop_state.is_empty() \
+		and loaded_run.map_nodes[0].visited \
+		and loaded_run.map_nodes[1].unlocked \
+		and app.game.router.current_scene != shop_screen
+	app.free()
+	_delete_test_save(save_path)
+	return passed
+
 func _main_menu_rejects_terminal_save(tree: SceneTree, failed: bool, completed: bool, save_path: String) -> bool:
 	var app = _create_app_with_save_service(tree, save_path)
 
@@ -337,6 +485,31 @@ func _seed_for_event_with_unavailable_option() -> int:
 			if option.min_hp > run.current_hp or option.min_gold > run.gold:
 				return seed
 	return 1
+
+func _first_button_with_prefix(root: Node, prefix: String) -> Button:
+	if root == null:
+		return null
+	if root is Button and root.name.begins_with(prefix):
+		return root as Button
+	for child in root.get_children():
+		var found := _first_button_with_prefix(child, prefix)
+		if found != null:
+			return found
+	return null
+
+func _has_sold_offer(shop_state: Dictionary, offer_type: String) -> bool:
+	for offer in shop_state.get("offers", []):
+		var payload := offer as Dictionary
+		if payload.get("type") == offer_type and payload.get("sold") == true:
+			return true
+	return false
+
+func _offer_sold(shop_state: Dictionary, offer_id: String) -> bool:
+	for offer in shop_state.get("offers", []):
+		var payload := offer as Dictionary
+		if payload.get("id") == offer_id:
+			return payload.get("sold") == true
+	return false
 
 func _delete_test_save(path: String) -> void:
 	if FileAccess.file_exists(path):

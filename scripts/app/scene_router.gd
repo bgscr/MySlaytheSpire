@@ -6,6 +6,7 @@ const MAP := "res://scenes/map/MapScreen.tscn"
 const COMBAT := "res://scenes/combat/CombatScreen.tscn"
 const EVENT := "res://scenes/event/EventScreen.tscn"
 const REWARD := "res://scenes/reward/RewardScreen.tscn"
+const SHOP := "res://scenes/shop/ShopScreen.tscn"
 const SUMMARY := "res://scenes/summary/RunSummaryScreen.tscn"
 
 var host: Control
