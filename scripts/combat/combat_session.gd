@@ -8,7 +8,9 @@ const CombatantState := preload("res://scripts/combat/combatant_state.gd")
 const ContentCatalog := preload("res://scripts/content/content_catalog.gd")
 const EncounterGenerator := preload("res://scripts/run/encounter_generator.gd")
 const EnemyDef := preload("res://scripts/data/enemy_def.gd")
+const GameEvent := preload("res://scripts/core/game_event.gd")
 const MapNodeState := preload("res://scripts/run/map_node_state.gd")
+const RelicRuntime := preload("res://scripts/relic/relic_runtime.gd")
 const RngService := preload("res://scripts/core/rng_service.gd")
 const RunState := preload("res://scripts/run/run_state.gd")
 
@@ -24,6 +26,7 @@ var catalog: ContentCatalog
 var run: RunState
 var state := CombatState.new()
 var engine := CombatEngine.new()
+var relic_runtime := RelicRuntime.new()
 var phase := PHASE_INVALID
 var error_text := ""
 var pending_hand_index := -1
@@ -38,6 +41,7 @@ func start(input_catalog: ContentCatalog, input_run: RunState) -> void:
 	run = input_run
 	state = CombatState.new()
 	engine = CombatEngine.new()
+	relic_runtime.reset()
 	phase = PHASE_INVALID
 	error_text = ""
 	pending_hand_index = -1
@@ -134,10 +138,7 @@ func end_player_turn() -> bool:
 	_run_enemy_turn()
 	if phase == PHASE_LOST:
 		return true
-	draw_cards(5)
-	_update_terminal_phase()
-	if phase != PHASE_WON and phase != PHASE_LOST:
-		phase = PHASE_PLAYER_TURN
+	_start_player_turn()
 	return true
 
 func draw_cards(count: int) -> void:
@@ -228,6 +229,17 @@ func _resolve_pending_draws() -> void:
 	state.pending_draw_count = 0
 	draw_cards(draw_count)
 
+func _start_player_turn() -> void:
+	_handle_relic_event("turn_started")
+	_resolve_pending_draws()
+	if _update_terminal_phase():
+		return
+	draw_cards(5)
+	phase = PHASE_PLAYER_TURN
+
+func _handle_relic_event(event_type: String) -> void:
+	relic_runtime.handle_event(GameEvent.new(event_type), catalog, run, state)
+
 func _clear_pending_selection() -> void:
 	pending_hand_index = -1
 	pending_card = null
@@ -252,6 +264,8 @@ func _finish_win() -> void:
 		return
 	run.current_hp = state.player.current_hp
 	if not terminal_rewards_applied:
+		_handle_relic_event("combat_won")
+		_resolve_pending_draws()
 		run.gold += state.gold_delta
 		terminal_rewards_applied = true
 
@@ -294,8 +308,9 @@ func _initialize_from_run() -> void:
 		state.enemies.append(CombatantState.new(enemy_id, enemy_def.max_hp))
 		enemy_intent_indices.append(0)
 
-	draw_cards(5)
-	phase = PHASE_PLAYER_TURN
+	_handle_relic_event("combat_started")
+	_resolve_pending_draws()
+	_start_player_turn()
 
 func _find_current_node() -> MapNodeState:
 	for candidate in run.map_nodes:

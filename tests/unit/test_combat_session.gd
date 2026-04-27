@@ -334,6 +334,94 @@ func test_player_death_sets_lost_and_failed_run() -> bool:
 	assert(passed)
 	return passed
 
+func test_combat_started_relics_apply_current_resource_effects() -> bool:
+	var catalog := _default_catalog()
+	var run := _run_with_single_node("node_0", "combat", [
+		"sword.strike",
+		"sword.guard",
+		"sword.flash_cut",
+		"sword.qi_surge",
+		"sword.cloud_step",
+	])
+	run.relic_ids = [
+		"jade_talisman",
+		"bronze_incense_burner",
+		"moonwell_seed",
+		"dragon_bone_flute",
+	]
+	var session := CombatSession.new()
+	session.start(catalog, run)
+	var passed: bool = session.phase == CombatSession.PHASE_PLAYER_TURN \
+		and session.state.player.block == 7 \
+		and session.state.player.current_hp == 67 \
+		and session.state.player.statuses.get("sword_focus", 0) == 2
+	assert(passed)
+	return passed
+
+func test_turn_started_relic_applies_on_first_turn() -> bool:
+	var catalog := _default_catalog()
+	var run := _run_with_single_node("node_0", "combat", [
+		"sword.strike",
+		"sword.guard",
+		"sword.flash_cut",
+		"sword.qi_surge",
+		"sword.cloud_step",
+	])
+	run.relic_ids = ["thunderseal_charm"]
+	var session := CombatSession.new()
+	session.start(catalog, run)
+	var passed: bool = session.phase == CombatSession.PHASE_PLAYER_TURN \
+		and session.state.energy == 4
+	assert(passed)
+	return passed
+
+func test_turn_started_relic_applies_after_enemy_turn() -> bool:
+	var catalog := _catalog_with_low_hp_enemy()
+	var run := _run_with_single_node("node_0", "combat", [
+		"sword.strike",
+		"sword.guard",
+		"sword.flash_cut",
+		"sword.qi_surge",
+		"sword.cloud_step",
+	])
+	run.relic_ids = ["thunderseal_charm"]
+	var session := CombatSession.new()
+	session.start(catalog, run)
+	session.state.hand = ["sword.guard"]
+	session.state.draw_pile = [
+		"sword.strike",
+		"sword.flash_cut",
+		"sword.qi_surge",
+		"sword.cloud_step",
+		"sword.guard",
+	]
+	var ended := session.end_player_turn()
+	var passed: bool = ended \
+		and session.phase == CombatSession.PHASE_PLAYER_TURN \
+		and session.state.turn == 2 \
+		and session.state.energy == 4
+	assert(passed)
+	return passed
+
+func test_combat_won_relic_adds_gold_once() -> bool:
+	var catalog := _catalog_with_low_hp_enemy()
+	var run := _run_with_single_node("node_0", "combat", ["test.execute"])
+	run.relic_ids = ["cracked_spirit_coin"]
+	run.gold = 5
+	var session := CombatSession.new()
+	session.start(catalog, run)
+	session.state.hand = ["test.execute"]
+	session.state.draw_pile.clear()
+	var selected := session.select_card(0)
+	var confirmed := session.confirm_enemy_target(0)
+	session._finish_win()
+	var passed: bool = selected \
+		and confirmed \
+		and session.phase == CombatSession.PHASE_WON \
+		and run.gold == 13
+	assert(passed)
+	return passed
+
 func _default_catalog() -> ContentCatalog:
 	var catalog := ContentCatalog.new()
 	catalog.load_default()
