@@ -8,4 +8,4 @@ id = "sword"
 name_key = "character.sword.name"
 max_hp = 72
 starting_deck_ids = Array[String](["sword.strike", "sword.strike", "sword.strike"])
-card_pool_ids = Array[String](["sword.strike", "sword.guard", "sword.flash_cut", "sword.qi_surge", "sword.break_stance", "sword.cloud_step", "sword.focused_slash", "sword.sword_resonance", "sword.horizon_arc"])
+card_pool_ids = Array[String](["sword.strike", "sword.guard", "sword.flash_cut", "sword.qi_surge", "sword.break_stance", "sword.cloud_step", "sword.focused_slash", "sword.sword_resonance", "sword.horizon_arc", "sword.iron_wind_cut", "sword.rising_arc", "sword.guardian_stance", "sword.meridian_flash", "sword.heart_piercer", "sword.unbroken_focus"])

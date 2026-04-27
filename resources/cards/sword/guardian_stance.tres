@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="CardDef" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/card_def.gd" id="1_card"]
+[ext_resource type="Script" path="res://scripts/data/effect_def.gd" id="2_effect"]
+
+[sub_resource type="Resource" id="Resource_block"]
+script = ExtResource("2_effect")
+effect_type = "block"
+amount = 9
+target = "player"
+
+[resource]
+script = ExtResource("1_card")
+id = "sword.guardian_stance"
+name_key = "card.sword.guardian_stance.name"
+description_key = "card.sword.guardian_stance.desc"
+cost = 1
+card_type = "skill"
+rarity = "common"
+effects = Array[ExtResource("2_effect")]([SubResource("Resource_block")])
+character_id = "sword"
+pool_tags = Array[String](["wave_1"])
+reward_weight = 100

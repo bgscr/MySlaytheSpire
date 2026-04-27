@@ -110,9 +110,9 @@ func test_default_catalog_loads_dual_starter_card_pool_counts() -> bool:
 	catalog.load_default()
 	var sword_ids := _ids(catalog.get_cards_for_character("sword"))
 	var alchemy_ids := _ids(catalog.get_cards_for_character("alchemy"))
-	var passed: bool = catalog.cards_by_id.size() == 18 \
-		and sword_ids.size() == 9 \
-		and alchemy_ids.size() == 9
+	var passed: bool = catalog.cards_by_id.size() == 30 \
+		and sword_ids.size() == 15 \
+		and alchemy_ids.size() == 15
 	assert(passed)
 	return passed
 
@@ -131,6 +131,12 @@ func test_dual_starter_card_pools_are_character_isolated() -> bool:
 		"sword.focused_slash",
 		"sword.sword_resonance",
 		"sword.horizon_arc",
+		"sword.iron_wind_cut",
+		"sword.rising_arc",
+		"sword.guardian_stance",
+		"sword.meridian_flash",
+		"sword.heart_piercer",
+		"sword.unbroken_focus",
 	]
 	var expected_alchemy: Array[String] = [
 		"alchemy.toxic_pill",
@@ -142,11 +148,41 @@ func test_dual_starter_card_pools_are_character_isolated() -> bool:
 		"alchemy.toxin_needle",
 		"alchemy.spirit_distill",
 		"alchemy.cinnabar_seal",
+		"alchemy.bitter_extract",
+		"alchemy.smoke_screen",
+		"alchemy.quick_simmer",
+		"alchemy.white_jade_paste",
+		"alchemy.mercury_bloom",
+		"alchemy.ninefold_refine",
 	]
 	var passed := _contains_all(sword_ids, expected_sword) \
 		and _contains_all(alchemy_ids, expected_alchemy) \
 		and not sword_ids.has("alchemy.toxic_pill") \
 		and not alchemy_ids.has("sword.strike")
+	assert(passed)
+	return passed
+
+func test_wave_1_catalog_loads_expanded_enemy_and_relic_counts() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.load_default()
+	var normal_ids := _ids(catalog.get_enemies_by_tier("normal"))
+	var elite_ids := _ids(catalog.get_enemies_by_tier("elite"))
+	var boss_ids := _ids(catalog.get_enemies_by_tier("boss"))
+	var common_relic_ids := _ids(catalog.get_relics_by_tier("common"))
+	var uncommon_relic_ids := _ids(catalog.get_relics_by_tier("uncommon"))
+	var rare_relic_ids := _ids(catalog.get_relics_by_tier("rare"))
+	var passed: bool = catalog.enemies_by_id.size() == 9 \
+		and catalog.relics_by_id.size() == 6 \
+		and normal_ids.size() == 4 \
+		and elite_ids.size() == 3 \
+		and boss_ids.size() == 2 \
+		and common_relic_ids.size() == 3 \
+		and uncommon_relic_ids.size() == 2 \
+		and rare_relic_ids.size() == 1 \
+		and normal_ids.has("wild_fox_spirit") \
+		and elite_ids.has("mirror_blade_adept") \
+		and boss_ids.has("boss_storm_dragon") \
+		and rare_relic_ids.has("dragon_bone_flute")
 	assert(passed)
 	return passed
 

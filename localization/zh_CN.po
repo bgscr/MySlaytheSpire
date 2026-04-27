@@ -141,3 +141,123 @@ msgstr "朱砂护印"
 
 msgid "card.alchemy.cinnabar_seal.desc"
 msgstr "获得 8 点护体。获得 1 层丹护。"
+
+msgid "card.sword.iron_wind_cut.name"
+msgstr "铁风斩"
+
+msgid "card.sword.iron_wind_cut.desc"
+msgstr "造成 7 点伤害。获得 2 点护体。"
+
+msgid "card.sword.rising_arc.name"
+msgstr "升弧剑"
+
+msgid "card.sword.rising_arc.desc"
+msgstr "造成 5 点伤害。抽 1 张牌。"
+
+msgid "card.sword.guardian_stance.name"
+msgstr "护山架"
+
+msgid "card.sword.guardian_stance.desc"
+msgstr "获得 9 点护体。"
+
+msgid "card.sword.meridian_flash.name"
+msgstr "经脉闪"
+
+msgid "card.sword.meridian_flash.desc"
+msgstr "获得 1 点能量。抽 1 张牌。"
+
+msgid "card.sword.heart_piercer.name"
+msgstr "穿心式"
+
+msgid "card.sword.heart_piercer.desc"
+msgstr "造成 13 点伤害。施加 1 层破势。"
+
+msgid "card.sword.unbroken_focus.name"
+msgstr "不破凝神"
+
+msgid "card.sword.unbroken_focus.desc"
+msgstr "获得 3 层剑心。获得 5 点护体。"
+
+msgid "card.alchemy.bitter_extract.name"
+msgstr "苦萃"
+
+msgid "card.alchemy.bitter_extract.desc"
+msgstr "造成 5 点伤害。施加 1 层毒。"
+
+msgid "card.alchemy.smoke_screen.name"
+msgstr "烟障散"
+
+msgid "card.alchemy.smoke_screen.desc"
+msgstr "获得 5 点护体。施加 1 层毒。"
+
+msgid "card.alchemy.quick_simmer.name"
+msgstr "速煎"
+
+msgid "card.alchemy.quick_simmer.desc"
+msgstr "抽 1 张牌。"
+
+msgid "card.alchemy.white_jade_paste.name"
+msgstr "白玉膏"
+
+msgid "card.alchemy.white_jade_paste.desc"
+msgstr "回复 3 点生命。获得 4 点护体。"
+
+msgid "card.alchemy.mercury_bloom.name"
+msgstr "汞华绽"
+
+msgid "card.alchemy.mercury_bloom.desc"
+msgstr "造成 8 点伤害。施加 3 层毒。"
+
+msgid "card.alchemy.ninefold_refine.name"
+msgstr "九转炼"
+
+msgid "card.alchemy.ninefold_refine.desc"
+msgstr "获得 1 点能量。抽 2 张牌。"
+
+msgid "enemy.wild_fox_spirit.name"
+msgstr "野狐灵"
+
+msgid "enemy.ash_lantern_cultist.name"
+msgstr "灰灯教徒"
+
+msgid "enemy.stone_grove_guardian.name"
+msgstr "石林守卫"
+
+msgid "enemy.mirror_blade_adept.name"
+msgstr "镜刃行者"
+
+msgid "enemy.venom_cauldron_hermit.name"
+msgstr "毒鼎隐士"
+
+msgid "enemy.boss_storm_dragon.name"
+msgstr "风暴蛟王"
+
+msgid "relic.bronze_incense_burner.name"
+msgstr "青铜香炉"
+
+msgid "relic.bronze_incense_burner.desc"
+msgstr "战斗开始时，获得 4 点护体。"
+
+msgid "relic.cracked_spirit_coin.name"
+msgstr "裂纹灵币"
+
+msgid "relic.cracked_spirit_coin.desc"
+msgstr "战斗胜利时，获得 8 枚灵石。"
+
+msgid "relic.moonwell_seed.name"
+msgstr "月井种"
+
+msgid "relic.moonwell_seed.desc"
+msgstr "战斗开始时，回复 2 点生命。"
+
+msgid "relic.thunderseal_charm.name"
+msgstr "雷篆符"
+
+msgid "relic.thunderseal_charm.desc"
+msgstr "回合开始时，获得 1 点能量。"
+
+msgid "relic.dragon_bone_flute.name"
+msgstr "龙骨笛"
+
+msgid "relic.dragon_bone_flute.desc"
+msgstr "战斗开始时，获得 2 层剑心。"

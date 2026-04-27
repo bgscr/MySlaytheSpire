@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="EnemyDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/enemy_def.gd" id="1_enemy"]
+
+[resource]
+script = ExtResource("1_enemy")
+id = "stone_grove_guardian"
+name_key = "enemy.stone_grove_guardian.name"
+max_hp = 32
+intent_sequence = Array[String](["block_6", "attack_7"])
+reward_tier = "normal"
+tier = "normal"
+encounter_weight = 100
+gold_reward_min = 8
+gold_reward_max = 14

@@ -16,6 +16,12 @@ const DEFAULT_CARD_PATHS: Array[String] = [
 	"res://resources/cards/sword/focused_slash.tres",
 	"res://resources/cards/sword/sword_resonance.tres",
 	"res://resources/cards/sword/horizon_arc.tres",
+	"res://resources/cards/sword/iron_wind_cut.tres",
+	"res://resources/cards/sword/rising_arc.tres",
+	"res://resources/cards/sword/guardian_stance.tres",
+	"res://resources/cards/sword/meridian_flash.tres",
+	"res://resources/cards/sword/heart_piercer.tres",
+	"res://resources/cards/sword/unbroken_focus.tres",
 	"res://resources/cards/alchemy/toxic_pill.tres",
 	"res://resources/cards/alchemy/healing_draught.tres",
 	"res://resources/cards/alchemy/poison_mist.tres",
@@ -25,6 +31,12 @@ const DEFAULT_CARD_PATHS: Array[String] = [
 	"res://resources/cards/alchemy/toxin_needle.tres",
 	"res://resources/cards/alchemy/spirit_distill.tres",
 	"res://resources/cards/alchemy/cinnabar_seal.tres",
+	"res://resources/cards/alchemy/bitter_extract.tres",
+	"res://resources/cards/alchemy/smoke_screen.tres",
+	"res://resources/cards/alchemy/quick_simmer.tres",
+	"res://resources/cards/alchemy/white_jade_paste.tres",
+	"res://resources/cards/alchemy/mercury_bloom.tres",
+	"res://resources/cards/alchemy/ninefold_refine.tres",
 ]
 
 const DEFAULT_CHARACTER_PATHS: Array[String] = [
@@ -36,10 +48,21 @@ const DEFAULT_ENEMY_PATHS: Array[String] = [
 	"res://resources/enemies/training_puppet.tres",
 	"res://resources/enemies/forest_bandit.tres",
 	"res://resources/enemies/boss_heart_demon.tres",
+	"res://resources/enemies/wild_fox_spirit.tres",
+	"res://resources/enemies/ash_lantern_cultist.tres",
+	"res://resources/enemies/stone_grove_guardian.tres",
+	"res://resources/enemies/mirror_blade_adept.tres",
+	"res://resources/enemies/venom_cauldron_hermit.tres",
+	"res://resources/enemies/boss_storm_dragon.tres",
 ]
 
 const DEFAULT_RELIC_PATHS: Array[String] = [
 	"res://resources/relics/jade_talisman.tres",
+	"res://resources/relics/bronze_incense_burner.tres",
+	"res://resources/relics/cracked_spirit_coin.tres",
+	"res://resources/relics/moonwell_seed.tres",
+	"res://resources/relics/thunderseal_charm.tres",
+	"res://resources/relics/dragon_bone_flute.tres",
 ]
 
 var cards_by_id: Dictionary = {}

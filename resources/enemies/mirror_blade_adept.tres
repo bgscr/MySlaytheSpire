@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="EnemyDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/enemy_def.gd" id="1_enemy"]
+
+[resource]
+script = ExtResource("1_enemy")
+id = "mirror_blade_adept"
+name_key = "enemy.mirror_blade_adept.name"
+max_hp = 42
+intent_sequence = Array[String](["attack_8", "block_6", "attack_10"])
+reward_tier = "elite"
+tier = "elite"
+encounter_weight = 100
+gold_reward_min = 18
+gold_reward_max = 28

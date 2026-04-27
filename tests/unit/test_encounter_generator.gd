@@ -195,6 +195,21 @@ func test_insufficient_support_pool_does_not_duplicate_enemy_ids() -> bool:
 	assert(passed)
 	return passed
 
+func test_default_catalog_has_wave_1_enemy_tier_composition() -> bool:
+	var catalog := _catalog()
+	var normal_ids := _ids(catalog.get_enemies_by_tier("normal"))
+	var elite_ids := _ids(catalog.get_enemies_by_tier("elite"))
+	var boss_ids := _ids(catalog.get_enemies_by_tier("boss"))
+	var passed: bool = normal_ids.size() == 4 \
+		and elite_ids.size() == 3 \
+		and boss_ids.size() == 2 \
+		and normal_ids.has("ash_lantern_cultist") \
+		and normal_ids.has("stone_grove_guardian") \
+		and elite_ids.has("venom_cauldron_hermit") \
+		and boss_ids.has("boss_storm_dragon")
+	assert(passed)
+	return passed
+
 func _catalog() -> ContentCatalog:
 	var catalog := ContentCatalog.new()
 	catalog.load_default()
@@ -255,3 +270,9 @@ func _all_unique(values: Array[String]) -> bool:
 			return false
 		seen[value] = true
 	return true
+
+func _ids(resources: Array[EnemyDef]) -> Array[String]:
+	var ids: Array[String] = []
+	for resource: EnemyDef in resources:
+		ids.append(resource.id)
+	return ids

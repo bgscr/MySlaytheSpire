@@ -9,7 +9,12 @@ func test_card_rewards_are_deterministic_for_same_seed_and_context() -> bool:
 	var generator := RewardGenerator.new()
 	var first := generator.generate_card_reward(catalog, 77, "sword", "node_1")
 	var second := generator.generate_card_reward(catalog, 77, "sword", "node_1")
-	var passed: bool = first == second and first.get("card_ids", []).has("sword.strike")
+	var ids: Array = first.get("card_ids", [])
+	var sword_pool := _ids(catalog.get_cards_for_character("sword"))
+	var passed: bool = first == second \
+		and ids.size() == 3 \
+		and _unique_count(ids) == 3 \
+		and _all_values_in_pool(ids, sword_pool)
 	assert(passed)
 	return passed
 
@@ -18,7 +23,10 @@ func test_card_rewards_use_character_pool() -> bool:
 	var generator := RewardGenerator.new()
 	var reward := generator.generate_card_reward(catalog, 77, "alchemy", "node_1")
 	var ids: Array = reward.get("card_ids", [])
-	var passed: bool = ids.has("alchemy.toxic_pill") and not ids.has("sword.strike")
+	var alchemy_pool := _ids(catalog.get_cards_for_character("alchemy"))
+	var passed: bool = ids.size() == 3 \
+		and _all_values_in_pool(ids, alchemy_pool) \
+		and not ids.has("sword.strike")
 	assert(passed)
 	return passed
 
@@ -61,6 +69,18 @@ func test_relic_rewards_return_empty_id_for_empty_pool() -> bool:
 	var passed: bool = reward.get("type") == "relic" \
 		and reward.get("tier") == "common" \
 		and reward.get("relic_id") == ""
+	assert(passed)
+	return passed
+
+func test_relic_rewards_draw_from_each_populated_wave_1_tier() -> bool:
+	var catalog := _catalog()
+	var generator := RewardGenerator.new()
+	var common := generator.generate_relic_reward(catalog, 91, "wave_1_common", "common")
+	var uncommon := generator.generate_relic_reward(catalog, 91, "wave_1_uncommon", "uncommon")
+	var rare := generator.generate_relic_reward(catalog, 91, "wave_1_rare", "rare")
+	var passed: bool = not String(common.get("relic_id", "")).is_empty() \
+		and not String(uncommon.get("relic_id", "")).is_empty() \
+		and rare.get("relic_id") == "dragon_bone_flute"
 	assert(passed)
 	return passed
 
