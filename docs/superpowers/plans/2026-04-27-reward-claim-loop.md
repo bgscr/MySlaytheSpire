@@ -84,7 +84,7 @@ Modify:
 - Modify: `scripts/reward/reward_generator.gd`
 - Modify: `tests/unit/test_reward_generator.gd`
 
-- [ ] **Step 1: Add failing RewardGenerator tests**
+- [x] **Step 1: Add failing RewardGenerator tests**
 
 Append these tests to `tests/unit/test_reward_generator.gd` after `test_alchemy_reward_draws_three_unique_cards_from_expanded_pool`:
 
@@ -152,7 +152,7 @@ func _rarities_for_ids(catalog: ContentCatalog, card_ids: Array) -> Array[String
 	return rarities
 ```
 
-- [ ] **Step 2: Run tests and verify RED**
+- [x] **Step 2: Run tests and verify RED**
 
 Run:
 
@@ -162,7 +162,7 @@ Run:
 
 Expected: `test_reward_generator.gd` fails because `generate_weighted_card_reward` and `generate_rare_preferred_card_reward` do not exist.
 
-- [ ] **Step 3: Implement weighted card helpers**
+- [x] **Step 3: Implement weighted card helpers**
 
 Modify `scripts/reward/reward_generator.gd`.
 
@@ -249,7 +249,7 @@ func _cards_with_rarity(cards: Array, rarity: String) -> Array:
 	return result
 ```
 
-- [ ] **Step 4: Run tests and verify GREEN for Task 1**
+- [x] **Step 4: Run tests and verify GREEN for Task 1**
 
 Run:
 
@@ -259,7 +259,7 @@ Run:
 
 Expected: all reward generator tests pass and full suite ends with `TESTS PASSED`.
 
-- [ ] **Step 5: Run Task 1 review gates**
+- [x] **Step 5: Run Task 1 review gates**
 
 Stage 1 Spec Compliance Review:
 
@@ -275,7 +275,7 @@ Stage 2 Code Quality Review:
 - Check helper functions are typed and small.
 - Classify issues as Critical, Important, or Minor.
 
-- [ ] **Step 6: Commit Task 1**
+- [x] **Step 6: Commit Task 1**
 
 ```powershell
 git add scripts/reward/reward_generator.gd tests/unit/test_reward_generator.gd
@@ -290,7 +290,7 @@ git commit -m "feat: add rarity-aware reward draws"
 - Create: `tests/unit/test_reward_resolver.gd`
 - Modify: `scripts/testing/test_runner.gd`
 
-- [ ] **Step 1: Register the new resolver test file**
+- [x] **Step 1: Register the new resolver test file**
 
 Modify `scripts/testing/test_runner.gd` and insert the resolver test immediately after `test_reward_generator.gd`:
 
@@ -313,7 +313,7 @@ const TEST_FILES := [
 ]
 ```
 
-- [ ] **Step 2: Write failing RewardResolver tests**
+- [x] **Step 2: Write failing RewardResolver tests**
 
 Create `tests/unit/test_reward_resolver.gd`:
 
@@ -435,7 +435,7 @@ func _array_value_count(values: Array) -> int:
 	return values.size()
 ```
 
-- [ ] **Step 3: Run tests and verify RED**
+- [x] **Step 3: Run tests and verify RED**
 
 Run:
 
@@ -445,7 +445,7 @@ Run:
 
 Expected: `test_reward_resolver.gd` fails to load because `res://scripts/reward/reward_resolver.gd` does not exist.
 
-- [ ] **Step 4: Implement RewardResolver**
+- [x] **Step 4: Implement RewardResolver**
 
 Create `scripts/reward/reward_resolver.gd`:
 
@@ -580,7 +580,7 @@ func _current_node(run: RunState) -> MapNodeState:
 	return null
 ```
 
-- [ ] **Step 5: Run tests and verify GREEN for Task 2**
+- [x] **Step 5: Run tests and verify GREEN for Task 2**
 
 Run:
 
@@ -590,7 +590,7 @@ Run:
 
 Expected: `test_reward_resolver.gd` runs and passes. Full suite ends with `TESTS PASSED`.
 
-- [ ] **Step 6: Run Godot import check**
+- [x] **Step 6: Run Godot import check**
 
 Run:
 
@@ -600,7 +600,7 @@ Run:
 
 Expected: exit 0 with no parse errors or missing resources.
 
-- [ ] **Step 7: Run Task 2 review gates**
+- [x] **Step 7: Run Task 2 review gates**
 
 Stage 1 Spec Compliance Review:
 
@@ -618,7 +618,7 @@ Stage 2 Code Quality Review:
 - Check reward item dictionaries match the spec shape.
 - Classify issues as Critical, Important, or Minor.
 
-- [ ] **Step 8: Commit Task 2**
+- [x] **Step 8: Commit Task 2**
 
 ```powershell
 git add scripts/reward/reward_resolver.gd scripts/testing/test_runner.gd tests/unit/test_reward_resolver.gd
@@ -632,7 +632,7 @@ git commit -m "feat: resolve node reward packages"
 - Modify: `scripts/ui/reward_screen.gd`
 - Modify: `tests/smoke/test_scene_flow.gd`
 
-- [ ] **Step 1: Add failing reward screen smoke tests**
+- [x] **Step 1: Add failing reward screen smoke tests**
 
 Modify `tests/smoke/test_scene_flow.gd`.
 
@@ -744,7 +744,7 @@ func _find_node_by_name(root: Node, node_name: String) -> Node:
 	return null
 ```
 
-- [ ] **Step 2: Run tests and verify RED**
+- [x] **Step 2: Run tests and verify RED**
 
 Run:
 
@@ -754,7 +754,7 @@ Run:
 
 Expected: new reward screen smoke tests fail because `RewardScreen` does not create `ContinueButton`, claim buttons, skip buttons, or reward item state.
 
-- [ ] **Step 3: Replace RewardScreen with claim/skip UI**
+- [x] **Step 3: Replace RewardScreen with claim/skip UI**
 
 Replace the body of `scripts/ui/reward_screen.gd` with:
 
@@ -1008,7 +1008,7 @@ func _app():
 	return get_tree().root.get_node_or_null("App")
 ```
 
-- [ ] **Step 4: Run tests and verify GREEN for Task 3**
+- [x] **Step 4: Run tests and verify GREEN for Task 3**
 
 Run:
 
@@ -1018,7 +1018,7 @@ Run:
 
 Expected: reward screen smoke tests pass and full suite ends with `TESTS PASSED`.
 
-- [ ] **Step 5: Run Godot import check**
+- [x] **Step 5: Run Godot import check**
 
 Run:
 
@@ -1028,7 +1028,7 @@ Run:
 
 Expected: exit 0 with no parse errors or missing resources.
 
-- [ ] **Step 6: Run Task 3 review gates**
+- [x] **Step 6: Run Task 3 review gates**
 
 Stage 1 Spec Compliance Review:
 
@@ -1048,7 +1048,7 @@ Stage 2 Code Quality Review:
 - Check smoke tests use real scene routing and save service.
 - Classify issues as Critical, Important, or Minor.
 
-- [ ] **Step 7: Commit Task 3**
+- [x] **Step 7: Commit Task 3**
 
 ```powershell
 git add scripts/ui/reward_screen.gd tests/smoke/test_scene_flow.gd
@@ -1062,7 +1062,7 @@ git commit -m "feat: add selectable reward screen"
 - Modify: `README.md`
 - Modify: `docs/superpowers/plans/2026-04-27-reward-claim-loop.md`
 
-- [ ] **Step 1: Update README Phase 2 progress**
+- [x] **Step 1: Update README Phase 2 progress**
 
 Add this bullet under `## Phase 2 Progress` in `README.md`:
 
@@ -1070,13 +1070,13 @@ Add this bullet under `## Phase 2 Progress` in `README.md`:
 - Reward claim loop: complete; combat rewards now generate card, gold, and relic choices that can be claimed or skipped before map advancement
 ```
 
-- [ ] **Step 2: Mark completed plan steps**
+- [x] **Step 2: Mark completed plan steps**
 
 Update completed checkboxes in `docs/superpowers/plans/2026-04-27-reward-claim-loop.md` from `[ ]` to `[x]`.
 
 Only mark a step complete after its command, review, or commit has actually happened.
 
-- [ ] **Step 3: Run final full tests**
+- [x] **Step 3: Run final full tests**
 
 Run:
 
@@ -1090,7 +1090,7 @@ Expected:
 TESTS PASSED
 ```
 
-- [ ] **Step 4: Run final import check**
+- [x] **Step 4: Run final import check**
 
 Run:
 
@@ -1100,7 +1100,7 @@ Run:
 
 Expected: exit 0 with no parse errors or missing resources.
 
-- [ ] **Step 5: Run final two-stage review**
+- [x] **Step 5: Run final two-stage review**
 
 Stage 1 Spec Compliance Review:
 
@@ -1112,7 +1112,7 @@ Stage 2 Code Quality Review:
 - Check GDScript typing, UI state boundaries, resource loading, save boundaries, deterministic RNG, duplication, and maintainability.
 - Classify issues as Critical, Important, or Minor.
 
-- [ ] **Step 6: Commit acceptance docs**
+- [x] **Step 6: Commit acceptance docs**
 
 ```powershell
 git add README.md docs/superpowers/plans/2026-04-27-reward-claim-loop.md
