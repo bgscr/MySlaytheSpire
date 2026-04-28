@@ -3,6 +3,7 @@ extends RefCounted
 const CombatPresentationConfig := preload("res://scripts/presentation/combat_presentation_config.gd")
 const CombatPresentationDelta := preload("res://scripts/presentation/combat_presentation_delta.gd")
 const CombatPresentationEvent := preload("res://scripts/presentation/combat_presentation_event.gd")
+const CombatPresentationLayer := preload("res://scripts/presentation/combat_presentation_layer.gd")
 const CombatPresentationQueue := preload("res://scripts/presentation/combat_presentation_queue.gd")
 const CombatState := preload("res://scripts/combat/combat_state.gd")
 const CombatantState := preload("res://scripts/combat/combatant_state.gd")
@@ -165,6 +166,52 @@ func test_initial_state_events_report_starting_block_and_statuses() -> bool:
 		and _has_event(events, "status_number", "player", 2, "sword_focus") \
 		and _has_event(events, "status_badge_pulse", "player", 0, "sword_focus") \
 		and _has_event(events, "block_number", "enemy:0", 3, "")
+	assert(passed)
+	return passed
+
+func test_layer_processes_queue_into_feedback_nodes(tree: SceneTree) -> bool:
+	var queue := CombatPresentationQueue.new()
+	var layer := CombatPresentationLayer.new()
+	layer.queue = queue
+	layer.name = "PresentationLayer"
+	tree.root.add_child(layer)
+	var player_target := Label.new()
+	player_target.name = "PlayerTarget"
+	layer.bind_target("player", player_target)
+	layer.add_child(player_target)
+
+	var damage := CombatPresentationEvent.new("damage_number")
+	damage.target_id = "player"
+	damage.amount = 5
+	queue.enqueue(damage)
+	var flash := CombatPresentationEvent.new("combatant_flash")
+	flash.target_id = "player"
+	queue.enqueue(flash)
+	layer.process_queue()
+
+	var float_text := layer.get_node_or_null("FloatText_0") as Label
+	var passed: bool = float_text != null \
+		and float_text.text == "-5" \
+		and player_target.modulate != Color.WHITE
+	layer.free()
+	assert(passed)
+	return passed
+
+func test_layer_target_highlight_applies_and_clears(tree: SceneTree) -> bool:
+	var layer := CombatPresentationLayer.new()
+	tree.root.add_child(layer)
+	var enemy_target := Button.new()
+	layer.bind_target("enemy:0", enemy_target)
+	layer.add_child(enemy_target)
+	var highlighted := CombatPresentationEvent.new("target_highlighted")
+	highlighted.target_id = "enemy:0"
+	layer.play_event(highlighted)
+	var has_highlight := enemy_target.has_theme_color_override("font_color")
+	var cleared := CombatPresentationEvent.new("target_unhighlighted")
+	cleared.target_id = "enemy:0"
+	layer.play_event(cleared)
+	var passed: bool = has_highlight and not enemy_target.has_theme_color_override("font_color")
+	layer.free()
 	assert(passed)
 	return passed
 

@@ -602,7 +602,7 @@ rtk proxy git commit -m "feat: add combat presentation delta events"
 - Create: `scripts/presentation/combat_presentation_layer.gd`
 - Modify: `tests/unit/test_combat_presentation.gd`
 
-- [ ] **Step 1: Add failing layer tests**
+- [x] **Step 1: Add failing layer tests**
 
 Append to `tests/unit/test_combat_presentation.gd`:
 
@@ -656,7 +656,7 @@ func test_layer_target_highlight_applies_and_clears(tree: SceneTree) -> bool:
 	return passed
 ```
 
-- [ ] **Step 2: Run tests to verify red**
+- [x] **Step 2: Run tests to verify red**
 
 Run:
 
@@ -666,7 +666,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: failures for missing `combat_presentation_layer.gd`.
 
-- [ ] **Step 3: Implement presentation layer**
+- [x] **Step 3: Implement presentation layer**
 
 Create `scripts/presentation/combat_presentation_layer.gd`:
 
@@ -785,7 +785,7 @@ func _target_position(target_id: String) -> Vector2:
 	return node.global_position - global_position
 ```
 
-- [ ] **Step 4: Run full tests to verify green**
+- [x] **Step 4: Run full tests to verify green**
 
 Run:
 
@@ -795,7 +795,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: `TESTS PASSED`.
 
-- [ ] **Step 5: Review and commit Task 3**
+- [x] **Step 5: Review and commit Task 3**
 
 Stage 1 Spec Compliance Review:
 
