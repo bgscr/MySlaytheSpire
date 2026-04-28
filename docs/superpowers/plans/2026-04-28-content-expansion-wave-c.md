@@ -118,7 +118,7 @@ Modify:
 - Modify: `tests/unit/test_run_state.gd`
 - Modify: `tests/unit/test_save_service.gd`
 
-- [ ] **Step 1: Add failing RunState pending reward serialization test**
+- [x] **Step 1: Add failing RunState pending reward serialization test**
 
 Append this test to `tests/unit/test_run_state.gd`:
 
@@ -149,7 +149,7 @@ func test_to_dict_serializes_current_reward_state_without_aliasing() -> bool:
 	return passed
 ```
 
-- [ ] **Step 2: Add failing SaveService pending reward tests**
+- [x] **Step 2: Add failing SaveService pending reward tests**
 
 Append these tests to `tests/unit/test_save_service.gd` before helper functions:
 
@@ -282,7 +282,7 @@ func test_load_run_returns_null_for_invalid_reward_state_rewards_type() -> bool:
 	return passed
 ```
 
-- [ ] **Step 3: Run tests and verify RED**
+- [x] **Step 3: Run tests and verify RED**
 
 Run:
 
@@ -292,7 +292,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: failures mentioning missing `current_reward_state`.
 
-- [ ] **Step 4: Implement RunState reward state serialization**
+- [x] **Step 4: Implement RunState reward state serialization**
 
 Modify `scripts/run/run_state.gd`:
 
@@ -308,7 +308,7 @@ Add it after `current_shop_state`, then update `to_dict()`:
 		"completed": completed,
 ```
 
-- [ ] **Step 5: Implement SaveService reward state validation and loading**
+- [x] **Step 5: Implement SaveService reward state validation and loading**
 
 In `scripts/save/save_service.gd`, after loading `current_shop_state`, add:
 
@@ -366,7 +366,7 @@ func _has_valid_reward_list(payload: Dictionary, key: String) -> bool:
 	return true
 ```
 
-- [ ] **Step 6: Run tests and verify GREEN for Task 1**
+- [x] **Step 6: Run tests and verify GREEN for Task 1**
 
 Run:
 
@@ -380,7 +380,7 @@ Expected:
 TESTS PASSED
 ```
 
-- [ ] **Step 7: Run Task 1 review gates**
+- [x] **Step 7: Run Task 1 review gates**
 
 Stage 1 Spec Compliance Review:
 
@@ -395,7 +395,7 @@ Stage 2 Code Quality Review:
 - Dictionary duplication uses `duplicate(true)`.
 - No save version bump is added.
 
-- [ ] **Step 8: Commit Task 1**
+- [x] **Step 8: Commit Task 1**
 
 Run:
 
