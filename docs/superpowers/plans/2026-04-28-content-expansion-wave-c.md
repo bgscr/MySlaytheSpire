@@ -1334,7 +1334,7 @@ rtk proxy git commit -m "feat: improve compact status display"
 - Modify: `tests/unit/test_event_resolver.gd`
 - Modify: `localization/zh_CN.po`
 
-- [ ] **Step 1: Add failing catalog, reward, encounter, and event tests**
+- [x] **Step 1: Add failing catalog, reward, encounter, and event tests**
 
 In `tests/unit/test_content_catalog.gd`, rename `test_wave_2_catalog_loads_expanded_enemy_relic_and_event_counts()` to `test_wave_c_catalog_loads_expanded_enemy_relic_and_event_counts()` and update the assertions:
 
@@ -1481,7 +1481,7 @@ func test_default_event_pool_includes_wave_c_events_with_options() -> bool:
 	return passed
 ```
 
-- [ ] **Step 2: Run tests and verify RED**
+- [x] **Step 2: Run tests and verify RED**
 
 Run:
 
@@ -1491,7 +1491,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: count and missing resource tests fail.
 
-- [ ] **Step 3: Extend ContentCatalog validation for event reward references**
+- [x] **Step 3: Extend ContentCatalog validation for event reward references**
 
 In `scripts/content/content_catalog.gd`, extend `_validate_event_options(errors)` inside the non-null option block:
 
@@ -1508,7 +1508,7 @@ In `scripts/content/content_catalog.gd`, extend `_validate_event_options(errors)
 				errors.append("Event %s option %s references empty relic tier %s" % [event.id, option.id, option.relic_reward_tier])
 ```
 
-- [ ] **Step 4: Create Wave C enemy resources**
+- [x] **Step 4: Create Wave C enemy resources**
 
 Create these files.
 
@@ -1592,7 +1592,7 @@ gold_reward_min = 55
 gold_reward_max = 75
 ```
 
-- [ ] **Step 5: Create Wave C relic resources**
+- [x] **Step 5: Create Wave C relic resources**
 
 Create these files. Use the same `.tres` style as existing relics.
 
@@ -1804,7 +1804,7 @@ tier = "rare"
 reward_weight = 100
 ```
 
-- [ ] **Step 6: Create Wave C event resources**
+- [x] **Step 6: Create Wave C event resources**
 
 Create these event files. All options use only Wave C fields added to `EventOptionDef`.
 
@@ -2039,7 +2039,7 @@ event_weight = 100
 options = Array[ExtResource("2_option")]([SubResource("Resource_prune_sword"), SubResource("Resource_prune_alchemy"), SubResource("Resource_work")])
 ```
 
-- [ ] **Step 7: Register Wave C resources in ContentCatalog**
+- [x] **Step 7: Register Wave C resources in ContentCatalog**
 
 Append these paths to `ContentCatalog.DEFAULT_ENEMY_PATHS` after existing Wave 2 enemies:
 
@@ -2074,7 +2074,7 @@ Append these paths to `ContentCatalog.DEFAULT_EVENT_PATHS`:
 	"res://resources/events/withered_master.tres",
 ```
 
-- [ ] **Step 8: Add localization keys**
+- [x] **Step 8: Add localization keys**
 
 Append non-empty `msgid` / `msgstr` entries to `localization/zh_CN.po` for:
 
@@ -2149,7 +2149,7 @@ event.withered_master.option.work.desc
 
 Use concise Chinese `msgstr` values matching the existing file style. Do not add empty `msgstr` values.
 
-- [ ] **Step 9: Run tests and verify GREEN for Task 6**
+- [x] **Step 9: Run tests and verify GREEN for Task 6**
 
 Run:
 
@@ -2163,7 +2163,7 @@ Expected:
 TESTS PASSED
 ```
 
-- [ ] **Step 10: Run Godot import check**
+- [x] **Step 10: Run Godot import check**
 
 Run:
 
@@ -2173,7 +2173,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: process exits 0.
 
-- [ ] **Step 11: Run Task 6 review gates**
+- [x] **Step 11: Run Task 6 review gates**
 
 Stage 1 Spec Compliance Review:
 
@@ -2191,7 +2191,7 @@ Stage 2 Code Quality Review:
 - Validation for event reward references is focused and deterministic.
 - Tests do not rely on dictionary ordering.
 
-- [ ] **Step 12: Commit Task 6**
+- [x] **Step 12: Commit Task 6**
 
 Run:
 
