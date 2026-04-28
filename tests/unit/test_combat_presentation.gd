@@ -238,6 +238,66 @@ func test_layer_ignores_float_events_without_bound_targets(tree: SceneTree) -> b
 	assert(passed)
 	return passed
 
+func test_layer_flash_and_status_pulse_restore_original_modulate(tree: SceneTree) -> bool:
+	var layer := CombatPresentationLayer.new()
+	tree.root.add_child(layer)
+	var combatant_target := Label.new()
+	combatant_target.modulate = Color(0.45, 0.55, 0.65, 0.75)
+	layer.bind_target("player", combatant_target)
+	layer.add_child(combatant_target)
+	var status_target := Label.new()
+	status_target.modulate = Color(0.25, 0.35, 0.45, 0.55)
+	layer.bind_status_target("player", status_target)
+	layer.add_child(status_target)
+
+	var flash := CombatPresentationEvent.new("combatant_flash")
+	flash.target_id = "player"
+	layer.play_event(flash)
+	_finish_processed_tweens(tree)
+	var flash_restored := combatant_target.modulate == Color(0.45, 0.55, 0.65, 0.75)
+
+	var pulse := CombatPresentationEvent.new("status_badge_pulse")
+	pulse.target_id = "player"
+	layer.play_event(pulse)
+	_finish_processed_tweens(tree)
+	var pulse_restored := status_target.modulate == Color(0.25, 0.35, 0.45, 0.55)
+
+	var passed: bool = flash_restored and pulse_restored
+	layer.free()
+	assert(passed)
+	return passed
+
+func test_layer_card_lift_restores_original_position_y(tree: SceneTree) -> bool:
+	var layer := CombatPresentationLayer.new()
+	tree.root.add_child(layer)
+	var card_target := Button.new()
+	card_target.position = Vector2(12.0, 42.0)
+	layer.bind_target("card:0", card_target)
+	layer.add_child(card_target)
+
+	var hovered := CombatPresentationEvent.new("card_hovered")
+	hovered.target_id = "card:0"
+	layer.play_event(hovered)
+	var lifted := card_target.position.y == 34.0
+	var unhovered := CombatPresentationEvent.new("card_unhovered")
+	unhovered.target_id = "card:0"
+	layer.play_event(unhovered)
+	var restored_after_hover := card_target.position.y == 42.0
+
+	var dragged := CombatPresentationEvent.new("card_drag_started")
+	dragged.target_id = "card:0"
+	layer.play_event(dragged)
+	var drag_lifted := card_target.position.y == 34.0
+	var released := CombatPresentationEvent.new("card_drag_released")
+	released.target_id = "card:0"
+	layer.play_event(released)
+	var restored_after_drag := card_target.position.y == 42.0
+
+	var passed: bool = lifted and restored_after_hover and drag_lifted and restored_after_drag
+	layer.free()
+	assert(passed)
+	return passed
+
 func _has_event(events: Array, event_type: String, target_id: String, amount: int, status_id: String) -> bool:
 	for event in events:
 		if event.event_type != event_type:
@@ -250,3 +310,7 @@ func _has_event(events: Array, event_type: String, target_id: String, amount: in
 			continue
 		return true
 	return false
+
+func _finish_processed_tweens(tree: SceneTree) -> void:
+	for tween in tree.get_processed_tweens():
+		tween.custom_step(1.0)

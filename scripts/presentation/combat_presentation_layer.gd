@@ -12,6 +12,7 @@ const PULSE_COLOR := Color(0.58, 0.86, 0.82)
 var queue: CombatPresentationQueue
 var targets := {}
 var status_targets := {}
+var _card_base_positions := {}
 var _float_index := 0
 
 func bind_target(target_id: String, node: Control) -> void:
@@ -27,6 +28,7 @@ func bind_status_target(target_id: String, node: Control) -> void:
 func clear_bindings() -> void:
 	targets.clear()
 	status_targets.clear()
+	_card_base_positions.clear()
 
 func process_queue() -> void:
 	if queue == null:
@@ -78,17 +80,19 @@ func _flash_target(target_id: String) -> void:
 	var target := targets.get(target_id) as Control
 	if target == null:
 		return
+	var original_modulate := target.modulate
 	target.modulate = FLASH_COLOR
 	var tween := create_tween()
-	tween.tween_property(target, "modulate", Color.WHITE, FLOAT_DURATION)
+	tween.tween_property(target, "modulate", original_modulate, FLOAT_DURATION)
 
 func _pulse_status(target_id: String) -> void:
 	var target := status_targets.get(target_id, targets.get(target_id)) as Control
 	if target == null:
 		return
+	var original_modulate := target.modulate
 	target.modulate = PULSE_COLOR
 	var tween := create_tween()
-	tween.tween_property(target, "modulate", Color.WHITE, FLOAT_DURATION)
+	tween.tween_property(target, "modulate", original_modulate, FLOAT_DURATION)
 
 func _set_highlight(target_id: String, enabled: bool) -> void:
 	var target := targets.get(target_id) as Control
@@ -103,7 +107,14 @@ func _set_card_lift(target_id: String, enabled: bool) -> void:
 	var target := targets.get(target_id) as Control
 	if target == null:
 		return
-	target.position.y = -8.0 if enabled else 0.0
+	if enabled:
+		if not _card_base_positions.has(target_id):
+			_card_base_positions[target_id] = target.position
+		var base_position := _card_base_positions[target_id] as Vector2
+		target.position = base_position + Vector2(0.0, -8.0)
+	elif _card_base_positions.has(target_id):
+		target.position = _card_base_positions[target_id]
+		_card_base_positions.erase(target_id)
 
 func _target_position(target_id: String) -> Vector2:
 	var target := targets.get(target_id) as Control
