@@ -805,7 +805,7 @@ rtk proxy git commit -m "feat: play polish presentation placeholders"
 - Modify: `scripts/ui/combat_screen.gd`
 - Modify: `tests/smoke/test_scene_flow.gd`
 
-- [ ] **Step 1: Add failing combat integration smoke tests**
+- [x] **Step 1: Add failing combat integration smoke tests**
 
 Append to `tests/smoke/test_scene_flow.gd`:
 
@@ -874,7 +874,7 @@ func test_combat_screen_cinematic_disabled_filters_slash_but_plays_card(tree: Sc
 	return passed
 ```
 
-- [ ] **Step 2: Run tests to verify RED**
+- [x] **Step 2: Run tests to verify RED**
 
 Run:
 
@@ -884,7 +884,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: failure because card play does not yet enqueue resolver polish events.
 
-- [ ] **Step 3: Wire resolver into CombatScreen**
+- [x] **Step 3: Wire resolver into CombatScreen**
 
 Modify `scripts/ui/combat_screen.gd`.
 
@@ -963,7 +963,7 @@ Leave `_on_end_turn_pressed()` targetless:
 	_run_with_feedback(func(): return session.end_player_turn())
 ```
 
-- [ ] **Step 4: Run tests to verify GREEN for Task 3**
+- [x] **Step 4: Run tests to verify GREEN for Task 3**
 
 Run:
 
@@ -973,7 +973,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: `TESTS PASSED`.
 
-- [ ] **Step 5: Run Task 3 review gates**
+- [x] **Step 5: Run Task 3 review gates**
 
 Stage 1 Spec Compliance Review:
 
@@ -990,7 +990,7 @@ Stage 2 Code Quality Review:
 - Existing delta feedback remains enqueued.
 - Integration does not duplicate card legality checks.
 
-- [ ] **Step 6: Commit Task 3**
+- [x] **Step 6: Commit Task 3**
 
 Run:
 

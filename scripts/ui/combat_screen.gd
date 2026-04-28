@@ -2,6 +2,7 @@ extends Control
 
 const CombatSession := preload("res://scripts/combat/combat_session.gd")
 const CombatPresentationConfig := preload("res://scripts/presentation/combat_presentation_config.gd")
+const CombatPresentationCueResolver := preload("res://scripts/presentation/combat_presentation_cue_resolver.gd")
 const CombatPresentationDelta := preload("res://scripts/presentation/combat_presentation_delta.gd")
 const CombatPresentationEvent := preload("res://scripts/presentation/combat_presentation_event.gd")
 const CombatPresentationLayer := preload("res://scripts/presentation/combat_presentation_layer.gd")
@@ -13,6 +14,7 @@ var session: CombatSession
 var presentation_config: CombatPresentationConfig
 var presentation_queue := CombatPresentationQueue.new()
 var presentation_delta := CombatPresentationDelta.new()
+var presentation_cue_resolver := CombatPresentationCueResolver.new()
 var presentation_layer: CombatPresentationLayer
 var enemy_buttons: Array[Button] = []
 var card_buttons: Array[Button] = []
@@ -226,7 +228,7 @@ func try_play_dragged_card(hand_index: int, target_kind: String, enemy_index: in
 				if not session.select_card(hand_index):
 					return false
 				return session.confirm_enemy_target(enemy_index)
-			return _run_with_feedback(enemy_action, card_id)
+			return _run_with_feedback(enemy_action, card_id, "enemy:%s" % enemy_index)
 		"player":
 			if mode == "enemy":
 				return false
@@ -234,7 +236,7 @@ func try_play_dragged_card(hand_index: int, target_kind: String, enemy_index: in
 				if not session.select_card(hand_index):
 					return false
 				return session.confirm_player_target()
-			return _run_with_feedback(player_action, card_id)
+			return _run_with_feedback(player_action, card_id, "player")
 		"upward":
 			if mode == "enemy":
 				return false
@@ -242,7 +244,7 @@ func try_play_dragged_card(hand_index: int, target_kind: String, enemy_index: in
 				if not session.select_card(hand_index):
 					return false
 				return session.confirm_player_target()
-			return _run_with_feedback(upward_action, card_id)
+			return _run_with_feedback(upward_action, card_id, "player")
 	return false
 
 func _card_target_mode(hand_index: int) -> String:
@@ -339,13 +341,13 @@ func _clear_current_highlight() -> void:
 func _on_enemy_pressed(enemy_index: int) -> void:
 	var card_id := _pending_card_id()
 	var action := func(): return session.confirm_enemy_target(enemy_index)
-	_run_with_feedback(action, card_id)
+	_run_with_feedback(action, card_id, "enemy:%s" % enemy_index)
 	_refresh()
 
 func _on_player_target_pressed() -> void:
 	var card_id := _pending_card_id()
 	var action := func(): return session.confirm_player_target()
-	_run_with_feedback(action, card_id)
+	_run_with_feedback(action, card_id, "player")
 	_refresh()
 
 func _cancel_selection() -> void:
@@ -356,15 +358,26 @@ func _on_end_turn_pressed() -> void:
 	_run_with_feedback(func(): return session.end_player_turn())
 	_refresh()
 
-func _run_with_feedback(action: Callable, played_card_id: String = "") -> bool:
+func _run_with_feedback(action: Callable, played_card_id: String = "", played_target_id: String = "") -> bool:
 	var before := presentation_delta.capture_state(session.state)
+	var played_card = session.catalog.get_card(played_card_id) if not played_card_id.is_empty() else null
 	var succeeded := bool(action.call())
 	if succeeded:
+		var delta_events := presentation_delta.events_between(before, session.state)
 		if not played_card_id.is_empty():
 			var played_event := CombatPresentationEvent.new("card_played")
 			played_event.card_id = played_card_id
+			played_event.source_id = "player"
+			played_event.target_id = played_target_id
 			presentation_queue.enqueue(played_event)
-		for event in presentation_delta.events_between(before, session.state):
+			for event in presentation_cue_resolver.resolve_card_play(
+				played_card,
+				"player",
+				played_target_id,
+				delta_events
+			):
+				presentation_queue.enqueue(event)
+		for event in delta_events:
 			presentation_queue.enqueue(event)
 	return succeeded
 
