@@ -476,7 +476,7 @@ rtk proxy git commit -m "feat: add presentation asset catalog"
 - Modify: `tests/unit/test_combat_presentation.gd`
 - Modify: `docs/superpowers/plans/2026-04-28-high-presentation-asset-pass.md`
 
-- [ ] **Step 1: Update failing layer visual tests**
+- [x] **Step 1: Update failing layer visual tests**
 
 Modify `tests/unit/test_combat_presentation.gd`.
 
@@ -535,7 +535,7 @@ func test_layer_uses_event_fallback_assets_without_cue_id(tree: SceneTree) -> bo
 	return passed
 ```
 
-- [ ] **Step 2: Run layer visual tests to verify they fail**
+- [x] **Step 2: Run layer visual tests to verify they fail**
 
 Run:
 
@@ -545,7 +545,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: FAIL because `CombatPresentationLayer` still creates `ColorRect` nodes for slash and particles.
 
-- [ ] **Step 3: Add the asset catalog to the layer**
+- [x] **Step 3: Add the asset catalog to the layer**
 
 Modify `scripts/presentation/combat_presentation_layer.gd`.
 
@@ -568,7 +568,7 @@ const SLASH_COLOR := Color(0.9, 0.96, 1.0, 0.9)
 const PARTICLE_COLOR := Color(0.46, 0.92, 0.66, 0.85)
 ```
 
-- [ ] **Step 4: Replace slash playback with texture-backed playback**
+- [x] **Step 4: Replace slash playback with texture-backed playback**
 
 Replace `_show_cinematic_slash()` in `scripts/presentation/combat_presentation_layer.gd`:
 
@@ -604,7 +604,7 @@ func _show_cinematic_slash(event: CombatPresentationEvent) -> void:
 	tween.finished.connect(slash.queue_free)
 ```
 
-- [ ] **Step 5: Replace particle playback with texture-backed playback**
+- [x] **Step 5: Replace particle playback with texture-backed playback**
 
 Replace `_show_particle_burst()` in `scripts/presentation/combat_presentation_layer.gd`:
 
@@ -655,7 +655,7 @@ func _load_texture(asset: Dictionary) -> Texture2D:
 	return load(path) as Texture2D
 ```
 
-- [ ] **Step 6: Run visual layer tests to verify they pass**
+- [x] **Step 6: Run visual layer tests to verify they pass**
 
 Run:
 
@@ -669,7 +669,7 @@ Expected:
 TESTS PASSED
 ```
 
-- [ ] **Step 7: Run two-stage review for Task 2**
+- [x] **Step 7: Run two-stage review for Task 2**
 
 Stage 1 Spec Compliance Review:
 
@@ -688,7 +688,7 @@ Stage 2 Code Quality Review:
 
 Classify findings as Critical, Important, or Minor. Fix Critical and Important issues before committing.
 
-- [ ] **Step 8: Commit Task 2**
+- [x] **Step 8: Commit Task 2**
 
 Run:
 

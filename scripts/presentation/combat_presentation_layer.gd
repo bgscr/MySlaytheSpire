@@ -2,6 +2,7 @@ class_name CombatPresentationLayer
 extends Control
 
 const CombatPresentationEvent := preload("res://scripts/presentation/combat_presentation_event.gd")
+const CombatPresentationAssetCatalog := preload("res://scripts/presentation/combat_presentation_asset_catalog.gd")
 const CombatPresentationQueue := preload("res://scripts/presentation/combat_presentation_queue.gd")
 
 const FLOAT_DURATION := 0.55
@@ -12,10 +13,9 @@ const SLASH_DURATION := 0.32
 const PARTICLE_DURATION := 0.42
 const CAMERA_IMPULSE_DURATION := 0.18
 const SLOW_MOTION_DURATION := 0.35
-const SLASH_COLOR := Color(0.9, 0.96, 1.0, 0.9)
-const PARTICLE_COLOR := Color(0.46, 0.92, 0.66, 0.85)
 
 var queue: CombatPresentationQueue
+var asset_catalog := CombatPresentationAssetCatalog.new()
 var targets := {}
 var status_targets := {}
 var _card_base_positions := {}
@@ -146,6 +146,12 @@ func _target_position(target_id: String) -> Vector2:
 		return target.global_position - global_position
 	return target.position
 
+func _load_texture(asset: Dictionary) -> Texture2D:
+	var path := String(asset.get("texture_path", ""))
+	if path.is_empty():
+		return null
+	return load(path) as Texture2D
+
 func _status_text(event: CombatPresentationEvent) -> String:
 	if not event.text.is_empty():
 		return event.text
@@ -157,40 +163,66 @@ func _status_text(event: CombatPresentationEvent) -> String:
 func _show_cinematic_slash(event: CombatPresentationEvent) -> void:
 	if not targets.has(event.target_id):
 		return
-	var slash := ColorRect.new()
+	var asset := asset_catalog.resolve(event)
+	var texture := _load_texture(asset)
+	if texture == null:
+		return
+	var slash := TextureRect.new()
 	slash.name = "CinematicSlash_%s" % _slash_index
 	_slash_index += 1
-	slash.color = SLASH_COLOR
-	slash.size = Vector2(74.0, 4.0)
+	slash.texture = texture
+	slash.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	slash.stretch_mode = TextureRect.STRETCH_SCALE
+	slash.size = asset.get("size", Vector2(104.0, 34.0))
 	slash.pivot_offset = slash.size * 0.5
-	slash.rotation = -0.55
-	slash.position = _target_position(event.target_id) + Vector2(-20.0, -18.0)
+	slash.rotation = float(asset.get("rotation", -0.55))
+	slash.modulate = asset.get("color", Color.WHITE)
+	slash.position = _target_position(event.target_id) + Vector2(-24.0, -22.0)
 	add_child(slash)
+
+	var duration := float(asset.get("duration", SLASH_DURATION))
+	var travel := asset.get("travel", Vector2(28.0, -2.0)) as Vector2
+	var scale_to := asset.get("scale_to", Vector2(1.12, 1.0)) as Vector2
 	var tween := create_tween()
 	tween.set_parallel(true)
-	tween.tween_property(slash, "position:x", slash.position.x + 28.0, SLASH_DURATION)
-	tween.tween_property(slash, "modulate:a", 0.0, SLASH_DURATION)
+	tween.tween_property(slash, "position", slash.position + travel, duration)
+	tween.tween_property(slash, "scale", scale_to, duration)
+	tween.tween_property(slash, "modulate:a", 0.0, duration)
 	tween.finished.connect(slash.queue_free)
 
 func _show_particle_burst(event: CombatPresentationEvent) -> void:
 	if not targets.has(event.target_id):
 		return
+	var asset := asset_catalog.resolve(event)
+	var texture := _load_texture(asset)
+	if texture == null:
+		return
 	var burst_index := _particle_burst_index
 	_particle_burst_index += 1
 	var origin := _target_position(event.target_id) + Vector2(12.0, -10.0)
-	for particle_index in range(5):
-		var particle := ColorRect.new()
+	var particle_count := maxi(1, int(asset.get("particle_count", 6)))
+	var particle_size := asset.get("size", Vector2(18.0, 18.0)) as Vector2
+	var radius := float(asset.get("radius", 26.0))
+	var duration := float(asset.get("duration", PARTICLE_DURATION))
+	var color := asset.get("color", Color.WHITE) as Color
+	for particle_index in range(particle_count):
+		var particle := TextureRect.new()
 		particle.name = "ParticleBurst_%s_%s" % [burst_index, particle_index]
-		particle.color = PARTICLE_COLOR
-		particle.size = Vector2(5.0, 5.0)
+		particle.texture = texture
+		particle.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		particle.stretch_mode = TextureRect.STRETCH_SCALE
+		particle.size = particle_size
+		particle.pivot_offset = particle.size * 0.5
+		particle.modulate = color
 		particle.position = origin
 		add_child(particle)
-		var angle := TAU * float(particle_index) / 5.0
-		var offset := Vector2(cos(angle), sin(angle)) * 24.0
+		var angle := TAU * float(particle_index) / float(particle_count)
+		var offset := Vector2(cos(angle), sin(angle)) * radius
 		var tween := create_tween()
 		tween.set_parallel(true)
-		tween.tween_property(particle, "position", origin + offset, PARTICLE_DURATION)
-		tween.tween_property(particle, "modulate:a", 0.0, PARTICLE_DURATION)
+		tween.tween_property(particle, "position", origin + offset, duration)
+		tween.tween_property(particle, "scale", Vector2(0.6, 0.6), duration)
+		tween.tween_property(particle, "modulate:a", 0.0, duration)
 		tween.finished.connect(particle.queue_free)
 
 func _play_camera_impulse(event: CombatPresentationEvent) -> void:

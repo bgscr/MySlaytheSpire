@@ -423,7 +423,7 @@ func test_config_filters_polish_event_categories() -> bool:
 	assert(passed)
 	return passed
 
-func test_layer_plays_cinematic_slash_and_particle_placeholders(tree: SceneTree) -> bool:
+func test_layer_plays_cinematic_slash_and_particle_assets(tree: SceneTree) -> bool:
 	var layer := CombatPresentationLayer.new()
 	tree.root.add_child(layer)
 	var target := Button.new()
@@ -433,14 +433,39 @@ func test_layer_plays_cinematic_slash_and_particle_placeholders(tree: SceneTree)
 
 	var slash := CombatPresentationEvent.new("cinematic_slash")
 	slash.target_id = "enemy:0"
+	slash.payload = {"cue_id": "sword.strike"}
 	layer.play_event(slash)
 	var particle := CombatPresentationEvent.new("particle_burst")
 	particle.target_id = "enemy:0"
+	particle.payload = {"cue_id": "alchemy.toxic_pill"}
 	layer.play_event(particle)
 
-	var slash_node := layer.get_node_or_null("CinematicSlash_0")
-	var particle_node := layer.get_node_or_null("ParticleBurst_0_0")
-	var passed: bool = slash_node != null and particle_node != null
+	var slash_node := layer.get_node_or_null("CinematicSlash_0") as TextureRect
+	var particle_node := layer.get_node_or_null("ParticleBurst_0_0") as TextureRect
+	var passed: bool = slash_node != null \
+		and slash_node.texture != null \
+		and particle_node != null \
+		and particle_node.texture != null \
+		and layer.get_node_or_null("CinematicSlash_0") is TextureRect \
+		and layer.get_node_or_null("ParticleBurst_0_0") is TextureRect
+	layer.free()
+	assert(passed)
+	return passed
+
+func test_layer_uses_event_fallback_assets_without_cue_id(tree: SceneTree) -> bool:
+	var layer := CombatPresentationLayer.new()
+	tree.root.add_child(layer)
+	var target := Button.new()
+	target.position = Vector2(24, 36)
+	layer.bind_target("enemy:0", target)
+	layer.add_child(target)
+
+	var slash := CombatPresentationEvent.new("cinematic_slash")
+	slash.target_id = "enemy:0"
+	layer.play_event(slash)
+
+	var slash_node := layer.get_node_or_null("CinematicSlash_0") as TextureRect
+	var passed: bool = slash_node != null and slash_node.texture != null
 	layer.free()
 	assert(passed)
 	return passed
