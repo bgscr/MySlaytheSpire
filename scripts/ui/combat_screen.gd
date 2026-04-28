@@ -1,10 +1,21 @@
 extends Control
 
 const CombatSession := preload("res://scripts/combat/combat_session.gd")
+const CombatPresentationConfig := preload("res://scripts/presentation/combat_presentation_config.gd")
+const CombatPresentationDelta := preload("res://scripts/presentation/combat_presentation_delta.gd")
+const CombatPresentationEvent := preload("res://scripts/presentation/combat_presentation_event.gd")
+const CombatPresentationLayer := preload("res://scripts/presentation/combat_presentation_layer.gd")
+const CombatPresentationQueue := preload("res://scripts/presentation/combat_presentation_queue.gd")
 const ContentCatalog := preload("res://scripts/content/content_catalog.gd")
 const SceneRouterScript := preload("res://scripts/app/scene_router.gd")
 
 var session: CombatSession
+var presentation_config: CombatPresentationConfig
+var presentation_queue := CombatPresentationQueue.new()
+var presentation_delta := CombatPresentationDelta.new()
+var presentation_layer: CombatPresentationLayer
+var enemy_buttons: Array[Button] = []
+var card_buttons: Array[Button] = []
 var status_label: Label
 var pile_label: Label
 var error_label: Label
@@ -19,6 +30,10 @@ func _ready() -> void:
 	_build_layout()
 	_start_session()
 	_refresh()
+
+func _process(_delta: float) -> void:
+	if presentation_layer != null:
+		presentation_layer.process_queue()
 
 func _unhandled_input(event: InputEvent) -> void:
 	if session == null:
@@ -74,12 +89,22 @@ func _build_layout() -> void:
 	hand_container.position = Vector2(16, 360)
 	add_child(hand_container)
 
+	presentation_layer = CombatPresentationLayer.new()
+	presentation_layer.name = "PresentationLayer"
+	presentation_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(presentation_layer)
+
 func _start_session() -> void:
 	var app = get_tree().root.get_node("App")
 	var catalog := ContentCatalog.new()
 	catalog.load_default()
 	session = CombatSession.new()
 	session.start(catalog, app.game.current_run)
+	presentation_config = CombatPresentationConfig.new()
+	presentation_queue.config = presentation_config
+	presentation_layer.queue = presentation_queue
+	for event in presentation_delta.events_from_initial_state(session.state):
+		presentation_queue.enqueue(event)
 
 func _refresh() -> void:
 	if session == null:
@@ -96,6 +121,10 @@ func _refresh() -> void:
 	cancel_button.visible = session.phase == CombatSession.PHASE_SELECTING_ENEMY_TARGET \
 		or session.phase == CombatSession.PHASE_CONFIRMING_PLAYER_TARGET
 	end_turn_button.disabled = session.phase != CombatSession.PHASE_PLAYER_TURN
+	if presentation_layer != null:
+		presentation_layer.clear_bindings()
+		presentation_layer.bind_target("player", status_label)
+		presentation_layer.bind_status_target("player", status_label)
 	_refresh_enemies()
 	_refresh_hand()
 	_route_if_terminal()
@@ -118,6 +147,7 @@ func _player_status_text() -> String:
 
 func _refresh_enemies() -> void:
 	_clear_children(enemy_container)
+	enemy_buttons.clear()
 	for enemy_index in range(session.state.enemies.size()):
 		var enemy = session.state.enemies[enemy_index]
 		var button := Button.new()
@@ -136,9 +166,15 @@ func _refresh_enemies() -> void:
 		button.disabled = enemy.is_defeated()
 		button.pressed.connect(func(): _on_enemy_pressed(enemy_index))
 		enemy_container.add_child(button)
+		enemy_buttons.append(button)
+		if presentation_layer != null:
+			var target_id := "enemy:%s" % enemy_index
+			presentation_layer.bind_target(target_id, button)
+			presentation_layer.bind_status_target(target_id, button)
 
 func _refresh_hand() -> void:
 	_clear_children(hand_container)
+	card_buttons.clear()
 	for hand_index in range(session.state.hand.size()):
 		var card_id := session.state.hand[hand_index]
 		var card = session.catalog.get_card(card_id)
@@ -151,6 +187,9 @@ func _refresh_hand() -> void:
 		button.disabled = session.phase != CombatSession.PHASE_PLAYER_TURN
 		button.pressed.connect(func(): _on_card_pressed(hand_index))
 		hand_container.add_child(button)
+		card_buttons.append(button)
+		if presentation_layer != null:
+			presentation_layer.bind_target("card:%s" % hand_index, button)
 
 func _clear_children(node: Node) -> void:
 	for child in node.get_children():
@@ -162,11 +201,15 @@ func _on_card_pressed(hand_index: int) -> void:
 	_refresh()
 
 func _on_enemy_pressed(enemy_index: int) -> void:
-	session.confirm_enemy_target(enemy_index)
+	var card_id := _pending_card_id()
+	var action := func(): return session.confirm_enemy_target(enemy_index)
+	_run_with_feedback(action, card_id)
 	_refresh()
 
 func _on_player_target_pressed() -> void:
-	session.confirm_player_target()
+	var card_id := _pending_card_id()
+	var action := func(): return session.confirm_player_target()
+	_run_with_feedback(action, card_id)
 	_refresh()
 
 func _cancel_selection() -> void:
@@ -174,8 +217,33 @@ func _cancel_selection() -> void:
 	_refresh()
 
 func _on_end_turn_pressed() -> void:
-	session.end_player_turn()
+	_run_with_feedback(func(): return session.end_player_turn())
 	_refresh()
+
+func _run_with_feedback(action: Callable, played_card_id: String = "") -> bool:
+	var before := presentation_delta.capture_state(session.state)
+	var succeeded := bool(action.call())
+	if succeeded:
+		if not played_card_id.is_empty():
+			var played_event := CombatPresentationEvent.new("card_played")
+			played_event.card_id = played_card_id
+			presentation_queue.enqueue(played_event)
+		for event in presentation_delta.events_between(before, session.state):
+			presentation_queue.enqueue(event)
+	return succeeded
+
+func _enqueue_card_event(event_type: String, hand_index: int) -> void:
+	if hand_index < 0 or hand_index >= session.state.hand.size():
+		return
+	var event := CombatPresentationEvent.new(event_type)
+	event.target_id = "card:%s" % hand_index
+	event.card_id = session.state.hand[hand_index]
+	presentation_queue.enqueue(event)
+
+func _pending_card_id() -> String:
+	if session.pending_card == null:
+		return ""
+	return session.pending_card.id
 
 func _route_if_terminal() -> void:
 	if session.phase == CombatSession.PHASE_WON:

@@ -825,7 +825,7 @@ rtk proxy git commit -m "feat: add combat presentation layer"
 - Modify: `scripts/ui/combat_screen.gd`
 - Modify: `tests/smoke/test_scene_flow.gd`
 
-- [ ] **Step 1: Add failing smoke test for presentation layer and click feedback**
+- [x] **Step 1: Add failing smoke test for presentation layer and click feedback**
 
 Append this test after `test_combat_screen_creates_session_and_cancels_pending_card` in `tests/smoke/test_scene_flow.gd`:
 
@@ -866,7 +866,7 @@ func test_combat_screen_click_play_enqueues_delta_feedback(tree: SceneTree) -> b
 	return passed
 ```
 
-- [ ] **Step 2: Run tests to verify red**
+- [x] **Step 2: Run tests to verify red**
 
 Run:
 
@@ -876,7 +876,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: failure because `CombatScreen` has no `presentation_layer`.
 
-- [ ] **Step 3: Add presentation preloads and fields to CombatScreen**
+- [x] **Step 3: Add presentation preloads and fields to CombatScreen**
 
 Modify the top of `scripts/ui/combat_screen.gd`:
 
@@ -899,7 +899,7 @@ var enemy_buttons: Array[Button] = []
 var card_buttons: Array[Button] = []
 ```
 
-- [ ] **Step 4: Instantiate layer and shared config**
+- [x] **Step 4: Instantiate layer and shared config**
 
 In `_build_layout()`, after creating `hand_container`, add:
 
@@ -922,7 +922,7 @@ In `_start_session()`, after `session.start(...)`, add:
 
 Task 6 will replace this local config with the shared `app.game.presentation_config` after the debug toggles exist.
 
-- [ ] **Step 5: Bind presentation targets during refresh**
+- [x] **Step 5: Bind presentation targets during refresh**
 
 In `_refresh()`, before `_refresh_enemies()`, reset dynamic bindings and rebind the player:
 
@@ -963,7 +963,7 @@ After creating each card button:
 			presentation_layer.bind_target("card:%s" % hand_index, button)
 ```
 
-- [ ] **Step 6: Add snapshot wrapper and use it around gameplay mutations**
+- [x] **Step 6: Add snapshot wrapper and use it around gameplay mutations**
 
 Add helper:
 
@@ -1026,7 +1026,7 @@ func _pending_card_id() -> String:
 	return session.pending_card.id
 ```
 
-- [ ] **Step 7: Process queue without blocking input**
+- [x] **Step 7: Process queue without blocking input**
 
 Add:
 
@@ -1038,7 +1038,7 @@ func _process(_delta: float) -> void:
 
 Do not add awaits or timers that gate gameplay.
 
-- [ ] **Step 8: Run full tests to verify green**
+- [x] **Step 8: Run full tests to verify green**
 
 Run:
 
@@ -1048,7 +1048,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: `TESTS PASSED`.
 
-- [ ] **Step 9: Review and commit Task 4**
+- [x] **Step 9: Review and commit Task 4**
 
 Stage 1 Spec Compliance Review:
 

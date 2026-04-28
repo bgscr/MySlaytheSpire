@@ -97,6 +97,44 @@ func test_combat_screen_creates_session_and_cancels_pending_card(tree: SceneTree
 	_delete_test_save("user://test_combat_screen_session_save.json")
 	return passed
 
+func test_combat_screen_click_play_enqueues_delta_feedback(tree: SceneTree) -> bool:
+	var app = _create_app_with_save_service(tree, "user://test_combat_presentation_click_save.json")
+	var run := RunStateScript.new()
+	run.seed_value = 12345
+	run.character_id = "sword"
+	run.max_hp = 72
+	run.current_hp = 72
+	run.deck_ids = ["sword.strike"]
+	run.current_node_id = "node_0"
+	var node := preload("res://scripts/run/map_node_state.gd").new("node_0", 0, "combat")
+	node.unlocked = true
+	run.map_nodes = [node]
+	app.game.current_run = run
+
+	var combat = app.game.router.go_to(SceneRouterScript.COMBAT)
+	combat.session.state.hand.clear()
+	combat.session.state.hand.append("sword.strike")
+	combat.session.state.draw_pile.clear()
+	combat._refresh()
+	var first_card := _find_node_by_name(combat, "CardButton_0") as Button
+	if first_card != null:
+		first_card.pressed.emit()
+	var enemy_button := _find_node_by_name(combat, "EnemyButton_0") as Button
+	if enemy_button != null:
+		enemy_button.pressed.emit()
+	var presentation_layer: Node = combat.get_node_or_null("PresentationLayer")
+	if presentation_layer != null:
+		presentation_layer.call("process_queue")
+	var float_text := _find_node_by_name(presentation_layer, "FloatText_0") as Label if presentation_layer != null else null
+	var passed: bool = presentation_layer != null \
+		and first_card != null \
+		and enemy_button != null \
+		and float_text != null \
+		and float_text.text.begins_with("-")
+	app.free()
+	_delete_test_save("user://test_combat_presentation_click_save.json")
+	return passed
+
 func test_reward_screen_claims_card_skips_gold_and_saves_on_continue(tree: SceneTree) -> bool:
 	var save_path := "user://test_reward_screen_claim_skip_save.json"
 	var app = _create_app_with_save_service(tree, save_path)
