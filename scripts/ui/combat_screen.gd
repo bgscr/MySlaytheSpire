@@ -111,7 +111,7 @@ func _player_status_text() -> String:
 		session.state.energy,
 		session.state.turn,
 	]
-	var statuses := session.status_runtime.status_text(session.state.player)
+	var statuses := session.status_runtime.status_display_text(session.state.player)
 	if not statuses.is_empty():
 		text += " Status %s" % statuses
 	return text
@@ -129,7 +129,7 @@ func _refresh_enemies() -> void:
 			enemy.block,
 			session.get_enemy_intent(enemy_index),
 		]
-		var statuses := session.status_runtime.status_text(enemy)
+		var statuses := session.status_runtime.status_display_text(enemy)
 		if not statuses.is_empty():
 			text += " Status %s" % statuses
 		button.text = text

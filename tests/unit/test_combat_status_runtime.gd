@@ -75,6 +75,33 @@ func test_status_text_lists_positive_status_layers_in_key_order() -> bool:
 	assert(passed)
 	return passed
 
+func test_status_display_text_uses_stable_known_order_and_layers() -> bool:
+	var combatant := CombatantState.new("sample", 10)
+	combatant.statuses["broken_stance"] = 1
+	combatant.statuses["poison"] = 3
+	combatant.statuses["sword_focus"] = 2
+	var display := CombatStatusRuntime.new().status_display_text(combatant)
+	var poison_index := display.find("3")
+	var focus_index := display.find("2")
+	var broken_index := display.rfind("1")
+	var passed: bool = not display.contains("poison:3") \
+		and display.contains(" | ") \
+		and poison_index >= 0 \
+		and focus_index > poison_index \
+		and broken_index > focus_index
+	assert(passed)
+	return passed
+
+func test_status_display_text_lists_unknown_statuses_after_known_statuses() -> bool:
+	var combatant := CombatantState.new("sample", 10)
+	combatant.statuses["zzz_unknown"] = 4
+	combatant.statuses["poison"] = 1
+	var display := CombatStatusRuntime.new().status_display_text(combatant)
+	var passed: bool = display.find("1") >= 0 \
+		and display.find("zzz_unknown 4") > display.find("1")
+	assert(passed)
+	return passed
+
 func _state() -> CombatState:
 	var state := CombatState.new()
 	state.player = CombatantState.new("sword", 30)

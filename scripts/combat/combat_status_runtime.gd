@@ -7,6 +7,11 @@ const CombatantState := preload("res://scripts/combat/combatant_state.gd")
 const STATUS_POISON := "poison"
 const STATUS_SWORD_FOCUS := "sword_focus"
 const STATUS_BROKEN_STANCE := "broken_stance"
+const STATUS_DISPLAY_ORDER: Array[String] = [
+	STATUS_POISON,
+	STATUS_SWORD_FOCUS,
+	STATUS_BROKEN_STANCE,
+]
 
 const STATUS_METADATA := {
 	STATUS_POISON: {
@@ -65,6 +70,36 @@ func status_text(combatant: CombatantState) -> String:
 		if not result.is_empty():
 			result += " "
 		result += "%s:%s" % [status_id, layers]
+	return result
+
+func status_display_text(combatant: CombatantState) -> String:
+	if combatant == null:
+		return ""
+	var parts: Array[String] = []
+	for status_id in STATUS_DISPLAY_ORDER:
+		var layers := _layers(combatant, status_id)
+		if layers > 0:
+			parts.append("%s %s" % [_status_display_name(status_id), layers])
+	var unknown_ids := _unknown_positive_status_ids(combatant)
+	for status_id in unknown_ids:
+		parts.append("%s %s" % [status_id, _layers(combatant, status_id)])
+	return " | ".join(parts)
+
+func _status_display_name(status_id: String) -> String:
+	var metadata: Dictionary = STATUS_METADATA.get(status_id, {})
+	var name_key := String(metadata.get("name_key", status_id))
+	var translated := tr(name_key)
+	return translated if not translated.is_empty() else status_id
+
+func _unknown_positive_status_ids(combatant: CombatantState) -> Array[String]:
+	var result: Array[String] = []
+	for key in combatant.statuses.keys():
+		var status_id := String(key)
+		if STATUS_METADATA.has(status_id):
+			continue
+		if _layers(combatant, status_id) > 0:
+			result.append(status_id)
+	result.sort()
 	return result
 
 func _layers(combatant: CombatantState, status_id: String) -> int:
