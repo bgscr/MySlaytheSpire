@@ -1,12 +1,16 @@
 extends RefCounted
 
+const CardDef := preload("res://scripts/data/card_def.gd")
+const CardPresentationCueDef := preload("res://scripts/data/card_presentation_cue_def.gd")
 const CombatPresentationConfig := preload("res://scripts/presentation/combat_presentation_config.gd")
+const CombatPresentationCueResolver := preload("res://scripts/presentation/combat_presentation_cue_resolver.gd")
 const CombatPresentationDelta := preload("res://scripts/presentation/combat_presentation_delta.gd")
 const CombatPresentationEvent := preload("res://scripts/presentation/combat_presentation_event.gd")
 const CombatPresentationLayer := preload("res://scripts/presentation/combat_presentation_layer.gd")
 const CombatPresentationQueue := preload("res://scripts/presentation/combat_presentation_queue.gd")
 const CombatState := preload("res://scripts/combat/combat_state.gd")
 const CombatantState := preload("res://scripts/combat/combatant_state.gd")
+const EffectDef := preload("res://scripts/data/effect_def.gd")
 
 func test_event_copy_does_not_alias_payload_or_tags() -> bool:
 	var event := CombatPresentationEvent.new("damage_number")
@@ -298,6 +302,104 @@ func test_layer_card_lift_restores_original_position_y(tree: SceneTree) -> bool:
 	assert(passed)
 	return passed
 
+func test_cue_resolver_converts_explicit_card_cues_without_aliasing() -> bool:
+	var cue := CardPresentationCueDef.new()
+	cue.event_type = "cinematic_slash"
+	cue.target_mode = "played_target"
+	cue.amount = 2
+	cue.intensity = 1.25
+	cue.cue_id = "slash.explicit"
+	cue.tags = ["cinematic"]
+	cue.payload = {"points": [Vector2(1, 2)]}
+	var card := CardDef.new()
+	card.id = "sword.explicit"
+	card.presentation_cues = [cue]
+
+	var events := CombatPresentationCueResolver.new().resolve_card_play(card, "player", "enemy:0", [])
+	cue.tags.append("mutated")
+	cue.payload["points"].append(Vector2(3, 4))
+	var event = events[0] if events.size() > 0 else null
+	var points: Array = event.payload.get("points", []) if event != null else []
+	var passed: bool = events.size() == 1 \
+		and event.event_type == "cinematic_slash" \
+		and event.card_id == "sword.explicit" \
+		and event.target_id == "enemy:0" \
+		and event.amount == 2 \
+		and is_equal_approx(event.intensity, 1.25) \
+		and event.tags == ["cinematic"] \
+		and event.payload.get("cue_id") == "slash.explicit" \
+		and points.size() == 1
+	assert(passed)
+	return passed
+
+func test_cue_resolver_maps_target_modes() -> bool:
+	var card := CardDef.new()
+	card.id = "mode.test"
+	card.presentation_cues = [
+		_cue("particle_burst", "played_target"),
+		_cue("camera_impulse", "source"),
+		_cue("slow_motion", "player"),
+		_cue("audio_cue", "none"),
+	]
+	var events := CombatPresentationCueResolver.new().resolve_card_play(card, "player", "enemy:1", [])
+	var passed: bool = events.size() == 4 \
+		and events[0].target_id == "enemy:1" \
+		and events[1].target_id == "player" \
+		and events[2].target_id == "player" \
+		and events[3].target_id == ""
+	assert(passed)
+	return passed
+
+func test_cue_resolver_fallback_emits_sword_slash_and_damage_camera() -> bool:
+	var card := CardDef.new()
+	card.id = "sword.fallback"
+	card.character_id = "sword"
+	card.card_type = "attack"
+	var damage_effect := EffectDef.new()
+	damage_effect.effect_type = "damage"
+	damage_effect.amount = 6
+	damage_effect.target = "enemy"
+	card.effects = [damage_effect]
+	var damage := CombatPresentationEvent.new("damage_number")
+	damage.target_id = "enemy:0"
+	damage.amount = 6
+
+	var events := CombatPresentationCueResolver.new().resolve_card_play(card, "player", "enemy:0", [damage])
+	var passed: bool = _has_event(events, "cinematic_slash", "enemy:0", 0, "") \
+		and _has_event(events, "camera_impulse", "", 0, "") \
+		and _event_count(events, "cinematic_slash") == 1 \
+		and _event_count(events, "camera_impulse") == 1
+	assert(passed)
+	return passed
+
+func test_cue_resolver_fallback_emits_alchemy_and_poison_particles() -> bool:
+	var card := CardDef.new()
+	card.id = "alchemy.poison_test"
+	card.character_id = "alchemy"
+	var poison_effect := EffectDef.new()
+	poison_effect.effect_type = "apply_status"
+	poison_effect.status_id = "poison"
+	poison_effect.amount = 2
+	poison_effect.target = "enemy"
+	card.effects = [poison_effect]
+
+	var events := CombatPresentationCueResolver.new().resolve_card_play(card, "player", "enemy:0", [])
+	var passed: bool = _has_event(events, "particle_burst", "enemy:0", 0, "") \
+		and _event_count(events, "particle_burst") == 1
+	assert(passed)
+	return passed
+
+func test_cue_resolver_does_not_infer_slow_motion_or_audio() -> bool:
+	var card := CardDef.new()
+	card.id = "sword.no_audio"
+	card.character_id = "sword"
+	card.card_type = "attack"
+	var events := CombatPresentationCueResolver.new().resolve_card_play(card, "player", "enemy:0", [])
+	var passed: bool = _event_count(events, "slow_motion") == 0 \
+		and _event_count(events, "audio_cue") == 0
+	assert(passed)
+	return passed
+
 func _has_event(events: Array, event_type: String, target_id: String, amount: int, status_id: String) -> bool:
 	for event in events:
 		if event.event_type != event_type:
@@ -310,6 +412,19 @@ func _has_event(events: Array, event_type: String, target_id: String, amount: in
 			continue
 		return true
 	return false
+
+func _cue(event_type: String, target_mode: String) -> CardPresentationCueDef:
+	var cue := CardPresentationCueDef.new()
+	cue.event_type = event_type
+	cue.target_mode = target_mode
+	return cue
+
+func _event_count(events: Array, event_type: String) -> int:
+	var count := 0
+	for event in events:
+		if event.event_type == event_type:
+			count += 1
+	return count
 
 func _finish_processed_tweens(tree: SceneTree) -> void:
 	for tween in tree.get_processed_tweens():

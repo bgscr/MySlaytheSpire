@@ -80,7 +80,7 @@ Modify:
 - Modify: `tests/unit/test_resource_schemas.gd`
 - Modify: `tests/unit/test_combat_presentation.gd`
 
-- [ ] **Step 1: Write failing schema tests**
+- [x] **Step 1: Write failing schema tests**
 
 Modify `tests/unit/test_resource_schemas.gd`.
 
@@ -125,7 +125,7 @@ func test_card_def_exports_presentation_cues() -> bool:
 	return passed
 ```
 
-- [ ] **Step 2: Write failing resolver tests**
+- [x] **Step 2: Write failing resolver tests**
 
 Modify `tests/unit/test_combat_presentation.gd`.
 
@@ -257,7 +257,7 @@ func _event_count(events: Array, event_type: String) -> int:
 	return count
 ```
 
-- [ ] **Step 3: Run tests to verify RED**
+- [x] **Step 3: Run tests to verify RED**
 
 Run:
 
@@ -267,7 +267,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: failures loading missing `card_presentation_cue_def.gd` and `combat_presentation_cue_resolver.gd`.
 
-- [ ] **Step 4: Implement cue schema**
+- [x] **Step 4: Implement cue schema**
 
 Create `scripts/data/card_presentation_cue_def.gd`:
 
@@ -298,7 +298,7 @@ Add after `@export var effects`:
 @export var presentation_cues: Array[CardPresentationCueDef] = []
 ```
 
-- [ ] **Step 5: Implement cue resolver**
+- [x] **Step 5: Implement cue resolver**
 
 Create `scripts/presentation/combat_presentation_cue_resolver.gd`:
 
@@ -434,7 +434,7 @@ func _max_damage_amount(delta_events: Array) -> int:
 	return max_damage
 ```
 
-- [ ] **Step 6: Run tests to verify GREEN for Task 1**
+- [x] **Step 6: Run tests to verify GREEN for Task 1**
 
 Run:
 
@@ -444,7 +444,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: `TESTS PASSED`.
 
-- [ ] **Step 7: Run Task 1 review gates**
+- [x] **Step 7: Run Task 1 review gates**
 
 Stage 1 Spec Compliance Review:
 
@@ -462,7 +462,7 @@ Stage 2 Code Quality Review:
 - Fallback inference is deterministic and does not duplicate event types.
 - Resolver has no scene-tree dependency.
 
-- [ ] **Step 8: Commit Task 1**
+- [x] **Step 8: Commit Task 1**
 
 Run:
 

@@ -1,6 +1,7 @@
 extends RefCounted
 
 const CardDef := preload("res://scripts/data/card_def.gd")
+const CardPresentationCueDef := preload("res://scripts/data/card_presentation_cue_def.gd")
 const CharacterDef := preload("res://scripts/data/character_def.gd")
 const EnemyDef := preload("res://scripts/data/enemy_def.gd")
 const EffectDef := preload("res://scripts/data/effect_def.gd")
@@ -75,6 +76,37 @@ func test_event_bus_emits_game_event_payload() -> bool:
 		and _received_event.type == "card_played" \
 		and _received_event.payload.get("card_id") == "sword.strike"
 	bus.free()
+	assert(passed)
+	return passed
+
+func test_card_presentation_cue_def_stores_runtime_event_fields() -> bool:
+	var cue := CardPresentationCueDef.new()
+	cue.event_type = "cinematic_slash"
+	cue.target_mode = "played_target"
+	cue.amount = 3
+	cue.intensity = 1.4
+	cue.cue_id = "slash.test"
+	cue.tags = ["cinematic"]
+	cue.payload = {"color": "gold"}
+	var passed: bool = cue.event_type == "cinematic_slash" \
+		and cue.target_mode == "played_target" \
+		and cue.amount == 3 \
+		and is_equal_approx(cue.intensity, 1.4) \
+		and cue.cue_id == "slash.test" \
+		and cue.tags == ["cinematic"] \
+		and cue.payload.get("color") == "gold"
+	assert(passed)
+	return passed
+
+func test_card_def_exports_presentation_cues() -> bool:
+	var cue := CardPresentationCueDef.new()
+	cue.event_type = "particle_burst"
+	var card := CardDef.new()
+	card.id = "alchemy.test"
+	card.presentation_cues = [cue]
+	var passed: bool = _has_property(card, "presentation_cues") \
+		and card.presentation_cues.size() == 1 \
+		and card.presentation_cues[0].event_type == "particle_burst"
 	assert(passed)
 	return passed
 
