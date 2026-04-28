@@ -758,7 +758,7 @@ rtk proxy git commit -m "feat: add event option rewards"
 - Modify: `tests/unit/test_reward_resolver.gd`
 - Modify: `tests/smoke/test_scene_flow.gd`
 
-- [ ] **Step 1: Add failing RewardResolver pending event reward tests**
+- [x] **Step 1: Add failing RewardResolver pending event reward tests**
 
 Append these tests to `tests/unit/test_reward_resolver.gd`:
 
@@ -807,7 +807,7 @@ func test_pending_event_reward_state_ignored_for_different_node() -> bool:
 	return passed
 ```
 
-- [ ] **Step 2: Add failing smoke test for event reward screen flow**
+- [x] **Step 2: Add failing smoke test for event reward screen flow**
 
 Append this test to `tests/smoke/test_scene_flow.gd` after event screen tests:
 
@@ -852,7 +852,7 @@ func test_reward_screen_claims_pending_event_reward_then_advances_event(tree: Sc
 	return passed
 ```
 
-- [ ] **Step 3: Run tests and verify RED**
+- [x] **Step 3: Run tests and verify RED**
 
 Run:
 
@@ -862,7 +862,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: pending event reward resolver/smoke tests fail because reward resolver ignores `current_reward_state` and reward screen does not clear it.
 
-- [ ] **Step 4: Implement pending event reward path in RewardResolver**
+- [x] **Step 4: Implement pending event reward path in RewardResolver**
 
 In `scripts/reward/reward_resolver.gd`, inside `resolve()` after current node lookup and before the node type match:
 
@@ -891,7 +891,7 @@ func _pending_event_rewards(run: RunState, node: MapNodeState) -> Array[Dictiona
 	return result
 ```
 
-- [ ] **Step 5: Clear pending event reward state in RewardScreen on continue**
+- [x] **Step 5: Clear pending event reward state in RewardScreen on continue**
 
 In `scripts/ui/reward_screen.gd`, add this helper:
 
@@ -924,7 +924,7 @@ The surrounding block should become:
 		return
 ```
 
-- [ ] **Step 6: Run tests and verify GREEN for Task 3**
+- [x] **Step 6: Run tests and verify GREEN for Task 3**
 
 Run:
 
@@ -938,7 +938,7 @@ Expected:
 TESTS PASSED
 ```
 
-- [ ] **Step 7: Run Task 3 review gates**
+- [x] **Step 7: Run Task 3 review gates**
 
 Stage 1 Spec Compliance Review:
 
@@ -954,7 +954,7 @@ Stage 2 Code Quality Review:
 - RewardScreen branching is limited to clearing pending state.
 - No separate event reward screen is added.
 
-- [ ] **Step 8: Commit Task 3**
+- [x] **Step 8: Commit Task 3**
 
 Run:
 
