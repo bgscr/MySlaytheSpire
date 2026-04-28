@@ -1242,7 +1242,7 @@ rtk proxy git commit -m "feat: add representative card polish cues"
 - Modify: `README.md`
 - Modify: `docs/superpowers/plans/2026-04-28-high-presentation-polish-hooks.md`
 
-- [ ] **Step 1: Run all local tests**
+- [x] **Step 1: Run all local tests**
 
 Run:
 
@@ -1256,7 +1256,7 @@ Expected:
 TESTS PASSED
 ```
 
-- [ ] **Step 2: Run Godot import check**
+- [x] **Step 2: Run Godot import check**
 
 Run:
 
@@ -1266,7 +1266,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: process exits 0.
 
-- [ ] **Step 3: Update README Phase 2 progress**
+- [x] **Step 3: Update README Phase 2 progress**
 
 Append under `## Phase 2 Progress`:
 
@@ -1284,11 +1284,11 @@ Update `## Next Plans` to:
 3. Release readiness: CI, artifact export, changelog, release draft, Steam adapter.
 ```
 
-- [ ] **Step 4: Mark completed plan steps**
+- [x] **Step 4: Mark completed plan steps**
 
 Update completed checkboxes in this plan from `[ ]` to `[x]` after verifying implementation and reviews.
 
-- [ ] **Step 5: Run final two-stage review**
+- [x] **Step 5: Run final two-stage review**
 
 Stage 1 Spec Compliance Review:
 
@@ -1313,7 +1313,7 @@ Stage 2 Code Quality Review:
 
 Classify findings as Critical, Important, or Minor. Fix Critical and Important issues before acceptance.
 
-- [ ] **Step 6: Commit acceptance docs**
+- [x] **Step 6: Commit acceptance docs**
 
 Run:
 
