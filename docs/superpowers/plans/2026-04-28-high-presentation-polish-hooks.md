@@ -481,7 +481,7 @@ rtk proxy git commit -m "feat: add card presentation cue resolver"
 - Modify: `tests/unit/test_combat_presentation.gd`
 - Modify: `tests/smoke/test_scene_flow.gd`
 
-- [ ] **Step 1: Add failing config and layer tests**
+- [x] **Step 1: Add failing config and layer tests**
 
 Append to `tests/unit/test_combat_presentation.gd`:
 
@@ -602,7 +602,7 @@ func test_debug_overlay_updates_polish_presentation_config(tree: SceneTree) -> b
 	return passed
 ```
 
-- [ ] **Step 2: Run tests to verify RED**
+- [x] **Step 2: Run tests to verify RED**
 
 Run:
 
@@ -612,7 +612,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: failures for missing config fields, missing placeholder playback nodes, and missing debug toggle nodes.
 
-- [ ] **Step 3: Implement config filtering**
+- [x] **Step 3: Implement config filtering**
 
 Modify `scripts/presentation/combat_presentation_config.gd`.
 
@@ -648,7 +648,7 @@ In `allows(event)`, add after the drag check:
 
 Remove or replace the older final cinematic-only check so `cinematic_slash` is filtered even when it has no tag.
 
-- [ ] **Step 4: Implement layer playback placeholders**
+- [x] **Step 4: Implement layer playback placeholders**
 
 Modify `scripts/presentation/combat_presentation_layer.gd`.
 
@@ -749,7 +749,7 @@ func _record_audio_cue(event: CombatPresentationEvent) -> void:
 	audio_cue_count += 1
 ```
 
-- [ ] **Step 5: Add DebugOverlay toggles**
+- [x] **Step 5: Add DebugOverlay toggles**
 
 Modify `scripts/ui/debug_overlay.gd`.
 
@@ -762,7 +762,7 @@ Add after `DebugPresentationCinematic`:
 	_add_presentation_toggle(box, "DebugPresentationAudioCue", "Audio Cue", "audio_cue_enabled")
 ```
 
-- [ ] **Step 6: Run tests to verify GREEN for Task 2**
+- [x] **Step 6: Run tests to verify GREEN for Task 2**
 
 Run:
 
@@ -772,7 +772,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: `TESTS PASSED`.
 
-- [ ] **Step 7: Run Task 2 review gates**
+- [x] **Step 7: Run Task 2 review gates**
 
 Stage 1 Spec Compliance Review:
 
@@ -789,7 +789,7 @@ Stage 2 Code Quality Review:
 - Camera impulse restores original layer position.
 - Audio cue state is inspectable without real audio dependencies.
 
-- [ ] **Step 8: Commit Task 2**
+- [x] **Step 8: Commit Task 2**
 
 Run:
 

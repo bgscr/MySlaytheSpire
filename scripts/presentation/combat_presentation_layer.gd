@@ -8,12 +8,24 @@ const FLOAT_DURATION := 0.55
 const FLASH_COLOR := Color(1.0, 0.92, 0.72)
 const HIGHLIGHT_COLOR := Color(1.0, 0.82, 0.35)
 const PULSE_COLOR := Color(0.58, 0.86, 0.82)
+const SLASH_DURATION := 0.32
+const PARTICLE_DURATION := 0.42
+const CAMERA_IMPULSE_DURATION := 0.18
+const SLOW_MOTION_DURATION := 0.35
+const SLASH_COLOR := Color(0.9, 0.96, 1.0, 0.9)
+const PARTICLE_COLOR := Color(0.46, 0.92, 0.66, 0.85)
 
 var queue: CombatPresentationQueue
 var targets := {}
 var status_targets := {}
 var _card_base_positions := {}
 var _float_index := 0
+var active_slow_motion_scale: float = 1.0
+var last_audio_cue_id: String = ""
+var audio_cue_count: int = 0
+var _slash_index := 0
+var _particle_burst_index := 0
+var _camera_base_position := Vector2.ZERO
 
 func bind_target(target_id: String, node: Control) -> void:
 	if target_id.is_empty() or node == null:
@@ -58,6 +70,16 @@ func play_event(event: CombatPresentationEvent) -> void:
 			_set_card_lift(event.target_id, true)
 		"card_unhovered", "card_drag_released":
 			_set_card_lift(event.target_id, false)
+		"cinematic_slash":
+			_show_cinematic_slash(event)
+		"particle_burst":
+			_show_particle_burst(event)
+		"camera_impulse":
+			_play_camera_impulse(event)
+		"slow_motion":
+			_record_slow_motion(event)
+		"audio_cue":
+			_record_audio_cue(event)
 
 func _show_float_text(event: CombatPresentationEvent, text: String, color: Color) -> void:
 	if not targets.has(event.target_id):
@@ -131,3 +153,59 @@ func _status_text(event: CombatPresentationEvent) -> String:
 	if event.status_id.is_empty():
 		return "%s%s Status" % [prefix, event.amount]
 	return "%s%s %s" % [prefix, event.amount, event.status_id]
+
+func _show_cinematic_slash(event: CombatPresentationEvent) -> void:
+	if not targets.has(event.target_id):
+		return
+	var slash := ColorRect.new()
+	slash.name = "CinematicSlash_%s" % _slash_index
+	_slash_index += 1
+	slash.color = SLASH_COLOR
+	slash.size = Vector2(74.0, 4.0)
+	slash.pivot_offset = slash.size * 0.5
+	slash.rotation = -0.55
+	slash.position = _target_position(event.target_id) + Vector2(-20.0, -18.0)
+	add_child(slash)
+	var tween := create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(slash, "position:x", slash.position.x + 28.0, SLASH_DURATION)
+	tween.tween_property(slash, "modulate:a", 0.0, SLASH_DURATION)
+	tween.finished.connect(slash.queue_free)
+
+func _show_particle_burst(event: CombatPresentationEvent) -> void:
+	if not targets.has(event.target_id):
+		return
+	var burst_index := _particle_burst_index
+	_particle_burst_index += 1
+	var origin := _target_position(event.target_id) + Vector2(12.0, -10.0)
+	for particle_index in range(5):
+		var particle := ColorRect.new()
+		particle.name = "ParticleBurst_%s_%s" % [burst_index, particle_index]
+		particle.color = PARTICLE_COLOR
+		particle.size = Vector2(5.0, 5.0)
+		particle.position = origin
+		add_child(particle)
+		var angle := TAU * float(particle_index) / 5.0
+		var offset := Vector2(cos(angle), sin(angle)) * 24.0
+		var tween := create_tween()
+		tween.set_parallel(true)
+		tween.tween_property(particle, "position", origin + offset, PARTICLE_DURATION)
+		tween.tween_property(particle, "modulate:a", 0.0, PARTICLE_DURATION)
+		tween.finished.connect(particle.queue_free)
+
+func _play_camera_impulse(event: CombatPresentationEvent) -> void:
+	_camera_base_position = position
+	var strength := 4.0 * maxf(0.25, event.intensity)
+	position = _camera_base_position + Vector2(strength, -strength * 0.5)
+	var tween := create_tween()
+	tween.tween_property(self, "position", _camera_base_position, CAMERA_IMPULSE_DURATION)
+
+func _record_slow_motion(event: CombatPresentationEvent) -> void:
+	active_slow_motion_scale = clampf(event.intensity, 0.1, 1.0)
+	var tween := create_tween()
+	tween.tween_interval(SLOW_MOTION_DURATION)
+	tween.tween_callback(func(): active_slow_motion_scale = 1.0)
+
+func _record_audio_cue(event: CombatPresentationEvent) -> void:
+	last_audio_cue_id = String(event.payload.get("cue_id", event.text))
+	audio_cue_count += 1

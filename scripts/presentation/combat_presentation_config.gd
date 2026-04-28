@@ -7,7 +7,11 @@ var floating_text_enabled := true
 var flash_enabled := true
 var target_highlight_enabled := true
 var status_pulse_enabled := true
-var cinematic_enabled := false
+var cinematic_enabled := true
+var particle_enabled := true
+var camera_impulse_enabled := true
+var slow_motion_enabled := true
+var audio_cue_enabled := true
 
 func allows(event) -> bool:
 	if event == null:
@@ -25,7 +29,15 @@ func allows(event) -> bool:
 		return false
 	if not drag_enabled and event_type.begins_with("card_drag_"):
 		return false
-	if not cinematic_enabled and event.tags.has("cinematic"):
+	if not cinematic_enabled and (event_type == "cinematic_slash" or event.tags.has("cinematic")):
+		return false
+	if not particle_enabled and event_type == "particle_burst":
+		return false
+	if not camera_impulse_enabled and event_type == "camera_impulse":
+		return false
+	if not slow_motion_enabled and event_type == "slow_motion":
+		return false
+	if not audio_cue_enabled and event_type == "audio_cue":
 		return false
 	return true
 

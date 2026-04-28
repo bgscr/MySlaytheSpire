@@ -236,6 +236,37 @@ func test_debug_overlay_updates_presentation_config(tree: SceneTree) -> bool:
 	_delete_test_save("user://test_debug_presentation_config_save.json")
 	return passed
 
+func test_debug_overlay_updates_polish_presentation_config(tree: SceneTree) -> bool:
+	var app = _create_app_with_save_service(tree, "user://test_debug_polish_config_save.json")
+	var debug_overlay: Node = app.get_node_or_null("DebugLayer/DebugOverlay")
+	var particle_toggle := _find_node_by_name(debug_overlay, "DebugPresentationParticles") as CheckBox
+	var camera_toggle := _find_node_by_name(debug_overlay, "DebugPresentationCameraImpulse") as CheckBox
+	var slow_toggle := _find_node_by_name(debug_overlay, "DebugPresentationSlowMotion") as CheckBox
+	var audio_toggle := _find_node_by_name(debug_overlay, "DebugPresentationAudioCue") as CheckBox
+	if particle_toggle != null:
+		particle_toggle.button_pressed = false
+		particle_toggle.toggled.emit(false)
+	if camera_toggle != null:
+		camera_toggle.button_pressed = false
+		camera_toggle.toggled.emit(false)
+	if slow_toggle != null:
+		slow_toggle.button_pressed = false
+		slow_toggle.toggled.emit(false)
+	if audio_toggle != null:
+		audio_toggle.button_pressed = false
+		audio_toggle.toggled.emit(false)
+	var passed: bool = particle_toggle != null \
+		and camera_toggle != null \
+		and slow_toggle != null \
+		and audio_toggle != null \
+		and app.game.presentation_config.particle_enabled == false \
+		and app.game.presentation_config.camera_impulse_enabled == false \
+		and app.game.presentation_config.slow_motion_enabled == false \
+		and app.game.presentation_config.audio_cue_enabled == false
+	app.free()
+	_delete_test_save("user://test_debug_polish_config_save.json")
+	return passed
+
 func test_combat_screen_drag_disabled_keeps_click_fallback(tree: SceneTree) -> bool:
 	var app = _create_app_with_save_service(tree, "user://test_drag_disabled_click_save.json")
 	var config: Variant = app.game.get("presentation_config")

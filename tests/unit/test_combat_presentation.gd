@@ -400,6 +400,86 @@ func test_cue_resolver_does_not_infer_slow_motion_or_audio() -> bool:
 	assert(passed)
 	return passed
 
+func test_config_filters_polish_event_categories() -> bool:
+	var config := CombatPresentationConfig.new()
+	config.cinematic_enabled = false
+	config.particle_enabled = false
+	config.camera_impulse_enabled = false
+	config.slow_motion_enabled = false
+	config.audio_cue_enabled = false
+
+	var queue := CombatPresentationQueue.new()
+	queue.config = config
+	queue.enqueue(CombatPresentationEvent.new("cinematic_slash"))
+	queue.enqueue(CombatPresentationEvent.new("particle_burst"))
+	queue.enqueue(CombatPresentationEvent.new("camera_impulse"))
+	queue.enqueue(CombatPresentationEvent.new("slow_motion"))
+	queue.enqueue(CombatPresentationEvent.new("audio_cue"))
+	queue.enqueue(CombatPresentationEvent.new("card_hovered"))
+
+	var drained := queue.drain()
+	var passed: bool = drained.size() == 1 and drained[0].event_type == "card_hovered"
+	assert(passed)
+	return passed
+
+func test_layer_plays_cinematic_slash_and_particle_placeholders(tree: SceneTree) -> bool:
+	var layer := CombatPresentationLayer.new()
+	tree.root.add_child(layer)
+	var target := Button.new()
+	target.position = Vector2(40, 50)
+	layer.bind_target("enemy:0", target)
+	layer.add_child(target)
+
+	var slash := CombatPresentationEvent.new("cinematic_slash")
+	slash.target_id = "enemy:0"
+	layer.play_event(slash)
+	var particle := CombatPresentationEvent.new("particle_burst")
+	particle.target_id = "enemy:0"
+	layer.play_event(particle)
+
+	var slash_node := layer.get_node_or_null("CinematicSlash_0")
+	var particle_node := layer.get_node_or_null("ParticleBurst_0_0")
+	var passed: bool = slash_node != null and particle_node != null
+	layer.free()
+	assert(passed)
+	return passed
+
+func test_layer_camera_impulse_restores_position(tree: SceneTree) -> bool:
+	var layer := CombatPresentationLayer.new()
+	tree.root.add_child(layer)
+	layer.position = Vector2(12, 18)
+	var impulse := CombatPresentationEvent.new("camera_impulse")
+	impulse.intensity = 1.0
+	layer.play_event(impulse)
+	var moved := layer.position != Vector2(12, 18)
+	_finish_processed_tweens(tree)
+	var restored := layer.position == Vector2(12, 18)
+	var passed: bool = moved and restored
+	layer.free()
+	assert(passed)
+	return passed
+
+func test_layer_records_slow_motion_and_audio_cue_without_global_timescale(tree: SceneTree) -> bool:
+	var layer := CombatPresentationLayer.new()
+	tree.root.add_child(layer)
+	var original_time_scale := Engine.time_scale
+
+	var slow := CombatPresentationEvent.new("slow_motion")
+	slow.intensity = 0.5
+	layer.play_event(slow)
+
+	var audio := CombatPresentationEvent.new("audio_cue")
+	audio.payload = {"cue_id": "slash.heavy"}
+	layer.play_event(audio)
+
+	var passed: bool = is_equal_approx(layer.active_slow_motion_scale, 0.5) \
+		and layer.last_audio_cue_id == "slash.heavy" \
+		and layer.audio_cue_count == 1 \
+		and is_equal_approx(Engine.time_scale, original_time_scale)
+	layer.free()
+	assert(passed)
+	return passed
+
 func _has_event(events: Array, event_type: String, target_id: String, amount: int, status_id: String) -> bool:
 	for event in events:
 		if event.event_type != event_type:
