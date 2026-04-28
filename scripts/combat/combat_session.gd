@@ -7,6 +7,7 @@ const CombatState := preload("res://scripts/combat/combat_state.gd")
 const CombatStatusRuntime := preload("res://scripts/combat/combat_status_runtime.gd")
 const CombatantState := preload("res://scripts/combat/combatant_state.gd")
 const ContentCatalog := preload("res://scripts/content/content_catalog.gd")
+const EffectDef := preload("res://scripts/data/effect_def.gd")
 const EncounterGenerator := preload("res://scripts/run/encounter_generator.gd")
 const EnemyDef := preload("res://scripts/data/enemy_def.gd")
 const GameEvent := preload("res://scripts/core/game_event.gd")
@@ -181,6 +182,12 @@ func _execute_enemy_intent(enemy_index: int) -> void:
 	if intent.is_empty():
 		_advance_enemy_intent(enemy_index)
 		return
+	if intent.begins_with("apply_status_"):
+		_execute_status_intent(enemy, enemy_index, intent.trim_prefix("apply_status_"), state.player)
+		return
+	if intent.begins_with("self_status_"):
+		_execute_status_intent(enemy, enemy_index, intent.trim_prefix("self_status_"), enemy)
+		return
 	var parts := intent.split("_")
 	if parts.size() != 2:
 		push_error("Unknown enemy intent format: %s" % intent)
@@ -195,6 +202,48 @@ func _execute_enemy_intent(enemy_index: int) -> void:
 		_:
 			push_error("Unknown enemy intent action: %s" % intent)
 	_advance_enemy_intent(enemy_index)
+
+func _execute_status_intent(
+	enemy: CombatantState,
+	enemy_index: int,
+	payload: String,
+	recipient: CombatantState
+) -> void:
+	var normalized_payload := payload
+	if recipient == state.player:
+		if not normalized_payload.ends_with("_player"):
+			push_error("Unknown enemy status intent target: %s" % payload)
+			_advance_enemy_intent(enemy_index)
+			return
+		normalized_payload = normalized_payload.trim_suffix("_player")
+	var parsed := _parse_status_intent_payload(normalized_payload)
+	if parsed.is_empty():
+		push_error("Unknown enemy status intent format: %s" % payload)
+		_advance_enemy_intent(enemy_index)
+		return
+	var effect := EffectDef.new()
+	effect.effect_type = "apply_status"
+	effect.status_id = String(parsed.get("status_id", ""))
+	effect.amount = int(parsed.get("amount", 0))
+	effect.target = "target"
+	engine.executor.execute_in_state(effect, state, enemy, recipient)
+	_advance_enemy_intent(enemy_index)
+
+func _parse_status_intent_payload(payload: String) -> Dictionary:
+	var amount_separator := payload.rfind("_")
+	if amount_separator <= 0 or amount_separator >= payload.length() - 1:
+		return {}
+	var status_id := payload.substr(0, amount_separator)
+	var amount_text := payload.substr(amount_separator + 1)
+	if status_id.is_empty() or not amount_text.is_valid_int():
+		return {}
+	var amount := int(amount_text)
+	if amount <= 0:
+		return {}
+	return {
+		"status_id": status_id,
+		"amount": amount,
+	}
 
 func _advance_enemy_intent(enemy_index: int) -> void:
 	if enemy_index >= 0 and enemy_index < enemy_intent_indices.size():

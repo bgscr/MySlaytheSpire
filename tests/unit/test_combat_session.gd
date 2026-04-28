@@ -535,6 +535,58 @@ func test_combat_won_relic_adds_gold_once() -> bool:
 	assert(passed)
 	return passed
 
+func test_enemy_intent_applies_status_to_player() -> bool:
+	var catalog := _catalog_with_single_enemy_intent("test_status_enemy", "normal", ["apply_status_poison_2_player"])
+	var run := _run_with_single_node("node_0", "combat", ["sword.guard"])
+	var session := CombatSession.new()
+	session.start(catalog, run)
+	session._execute_enemy_intent(0)
+	var passed: bool = session.state.player.statuses.get("poison", 0) == 2 \
+		and session.enemy_intent_indices[0] == 1
+	assert(passed)
+	return passed
+
+func test_enemy_intent_applies_broken_stance_to_player() -> bool:
+	var catalog := _catalog_with_single_enemy_intent("test_status_enemy", "normal", ["apply_status_broken_stance_1_player"])
+	var run := _run_with_single_node("node_0", "combat", ["sword.guard"])
+	var session := CombatSession.new()
+	session.start(catalog, run)
+	session._execute_enemy_intent(0)
+	var passed: bool = session.state.player.statuses.get("broken_stance", 0) == 1 \
+		and session.enemy_intent_indices[0] == 1
+	assert(passed)
+	return passed
+
+func test_enemy_self_status_intent_applies_status_to_acting_enemy() -> bool:
+	var catalog := _catalog_with_single_enemy_intent("test_focus_enemy", "normal", ["self_status_sword_focus_1"])
+	var run := _run_with_single_node("node_0", "combat", ["sword.guard"])
+	var session := CombatSession.new()
+	session.start(catalog, run)
+	session._execute_enemy_intent(0)
+	var passed: bool = session.state.enemies[0].statuses.get("sword_focus", 0) == 1 \
+		and session.enemy_intent_indices[0] == 1
+	assert(passed)
+	return passed
+
+func test_malformed_status_intent_advances_without_mutation() -> bool:
+	var catalog := _catalog_with_single_enemy_intent("test_bad_status_enemy", "normal", ["apply_status_poison_player"])
+	var run := _run_with_single_node("node_0", "combat", ["sword.guard"])
+	var session := CombatSession.new()
+	session.start(catalog, run)
+	session._execute_enemy_intent(0)
+	var passed: bool = session.state.player.statuses.is_empty() \
+		and session.state.enemies[0].statuses.is_empty() \
+		and session.enemy_intent_indices[0] == 1
+	assert(passed)
+	return passed
+
+func _catalog_with_single_enemy_intent(enemy_id: String, tier: String, intents: Array[String]) -> ContentCatalog:
+	var catalog := _default_catalog()
+	catalog.enemies_by_id.clear()
+	var enemy := _enemy(enemy_id, tier, 30, intents)
+	catalog.enemies_by_id[enemy.id] = enemy
+	return catalog
+
 func _default_catalog() -> ContentCatalog:
 	var catalog := ContentCatalog.new()
 	catalog.load_default()
