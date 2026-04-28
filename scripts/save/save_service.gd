@@ -47,6 +47,8 @@ func load_run() -> RunState:
 	run.current_node_id = payload["current_node_id"]
 	var shop_state: Dictionary = payload.get("current_shop_state", {})
 	run.current_shop_state = shop_state.duplicate(true)
+	var reward_state: Dictionary = payload.get("current_reward_state", {})
+	run.current_reward_state = reward_state.duplicate(true)
 	run.completed = payload["completed"]
 	run.failed = payload["failed"]
 	return run
@@ -70,6 +72,7 @@ func _is_valid_run_payload(payload: Dictionary) -> bool:
 		and _has_valid_map_nodes(payload, "map_nodes") \
 		and _has_string(payload, "current_node_id") \
 		and _has_optional_dictionary(payload, "current_shop_state") \
+		and _has_optional_reward_state(payload, "current_reward_state") \
 		and _has_bool(payload, "completed") \
 		and _has_bool(payload, "failed")
 
@@ -81,6 +84,43 @@ func _has_string(payload: Dictionary, key: String) -> bool:
 
 func _has_optional_dictionary(payload: Dictionary, key: String) -> bool:
 	return not payload.has(key) or payload[key] is Dictionary
+
+func _has_optional_reward_state(payload: Dictionary, key: String) -> bool:
+	if not payload.has(key):
+		return true
+	if not payload[key] is Dictionary:
+		return false
+	var reward_state: Dictionary = payload[key]
+	if reward_state.is_empty():
+		return true
+	return _has_string(reward_state, "source") \
+		and _has_string(reward_state, "node_id") \
+		and _has_string(reward_state, "event_id") \
+		and _has_string(reward_state, "option_id") \
+		and _has_valid_reward_list(reward_state, "rewards")
+
+func _has_valid_reward_list(payload: Dictionary, key: String) -> bool:
+	if not payload.has(key) or not payload[key] is Array:
+		return false
+	for reward in payload[key]:
+		if not reward is Dictionary:
+			return false
+		var reward_payload: Dictionary = reward
+		if not _has_string(reward_payload, "id") or not _has_string(reward_payload, "type"):
+			return false
+		match String(reward_payload["type"]):
+			"card_choice":
+				if not _has_string_array(reward_payload, "card_ids"):
+					return false
+			"gold":
+				if not _has_int(reward_payload, "amount"):
+					return false
+			"relic":
+				if not _has_string(reward_payload, "relic_id"):
+					return false
+			_:
+				return false
+	return true
 
 func _has_bool(payload: Dictionary, key: String) -> bool:
 	return payload.has(key) and payload[key] is bool

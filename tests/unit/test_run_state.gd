@@ -98,3 +98,28 @@ func test_to_dict_serializes_current_shop_state_without_aliasing() -> bool:
 		and (run_offers[0] as Dictionary).get("sold") == false
 	assert(passed)
 	return passed
+
+func test_to_dict_serializes_current_reward_state_without_aliasing() -> bool:
+	var run := RunState.new()
+	run.current_reward_state = {
+		"source": "event",
+		"node_id": "node_event",
+		"event_id": "forgotten_armory",
+		"option_id": "choose_blade",
+		"rewards": [
+			{
+				"id": "event-card:node_event:choose_blade",
+				"type": "card_choice",
+				"card_ids": ["sword.flash_cut", "sword.heart_piercer"],
+			},
+		],
+	}
+	var payload := run.to_dict()
+	var reward_state: Dictionary = payload.get("current_reward_state", {})
+	var rewards: Array = reward_state.get("rewards", [])
+	(rewards[0] as Dictionary)["card_ids"].append("sword.strike")
+	var passed: bool = reward_state.get("source") == "event" \
+		and reward_state.get("node_id") == "node_event" \
+		and run.current_reward_state["rewards"][0]["card_ids"].size() == 2
+	assert(passed)
+	return passed

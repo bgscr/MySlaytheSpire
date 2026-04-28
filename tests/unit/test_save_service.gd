@@ -289,6 +289,140 @@ func test_load_run_returns_null_for_invalid_shop_state_type() -> bool:
 	service.delete_save()
 	return passed
 
+func test_save_round_trip_preserves_current_reward_state() -> bool:
+	var save_path := "user://test_reward_state_save.json"
+	_delete_test_save(save_path)
+	var run := RunState.new()
+	run.current_reward_state = {
+		"source": "event",
+		"node_id": "node_event",
+		"event_id": "forgotten_armory",
+		"option_id": "choose_blade",
+		"rewards": [
+			{
+				"id": "event-card:node_event:choose_blade",
+				"type": "card_choice",
+				"card_ids": ["sword.flash_cut", "sword.heart_piercer"],
+			},
+			{
+				"id": "event-relic:node_event:choose_blade",
+				"type": "relic",
+				"relic_id": "paper_lantern_charm",
+				"tier": "common",
+			},
+			{
+				"id": "event-gold:node_event:choose_blade",
+				"type": "gold",
+				"amount": 12,
+			},
+		],
+	}
+	var service := SaveService.new(save_path)
+	service.save_run(run)
+
+	var loaded := service.load_run()
+	var reward_state: Dictionary = loaded.current_reward_state if loaded != null else {}
+	var rewards: Array = reward_state.get("rewards", [])
+	var passed: bool = loaded != null \
+		and reward_state.get("source") == "event" \
+		and reward_state.get("node_id") == "node_event" \
+		and rewards.size() == 3 \
+		and (rewards[0] as Dictionary).get("type") == "card_choice" \
+		and ((rewards[0] as Dictionary).get("card_ids", []) as Array).size() == 2 \
+		and (rewards[1] as Dictionary).get("relic_id") == "paper_lantern_charm" \
+		and (rewards[2] as Dictionary).get("type") == "gold" \
+		and (rewards[2] as Dictionary).get("amount") == 12
+	assert(passed)
+	service.delete_save()
+	return passed
+
+func test_load_run_accepts_legacy_save_without_reward_state() -> bool:
+	var save_path := "user://test_legacy_without_reward_state.json"
+	_delete_test_save(save_path)
+	if not _write_test_save(save_path, JSON.stringify({
+		"version": 1,
+		"seed_value": 42,
+		"character_id": "sword",
+		"current_hp": 55,
+		"max_hp": 72,
+		"gold": 99,
+		"deck_ids": [],
+		"relic_ids": [],
+		"map_nodes": [],
+		"current_node_id": "",
+		"completed": false,
+		"failed": false,
+	})):
+		assert(false)
+		return false
+
+	var service := SaveService.new(save_path)
+	var loaded := service.load_run()
+	var passed: bool = loaded != null and loaded.current_reward_state.is_empty()
+	assert(passed)
+	service.delete_save()
+	return passed
+
+func test_load_run_returns_null_for_invalid_reward_state_type() -> bool:
+	var save_path := "user://test_invalid_reward_state_type.json"
+	_delete_test_save(save_path)
+	if not _write_test_save(save_path, JSON.stringify({
+		"version": 1,
+		"seed_value": 42,
+		"character_id": "sword",
+		"current_hp": 55,
+		"max_hp": 72,
+		"gold": 99,
+		"deck_ids": [],
+		"relic_ids": [],
+		"map_nodes": [],
+		"current_node_id": "",
+		"completed": false,
+		"failed": false,
+		"current_reward_state": "bad",
+	})):
+		assert(false)
+		return false
+
+	var service := SaveService.new(save_path)
+	var passed: bool = service.load_run() == null
+	assert(passed)
+	service.delete_save()
+	return passed
+
+func test_load_run_returns_null_for_invalid_reward_state_rewards_type() -> bool:
+	var save_path := "user://test_invalid_reward_state_rewards_type.json"
+	_delete_test_save(save_path)
+	if not _write_test_save(save_path, JSON.stringify({
+		"version": 1,
+		"seed_value": 42,
+		"character_id": "sword",
+		"current_hp": 55,
+		"max_hp": 72,
+		"gold": 99,
+		"deck_ids": [],
+		"relic_ids": [],
+		"map_nodes": [],
+		"current_node_id": "",
+		"completed": false,
+		"failed": false,
+		"current_reward_state": {
+			"source": "event",
+			"node_id": "node_event",
+			"event_id": "forgotten_armory",
+			"option_id": "choose_blade",
+			"rewards": "bad",
+		},
+	})):
+		assert(false)
+		return false
+
+	var service := SaveService.new(save_path)
+	var passed: bool = service.load_run() == null
+	assert(passed)
+	service.delete_save()
+	return passed
+
 func _delete_test_save(path: String) -> void:
 	if FileAccess.file_exists(path):
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(path))

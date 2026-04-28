@@ -12,6 +12,7 @@ var relic_ids: Array[String] = []
 var map_nodes: Array = []
 var current_node_id := ""
 var current_shop_state: Dictionary = {}
+var current_reward_state: Dictionary = {}
 var completed := false
 var failed := false
 
@@ -37,6 +38,7 @@ func to_dict() -> Dictionary:
 		"map_nodes": node_payload,
 		"current_node_id": current_node_id,
 		"current_shop_state": current_shop_state.duplicate(true),
+		"current_reward_state": current_reward_state.duplicate(true),
 		"completed": completed,
 		"failed": failed,
 	}
