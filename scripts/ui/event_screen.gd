@@ -83,7 +83,10 @@ func _on_option_pressed(index: int) -> void:
 	var app = _app()
 	if app == null or app.game.current_run == null:
 		return
-	if not runner.apply_option(app.game.current_run, current_event.options[index]):
+	if not runner.apply_event_option(catalog, app.game.current_run, current_event, current_event.options[index]):
+		return
+	if not app.game.current_run.current_reward_state.is_empty():
+		_save_and_route_to_reward(app)
 		return
 	_advance_and_route(app)
 
@@ -107,6 +110,13 @@ func _advance_and_route(app) -> void:
 		app.game.router.go_to(SceneRouterScript.SUMMARY)
 	else:
 		app.game.router.go_to(SceneRouterScript.MAP)
+
+func _save_and_route_to_reward(app) -> void:
+	advance_requested = true
+	_set_option_buttons_disabled()
+	if app.game.save_service:
+		app.game.save_service.save_run(app.game.current_run)
+	app.game.router.go_to(SceneRouterScript.REWARD)
 
 func _set_option_buttons_disabled() -> void:
 	for child in option_container.get_children():
