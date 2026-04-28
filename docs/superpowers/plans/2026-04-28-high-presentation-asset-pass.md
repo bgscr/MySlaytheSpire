@@ -705,7 +705,7 @@ rtk proxy git commit -m "feat: play presentation texture assets"
 - Modify: `tests/unit/test_combat_presentation.gd`
 - Modify: `docs/superpowers/plans/2026-04-28-high-presentation-asset-pass.md`
 
-- [ ] **Step 1: Update failing camera, slow-motion, and audio tests**
+- [x] **Step 1: Update failing camera, slow-motion, and audio tests**
 
 Modify `tests/unit/test_combat_presentation.gd`.
 
@@ -780,7 +780,7 @@ func test_layer_records_unmapped_audio_cue_without_stream(tree: SceneTree) -> bo
 	return passed
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 Run:
 
@@ -790,7 +790,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: FAIL because camera duration/direction, slow-motion wash, and audio streams are not catalog-driven yet.
 
-- [ ] **Step 3: Add slow-motion state fields**
+- [x] **Step 3: Add slow-motion state fields**
 
 Modify `scripts/presentation/combat_presentation_layer.gd`.
 
@@ -801,7 +801,7 @@ var _slow_motion_wash_index := 0
 var _audio_player: AudioStreamPlayer
 ```
 
-- [ ] **Step 4: Replace camera impulse with catalog-driven parameters**
+- [x] **Step 4: Replace camera impulse with catalog-driven parameters**
 
 Replace `_play_camera_impulse()` in `scripts/presentation/combat_presentation_layer.gd`:
 
@@ -821,7 +821,7 @@ func _play_camera_impulse(event: CombatPresentationEvent) -> void:
 	)
 ```
 
-- [ ] **Step 5: Replace slow-motion playback with catalog-driven local state and wash texture**
+- [x] **Step 5: Replace slow-motion playback with catalog-driven local state and wash texture**
 
 Replace `_record_slow_motion()` in `scripts/presentation/combat_presentation_layer.gd`:
 
@@ -867,7 +867,7 @@ func _slow_motion_wash_position(wash_size: Vector2) -> Vector2:
 	return viewport_size * 0.5 - global_position - wash_size * 0.5
 ```
 
-- [ ] **Step 6: Replace audio cue recording with real AudioStreamPlayer playback**
+- [x] **Step 6: Replace audio cue recording with real AudioStreamPlayer playback**
 
 Replace `_record_audio_cue()` in `scripts/presentation/combat_presentation_layer.gd`:
 
@@ -900,7 +900,7 @@ func _presentation_audio_player() -> AudioStreamPlayer:
 	return _audio_player
 ```
 
-- [ ] **Step 7: Run tests to verify they pass**
+- [x] **Step 7: Run tests to verify they pass**
 
 Run:
 
@@ -914,7 +914,7 @@ Expected:
 TESTS PASSED
 ```
 
-- [ ] **Step 8: Run two-stage review for Task 3**
+- [x] **Step 8: Run two-stage review for Task 3**
 
 Stage 1 Spec Compliance Review:
 

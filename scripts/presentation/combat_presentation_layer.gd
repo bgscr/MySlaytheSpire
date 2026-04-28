@@ -26,6 +26,8 @@ var audio_cue_count: int = 0
 var _slash_index := 0
 var _particle_burst_index := 0
 var _camera_base_position := Vector2.ZERO
+var _slow_motion_wash_index := 0
+var _audio_player: AudioStreamPlayer
 
 func bind_target(target_id: String, node: Control) -> void:
 	if target_id.is_empty() or node == null:
@@ -225,19 +227,75 @@ func _show_particle_burst(event: CombatPresentationEvent) -> void:
 		tween.tween_property(particle, "modulate:a", 0.0, duration)
 		tween.finished.connect(particle.queue_free)
 
-func _play_camera_impulse(event: CombatPresentationEvent) -> void:
-	_camera_base_position = position
-	var strength := 4.0 * maxf(0.25, event.intensity)
-	position = _camera_base_position + Vector2(strength, -strength * 0.5)
+func _show_slow_motion_wash(asset: Dictionary, duration: float) -> void:
+	var texture := _load_texture(asset)
+	if texture == null:
+		return
+	var wash := TextureRect.new()
+	wash.name = "SlowMotionWash_%s" % _slow_motion_wash_index
+	_slow_motion_wash_index += 1
+	wash.texture = texture
+	wash.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	wash.stretch_mode = TextureRect.STRETCH_SCALE
+	wash.size = asset.get("size", Vector2(120.0, 120.0))
+	wash.pivot_offset = wash.size * 0.5
+	wash.modulate = asset.get("color", Color(0.72, 0.92, 1.0, 0.2))
+	wash.position = _slow_motion_wash_position(wash.size)
+	add_child(wash)
 	var tween := create_tween()
-	tween.tween_property(self, "position", _camera_base_position, CAMERA_IMPULSE_DURATION)
+	tween.set_parallel(true)
+	tween.tween_property(wash, "scale", Vector2(1.18, 1.18), duration)
+	tween.tween_property(wash, "modulate:a", 0.0, duration)
+	tween.finished.connect(wash.queue_free)
+
+func _slow_motion_wash_position(wash_size: Vector2) -> Vector2:
+	var viewport_size := get_viewport_rect().size
+	if viewport_size == Vector2.ZERO:
+		return Vector2.ZERO
+	return viewport_size * 0.5 - global_position - wash_size * 0.5
+
+func _play_camera_impulse(event: CombatPresentationEvent) -> void:
+	var asset := asset_catalog.resolve(event)
+	_camera_base_position = position
+	var strength := float(asset.get("strength", 4.0)) * maxf(0.25, event.intensity)
+	var direction := asset.get("direction", Vector2(1.0, -0.5)) as Vector2
+	position = _camera_base_position + direction * strength
+	var tween := create_tween()
+	tween.tween_property(
+		self,
+		"position",
+		_camera_base_position,
+		float(asset.get("duration", CAMERA_IMPULSE_DURATION))
+	)
 
 func _record_slow_motion(event: CombatPresentationEvent) -> void:
-	active_slow_motion_scale = clampf(event.intensity, 0.1, 1.0)
+	var asset := asset_catalog.resolve(event)
+	active_slow_motion_scale = clampf(float(asset.get("scale", event.intensity)), 0.1, 1.0)
+	var duration := float(asset.get("duration", SLOW_MOTION_DURATION))
+	_show_slow_motion_wash(asset, duration)
 	var tween := create_tween()
-	tween.tween_interval(SLOW_MOTION_DURATION)
+	tween.tween_interval(duration)
 	tween.tween_callback(func(): active_slow_motion_scale = 1.0)
 
 func _record_audio_cue(event: CombatPresentationEvent) -> void:
 	last_audio_cue_id = String(event.payload.get("cue_id", event.text))
 	audio_cue_count += 1
+	var asset := asset_catalog.resolve(event)
+	var path := String(asset.get("audio_path", ""))
+	if path.is_empty():
+		return
+	var stream := load(path) as AudioStream
+	if stream == null:
+		return
+	var player := _presentation_audio_player()
+	player.stream = stream
+	player.volume_db = float(asset.get("volume_db", -8.0))
+	player.play()
+
+func _presentation_audio_player() -> AudioStreamPlayer:
+	if _audio_player != null and is_instance_valid(_audio_player):
+		return _audio_player
+	_audio_player = AudioStreamPlayer.new()
+	_audio_player.name = "PresentationAudioPlayer"
+	add_child(_audio_player)
+	return _audio_player

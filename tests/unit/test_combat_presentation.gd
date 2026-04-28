@@ -470,14 +470,14 @@ func test_layer_uses_event_fallback_assets_without_cue_id(tree: SceneTree) -> bo
 	assert(passed)
 	return passed
 
-func test_layer_camera_impulse_restores_position(tree: SceneTree) -> bool:
+func test_layer_camera_impulse_uses_catalog_and_restores_position(tree: SceneTree) -> bool:
 	var layer := CombatPresentationLayer.new()
 	tree.root.add_child(layer)
 	layer.position = Vector2(12, 18)
 	var impulse := CombatPresentationEvent.new("camera_impulse")
-	impulse.intensity = 1.0
+	impulse.intensity = 1.5
 	layer.play_event(impulse)
-	var moved := layer.position != Vector2(12, 18)
+	var moved := layer.position == Vector2(18.0, 15.0)
 	_finish_processed_tweens(tree)
 	var restored := layer.position == Vector2(12, 18)
 	var passed: bool = moved and restored
@@ -485,21 +485,28 @@ func test_layer_camera_impulse_restores_position(tree: SceneTree) -> bool:
 	assert(passed)
 	return passed
 
-func test_layer_records_slow_motion_and_audio_cue_without_global_timescale(tree: SceneTree) -> bool:
+func test_layer_plays_slow_motion_wash_and_audio_stream_without_global_timescale(tree: SceneTree) -> bool:
 	var layer := CombatPresentationLayer.new()
 	tree.root.add_child(layer)
 	var original_time_scale := Engine.time_scale
 
 	var slow := CombatPresentationEvent.new("slow_motion")
 	slow.intensity = 0.5
+	slow.payload = {"cue_id": "sword.heaven_cutting_arc"}
 	layer.play_event(slow)
 
 	var audio := CombatPresentationEvent.new("audio_cue")
-	audio.payload = {"cue_id": "slash.heavy"}
+	audio.payload = {"cue_id": "sword.heaven_cutting_arc"}
 	layer.play_event(audio)
 
-	var passed: bool = is_equal_approx(layer.active_slow_motion_scale, 0.5) \
-		and layer.last_audio_cue_id == "slash.heavy" \
+	var wash := layer.get_node_or_null("SlowMotionWash_0") as TextureRect
+	var player := layer.get_node_or_null("PresentationAudioPlayer") as AudioStreamPlayer
+	var passed: bool = is_equal_approx(layer.active_slow_motion_scale, 0.45) \
+		and wash != null \
+		and wash.texture != null \
+		and player != null \
+		and player.stream != null \
+		and layer.last_audio_cue_id == "sword.heaven_cutting_arc" \
 		and layer.audio_cue_count == 1 \
 		and is_equal_approx(Engine.time_scale, original_time_scale)
 	layer.free()
@@ -566,6 +573,22 @@ func test_asset_catalog_registered_resources_load() -> bool:
 			return false
 	assert(true)
 	return true
+
+func test_layer_records_unmapped_audio_cue_without_stream(tree: SceneTree) -> bool:
+	var layer := CombatPresentationLayer.new()
+	tree.root.add_child(layer)
+
+	var audio := CombatPresentationEvent.new("audio_cue")
+	audio.payload = {"cue_id": "unmapped.cue"}
+	layer.play_event(audio)
+
+	var player := layer.get_node_or_null("PresentationAudioPlayer") as AudioStreamPlayer
+	var passed: bool = layer.last_audio_cue_id == "unmapped.cue" \
+		and layer.audio_cue_count == 1 \
+		and player == null
+	layer.free()
+	assert(passed)
+	return passed
 
 func _has_event(events: Array, event_type: String, target_id: String, amount: int, status_id: String) -> bool:
 	for event in events:
