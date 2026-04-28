@@ -1079,7 +1079,7 @@ rtk proxy git commit -m "feat: route combat feedback through presentation queue"
 - Modify: `scripts/ui/combat_screen.gd`
 - Modify: `tests/smoke/test_scene_flow.gd`
 
-- [ ] **Step 1: Add failing drag smoke tests**
+- [x] **Step 1: Add failing drag smoke tests**
 
 Append to `tests/smoke/test_scene_flow.gd` after the click feedback test:
 
@@ -1169,7 +1169,7 @@ func test_combat_screen_drag_self_card_upward_plays_to_player(tree: SceneTree) -
 	return passed
 ```
 
-- [ ] **Step 2: Run tests to verify red**
+- [x] **Step 2: Run tests to verify red**
 
 Run:
 
@@ -1179,7 +1179,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: failures for missing `try_play_dragged_card`.
 
-- [ ] **Step 3: Add target mode and drag helpers**
+- [x] **Step 3: Add target mode and drag helpers**
 
 Add fields to `scripts/ui/combat_screen.gd`:
 
@@ -1241,7 +1241,7 @@ func _card_target_mode(hand_index: int) -> String:
 	return "player"
 ```
 
-- [ ] **Step 4: Wire hover and GUI input to card buttons**
+- [x] **Step 4: Wire hover and GUI input to card buttons**
 
 In `_refresh_hand()`, after `button.pressed.connect(...)`, add:
 
@@ -1272,7 +1272,7 @@ func _on_card_gui_input(event: InputEvent, hand_index: int, button: Button) -> v
 		_update_card_drag(event.global_position)
 ```
 
-- [ ] **Step 5: Implement drag start, move, release, and highlight**
+- [x] **Step 5: Implement drag start, move, release, and highlight**
 
 Add:
 
@@ -1334,7 +1334,7 @@ func _clear_current_highlight() -> void:
 	current_highlight_target = ""
 ```
 
-- [ ] **Step 6: Run full tests to verify green**
+- [x] **Step 6: Run full tests to verify green**
 
 Run:
 
@@ -1344,7 +1344,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: `TESTS PASSED`.
 
-- [ ] **Step 7: Review and commit Task 5**
+- [x] **Step 7: Review and commit Task 5**
 
 Stage 1 Spec Compliance Review:
 

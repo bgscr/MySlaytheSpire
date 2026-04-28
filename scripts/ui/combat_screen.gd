@@ -16,6 +16,9 @@ var presentation_delta := CombatPresentationDelta.new()
 var presentation_layer: CombatPresentationLayer
 var enemy_buttons: Array[Button] = []
 var card_buttons: Array[Button] = []
+var dragging_hand_index := -1
+var drag_start_position := Vector2.ZERO
+var current_highlight_target := ""
 var status_label: Label
 var pile_label: Label
 var error_label: Label
@@ -122,6 +125,7 @@ func _refresh() -> void:
 		or session.phase == CombatSession.PHASE_CONFIRMING_PLAYER_TARGET
 	end_turn_button.disabled = session.phase != CombatSession.PHASE_PLAYER_TURN
 	if presentation_layer != null:
+		_clear_current_highlight()
 		presentation_layer.clear_bindings()
 		presentation_layer.bind_target("player", status_label)
 		presentation_layer.bind_status_target("player", status_label)
@@ -186,6 +190,9 @@ func _refresh_hand() -> void:
 			button.text = "%s [%s] (%s)" % [card.id, card.card_type, card.cost]
 		button.disabled = session.phase != CombatSession.PHASE_PLAYER_TURN
 		button.pressed.connect(func(): _on_card_pressed(hand_index))
+		button.mouse_entered.connect(func(): _on_card_hovered(hand_index))
+		button.mouse_exited.connect(func(): _on_card_unhovered(hand_index))
+		button.gui_input.connect(func(event): _on_card_gui_input(event, hand_index, button))
 		hand_container.add_child(button)
 		card_buttons.append(button)
 		if presentation_layer != null:
@@ -199,6 +206,135 @@ func _clear_children(node: Node) -> void:
 func _on_card_pressed(hand_index: int) -> void:
 	session.select_card(hand_index)
 	_refresh()
+
+func try_play_dragged_card(hand_index: int, target_kind: String, enemy_index: int = -1) -> bool:
+	if presentation_config != null and not presentation_config.drag_enabled:
+		return false
+	if session == null or session.phase != CombatSession.PHASE_PLAYER_TURN:
+		return false
+	if hand_index < 0 or hand_index >= session.state.hand.size():
+		return false
+	var card_id := session.state.hand[hand_index]
+	var mode := _card_target_mode(hand_index)
+	match target_kind:
+		"enemy":
+			if mode != "enemy":
+				return false
+			if enemy_index < 0 or enemy_index >= session.state.enemies.size():
+				return false
+			var enemy_action := func():
+				if not session.select_card(hand_index):
+					return false
+				return session.confirm_enemy_target(enemy_index)
+			return _run_with_feedback(enemy_action, card_id)
+		"player":
+			if mode == "enemy":
+				return false
+			var player_action := func():
+				if not session.select_card(hand_index):
+					return false
+				return session.confirm_player_target()
+			return _run_with_feedback(player_action, card_id)
+		"upward":
+			if mode == "enemy":
+				return false
+			var upward_action := func():
+				if not session.select_card(hand_index):
+					return false
+				return session.confirm_player_target()
+			return _run_with_feedback(upward_action, card_id)
+	return false
+
+func _card_target_mode(hand_index: int) -> String:
+	if session == null or hand_index < 0 or hand_index >= session.state.hand.size():
+		return "invalid"
+	var card = session.catalog.get_card(session.state.hand[hand_index])
+	if card == null:
+		return "invalid"
+	for effect in card.effects:
+		var target := String(effect.target).to_lower()
+		if target == "enemy" or target == "target":
+			return "enemy"
+	return "player"
+
+func _on_card_hovered(hand_index: int) -> void:
+	_enqueue_card_event("card_hovered", hand_index)
+
+func _on_card_unhovered(hand_index: int) -> void:
+	_enqueue_card_event("card_unhovered", hand_index)
+
+func _on_card_gui_input(event: InputEvent, hand_index: int, button: Button) -> void:
+	if presentation_config != null and not presentation_config.drag_enabled:
+		return
+	if event is InputEventMouseButton:
+		var mouse_button := event as InputEventMouseButton
+		if mouse_button.button_index != MOUSE_BUTTON_LEFT:
+			return
+		if mouse_button.pressed:
+			_start_card_drag(hand_index, button, mouse_button.global_position)
+		elif dragging_hand_index == hand_index:
+			_release_card_drag(mouse_button.global_position)
+	elif event is InputEventMouseMotion and dragging_hand_index == hand_index:
+		var mouse_motion := event as InputEventMouseMotion
+		_update_card_drag(mouse_motion.global_position)
+
+func _start_card_drag(hand_index: int, _button: Button, global_position: Vector2) -> void:
+	if session == null or session.phase != CombatSession.PHASE_PLAYER_TURN:
+		return
+	if hand_index < 0 or hand_index >= session.state.hand.size():
+		return
+	dragging_hand_index = hand_index
+	drag_start_position = global_position
+	_enqueue_card_event("card_drag_started", hand_index)
+
+func _update_card_drag(global_position: Vector2) -> void:
+	if dragging_hand_index < 0:
+		return
+	var target_id := _target_id_at_position(global_position)
+	if target_id != current_highlight_target:
+		_clear_current_highlight()
+		current_highlight_target = target_id
+		if not current_highlight_target.is_empty():
+			var event := CombatPresentationEvent.new("target_highlighted")
+			event.target_id = current_highlight_target
+			presentation_queue.enqueue(event)
+
+func _release_card_drag(global_position: Vector2) -> void:
+	if dragging_hand_index < 0:
+		return
+	var hand_index := dragging_hand_index
+	dragging_hand_index = -1
+	_clear_current_highlight()
+	_enqueue_card_event("card_drag_released", hand_index)
+	var target_id := _target_id_at_position(global_position)
+	var played := false
+	if target_id.begins_with("enemy:"):
+		played = try_play_dragged_card(hand_index, "enemy", int(target_id.trim_prefix("enemy:")))
+	elif target_id == "player":
+		played = try_play_dragged_card(hand_index, "player", -1)
+	elif drag_start_position.y - global_position.y >= 80.0:
+		played = try_play_dragged_card(hand_index, "upward", -1)
+	if played:
+		_refresh()
+
+func _target_id_at_position(global_position: Vector2) -> String:
+	for enemy_index in range(enemy_buttons.size()):
+		var button := enemy_buttons[enemy_index]
+		if button != null and button.get_global_rect().has_point(global_position):
+			return "enemy:%s" % enemy_index
+	if player_target_button != null and player_target_button.get_global_rect().has_point(global_position):
+		return "player"
+	if status_label != null and status_label.get_global_rect().has_point(global_position):
+		return "player"
+	return ""
+
+func _clear_current_highlight() -> void:
+	if current_highlight_target.is_empty():
+		return
+	var event := CombatPresentationEvent.new("target_unhighlighted")
+	event.target_id = current_highlight_target
+	presentation_queue.enqueue(event)
+	current_highlight_target = ""
 
 func _on_enemy_pressed(enemy_index: int) -> void:
 	var card_id := _pending_card_id()

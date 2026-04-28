@@ -135,6 +135,94 @@ func test_combat_screen_click_play_enqueues_delta_feedback(tree: SceneTree) -> b
 	_delete_test_save("user://test_combat_presentation_click_save.json")
 	return passed
 
+func test_combat_screen_drag_enemy_target_card_to_enemy(tree: SceneTree) -> bool:
+	var app = _create_app_with_save_service(tree, "user://test_combat_drag_enemy_save.json")
+	var run := RunStateScript.new()
+	run.seed_value = 12345
+	run.character_id = "sword"
+	run.max_hp = 72
+	run.current_hp = 72
+	run.deck_ids = ["sword.strike"]
+	run.current_node_id = "node_0"
+	var node := preload("res://scripts/run/map_node_state.gd").new("node_0", 0, "combat")
+	node.unlocked = true
+	run.map_nodes = [node]
+	app.game.current_run = run
+
+	var combat = app.game.router.go_to(SceneRouterScript.COMBAT)
+	combat.session.state.hand.clear()
+	combat.session.state.hand.append("sword.strike")
+	combat.session.state.draw_pile.clear()
+	combat._refresh()
+	var enemy_hp_before: int = combat.session.state.enemies[0].current_hp
+	var played: bool = combat.try_play_dragged_card(0, "enemy", 0)
+	combat.presentation_layer.process_queue()
+	var float_text := _find_node_by_name(combat.presentation_layer, "FloatText_0") as Label
+	var passed: bool = played \
+		and combat.session.state.enemies[0].current_hp < enemy_hp_before \
+		and combat.session.state.hand.is_empty() \
+		and float_text != null
+	app.free()
+	_delete_test_save("user://test_combat_drag_enemy_save.json")
+	return passed
+
+func test_combat_screen_invalid_drag_release_does_not_mutate_state(tree: SceneTree) -> bool:
+	var app = _create_app_with_save_service(tree, "user://test_combat_invalid_drag_save.json")
+	var run := RunStateScript.new()
+	run.seed_value = 12345
+	run.character_id = "sword"
+	run.max_hp = 72
+	run.current_hp = 72
+	run.deck_ids = ["sword.strike"]
+	run.current_node_id = "node_0"
+	var node := preload("res://scripts/run/map_node_state.gd").new("node_0", 0, "combat")
+	node.unlocked = true
+	run.map_nodes = [node]
+	app.game.current_run = run
+
+	var combat = app.game.router.go_to(SceneRouterScript.COMBAT)
+	combat.session.state.hand.clear()
+	combat.session.state.hand.append("sword.strike")
+	combat.session.state.draw_pile.clear()
+	combat._refresh()
+	var enemy_hp_before: int = combat.session.state.enemies[0].current_hp
+	var played: bool = combat.try_play_dragged_card(0, "player", -1)
+	var passed: bool = not played \
+		and combat.session.state.enemies[0].current_hp == enemy_hp_before \
+		and combat.session.state.hand.size() == 1 \
+		and combat.session.state.hand[0] == "sword.strike"
+	app.free()
+	_delete_test_save("user://test_combat_invalid_drag_save.json")
+	return passed
+
+func test_combat_screen_drag_self_card_upward_plays_to_player(tree: SceneTree) -> bool:
+	var app = _create_app_with_save_service(tree, "user://test_combat_drag_self_save.json")
+	var run := RunStateScript.new()
+	run.seed_value = 12345
+	run.character_id = "sword"
+	run.max_hp = 72
+	run.current_hp = 72
+	run.deck_ids = ["sword.guard"]
+	run.current_node_id = "node_0"
+	var node := preload("res://scripts/run/map_node_state.gd").new("node_0", 0, "combat")
+	node.unlocked = true
+	run.map_nodes = [node]
+	app.game.current_run = run
+
+	var combat = app.game.router.go_to(SceneRouterScript.COMBAT)
+	combat.session.state.hand.clear()
+	combat.session.state.hand.append("sword.guard")
+	combat.session.state.draw_pile.clear()
+	combat._refresh()
+	var block_before: int = combat.session.state.player.block
+	var played: bool = combat.try_play_dragged_card(0, "upward", -1)
+	var passed: bool = played \
+		and combat.session.state.player.block > block_before \
+		and combat.session.state.hand.is_empty()
+	app.free()
+	_delete_test_save("user://test_combat_drag_self_save.json")
+	return passed
+
 func test_reward_screen_claims_card_skips_gold_and_saves_on_continue(tree: SceneTree) -> bool:
 	var save_path := "user://test_reward_screen_claim_skip_save.json"
 	var app = _create_app_with_save_service(tree, save_path)
