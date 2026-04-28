@@ -1,8 +1,11 @@
 extends RefCounted
 
 const CombatPresentationConfig := preload("res://scripts/presentation/combat_presentation_config.gd")
+const CombatPresentationDelta := preload("res://scripts/presentation/combat_presentation_delta.gd")
 const CombatPresentationEvent := preload("res://scripts/presentation/combat_presentation_event.gd")
 const CombatPresentationQueue := preload("res://scripts/presentation/combat_presentation_queue.gd")
+const CombatState := preload("res://scripts/combat/combat_state.gd")
+const CombatantState := preload("res://scripts/combat/combatant_state.gd")
 
 func test_event_copy_does_not_alias_payload_or_tags() -> bool:
 	var event := CombatPresentationEvent.new("damage_number")
@@ -103,3 +106,77 @@ func test_queue_drops_all_events_when_disabled() -> bool:
 	var passed: bool = queue.size() == 0
 	assert(passed)
 	return passed
+
+func test_delta_emits_damage_flash_block_status_and_pulse_events() -> bool:
+	var state := CombatState.new()
+	state.player = CombatantState.new("sword", 72)
+	state.player.current_hp = 50
+	state.player.block = 1
+	state.player.statuses = {"poison": 1}
+	state.enemies = [CombatantState.new("enemy_a", 30)]
+	state.enemies[0].current_hp = 30
+	state.enemies[0].block = 0
+	state.enemies[0].statuses = {}
+
+	var delta := CombatPresentationDelta.new()
+	var before := delta.capture_state(state)
+
+	state.player.current_hp = 44
+	state.player.block = 5
+	state.player.statuses["poison"] = 3
+	state.enemies[0].current_hp = 21
+	state.enemies[0].statuses["broken_stance"] = 2
+
+	var events := delta.events_between(before, state)
+	var passed: bool = _has_event(events, "damage_number", "player", 6, "") \
+		and _has_event(events, "combatant_flash", "player", 0, "") \
+		and _has_event(events, "block_number", "player", 4, "") \
+		and _has_event(events, "status_number", "player", 2, "poison") \
+		and _has_event(events, "status_badge_pulse", "player", 0, "poison") \
+		and _has_event(events, "damage_number", "enemy:0", 9, "") \
+		and _has_event(events, "combatant_flash", "enemy:0", 0, "") \
+		and _has_event(events, "status_number", "enemy:0", 2, "broken_stance") \
+		and _has_event(events, "status_badge_pulse", "enemy:0", 0, "broken_stance")
+	assert(passed)
+	return passed
+
+func test_delta_ignores_unchanged_hp_block_and_status_values() -> bool:
+	var state := CombatState.new()
+	state.player = CombatantState.new("sword", 72)
+	state.player.block = 2
+	state.player.statuses = {"poison": 1}
+	var delta := CombatPresentationDelta.new()
+	var before := delta.capture_state(state)
+	var events := delta.events_between(before, state)
+	var passed: bool = events.is_empty()
+	assert(passed)
+	return passed
+
+func test_initial_state_events_report_starting_block_and_statuses() -> bool:
+	var state := CombatState.new()
+	state.player = CombatantState.new("sword", 72)
+	state.player.block = 4
+	state.player.statuses = {"sword_focus": 2}
+	state.enemies = [CombatantState.new("enemy_a", 30)]
+	state.enemies[0].block = 3
+	var delta := CombatPresentationDelta.new()
+	var events := delta.events_from_initial_state(state)
+	var passed: bool = _has_event(events, "block_number", "player", 4, "") \
+		and _has_event(events, "status_number", "player", 2, "sword_focus") \
+		and _has_event(events, "status_badge_pulse", "player", 0, "sword_focus") \
+		and _has_event(events, "block_number", "enemy:0", 3, "")
+	assert(passed)
+	return passed
+
+func _has_event(events: Array, event_type: String, target_id: String, amount: int, status_id: String) -> bool:
+	for event in events:
+		if event.event_type != event_type:
+			continue
+		if event.target_id != target_id:
+			continue
+		if amount != 0 and event.amount != amount:
+			continue
+		if not status_id.is_empty() and event.status_id != status_id:
+			continue
+		return true
+	return false

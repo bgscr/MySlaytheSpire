@@ -330,7 +330,7 @@ rtk proxy git commit -m "feat: add combat presentation event queue"
 - Create: `scripts/presentation/combat_presentation_delta.gd`
 - Modify: `tests/unit/test_combat_presentation.gd`
 
-- [ ] **Step 1: Add failing delta tests**
+- [x] **Step 1: Add failing delta tests**
 
 Append to `tests/unit/test_combat_presentation.gd`:
 
@@ -414,7 +414,7 @@ func _has_event(events: Array, event_type: String, target_id: String, amount: in
 	return false
 ```
 
-- [ ] **Step 2: Run tests to verify red**
+- [x] **Step 2: Run tests to verify red**
 
 Run:
 
@@ -424,7 +424,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: failures for missing `combat_presentation_delta.gd`.
 
-- [ ] **Step 3: Implement delta helper**
+- [x] **Step 3: Implement delta helper**
 
 Create `scripts/presentation/combat_presentation_delta.gd`:
 
@@ -562,7 +562,7 @@ func _enemy_target_id(enemy_index: int) -> String:
 	return "enemy:%s" % enemy_index
 ```
 
-- [ ] **Step 4: Run full tests to verify green**
+- [x] **Step 4: Run full tests to verify green**
 
 Run:
 
@@ -572,7 +572,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: `TESTS PASSED`.
 
-- [ ] **Step 5: Review and commit Task 2**
+- [x] **Step 5: Review and commit Task 2**
 
 Stage 1 Spec Compliance Review:
 
