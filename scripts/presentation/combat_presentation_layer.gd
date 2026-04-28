@@ -26,7 +26,9 @@ var audio_cue_count: int = 0
 var _slash_index := 0
 var _particle_burst_index := 0
 var _camera_base_position := Vector2.ZERO
+var _camera_impulse_tween: Tween
 var _slow_motion_wash_index := 0
+var _slow_motion_tween: Tween
 var _audio_player: AudioStreamPlayer
 
 func bind_target(target_id: String, node: Control) -> void:
@@ -256,16 +258,24 @@ func _slow_motion_wash_position(wash_size: Vector2) -> Vector2:
 
 func _play_camera_impulse(event: CombatPresentationEvent) -> void:
 	var asset := asset_catalog.resolve(event)
-	_camera_base_position = position
+	if _camera_impulse_tween == null:
+		_camera_base_position = position
+	else:
+		_camera_impulse_tween.kill()
 	var strength := float(asset.get("strength", 4.0)) * maxf(0.25, event.intensity)
 	var direction := asset.get("direction", Vector2(1.0, -0.5)) as Vector2
 	position = _camera_base_position + direction * strength
 	var tween := create_tween()
+	_camera_impulse_tween = tween
 	tween.tween_property(
 		self,
 		"position",
 		_camera_base_position,
 		float(asset.get("duration", CAMERA_IMPULSE_DURATION))
+	)
+	tween.finished.connect(func():
+		if _camera_impulse_tween == tween:
+			_camera_impulse_tween = null
 	)
 
 func _record_slow_motion(event: CombatPresentationEvent) -> void:
@@ -273,9 +283,17 @@ func _record_slow_motion(event: CombatPresentationEvent) -> void:
 	active_slow_motion_scale = clampf(float(asset.get("scale", event.intensity)), 0.1, 1.0)
 	var duration := float(asset.get("duration", SLOW_MOTION_DURATION))
 	_show_slow_motion_wash(asset, duration)
+	if _slow_motion_tween != null:
+		_slow_motion_tween.kill()
 	var tween := create_tween()
+	_slow_motion_tween = tween
 	tween.tween_interval(duration)
-	tween.tween_callback(func(): active_slow_motion_scale = 1.0)
+	tween.tween_callback(func():
+		if _slow_motion_tween != tween:
+			return
+		active_slow_motion_scale = 1.0
+		_slow_motion_tween = null
+	)
 
 func _record_audio_cue(event: CombatPresentationEvent) -> void:
 	last_audio_cue_id = String(event.payload.get("cue_id", event.text))

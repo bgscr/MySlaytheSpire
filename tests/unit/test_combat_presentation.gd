@@ -485,6 +485,24 @@ func test_layer_camera_impulse_uses_catalog_and_restores_position(tree: SceneTre
 	assert(passed)
 	return passed
 
+func test_layer_overlapping_camera_impulses_restore_original_position(tree: SceneTree) -> bool:
+	var layer := CombatPresentationLayer.new()
+	tree.root.add_child(layer)
+	layer.position = Vector2(12, 18)
+	var first := CombatPresentationEvent.new("camera_impulse")
+	first.intensity = 1.5
+	layer.play_event(first)
+	var second := CombatPresentationEvent.new("camera_impulse")
+	second.intensity = 1.5
+	layer.play_event(second)
+	var did_not_stack_from_displaced_position := layer.position == Vector2(18.0, 15.0)
+	_finish_processed_tweens(tree)
+	var restored := layer.position == Vector2(12, 18)
+	var passed: bool = did_not_stack_from_displaced_position and restored
+	layer.free()
+	assert(passed)
+	return passed
+
 func test_layer_plays_slow_motion_wash_and_audio_stream_without_global_timescale(tree: SceneTree) -> bool:
 	var layer := CombatPresentationLayer.new()
 	tree.root.add_child(layer)
@@ -509,6 +527,25 @@ func test_layer_plays_slow_motion_wash_and_audio_stream_without_global_timescale
 		and layer.last_audio_cue_id == "sword.heaven_cutting_arc" \
 		and layer.audio_cue_count == 1 \
 		and is_equal_approx(Engine.time_scale, original_time_scale)
+	layer.free()
+	assert(passed)
+	return passed
+
+func test_layer_overlapping_slow_motion_ignores_stale_reset(tree: SceneTree) -> bool:
+	var layer := CombatPresentationLayer.new()
+	tree.root.add_child(layer)
+	var first := CombatPresentationEvent.new("slow_motion")
+	layer.play_event(first)
+	var second := CombatPresentationEvent.new("slow_motion")
+	second.payload = {"cue_id": "sword.heaven_cutting_arc"}
+	layer.play_event(second)
+	var latest_scale_applied := is_equal_approx(layer.active_slow_motion_scale, 0.45)
+	for tween in tree.get_processed_tweens():
+		tween.custom_step(0.36)
+	var stale_reset_ignored := is_equal_approx(layer.active_slow_motion_scale, 0.45)
+	_finish_processed_tweens(tree)
+	var restored := is_equal_approx(layer.active_slow_motion_scale, 1.0)
+	var passed: bool = latest_scale_applied and stale_reset_ignored and restored
 	layer.free()
 	assert(passed)
 	return passed
