@@ -368,6 +368,35 @@ func test_combat_screen_cinematic_disabled_filters_slash_but_plays_card(tree: Sc
 	_delete_test_save("user://test_combat_cinematic_disabled_save.json")
 	return passed
 
+func test_explicit_slow_motion_and_audio_cues_are_recorded(tree: SceneTree) -> bool:
+	var app = _create_app_with_save_service(tree, "user://test_explicit_slow_audio_save.json")
+	var run := RunStateScript.new()
+	run.seed_value = 12345
+	run.character_id = "sword"
+	run.max_hp = 72
+	run.current_hp = 72
+	run.deck_ids = ["sword.heaven_cutting_arc"]
+	run.current_node_id = "node_0"
+	var node := preload("res://scripts/run/map_node_state.gd").new("node_0", 0, "combat")
+	node.unlocked = true
+	run.map_nodes = [node]
+	app.game.current_run = run
+
+	var combat = app.game.router.go_to(SceneRouterScript.COMBAT)
+	combat.session.state.energy = 3
+	combat.session.state.hand.clear()
+	combat.session.state.hand.append("sword.heaven_cutting_arc")
+	combat.session.state.draw_pile.clear()
+	combat._refresh()
+	var played: bool = combat.try_play_dragged_card(0, "enemy", 0)
+	combat.presentation_layer.process_queue()
+	var passed: bool = played \
+		and combat.presentation_layer.active_slow_motion_scale < 1.0 \
+		and combat.presentation_layer.last_audio_cue_id == "sword.heaven_cutting_arc"
+	app.free()
+	_delete_test_save("user://test_explicit_slow_audio_save.json")
+	return passed
+
 func test_reward_screen_claims_card_skips_gold_and_saves_on_continue(tree: SceneTree) -> bool:
 	var save_path := "user://test_reward_screen_claim_skip_save.json"
 	var app = _create_app_with_save_service(tree, save_path)

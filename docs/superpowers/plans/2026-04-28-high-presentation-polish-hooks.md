@@ -1009,7 +1009,7 @@ rtk proxy git commit -m "feat: trigger polish cues from card play"
 - Modify: `tests/unit/test_content_catalog.gd`
 - Modify: `tests/smoke/test_scene_flow.gd`
 
-- [ ] **Step 1: Add failing catalog and smoke tests for explicit cues**
+- [x] **Step 1: Add failing catalog and smoke tests for explicit cues**
 
 Append to `tests/unit/test_content_catalog.gd`:
 
@@ -1077,7 +1077,7 @@ func test_explicit_slow_motion_and_audio_cues_are_recorded(tree: SceneTree) -> b
 	return passed
 ```
 
-- [ ] **Step 2: Run tests to verify RED**
+- [x] **Step 2: Run tests to verify RED**
 
 Run:
 
@@ -1087,14 +1087,14 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: failures because representative resources do not yet define explicit cues.
 
-- [ ] **Step 3: Add explicit cue resources to sword strike**
+- [x] **Step 3: Add explicit cue resources to sword strike**
 
 Modify `resources/cards/sword/strike_sword.tres`.
 
 Change header to load the cue script:
 
 ```ini
-[gd_resource type="Resource" script_class="CardDef" load_steps=4 format=3]
+[gd_resource type="Resource" script_class="CardDef" load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/data/card_def.gd" id="1_card"]
 [ext_resource type="Script" path="res://scripts/data/effect_def.gd" id="2_effect"]
@@ -1119,14 +1119,14 @@ Add in `[resource]` after `effects`:
 presentation_cues = Array[ExtResource("3_cue")]([SubResource("Resource_slash_cue")])
 ```
 
-- [ ] **Step 4: Add explicit cue resources to toxic pill**
+- [x] **Step 4: Add explicit cue resources to toxic pill**
 
 Modify `resources/cards/alchemy/toxic_pill.tres`.
 
 Change header and ext resources:
 
 ```ini
-[gd_resource type="Resource" script_class="CardDef" load_steps=4 format=3]
+[gd_resource type="Resource" script_class="CardDef" load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/data/card_def.gd" id="1_card"]
 [ext_resource type="Script" path="res://scripts/data/effect_def.gd" id="2_effect"]
@@ -1150,7 +1150,7 @@ Add in `[resource]` after `effects`:
 presentation_cues = Array[ExtResource("3_cue")]([SubResource("Resource_particle_cue")])
 ```
 
-- [ ] **Step 5: Add explicit slow-motion and audio cues to Heaven Cutting Arc**
+- [x] **Step 5: Add explicit slow-motion and audio cues to Heaven Cutting Arc**
 
 Modify `resources/cards/sword/heaven_cutting_arc.tres`.
 
@@ -1188,7 +1188,7 @@ Add in `[resource]` after `effects`:
 presentation_cues = Array[ExtResource("3_cue")]([SubResource("Resource_slow_cue"), SubResource("Resource_audio_cue")])
 ```
 
-- [ ] **Step 6: Run tests to verify GREEN for Task 4**
+- [x] **Step 6: Run tests to verify GREEN for Task 4**
 
 Run:
 
@@ -1198,7 +1198,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: `TESTS PASSED`.
 
-- [ ] **Step 7: Run Godot import check**
+- [x] **Step 7: Run Godot import check**
 
 Run:
 
@@ -1208,7 +1208,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: process exits 0.
 
-- [ ] **Step 8: Run Task 4 review gates**
+- [x] **Step 8: Run Task 4 review gates**
 
 Stage 1 Spec Compliance Review:
 
@@ -1226,7 +1226,7 @@ Stage 2 Code Quality Review:
 - Cue tags are only used where filtering needs them.
 - Explicit cue resources do not encode gameplay effects.
 
-- [ ] **Step 9: Commit Task 4**
+- [x] **Step 9: Commit Task 4**
 
 Run:
 

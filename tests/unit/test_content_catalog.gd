@@ -300,6 +300,25 @@ func test_loaded_character_card_pool_ids_exclude_unlisted_same_character_cards()
 	assert(passed)
 	return passed
 
+func test_representative_cards_load_explicit_presentation_cues() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.load_default()
+	var strike := catalog.get_card("sword.strike")
+	var toxic := catalog.get_card("alchemy.toxic_pill")
+	var heaven := catalog.get_card("sword.heaven_cutting_arc")
+	var passed: bool = strike != null \
+		and toxic != null \
+		and heaven != null \
+		and strike.presentation_cues.size() == 1 \
+		and strike.presentation_cues[0].event_type == "cinematic_slash" \
+		and toxic.presentation_cues.size() == 1 \
+		and toxic.presentation_cues[0].event_type == "particle_burst" \
+		and heaven.presentation_cues.size() == 2 \
+		and _has_card_cue(heaven, "slow_motion") \
+		and _has_card_cue(heaven, "audio_cue")
+	assert(passed)
+	return passed
+
 func _ids(resources: Array) -> Array[String]:
 	var ids: Array[String] = []
 	for resource in resources:
@@ -311,6 +330,12 @@ func _contains_all(values: Array[String], expected: Array[String]) -> bool:
 		if not values.has(value):
 			return false
 	return true
+
+func _has_card_cue(card: CardDef, event_type: String) -> bool:
+	for cue in card.presentation_cues:
+		if cue != null and cue.event_type == event_type:
+			return true
+	return false
 
 func _any_contains(values: Array[String], text: String) -> bool:
 	for value in values:
