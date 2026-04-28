@@ -647,7 +647,7 @@ rtk proxy git commit -m "feat: apply combat status hooks"
 - Modify: `resources/characters/alchemy_cultivator.tres`
 - Modify: `localization/zh_CN.po`
 
-- [ ] **Step 1: Create card resources from the Resource Data table**
+- [x] **Step 1: Create card resources from the Resource Data table**
 
 Use the existing Wave 1 `.tres` format. For a two-effect attack such as `sword.wind_splitting_step`, the file shape is:
 
@@ -706,7 +706,7 @@ pool_tags = Array[String](["wave_2"])
 reward_weight = 100
 ```
 
-- [ ] **Step 2: Create enemy resources**
+- [x] **Step 2: Create enemy resources**
 
 Use this shape for `resources/enemies/scarlet_mantis_acolyte.tres` and the Resource Data table for all three enemies:
 
@@ -728,7 +728,7 @@ gold_reward_min = 9
 gold_reward_max = 15
 ```
 
-- [ ] **Step 3: Create relic resources**
+- [x] **Step 3: Create relic resources**
 
 Use this shape for `resources/relics/mist_vein_bracelet.tres` and the Resource Data table for all six relics:
 
@@ -758,7 +758,7 @@ reward_weight = 100
 
 For `starforged_meridian`, use `load_steps=4` and include both `gain_energy 1 player` and `apply_status 2 sword_focus player`.
 
-- [ ] **Step 4: Create event resources**
+- [x] **Step 4: Create event resources**
 
 Use this shape for `resources/events/sealed_sword_tomb.tres` and the Resource Data table for all three events:
 
@@ -799,7 +799,7 @@ event_weight = 100
 options = Array[ExtResource("2_option")]([SubResource("Resource_draw_blade"), SubResource("Resource_meditate"), SubResource("Resource_leave")])
 ```
 
-- [ ] **Step 5: Register resources in `ContentCatalog`**
+- [x] **Step 5: Register resources in `ContentCatalog`**
 
 Append new card paths after the existing sword and alchemy groups in `DEFAULT_CARD_PATHS`:
 
@@ -843,7 +843,7 @@ Append new event paths:
 	"res://resources/events/spirit_beast_tracks.tres",
 ```
 
-- [ ] **Step 6: Append card ids to character pools**
+- [x] **Step 6: Append card ids to character pools**
 
 In `resources/characters/sword_cultivator.tres`, append:
 
@@ -859,7 +859,7 @@ In `resources/characters/alchemy_cultivator.tres`, append:
 
 Do not change `starting_deck_ids`.
 
-- [ ] **Step 7: Add localization keys**
+- [x] **Step 7: Add localization keys**
 
 Append these keys to `localization/zh_CN.po` with non-empty `msgstr` values:
 
@@ -1060,7 +1060,7 @@ msgid "event.spirit_beast_tracks.option.leave.desc"
 msgstr "不改变当前状态。"
 ```
 
-- [ ] **Step 8: Run import check for new resources**
+- [x] **Step 8: Run import check for new resources**
 
 Run:
 
@@ -1081,7 +1081,7 @@ Do not commit until Task 4 tests prove the expanded catalog is correct.
 - Modify: `tests/unit/test_encounter_generator.gd`
 - Modify: `tests/unit/test_event_resolver.gd`
 
-- [ ] **Step 1: Update catalog card pool counts and expected ids**
+- [x] **Step 1: Update catalog card pool counts and expected ids**
 
 In `tests/unit/test_content_catalog.gd`, change `test_default_catalog_loads_dual_starter_card_pool_counts()` to expect:
 
@@ -1111,7 +1111,7 @@ Extend `expected_alchemy` with:
 		"alchemy.golden_core_detox",
 ```
 
-- [ ] **Step 2: Replace Wave 1 count test with Wave 2 count test**
+- [x] **Step 2: Replace Wave 1 count test with Wave 2 count test**
 
 Rename `test_wave_1_catalog_loads_expanded_enemy_and_relic_counts()` to `test_wave_2_catalog_loads_expanded_enemy_relic_and_event_counts()` and use:
 
@@ -1158,7 +1158,7 @@ func _ids(resources: Array) -> Array[String]:
 	return ids
 ```
 
-- [ ] **Step 3: Update event pool test**
+- [x] **Step 3: Update event pool test**
 
 In `test_default_catalog_loads_event_pool()`, expect 6 events and all ids:
 
@@ -1174,7 +1174,7 @@ In `test_default_catalog_loads_event_pool()`, expect 6 events and all ids:
 		and catalog.get_event("spirit_beast_tracks") != null
 ```
 
-- [ ] **Step 4: Update reward generator tests**
+- [x] **Step 4: Update reward generator tests**
 
 In `tests/unit/test_reward_generator.gd`, rename `test_relic_rewards_draw_from_each_populated_wave_1_tier()` to `test_relic_rewards_draw_from_each_populated_wave_2_tier()` and assert all three tiers return populated ids:
 
@@ -1194,7 +1194,7 @@ func test_relic_rewards_draw_from_each_populated_wave_2_tier() -> bool:
 
 Keep existing card reward tests; they should now draw from 20-card character pools.
 
-- [ ] **Step 5: Update encounter generator tier composition test**
+- [x] **Step 5: Update encounter generator tier composition test**
 
 In `tests/unit/test_encounter_generator.gd`, rename `test_default_catalog_has_wave_1_enemy_tier_composition()` to `test_default_catalog_has_wave_2_enemy_tier_composition()` and use:
 
@@ -1214,7 +1214,7 @@ func test_default_catalog_has_wave_2_enemy_tier_composition() -> bool:
 	return passed
 ```
 
-- [ ] **Step 6: Update event resolver expected ids**
+- [x] **Step 6: Update event resolver expected ids**
 
 In `tests/unit/test_event_resolver.gd`, replace the three-id list in `test_event_resolver_returns_deterministic_event_for_same_run_context()` with:
 
@@ -1229,7 +1229,7 @@ In `tests/unit/test_event_resolver.gd`, replace the three-id list in `test_event
 		].has(first.id)
 ```
 
-- [ ] **Step 7: Run tests and import check**
+- [x] **Step 7: Run tests and import check**
 
 Run:
 
@@ -1246,7 +1246,7 @@ TESTS PASSED
 
 and Godot import check exits 0.
 
-- [ ] **Step 8: Commit Tasks 3 and 4**
+- [x] **Step 8: Commit Tasks 3 and 4**
 
 Run:
 
@@ -1262,7 +1262,7 @@ rtk proxy git commit -m "feat: expand wave 2 content pools"
 - Modify: `README.md`
 - Modify: `docs/superpowers/plans/2026-04-27-content-expansion-wave-2.md`
 
-- [ ] **Step 1: Update README Phase 2 progress**
+- [x] **Step 1: Update README Phase 2 progress**
 
 Add this bullet under `## Phase 2 Progress`:
 
@@ -1276,7 +1276,7 @@ Update `## Next Plans` item 1 to avoid duplicating completed Wave 2 scope:
 1. Content expansion wave C: larger event and relic pools, event rewards, enemy status intents, and richer status presentation.
 ```
 
-- [ ] **Step 2: Run full verification**
+- [x] **Step 2: Run full verification**
 
 Run:
 
@@ -1294,7 +1294,7 @@ TESTS PASSED
 
 Godot import check exits 0. `git status --short` shows only README and this plan before the final docs commit.
 
-- [ ] **Step 3: Run Stage 1 Spec Compliance Review**
+- [x] **Step 3: Run Stage 1 Spec Compliance Review**
 
 Check every item from the spec:
 
@@ -1316,7 +1316,7 @@ Check every item from the spec:
 
 If any item fails, fix it before continuing to Stage 2.
 
-- [ ] **Step 4: Run Stage 2 Code Quality Review**
+- [x] **Step 4: Run Stage 2 Code Quality Review**
 
 Classify any findings as Critical, Important, or Minor:
 
@@ -1332,7 +1332,7 @@ Classify any findings as Critical, Important, or Minor:
 
 Fix Critical and Important issues before acceptance. Minor issues can be fixed immediately if low risk, or recorded in the final summary.
 
-- [ ] **Step 5: Commit acceptance docs**
+- [x] **Step 5: Commit acceptance docs**
 
 Run:
 

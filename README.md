@@ -44,10 +44,11 @@ $env:GODOT4="C:\Tools\Godot\Godot_v4.6.2-stable_win64_console.exe"
 - Reward claim loop: complete; combat rewards now generate card, gold, and relic choices that can be claimed or skipped before map advancement
 - Event node foundation: complete; map event nodes now resolve data-driven events with selectable HP/gold options, save, and advance run progress
 - Shop node foundation: complete; map shop nodes now offer transaction-saved cards, relics, healing, removal, and one paid refresh before map advancement
+- Content expansion wave 2: complete; poison, sword focus, and broken stance now have combat behavior, sword and alchemy each have 20 cards, default content has 12 enemies, 12 relics, and 6 events.
 
 ## Next Plans
 
-1. Content expansion: two characters, card pools, relics, enemies, bosses, event pool.
+1. Content expansion wave C: larger event and relic pools, event rewards, enemy status intents, and richer status presentation.
 2. High-presentation pass: generated assets, animation, particles, camera, audio.
 3. Developer tools: card browser, enemy sandbox, event tester, reward inspector, save inspector.
 4. Release readiness: CI, artifact export, changelog, release draft, Steam adapter.
