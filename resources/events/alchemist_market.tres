@@ -1,0 +1,34 @@
+[gd_resource type="Resource" script_class="EventDef" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/event_def.gd" id="1_event"]
+[ext_resource type="Script" path="res://scripts/data/event_option_def.gd" id="2_option"]
+
+[sub_resource type="Resource" id="Resource_buy_brew"]
+script = ExtResource("2_option")
+id = "buy_brew"
+label_key = "event.alchemist_market.option.buy_brew"
+description_key = "event.alchemist_market.option.buy_brew.desc"
+min_gold = 20
+hp_delta = 10
+gold_delta = -20
+
+[sub_resource type="Resource" id="Resource_sample"]
+script = ExtResource("2_option")
+id = "sample"
+label_key = "event.alchemist_market.option.sample"
+description_key = "event.alchemist_market.option.sample.desc"
+hp_delta = 4
+
+[sub_resource type="Resource" id="Resource_leave"]
+script = ExtResource("2_option")
+id = "leave"
+label_key = "event.alchemist_market.option.leave"
+description_key = "event.alchemist_market.option.leave.desc"
+
+[resource]
+script = ExtResource("1_event")
+id = "alchemist_market"
+title_key = "event.alchemist_market.title"
+body_key = "event.alchemist_market.body"
+event_weight = 100
+options = Array[ExtResource("2_option")]([SubResource("Resource_buy_brew"), SubResource("Resource_sample"), SubResource("Resource_leave")])

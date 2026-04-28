@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="CardDef" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/card_def.gd" id="1_card"]
+[ext_resource type="Script" path="res://scripts/data/effect_def.gd" id="2_effect"]
+
+[sub_resource type="Resource" id="Resource_damage"]
+script = ExtResource("2_effect")
+effect_type = "damage"
+amount = 6
+target = "enemy"
+
+[sub_resource type="Resource" id="Resource_broken_stance"]
+script = ExtResource("2_effect")
+effect_type = "apply_status"
+amount = 1
+status_id = "broken_stance"
+target = "enemy"
+
+[resource]
+script = ExtResource("1_card")
+id = "sword.wind_splitting_step"
+name_key = "card.sword.wind_splitting_step.name"
+description_key = "card.sword.wind_splitting_step.desc"
+cost = 1
+card_type = "attack"
+rarity = "common"
+effects = Array[ExtResource("2_effect")]([SubResource("Resource_damage"), SubResource("Resource_broken_stance")])
+character_id = "sword"
+pool_tags = Array[String](["wave_2"])
+reward_weight = 100

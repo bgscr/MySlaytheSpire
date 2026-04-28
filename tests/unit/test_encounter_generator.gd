@@ -195,18 +195,21 @@ func test_insufficient_support_pool_does_not_duplicate_enemy_ids() -> bool:
 	assert(passed)
 	return passed
 
-func test_default_catalog_has_wave_1_enemy_tier_composition() -> bool:
+func test_default_catalog_has_wave_2_enemy_tier_composition() -> bool:
 	var catalog := _catalog()
 	var normal_ids := _ids(catalog.get_enemies_by_tier("normal"))
 	var elite_ids := _ids(catalog.get_enemies_by_tier("elite"))
 	var boss_ids := _ids(catalog.get_enemies_by_tier("boss"))
-	var passed: bool = normal_ids.size() == 4 \
-		and elite_ids.size() == 3 \
-		and boss_ids.size() == 2 \
+	var passed: bool = normal_ids.size() == 5 \
+		and elite_ids.size() == 4 \
+		and boss_ids.size() == 3 \
 		and normal_ids.has("ash_lantern_cultist") \
 		and normal_ids.has("stone_grove_guardian") \
+		and normal_ids.has("scarlet_mantis_acolyte") \
 		and elite_ids.has("venom_cauldron_hermit") \
-		and boss_ids.has("boss_storm_dragon")
+		and elite_ids.has("jade_armor_sentinel") \
+		and boss_ids.has("boss_storm_dragon") \
+		and boss_ids.has("boss_void_tiger")
 	assert(passed)
 	return passed
 
@@ -271,8 +274,8 @@ func _all_unique(values: Array[String]) -> bool:
 		seen[value] = true
 	return true
 
-func _ids(resources: Array[EnemyDef]) -> Array[String]:
+func _ids(resources: Array) -> Array[String]:
 	var ids: Array[String] = []
-	for resource: EnemyDef in resources:
+	for resource in resources:
 		ids.append(resource.id)
 	return ids

@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="CardDef" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/card_def.gd" id="1_card"]
+[ext_resource type="Script" path="res://scripts/data/effect_def.gd" id="2_effect"]
+
+[sub_resource type="Resource" id="Resource_energy"]
+script = ExtResource("2_effect")
+effect_type = "gain_energy"
+amount = 1
+target = "player"
+
+[sub_resource type="Resource" id="Resource_draw"]
+script = ExtResource("2_effect")
+effect_type = "draw_card"
+amount = 2
+target = "player"
+
+[sub_resource type="Resource" id="Resource_heal"]
+script = ExtResource("2_effect")
+effect_type = "heal"
+amount = 3
+target = "player"
+
+[resource]
+script = ExtResource("1_card")
+id = "alchemy.golden_core_detox"
+name_key = "card.alchemy.golden_core_detox.name"
+description_key = "card.alchemy.golden_core_detox.desc"
+cost = 1
+card_type = "skill"
+rarity = "rare"
+effects = Array[ExtResource("2_effect")]([SubResource("Resource_energy"), SubResource("Resource_draw"), SubResource("Resource_heal")])
+character_id = "alchemy"
+pool_tags = Array[String](["wave_2"])
+reward_weight = 100

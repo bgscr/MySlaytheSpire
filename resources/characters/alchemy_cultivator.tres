@@ -8,4 +8,4 @@ id = "alchemy"
 name_key = "character.alchemy.name"
 max_hp = 68
 starting_deck_ids = Array[String](["alchemy.toxic_pill", "alchemy.toxic_pill", "alchemy.toxic_pill"])
-card_pool_ids = Array[String](["alchemy.toxic_pill", "alchemy.healing_draught", "alchemy.poison_mist", "alchemy.inner_fire_pill", "alchemy.cauldron_burst", "alchemy.calming_powder", "alchemy.toxin_needle", "alchemy.spirit_distill", "alchemy.cinnabar_seal", "alchemy.bitter_extract", "alchemy.smoke_screen", "alchemy.quick_simmer", "alchemy.white_jade_paste", "alchemy.mercury_bloom", "alchemy.ninefold_refine"])
+card_pool_ids = Array[String](["alchemy.toxic_pill", "alchemy.healing_draught", "alchemy.poison_mist", "alchemy.inner_fire_pill", "alchemy.cauldron_burst", "alchemy.calming_powder", "alchemy.toxin_needle", "alchemy.spirit_distill", "alchemy.cinnabar_seal", "alchemy.bitter_extract", "alchemy.smoke_screen", "alchemy.quick_simmer", "alchemy.white_jade_paste", "alchemy.mercury_bloom", "alchemy.ninefold_refine", "alchemy.coiling_miasma", "alchemy.needle_rain", "alchemy.purifying_brew", "alchemy.cauldron_overflow", "alchemy.golden_core_detox"])

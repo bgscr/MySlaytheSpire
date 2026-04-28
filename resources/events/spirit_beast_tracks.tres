@@ -1,0 +1,34 @@
+[gd_resource type="Resource" script_class="EventDef" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/event_def.gd" id="1_event"]
+[ext_resource type="Script" path="res://scripts/data/event_option_def.gd" id="2_option"]
+
+[sub_resource type="Resource" id="Resource_chase"]
+script = ExtResource("2_option")
+id = "chase"
+label_key = "event.spirit_beast_tracks.option.chase"
+description_key = "event.spirit_beast_tracks.option.chase.desc"
+min_hp = 6
+hp_delta = -5
+gold_delta = 28
+
+[sub_resource type="Resource" id="Resource_hide"]
+script = ExtResource("2_option")
+id = "hide"
+label_key = "event.spirit_beast_tracks.option.hide"
+description_key = "event.spirit_beast_tracks.option.hide.desc"
+hp_delta = 3
+
+[sub_resource type="Resource" id="Resource_leave"]
+script = ExtResource("2_option")
+id = "leave"
+label_key = "event.spirit_beast_tracks.option.leave"
+description_key = "event.spirit_beast_tracks.option.leave.desc"
+
+[resource]
+script = ExtResource("1_event")
+id = "spirit_beast_tracks"
+title_key = "event.spirit_beast_tracks.title"
+body_key = "event.spirit_beast_tracks.body"
+event_weight = 100
+options = Array[ExtResource("2_option")]([SubResource("Resource_chase"), SubResource("Resource_hide"), SubResource("Resource_leave")])

@@ -315,3 +315,198 @@ msgstr "取走香炉铜钱，获得 12 金"
 
 msgid "event.quiet_shrine.option.coin.desc"
 msgstr "获得少量金币。"
+
+msgid "status.poison.name"
+msgstr "毒"
+
+msgid "status.poison.desc"
+msgstr "回合开始时失去等同层数的生命，然后减少 1 层。"
+
+msgid "status.sword_focus.name"
+msgstr "剑心"
+
+msgid "status.sword_focus.desc"
+msgstr "下一次由玩家造成的伤害增加等同层数的数值，然后减少 1 层。"
+
+msgid "status.broken_stance.name"
+msgstr "破势"
+
+msgid "status.broken_stance.desc"
+msgstr "下一次受到伤害时额外受到等同层数的伤害，然后减少 1 层。"
+
+msgid "card.sword.wind_splitting_step.name"
+msgstr "分风踏"
+
+msgid "card.sword.wind_splitting_step.desc"
+msgstr "造成 6 点伤害。施加 1 层破势。"
+
+msgid "card.sword.clear_mind_guard.name"
+msgstr "清心守"
+
+msgid "card.sword.clear_mind_guard.desc"
+msgstr "获得 7 点护体。获得 1 层剑心。"
+
+msgid "card.sword.thread_the_needle.name"
+msgstr "穿针剑"
+
+msgid "card.sword.thread_the_needle.desc"
+msgstr "造成 8 点伤害。抽 1 张牌。"
+
+msgid "card.sword.echoing_sword_heart.name"
+msgstr "回响剑心"
+
+msgid "card.sword.echoing_sword_heart.desc"
+msgstr "获得 2 层剑心。抽 1 张牌。"
+
+msgid "card.sword.heaven_cutting_arc.name"
+msgstr "斩天弧"
+
+msgid "card.sword.heaven_cutting_arc.desc"
+msgstr "造成 18 点伤害。施加 2 层破势。"
+
+msgid "card.alchemy.coiling_miasma.name"
+msgstr "缠雾瘴"
+
+msgid "card.alchemy.coiling_miasma.desc"
+msgstr "施加 3 层毒。"
+
+msgid "card.alchemy.needle_rain.name"
+msgstr "针雨"
+
+msgid "card.alchemy.needle_rain.desc"
+msgstr "造成 4 点伤害。施加 2 层毒。"
+
+msgid "card.alchemy.purifying_brew.name"
+msgstr "净灵酿"
+
+msgid "card.alchemy.purifying_brew.desc"
+msgstr "恢复 4 点生命。抽 1 张牌。"
+
+msgid "card.alchemy.cauldron_overflow.name"
+msgstr "鼎沸溢流"
+
+msgid "card.alchemy.cauldron_overflow.desc"
+msgstr "施加 5 层毒。获得 5 点护体。"
+
+msgid "card.alchemy.golden_core_detox.name"
+msgstr "金丹解厄"
+
+msgid "card.alchemy.golden_core_detox.desc"
+msgstr "获得 1 点能量。抽 2 张牌。恢复 3 点生命。"
+
+msgid "enemy.scarlet_mantis_acolyte.name"
+msgstr "赤螳侍徒"
+
+msgid "enemy.jade_armor_sentinel.name"
+msgstr "玉甲镇卫"
+
+msgid "enemy.boss_void_tiger.name"
+msgstr "虚虎妖王"
+
+msgid "relic.mist_vein_bracelet.name"
+msgstr "雾脉手环"
+
+msgid "relic.mist_vein_bracelet.desc"
+msgstr "战斗开始时，获得 1 层剑心。"
+
+msgid "relic.verdant_antidote_gourd.name"
+msgstr "翠药葫芦"
+
+msgid "relic.verdant_antidote_gourd.desc"
+msgstr "战斗开始时，恢复 3 点生命。"
+
+msgid "relic.copper_mantis_hook.name"
+msgstr "铜螳钩"
+
+msgid "relic.copper_mantis_hook.desc"
+msgstr "战斗胜利时，获得 6 金。"
+
+msgid "relic.white_tiger_tally.name"
+msgstr "白虎符"
+
+msgid "relic.white_tiger_tally.desc"
+msgstr "回合开始时，获得 2 点护体。"
+
+msgid "relic.nine_smoke_censer.name"
+msgstr "九烟炉"
+
+msgid "relic.nine_smoke_censer.desc"
+msgstr "战斗开始时，获得 5 点护体。"
+
+msgid "relic.starforged_meridian.name"
+msgstr "星铸经脉"
+
+msgid "relic.starforged_meridian.desc"
+msgstr "战斗开始时，获得 1 点能量和 2 层剑心。"
+
+msgid "event.sealed_sword_tomb.title"
+msgstr "封剑古冢"
+
+msgid "event.sealed_sword_tomb.body"
+msgstr "石门半掩，旧剑意仍在冢中回响。"
+
+msgid "event.sealed_sword_tomb.option.draw_blade"
+msgstr "拔出残剑，失去 8 生命，获得 45 金"
+
+msgid "event.sealed_sword_tomb.option.draw_blade.desc"
+msgstr "以气血换取古冢馈赠。"
+
+msgid "event.sealed_sword_tomb.option.meditate"
+msgstr "静坐参悟，失去 3 生命"
+
+msgid "event.sealed_sword_tomb.option.meditate.desc"
+msgstr "承受余锋，磨炼心神。"
+
+msgid "event.sealed_sword_tomb.option.leave"
+msgstr "离开"
+
+msgid "event.sealed_sword_tomb.option.leave.desc"
+msgstr "不改变当前状态。"
+
+msgid "event.alchemist_market.title"
+msgstr "炼丹市集"
+
+msgid "event.alchemist_market.body"
+msgstr "游方丹师在雾中摆摊，丹香与苦味混在一起。"
+
+msgid "event.alchemist_market.option.buy_brew"
+msgstr "支付 20 金，恢复 10 生命"
+
+msgid "event.alchemist_market.option.buy_brew.desc"
+msgstr "买下一盏温热药汤。"
+
+msgid "event.alchemist_market.option.sample"
+msgstr "试饮赠药，恢复 4 生命"
+
+msgid "event.alchemist_market.option.sample.desc"
+msgstr "药性微弱，但没有代价。"
+
+msgid "event.alchemist_market.option.leave"
+msgstr "离开"
+
+msgid "event.alchemist_market.option.leave.desc"
+msgstr "不改变当前状态。"
+
+msgid "event.spirit_beast_tracks.title"
+msgstr "灵兽踪迹"
+
+msgid "event.spirit_beast_tracks.body"
+msgstr "潮湿泥地里留着发光爪印，远处林叶无风自动。"
+
+msgid "event.spirit_beast_tracks.option.chase"
+msgstr "追踪灵兽，失去 5 生命，获得 28 金"
+
+msgid "event.spirit_beast_tracks.option.chase.desc"
+msgstr "冒险追入林中，搜得散落灵石。"
+
+msgid "event.spirit_beast_tracks.option.hide"
+msgstr "屏息潜伏，恢复 3 生命"
+
+msgid "event.spirit_beast_tracks.option.hide.desc"
+msgstr "借林间灵气调息片刻。"
+
+msgid "event.spirit_beast_tracks.option.leave"
+msgstr "离开"
+
+msgid "event.spirit_beast_tracks.option.leave.desc"
+msgstr "不改变当前状态。"

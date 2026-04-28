@@ -79,8 +79,9 @@ func test_shop_resolver_excludes_owned_relics() -> bool:
 	]
 	var state := ShopResolver.new().resolve(_catalog(), run)
 	var relic_offers := _offers_of_type(state, "relic")
-	var passed: bool = relic_offers.size() == 1 \
-		and not run.relic_ids.has(String((relic_offers[0] as Dictionary).get("item_id", "")))
+	var passed: bool = relic_offers.size() == 2
+	for offer in relic_offers:
+		passed = passed and not run.relic_ids.has(String((offer as Dictionary).get("item_id", "")))
 	assert(passed)
 	return passed
 

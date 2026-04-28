@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="EnemyDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/enemy_def.gd" id="1_enemy"]
+
+[resource]
+script = ExtResource("1_enemy")
+id = "jade_armor_sentinel"
+name_key = "enemy.jade_armor_sentinel.name"
+max_hp = 54
+intent_sequence = Array[String](["block_10", "attack_11", "attack_8"])
+reward_tier = "elite"
+tier = "elite"
+encounter_weight = 100
+gold_reward_min = 20
+gold_reward_max = 30

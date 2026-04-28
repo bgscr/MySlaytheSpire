@@ -1,0 +1,34 @@
+[gd_resource type="Resource" script_class="EventDef" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/event_def.gd" id="1_event"]
+[ext_resource type="Script" path="res://scripts/data/event_option_def.gd" id="2_option"]
+
+[sub_resource type="Resource" id="Resource_draw_blade"]
+script = ExtResource("2_option")
+id = "draw_blade"
+label_key = "event.sealed_sword_tomb.option.draw_blade"
+description_key = "event.sealed_sword_tomb.option.draw_blade.desc"
+min_hp = 9
+hp_delta = -8
+gold_delta = 45
+
+[sub_resource type="Resource" id="Resource_meditate"]
+script = ExtResource("2_option")
+id = "meditate"
+label_key = "event.sealed_sword_tomb.option.meditate"
+description_key = "event.sealed_sword_tomb.option.meditate.desc"
+hp_delta = -3
+
+[sub_resource type="Resource" id="Resource_leave"]
+script = ExtResource("2_option")
+id = "leave"
+label_key = "event.sealed_sword_tomb.option.leave"
+description_key = "event.sealed_sword_tomb.option.leave.desc"
+
+[resource]
+script = ExtResource("1_event")
+id = "sealed_sword_tomb"
+title_key = "event.sealed_sword_tomb.title"
+body_key = "event.sealed_sword_tomb.body"
+event_weight = 100
+options = Array[ExtResource("2_option")]([SubResource("Resource_draw_blade"), SubResource("Resource_meditate"), SubResource("Resource_leave")])

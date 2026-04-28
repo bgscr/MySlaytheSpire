@@ -111,9 +111,9 @@ func test_default_catalog_loads_dual_starter_card_pool_counts() -> bool:
 	catalog.load_default()
 	var sword_ids := _ids(catalog.get_cards_for_character("sword"))
 	var alchemy_ids := _ids(catalog.get_cards_for_character("alchemy"))
-	var passed: bool = catalog.cards_by_id.size() == 30 \
-		and sword_ids.size() == 15 \
-		and alchemy_ids.size() == 15
+	var passed: bool = catalog.cards_by_id.size() == 40 \
+		and sword_ids.size() == 20 \
+		and alchemy_ids.size() == 20
 	assert(passed)
 	return passed
 
@@ -138,6 +138,11 @@ func test_dual_starter_card_pools_are_character_isolated() -> bool:
 		"sword.meridian_flash",
 		"sword.heart_piercer",
 		"sword.unbroken_focus",
+		"sword.wind_splitting_step",
+		"sword.clear_mind_guard",
+		"sword.thread_the_needle",
+		"sword.echoing_sword_heart",
+		"sword.heaven_cutting_arc",
 	]
 	var expected_alchemy: Array[String] = [
 		"alchemy.toxic_pill",
@@ -155,6 +160,11 @@ func test_dual_starter_card_pools_are_character_isolated() -> bool:
 		"alchemy.white_jade_paste",
 		"alchemy.mercury_bloom",
 		"alchemy.ninefold_refine",
+		"alchemy.coiling_miasma",
+		"alchemy.needle_rain",
+		"alchemy.purifying_brew",
+		"alchemy.cauldron_overflow",
+		"alchemy.golden_core_detox",
 	]
 	var passed := _contains_all(sword_ids, expected_sword) \
 		and _contains_all(alchemy_ids, expected_alchemy) \
@@ -163,7 +173,7 @@ func test_dual_starter_card_pools_are_character_isolated() -> bool:
 	assert(passed)
 	return passed
 
-func test_wave_1_catalog_loads_expanded_enemy_and_relic_counts() -> bool:
+func test_wave_2_catalog_loads_expanded_enemy_relic_and_event_counts() -> bool:
 	var catalog := ContentCatalog.new()
 	catalog.load_default()
 	var normal_ids := _ids(catalog.get_enemies_by_tier("normal"))
@@ -172,18 +182,32 @@ func test_wave_1_catalog_loads_expanded_enemy_and_relic_counts() -> bool:
 	var common_relic_ids := _ids(catalog.get_relics_by_tier("common"))
 	var uncommon_relic_ids := _ids(catalog.get_relics_by_tier("uncommon"))
 	var rare_relic_ids := _ids(catalog.get_relics_by_tier("rare"))
-	var passed: bool = catalog.enemies_by_id.size() == 9 \
-		and catalog.relics_by_id.size() == 6 \
-		and normal_ids.size() == 4 \
-		and elite_ids.size() == 3 \
-		and boss_ids.size() == 2 \
-		and common_relic_ids.size() == 3 \
-		and uncommon_relic_ids.size() == 2 \
-		and rare_relic_ids.size() == 1 \
+	var event_ids := _ids(catalog.get_events())
+	var passed: bool = catalog.enemies_by_id.size() == 12 \
+		and catalog.relics_by_id.size() == 12 \
+		and catalog.events_by_id.size() == 6 \
+		and normal_ids.size() == 5 \
+		and elite_ids.size() == 4 \
+		and boss_ids.size() == 3 \
+		and common_relic_ids.size() == 6 \
+		and uncommon_relic_ids.size() == 4 \
+		and rare_relic_ids.size() == 2 \
 		and normal_ids.has("wild_fox_spirit") \
+		and normal_ids.has("scarlet_mantis_acolyte") \
 		and elite_ids.has("mirror_blade_adept") \
+		and elite_ids.has("jade_armor_sentinel") \
 		and boss_ids.has("boss_storm_dragon") \
-		and rare_relic_ids.has("dragon_bone_flute")
+		and boss_ids.has("boss_void_tiger") \
+		and common_relic_ids.has("mist_vein_bracelet") \
+		and common_relic_ids.has("verdant_antidote_gourd") \
+		and common_relic_ids.has("copper_mantis_hook") \
+		and uncommon_relic_ids.has("white_tiger_tally") \
+		and uncommon_relic_ids.has("nine_smoke_censer") \
+		and rare_relic_ids.has("dragon_bone_flute") \
+		and rare_relic_ids.has("starforged_meridian") \
+		and event_ids.has("sealed_sword_tomb") \
+		and event_ids.has("alchemist_market") \
+		and event_ids.has("spirit_beast_tracks")
 	assert(passed)
 	return passed
 
@@ -191,11 +215,14 @@ func test_default_catalog_loads_event_pool() -> bool:
 	var catalog := ContentCatalog.new()
 	catalog.load_default()
 	var event_ids := _ids(catalog.get_events())
-	var passed: bool = catalog.events_by_id.size() == 3 \
+	var passed: bool = catalog.events_by_id.size() == 6 \
 		and event_ids.has("wandering_physician") \
 		and event_ids.has("spirit_toll") \
 		and event_ids.has("quiet_shrine") \
-		and catalog.get_event("quiet_shrine") != null
+		and event_ids.has("sealed_sword_tomb") \
+		and event_ids.has("alchemist_market") \
+		and event_ids.has("spirit_beast_tracks") \
+		and catalog.get_event("spirit_beast_tracks") != null
 	assert(passed)
 	return passed
 

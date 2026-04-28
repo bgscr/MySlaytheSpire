@@ -13,7 +13,14 @@ func test_event_resolver_returns_deterministic_event_for_same_run_context() -> b
 	var passed: bool = first != null \
 		and second != null \
 		and first.id == second.id \
-		and ["wandering_physician", "spirit_toll", "quiet_shrine"].has(first.id)
+		and [
+			"wandering_physician",
+			"spirit_toll",
+			"quiet_shrine",
+			"sealed_sword_tomb",
+			"alchemist_market",
+			"spirit_beast_tracks",
+		].has(first.id)
 	assert(passed)
 	return passed
 

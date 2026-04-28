@@ -23,6 +23,11 @@ const DEFAULT_CARD_PATHS: Array[String] = [
 	"res://resources/cards/sword/meridian_flash.tres",
 	"res://resources/cards/sword/heart_piercer.tres",
 	"res://resources/cards/sword/unbroken_focus.tres",
+	"res://resources/cards/sword/wind_splitting_step.tres",
+	"res://resources/cards/sword/clear_mind_guard.tres",
+	"res://resources/cards/sword/thread_the_needle.tres",
+	"res://resources/cards/sword/echoing_sword_heart.tres",
+	"res://resources/cards/sword/heaven_cutting_arc.tres",
 	"res://resources/cards/alchemy/toxic_pill.tres",
 	"res://resources/cards/alchemy/healing_draught.tres",
 	"res://resources/cards/alchemy/poison_mist.tres",
@@ -38,6 +43,11 @@ const DEFAULT_CARD_PATHS: Array[String] = [
 	"res://resources/cards/alchemy/white_jade_paste.tres",
 	"res://resources/cards/alchemy/mercury_bloom.tres",
 	"res://resources/cards/alchemy/ninefold_refine.tres",
+	"res://resources/cards/alchemy/coiling_miasma.tres",
+	"res://resources/cards/alchemy/needle_rain.tres",
+	"res://resources/cards/alchemy/purifying_brew.tres",
+	"res://resources/cards/alchemy/cauldron_overflow.tres",
+	"res://resources/cards/alchemy/golden_core_detox.tres",
 ]
 
 const DEFAULT_CHARACTER_PATHS: Array[String] = [
@@ -55,6 +65,9 @@ const DEFAULT_ENEMY_PATHS: Array[String] = [
 	"res://resources/enemies/mirror_blade_adept.tres",
 	"res://resources/enemies/venom_cauldron_hermit.tres",
 	"res://resources/enemies/boss_storm_dragon.tres",
+	"res://resources/enemies/scarlet_mantis_acolyte.tres",
+	"res://resources/enemies/jade_armor_sentinel.tres",
+	"res://resources/enemies/boss_void_tiger.tres",
 ]
 
 const DEFAULT_RELIC_PATHS: Array[String] = [
@@ -64,12 +77,21 @@ const DEFAULT_RELIC_PATHS: Array[String] = [
 	"res://resources/relics/moonwell_seed.tres",
 	"res://resources/relics/thunderseal_charm.tres",
 	"res://resources/relics/dragon_bone_flute.tres",
+	"res://resources/relics/mist_vein_bracelet.tres",
+	"res://resources/relics/verdant_antidote_gourd.tres",
+	"res://resources/relics/copper_mantis_hook.tres",
+	"res://resources/relics/white_tiger_tally.tres",
+	"res://resources/relics/nine_smoke_censer.tres",
+	"res://resources/relics/starforged_meridian.tres",
 ]
 
 const DEFAULT_EVENT_PATHS: Array[String] = [
 	"res://resources/events/wandering_physician.tres",
 	"res://resources/events/spirit_toll.tres",
 	"res://resources/events/quiet_shrine.tres",
+	"res://resources/events/sealed_sword_tomb.tres",
+	"res://resources/events/alchemist_market.tres",
+	"res://resources/events/spirit_beast_tracks.tres",
 ]
 
 var cards_by_id: Dictionary = {}

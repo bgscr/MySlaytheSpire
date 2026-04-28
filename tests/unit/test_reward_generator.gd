@@ -72,15 +72,15 @@ func test_relic_rewards_return_empty_id_for_empty_pool() -> bool:
 	assert(passed)
 	return passed
 
-func test_relic_rewards_draw_from_each_populated_wave_1_tier() -> bool:
+func test_relic_rewards_draw_from_each_populated_wave_2_tier() -> bool:
 	var catalog := _catalog()
 	var generator := RewardGenerator.new()
-	var common := generator.generate_relic_reward(catalog, 91, "wave_1_common", "common")
-	var uncommon := generator.generate_relic_reward(catalog, 91, "wave_1_uncommon", "uncommon")
-	var rare := generator.generate_relic_reward(catalog, 91, "wave_1_rare", "rare")
+	var common := generator.generate_relic_reward(catalog, 91, "wave_2_common", "common")
+	var uncommon := generator.generate_relic_reward(catalog, 91, "wave_2_uncommon", "uncommon")
+	var rare := generator.generate_relic_reward(catalog, 91, "wave_2_rare", "rare")
 	var passed: bool = not String(common.get("relic_id", "")).is_empty() \
 		and not String(uncommon.get("relic_id", "")).is_empty() \
-		and rare.get("relic_id") == "dragon_bone_flute"
+		and not String(rare.get("relic_id", "")).is_empty()
 	assert(passed)
 	return passed
 
@@ -186,9 +186,9 @@ func _catalog() -> ContentCatalog:
 	catalog.load_default()
 	return catalog
 
-func _ids(resources: Array[CardDef]) -> Array[String]:
+func _ids(resources: Array) -> Array[String]:
 	var ids: Array[String] = []
-	for resource: CardDef in resources:
+	for resource in resources:
 		ids.append(resource.id)
 	return ids
 

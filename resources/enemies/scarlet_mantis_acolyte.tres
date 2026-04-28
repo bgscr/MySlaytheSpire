@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="EnemyDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/enemy_def.gd" id="1_enemy"]
+
+[resource]
+script = ExtResource("1_enemy")
+id = "scarlet_mantis_acolyte"
+name_key = "enemy.scarlet_mantis_acolyte.name"
+max_hp = 28
+intent_sequence = Array[String](["attack_7", "block_4", "attack_5"])
+reward_tier = "normal"
+tier = "normal"
+encounter_weight = 100
+gold_reward_min = 9
+gold_reward_max = 15
