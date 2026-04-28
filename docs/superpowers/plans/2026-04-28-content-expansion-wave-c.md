@@ -1170,7 +1170,7 @@ rtk proxy git commit -m "feat: support enemy status intents"
 - Modify: `scripts/ui/combat_screen.gd`
 - Modify: `tests/unit/test_combat_status_runtime.gd`
 
-- [ ] **Step 1: Add failing status display tests**
+- [x] **Step 1: Add failing status display tests**
 
 Append these tests to `tests/unit/test_combat_status_runtime.gd`:
 
@@ -1203,7 +1203,7 @@ func test_status_display_text_lists_unknown_statuses_after_known_statuses() -> b
 	return passed
 ```
 
-- [ ] **Step 2: Run tests and verify RED**
+- [x] **Step 2: Run tests and verify RED**
 
 Run:
 
@@ -1213,7 +1213,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: missing `status_display_text`.
 
-- [ ] **Step 3: Implement status display text**
+- [x] **Step 3: Implement status display text**
 
 In `scripts/combat/combat_status_runtime.gd`, add:
 
@@ -1263,7 +1263,7 @@ func _unknown_positive_status_ids(combatant: CombatantState) -> Array[String]:
 	return result
 ```
 
-- [ ] **Step 4: Use display text in CombatScreen**
+- [x] **Step 4: Use display text in CombatScreen**
 
 In `scripts/ui/combat_screen.gd`, replace both calls to `status_runtime.status_text(...)` with:
 
@@ -1283,7 +1283,7 @@ The enemy block should become:
 		var statuses := session.status_runtime.status_display_text(enemy)
 ```
 
-- [ ] **Step 5: Run tests and verify GREEN for Task 5**
+- [x] **Step 5: Run tests and verify GREEN for Task 5**
 
 Run:
 
@@ -1297,7 +1297,7 @@ Expected:
 TESTS PASSED
 ```
 
-- [ ] **Step 6: Run Task 5 review gates**
+- [x] **Step 6: Run Task 5 review gates**
 
 Stage 1 Spec Compliance Review:
 
@@ -1313,7 +1313,7 @@ Stage 2 Code Quality Review:
 - Display helpers are small and deterministic.
 - UI does not duplicate status ordering rules.
 
-- [ ] **Step 7: Commit Task 5**
+- [x] **Step 7: Commit Task 5**
 
 Run:
 
