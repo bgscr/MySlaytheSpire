@@ -413,7 +413,7 @@ rtk proxy git commit -m "feat: save pending event reward state"
 - Modify: `scripts/ui/event_screen.gd`
 - Modify: `tests/unit/test_event_runner.gd`
 
-- [ ] **Step 1: Add failing EventRunner reward tests**
+- [x] **Step 1: Add failing EventRunner reward tests**
 
 Append these tests to `tests/unit/test_event_runner.gd`:
 
@@ -529,7 +529,7 @@ func _event(event_id: String, option: EventOptionDef) -> EventDef:
 	return event
 ```
 
-- [ ] **Step 2: Run tests and verify RED**
+- [x] **Step 2: Run tests and verify RED**
 
 Run:
 
@@ -539,7 +539,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: failures for missing `grant_card_ids`, `grant_relic_ids`, `remove_card_id`, `card_reward_count`, `relic_reward_tier`, `apply_event_option`.
 
-- [ ] **Step 3: Extend EventOptionDef**
+- [x] **Step 3: Extend EventOptionDef**
 
 Modify `scripts/data/event_option_def.gd`:
 
@@ -562,7 +562,7 @@ extends Resource
 @export var reward_context: String = ""
 ```
 
-- [ ] **Step 4: Extend EventRunner with catalog-aware event option application**
+- [x] **Step 4: Extend EventRunner with catalog-aware event option application**
 
 Replace `scripts/event/event_runner.gd` with:
 
@@ -686,7 +686,7 @@ func _reward_context(run: RunState, event: EventDef, option: EventOptionDef) -> 
 	return "%s:%s:%s" % [run.current_node_id, event.id, option.id]
 ```
 
-- [ ] **Step 5: Route EventScreen pending rewards to RewardScreen**
+- [x] **Step 5: Route EventScreen pending rewards to RewardScreen**
 
 In `scripts/ui/event_screen.gd`, change `_on_option_pressed()`:
 
@@ -710,7 +710,7 @@ func _save_and_route_to_reward(app) -> void:
 	app.game.router.go_to(SceneRouterScript.REWARD)
 ```
 
-- [ ] **Step 6: Run tests and verify GREEN for Task 2**
+- [x] **Step 6: Run tests and verify GREEN for Task 2**
 
 Run:
 
@@ -724,7 +724,7 @@ Expected:
 TESTS PASSED
 ```
 
-- [ ] **Step 7: Run Task 2 review gates**
+- [x] **Step 7: Run Task 2 review gates**
 
 Stage 1 Spec Compliance Review:
 
@@ -740,7 +740,7 @@ Stage 2 Code Quality Review:
 - Direct relic grants reject duplicates.
 - No reward UI logic is added to `EventRunner`.
 
-- [ ] **Step 8: Commit Task 2**
+- [x] **Step 8: Commit Task 2**
 
 Run:
 
