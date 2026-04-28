@@ -223,6 +223,57 @@ func test_combat_screen_drag_self_card_upward_plays_to_player(tree: SceneTree) -
 	_delete_test_save("user://test_combat_drag_self_save.json")
 	return passed
 
+func test_debug_overlay_updates_presentation_config(tree: SceneTree) -> bool:
+	var app = _create_app_with_save_service(tree, "user://test_debug_presentation_config_save.json")
+	var debug_overlay: Node = app.get_node_or_null("DebugLayer/DebugOverlay")
+	var drag_toggle := _find_node_by_name(debug_overlay, "DebugPresentationDrag") as CheckBox
+	if drag_toggle != null:
+		drag_toggle.button_pressed = false
+		drag_toggle.toggled.emit(false)
+	var passed: bool = drag_toggle != null \
+		and app.game.presentation_config.drag_enabled == false
+	app.free()
+	_delete_test_save("user://test_debug_presentation_config_save.json")
+	return passed
+
+func test_combat_screen_drag_disabled_keeps_click_fallback(tree: SceneTree) -> bool:
+	var app = _create_app_with_save_service(tree, "user://test_drag_disabled_click_save.json")
+	var config: Variant = app.game.get("presentation_config")
+	if config != null:
+		config.drag_enabled = false
+	var run := RunStateScript.new()
+	run.seed_value = 12345
+	run.character_id = "sword"
+	run.max_hp = 72
+	run.current_hp = 72
+	run.deck_ids = ["sword.strike"]
+	run.current_node_id = "node_0"
+	var node := preload("res://scripts/run/map_node_state.gd").new("node_0", 0, "combat")
+	node.unlocked = true
+	run.map_nodes = [node]
+	app.game.current_run = run
+
+	var combat = app.game.router.go_to(SceneRouterScript.COMBAT)
+	combat.session.state.hand.clear()
+	combat.session.state.hand.append("sword.strike")
+	combat.session.state.draw_pile.clear()
+	combat._refresh()
+	var drag_played: bool = combat.try_play_dragged_card(0, "enemy", 0)
+	var first_card := _find_node_by_name(combat, "CardButton_0") as Button
+	if first_card != null:
+		first_card.pressed.emit()
+	var enemy_button := _find_node_by_name(combat, "EnemyButton_0") as Button
+	if enemy_button != null:
+		enemy_button.pressed.emit()
+	var passed: bool = not drag_played \
+		and config != null \
+		and first_card != null \
+		and enemy_button != null \
+		and combat.session.state.hand.is_empty()
+	app.free()
+	_delete_test_save("user://test_drag_disabled_click_save.json")
+	return passed
+
 func test_reward_screen_claims_card_skips_gold_and_saves_on_continue(tree: SceneTree) -> bool:
 	var save_path := "user://test_reward_screen_claim_skip_save.json"
 	var app = _create_app_with_save_service(tree, save_path)

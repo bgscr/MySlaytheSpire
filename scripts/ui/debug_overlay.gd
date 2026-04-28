@@ -22,8 +22,27 @@ func _ready() -> void:
 	map.pressed.connect(_go_map)
 	box.add_child(map)
 
+	_add_presentation_toggle(box, "DebugPresentationEnabled", "Presentation", "enabled")
+	_add_presentation_toggle(box, "DebugPresentationDrag", "Drag Play", "drag_enabled")
+	_add_presentation_toggle(box, "DebugPresentationFloatingText", "Float Text", "floating_text_enabled")
+	_add_presentation_toggle(box, "DebugPresentationFlash", "Hit Flash", "flash_enabled")
+	_add_presentation_toggle(box, "DebugPresentationHighlight", "Target Highlight", "target_highlight_enabled")
+	_add_presentation_toggle(box, "DebugPresentationStatusPulse", "Status Pulse", "status_pulse_enabled")
+	_add_presentation_toggle(box, "DebugPresentationCinematic", "Future Cinematic", "cinematic_enabled")
+
 func _get_app() -> Node:
 	return get_tree().root.get_node_or_null("App")
+
+func _add_presentation_toggle(box: VBoxContainer, node_name: String, label: String, property_name: String) -> void:
+	var app := _get_app()
+	if app == null or app.game == null or app.game.presentation_config == null:
+		return
+	var toggle := CheckBox.new()
+	toggle.name = node_name
+	toggle.text = "Debug: %s" % label
+	toggle.button_pressed = bool(app.game.presentation_config.get(property_name))
+	toggle.toggled.connect(func(enabled: bool): app.game.presentation_config.set(property_name, enabled))
+	box.add_child(toggle)
 
 func _full_hp() -> void:
 	var app := _get_app()

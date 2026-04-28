@@ -103,7 +103,7 @@ func _start_session() -> void:
 	catalog.load_default()
 	session = CombatSession.new()
 	session.start(catalog, app.game.current_run)
-	presentation_config = CombatPresentationConfig.new()
+	presentation_config = app.game.presentation_config
 	presentation_queue.config = presentation_config
 	presentation_layer.queue = presentation_queue
 	for event in presentation_delta.events_from_initial_state(session.state):

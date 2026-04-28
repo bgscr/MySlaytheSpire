@@ -1377,7 +1377,7 @@ rtk proxy git commit -m "feat: add mouse drag combat play"
 - Modify: `scripts/ui/debug_overlay.gd`
 - Modify: `tests/smoke/test_scene_flow.gd`
 
-- [ ] **Step 1: Add failing debug toggle smoke tests**
+- [x] **Step 1: Add failing debug toggle smoke tests**
 
 Append to `tests/smoke/test_scene_flow.gd`:
 
@@ -1430,7 +1430,7 @@ func test_combat_screen_drag_disabled_keeps_click_fallback(tree: SceneTree) -> b
 	return passed
 ```
 
-- [ ] **Step 2: Run tests to verify red**
+- [x] **Step 2: Run tests to verify red**
 
 Run:
 
@@ -1440,7 +1440,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: failures for missing `presentation_config` or missing debug toggle nodes.
 
-- [ ] **Step 3: Store presentation config in Game**
+- [x] **Step 3: Store presentation config in Game**
 
 Modify `scripts/app/game.gd`:
 
@@ -1458,7 +1458,7 @@ var save_service
 var presentation_config := CombatPresentationConfig.new()
 ```
 
-- [ ] **Step 4: Add DebugOverlay toggles**
+- [x] **Step 4: Add DebugOverlay toggles**
 
 In `scripts/ui/debug_overlay.gd`, add after the existing map button:
 
@@ -1499,7 +1499,7 @@ with:
 	presentation_config = app.game.presentation_config
 ```
 
-- [ ] **Step 5: Run full tests to verify green**
+- [x] **Step 5: Run full tests to verify green**
 
 Run:
 
@@ -1509,7 +1509,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: `TESTS PASSED`.
 
-- [ ] **Step 6: Review and commit Task 6**
+- [x] **Step 6: Review and commit Task 6**
 
 Stage 1 Spec Compliance Review:
 
