@@ -176,6 +176,7 @@ Automatic fallback applies only after successful player card play. Enemy turns c
 Extend `CombatPresentationConfig`:
 
 ```gdscript
+var cinematic_enabled := true
 var particle_enabled := true
 var camera_impulse_enabled := true
 var slow_motion_enabled := true
@@ -184,6 +185,7 @@ var audio_cue_enabled := true
 
 Filtering rules:
 
+- `cinematic_enabled` becomes a real, default-on development toggle in this pass.
 - If `cinematic_enabled == false`, drop `cinematic_slash` and any event tagged `cinematic`.
 - If `particle_enabled == false`, drop `particle_burst`.
 - If `camera_impulse_enabled == false`, drop `camera_impulse`.
