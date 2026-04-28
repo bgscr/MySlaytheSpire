@@ -950,7 +950,7 @@ rtk proxy git commit -m "feat: route polish playback through assets"
 - Modify: `tests/smoke/test_scene_flow.gd`
 - Modify: `docs/superpowers/plans/2026-04-28-high-presentation-asset-pass.md`
 
-- [ ] **Step 1: Update slash smoke test to assert texture asset playback**
+- [x] **Step 1: Update slash smoke test to assert texture asset playback**
 
 Modify `tests/smoke/test_scene_flow.gd`.
 
@@ -971,7 +971,7 @@ var passed: bool = first_card != null \
 	and slash.texture != null
 ```
 
-- [ ] **Step 2: Add alchemy mist smoke test**
+- [x] **Step 2: Add alchemy mist smoke test**
 
 Append this test after `test_combat_screen_cinematic_disabled_filters_slash_but_plays_card`:
 
@@ -1012,7 +1012,7 @@ func test_combat_screen_click_play_triggers_particle_asset_feedback(tree: SceneT
 	return passed
 ```
 
-- [ ] **Step 3: Update slow/audio smoke test to assert asset-backed playback**
+- [x] **Step 3: Update slow/audio smoke test to assert asset-backed playback**
 
 In `test_explicit_slow_motion_and_audio_cues_are_recorded`, replace:
 
@@ -1036,7 +1036,7 @@ var passed: bool = played \
 	and audio_player.stream != null
 ```
 
-- [ ] **Step 4: Run smoke tests to verify they pass**
+- [x] **Step 4: Run smoke tests to verify they pass**
 
 Run:
 
@@ -1050,7 +1050,7 @@ Expected:
 TESTS PASSED
 ```
 
-- [ ] **Step 5: Run two-stage review for Task 4**
+- [x] **Step 5: Run two-stage review for Task 4**
 
 Stage 1 Spec Compliance Review:
 
@@ -1067,7 +1067,7 @@ Stage 2 Code Quality Review:
 
 Classify findings as Critical, Important, or Minor. Fix Critical and Important issues before committing.
 
-- [ ] **Step 6: Commit Task 4**
+- [x] **Step 6: Commit Task 4**
 
 Run:
 

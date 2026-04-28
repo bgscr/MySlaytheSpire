@@ -331,8 +331,11 @@ func test_combat_screen_click_play_triggers_slash_polish_feedback(tree: SceneTre
 	if enemy_button != null:
 		enemy_button.pressed.emit()
 	combat.presentation_layer.process_queue()
-	var slash := _find_node_by_name(combat.presentation_layer, "CinematicSlash_0")
-	var passed: bool = first_card != null and enemy_button != null and slash != null
+	var slash := _find_node_by_name(combat.presentation_layer, "CinematicSlash_0") as TextureRect
+	var passed: bool = first_card != null \
+		and enemy_button != null \
+		and slash != null \
+		and slash.texture != null
 	app.free()
 	_delete_test_save("user://test_combat_slash_polish_save.json")
 	return passed
@@ -368,6 +371,41 @@ func test_combat_screen_cinematic_disabled_filters_slash_but_plays_card(tree: Sc
 	_delete_test_save("user://test_combat_cinematic_disabled_save.json")
 	return passed
 
+func test_combat_screen_click_play_triggers_particle_asset_feedback(tree: SceneTree) -> bool:
+	var app = _create_app_with_save_service(tree, "user://test_combat_particle_asset_save.json")
+	var run := RunStateScript.new()
+	run.seed_value = 12345
+	run.character_id = "alchemy"
+	run.max_hp = 68
+	run.current_hp = 68
+	run.deck_ids = ["alchemy.toxic_pill"]
+	run.current_node_id = "node_0"
+	var node := preload("res://scripts/run/map_node_state.gd").new("node_0", 0, "combat")
+	node.unlocked = true
+	run.map_nodes = [node]
+	app.game.current_run = run
+
+	var combat = app.game.router.go_to(SceneRouterScript.COMBAT)
+	combat.session.state.hand.clear()
+	combat.session.state.hand.append("alchemy.toxic_pill")
+	combat.session.state.draw_pile.clear()
+	combat._refresh()
+	var first_card := _find_node_by_name(combat, "CardButton_0") as Button
+	if first_card != null:
+		first_card.pressed.emit()
+	var enemy_button := _find_node_by_name(combat, "EnemyButton_0") as Button
+	if enemy_button != null:
+		enemy_button.pressed.emit()
+	combat.presentation_layer.process_queue()
+	var particle := _find_node_by_name(combat.presentation_layer, "ParticleBurst_0_0") as TextureRect
+	var passed: bool = first_card != null \
+		and enemy_button != null \
+		and particle != null \
+		and particle.texture != null
+	app.free()
+	_delete_test_save("user://test_combat_particle_asset_save.json")
+	return passed
+
 func test_explicit_slow_motion_and_audio_cues_are_recorded(tree: SceneTree) -> bool:
 	var app = _create_app_with_save_service(tree, "user://test_explicit_slow_audio_save.json")
 	var run := RunStateScript.new()
@@ -390,9 +428,15 @@ func test_explicit_slow_motion_and_audio_cues_are_recorded(tree: SceneTree) -> b
 	combat._refresh()
 	var played: bool = combat.try_play_dragged_card(0, "enemy", 0)
 	combat.presentation_layer.process_queue()
+	var wash := _find_node_by_name(combat.presentation_layer, "SlowMotionWash_0") as TextureRect
+	var audio_player := _find_node_by_name(combat.presentation_layer, "PresentationAudioPlayer") as AudioStreamPlayer
 	var passed: bool = played \
 		and combat.presentation_layer.active_slow_motion_scale < 1.0 \
-		and combat.presentation_layer.last_audio_cue_id == "sword.heaven_cutting_arc"
+		and combat.presentation_layer.last_audio_cue_id == "sword.heaven_cutting_arc" \
+		and wash != null \
+		and wash.texture != null \
+		and audio_player != null \
+		and audio_player.stream != null
 	app.free()
 	_delete_test_save("user://test_explicit_slow_audio_save.json")
 	return passed
