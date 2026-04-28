@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="EventDef" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/event_def.gd" id="1_event"]
+[ext_resource type="Script" path="res://scripts/data/event_option_def.gd" id="2_option"]
+
+[sub_resource type="Resource" id="Resource_accept"]
+script = ExtResource("2_option")
+id = "accept"
+label_key = "event.spirit_compact.option.accept"
+description_key = "event.spirit_compact.option.accept.desc"
+min_hp = 11
+hp_delta = -10
+grant_relic_ids = Array[String](["paper_lantern_charm"])
+
+[sub_resource type="Resource" id="Resource_refuse"]
+script = ExtResource("2_option")
+id = "refuse"
+label_key = "event.spirit_compact.option.refuse"
+description_key = "event.spirit_compact.option.refuse.desc"
+
+[resource]
+script = ExtResource("1_event")
+id = "spirit_compact"
+title_key = "event.spirit_compact.title"
+body_key = "event.spirit_compact.body"
+event_weight = 100
+options = Array[ExtResource("2_option")]([SubResource("Resource_accept"), SubResource("Resource_refuse")])

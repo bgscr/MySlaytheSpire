@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="EnemyDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/enemy_def.gd" id="1_enemy"]
+
+[resource]
+script = ExtResource("1_enemy")
+id = "iron_oath_duelist"
+name_key = "enemy.iron_oath_duelist.name"
+max_hp = 34
+intent_sequence = Array[String](["self_status_sword_focus_1", "attack_7", "attack_9"])
+reward_tier = "normal"
+tier = "normal"
+encounter_weight = 100
+gold_reward_min = 11
+gold_reward_max = 18

@@ -510,3 +510,201 @@ msgstr "离开"
 
 msgid "event.spirit_beast_tracks.option.leave.desc"
 msgstr "不改变当前状态。"
+
+msgid "enemy.plague_jade_imp.name"
+msgstr "疫玉小鬼"
+
+msgid "enemy.iron_oath_duelist.name"
+msgstr "铁誓剑客"
+
+msgid "enemy.miasma_cauldron_elder.name"
+msgstr "瘴鼎长老"
+
+msgid "enemy.boss_sword_ghost.name"
+msgstr "剑冢幽王"
+
+msgid "relic.paper_lantern_charm.name"
+msgstr "纸灯护符"
+
+msgid "relic.paper_lantern_charm.desc"
+msgstr "战斗开始时，获得 3 点护体。"
+
+msgid "relic.mothwing_sachet.name"
+msgstr "蛾翼香囊"
+
+msgid "relic.mothwing_sachet.desc"
+msgstr "回合开始时，恢复 1 点生命。"
+
+msgid "relic.rusted_meridian_ring.name"
+msgstr "锈脉指环"
+
+msgid "relic.rusted_meridian_ring.desc"
+msgstr "战斗胜利时，获得 4 金。"
+
+msgid "relic.silk_thread_prayer.name"
+msgstr "丝线祈结"
+
+msgid "relic.silk_thread_prayer.desc"
+msgstr "战斗开始时，获得 1 层剑心。"
+
+msgid "relic.black_pill_vial.name"
+msgstr "黑丸小瓶"
+
+msgid "relic.black_pill_vial.desc"
+msgstr "战斗开始时，获得 1 层毒与 1 点能量。"
+
+msgid "relic.cloudstep_sandals.name"
+msgstr "云步履"
+
+msgid "relic.cloudstep_sandals.desc"
+msgstr "回合开始时，获得 3 点护体。"
+
+msgid "relic.immortal_peach_core.name"
+msgstr "不死桃核"
+
+msgid "relic.immortal_peach_core.desc"
+msgstr "战斗开始时，恢复 6 点生命。"
+
+msgid "relic.void_tiger_eye.name"
+msgstr "虚虎眼"
+
+msgid "relic.void_tiger_eye.desc"
+msgstr "战斗胜利时，获得 12 金。"
+
+msgid "event.forgotten_armory.title"
+msgstr "遗忘兵库"
+
+msgid "event.forgotten_armory.body"
+msgstr "尘封兵架仍有寒光，旧符在墙上微微发亮。"
+
+msgid "event.forgotten_armory.option.take_blade"
+msgstr "取走残刃"
+
+msgid "event.forgotten_armory.option.take_blade.desc"
+msgstr "获得一张快斩。"
+
+msgid "event.forgotten_armory.option.take_pill"
+msgstr "取走毒针"
+
+msgid "event.forgotten_armory.option.take_pill.desc"
+msgstr "获得一张毒针。"
+
+msgid "event.forgotten_armory.option.train"
+msgstr "以血练招"
+
+msgid "event.forgotten_armory.option.train.desc"
+msgstr "失去 7 生命，选择一张奖励牌。"
+
+msgid "event.forgotten_armory.option.leave"
+msgstr "离开"
+
+msgid "event.forgotten_armory.option.leave.desc"
+msgstr "不改变当前状态。"
+
+msgid "event.jade_debt_collector.title"
+msgstr "玉债收账人"
+
+msgid "event.jade_debt_collector.body"
+msgstr "一名青衣账客拦住去路，玉算盘珠声清脆。"
+
+msgid "event.jade_debt_collector.option.pay"
+msgstr "支付 25 金"
+
+msgid "event.jade_debt_collector.option.pay.desc"
+msgstr "用金子买下安宁。"
+
+msgid "event.jade_debt_collector.option.bargain"
+msgstr "以剑抵债"
+
+msgid "event.jade_debt_collector.option.bargain.desc"
+msgstr "移除一张打击，获得 10 金。"
+
+msgid "event.jade_debt_collector.option.refuse"
+msgstr "拒绝交账"
+
+msgid "event.jade_debt_collector.option.refuse.desc"
+msgstr "失去 6 生命。"
+
+msgid "event.moonlit_ferry.title"
+msgstr "月下渡船"
+
+msgid "event.moonlit_ferry.body"
+msgstr "无篙小舟停在月色里，水面映出另一个山门。"
+
+msgid "event.moonlit_ferry.option.cross"
+msgstr "渡过月河"
+
+msgid "event.moonlit_ferry.option.cross.desc"
+msgstr "失去 8 生命，获得一件普通遗物奖励。"
+
+msgid "event.moonlit_ferry.option.wait"
+msgstr "岸边调息"
+
+msgid "event.moonlit_ferry.option.wait.desc"
+msgstr "恢复 2 生命。"
+
+msgid "event.spirit_compact.title"
+msgstr "灵契"
+
+msgid "event.spirit_compact.body"
+msgstr "一枚纸灯悬在空中，等待你以血立约。"
+
+msgid "event.spirit_compact.option.accept"
+msgstr "签下灵契"
+
+msgid "event.spirit_compact.option.accept.desc"
+msgstr "失去 10 生命，获得纸灯护符。"
+
+msgid "event.spirit_compact.option.refuse"
+msgstr "拒绝"
+
+msgid "event.spirit_compact.option.refuse.desc"
+msgstr "不改变当前状态。"
+
+msgid "event.tea_house_rumor.title"
+msgstr "茶馆传闻"
+
+msgid "event.tea_house_rumor.body"
+msgstr "雾中茶馆灯火温软，掌柜低声讲起秘境传闻。"
+
+msgid "event.tea_house_rumor.option.rest"
+msgstr "饮茶歇息"
+
+msgid "event.tea_house_rumor.option.rest.desc"
+msgstr "恢复 6 生命。"
+
+msgid "event.tea_house_rumor.option.buy_rumor"
+msgstr "购买传闻"
+
+msgid "event.tea_house_rumor.option.buy_rumor.desc"
+msgstr "支付 18 金，选择一张奖励牌。"
+
+msgid "event.tea_house_rumor.option.leave"
+msgstr "离开"
+
+msgid "event.tea_house_rumor.option.leave.desc"
+msgstr "不改变当前状态。"
+
+msgid "event.withered_master.title"
+msgstr "枯坐师父"
+
+msgid "event.withered_master.body"
+msgstr "白发老者盘坐枯树下，指尖一点便看穿你的旧招。"
+
+msgid "event.withered_master.option.prune_sword"
+msgstr "删去旧剑招"
+
+msgid "event.withered_master.option.prune_sword.desc"
+msgstr "移除一张剑修打击。"
+
+msgid "event.withered_master.option.prune_alchemy"
+msgstr "弃去旧丹方"
+
+msgid "event.withered_master.option.prune_alchemy.desc"
+msgstr "移除一张毒丸。"
+
+msgid "event.withered_master.option.work"
+msgstr "为师父打杂"
+
+msgid "event.withered_master.option.work.desc"
+msgstr "失去 5 生命，获得 22 金。"

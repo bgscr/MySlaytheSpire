@@ -1,0 +1,41 @@
+[gd_resource type="Resource" script_class="EventDef" load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/event_def.gd" id="1_event"]
+[ext_resource type="Script" path="res://scripts/data/event_option_def.gd" id="2_option"]
+
+[sub_resource type="Resource" id="Resource_take_blade"]
+script = ExtResource("2_option")
+id = "take_blade"
+label_key = "event.forgotten_armory.option.take_blade"
+description_key = "event.forgotten_armory.option.take_blade.desc"
+grant_card_ids = Array[String](["sword.flash_cut"])
+
+[sub_resource type="Resource" id="Resource_train"]
+script = ExtResource("2_option")
+id = "train"
+label_key = "event.forgotten_armory.option.train"
+description_key = "event.forgotten_armory.option.train.desc"
+min_hp = 8
+hp_delta = -7
+card_reward_count = 3
+
+[sub_resource type="Resource" id="Resource_take_pill"]
+script = ExtResource("2_option")
+id = "take_pill"
+label_key = "event.forgotten_armory.option.take_pill"
+description_key = "event.forgotten_armory.option.take_pill.desc"
+grant_card_ids = Array[String](["alchemy.toxin_needle"])
+
+[sub_resource type="Resource" id="Resource_leave"]
+script = ExtResource("2_option")
+id = "leave"
+label_key = "event.forgotten_armory.option.leave"
+description_key = "event.forgotten_armory.option.leave.desc"
+
+[resource]
+script = ExtResource("1_event")
+id = "forgotten_armory"
+title_key = "event.forgotten_armory.title"
+body_key = "event.forgotten_armory.body"
+event_weight = 100
+options = Array[ExtResource("2_option")]([SubResource("Resource_take_blade"), SubResource("Resource_take_pill"), SubResource("Resource_train"), SubResource("Resource_leave")])

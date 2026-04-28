@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="EventDef" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/event_def.gd" id="1_event"]
+[ext_resource type="Script" path="res://scripts/data/event_option_def.gd" id="2_option"]
+
+[sub_resource type="Resource" id="Resource_prune_sword"]
+script = ExtResource("2_option")
+id = "prune_sword"
+label_key = "event.withered_master.option.prune_sword"
+description_key = "event.withered_master.option.prune_sword.desc"
+remove_card_id = "sword.strike"
+
+[sub_resource type="Resource" id="Resource_prune_alchemy"]
+script = ExtResource("2_option")
+id = "prune_alchemy"
+label_key = "event.withered_master.option.prune_alchemy"
+description_key = "event.withered_master.option.prune_alchemy.desc"
+remove_card_id = "alchemy.toxic_pill"
+
+[sub_resource type="Resource" id="Resource_work"]
+script = ExtResource("2_option")
+id = "work"
+label_key = "event.withered_master.option.work"
+description_key = "event.withered_master.option.work.desc"
+min_hp = 6
+hp_delta = -5
+gold_delta = 22
+
+[resource]
+script = ExtResource("1_event")
+id = "withered_master"
+title_key = "event.withered_master.title"
+body_key = "event.withered_master.body"
+event_weight = 100
+options = Array[ExtResource("2_option")]([SubResource("Resource_prune_sword"), SubResource("Resource_prune_alchemy"), SubResource("Resource_work")])

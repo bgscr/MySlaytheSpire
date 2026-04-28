@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="EventDef" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/event_def.gd" id="1_event"]
+[ext_resource type="Script" path="res://scripts/data/event_option_def.gd" id="2_option"]
+
+[sub_resource type="Resource" id="Resource_cross"]
+script = ExtResource("2_option")
+id = "cross"
+label_key = "event.moonlit_ferry.option.cross"
+description_key = "event.moonlit_ferry.option.cross.desc"
+min_hp = 9
+hp_delta = -8
+relic_reward_tier = "common"
+
+[sub_resource type="Resource" id="Resource_wait"]
+script = ExtResource("2_option")
+id = "wait"
+label_key = "event.moonlit_ferry.option.wait"
+description_key = "event.moonlit_ferry.option.wait.desc"
+hp_delta = 2
+
+[resource]
+script = ExtResource("1_event")
+id = "moonlit_ferry"
+title_key = "event.moonlit_ferry.title"
+body_key = "event.moonlit_ferry.body"
+event_weight = 100
+options = Array[ExtResource("2_option")]([SubResource("Resource_cross"), SubResource("Resource_wait")])

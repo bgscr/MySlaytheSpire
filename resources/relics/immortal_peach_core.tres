@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="RelicDef" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/relic_def.gd" id="1_relic"]
+[ext_resource type="Script" path="res://scripts/data/effect_def.gd" id="2_effect"]
+
+[sub_resource type="Resource" id="Resource_heal"]
+script = ExtResource("2_effect")
+effect_type = "heal"
+amount = 6
+target = "player"
+
+[resource]
+script = ExtResource("1_relic")
+id = "immortal_peach_core"
+name_key = "relic.immortal_peach_core.name"
+description_key = "relic.immortal_peach_core.desc"
+trigger_event = "combat_started"
+effects = Array[ExtResource("2_effect")]([SubResource("Resource_heal")])
+tier = "rare"
+reward_weight = 100

@@ -72,12 +72,11 @@ func test_relic_rewards_return_empty_id_for_empty_pool() -> bool:
 	assert(passed)
 	return passed
 
-func test_relic_rewards_draw_from_each_populated_wave_2_tier() -> bool:
+func test_relic_rewards_draw_from_each_populated_wave_c_tier() -> bool:
 	var catalog := _catalog()
-	var generator := RewardGenerator.new()
-	var common := generator.generate_relic_reward(catalog, 91, "wave_2_common", "common")
-	var uncommon := generator.generate_relic_reward(catalog, 91, "wave_2_uncommon", "uncommon")
-	var rare := generator.generate_relic_reward(catalog, 91, "wave_2_rare", "rare")
+	var common := RewardGenerator.new().generate_relic_reward(catalog, 1, "wave_c_common", "common")
+	var uncommon := RewardGenerator.new().generate_relic_reward(catalog, 1, "wave_c_uncommon", "uncommon")
+	var rare := RewardGenerator.new().generate_relic_reward(catalog, 1, "wave_c_rare", "rare")
 	var passed: bool = not String(common.get("relic_id", "")).is_empty() \
 		and not String(uncommon.get("relic_id", "")).is_empty() \
 		and not String(rare.get("relic_id", "")).is_empty()

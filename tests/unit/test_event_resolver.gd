@@ -20,6 +20,12 @@ func test_event_resolver_returns_deterministic_event_for_same_run_context() -> b
 			"sealed_sword_tomb",
 			"alchemist_market",
 			"spirit_beast_tracks",
+			"forgotten_armory",
+			"jade_debt_collector",
+			"moonlit_ferry",
+			"spirit_compact",
+			"tea_house_rumor",
+			"withered_master",
 		].has(first.id)
 	assert(passed)
 	return passed
@@ -43,6 +49,24 @@ func test_event_resolver_returns_null_for_missing_current_node() -> bool:
 	run.current_node_id = "missing"
 	var event = EventResolver.new().resolve(_catalog(), run)
 	var passed := event == null
+	assert(passed)
+	return passed
+
+func test_default_event_pool_includes_wave_c_events_with_options() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.load_default()
+	var expected := [
+		"forgotten_armory",
+		"jade_debt_collector",
+		"moonlit_ferry",
+		"spirit_compact",
+		"tea_house_rumor",
+		"withered_master",
+	]
+	var passed := true
+	for event_id in expected:
+		var event := catalog.get_event(event_id)
+		passed = passed and event != null and not event.options.is_empty()
 	assert(passed)
 	return passed
 

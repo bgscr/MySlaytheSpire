@@ -173,7 +173,7 @@ func test_dual_starter_card_pools_are_character_isolated() -> bool:
 	assert(passed)
 	return passed
 
-func test_wave_2_catalog_loads_expanded_enemy_relic_and_event_counts() -> bool:
+func test_wave_c_catalog_loads_expanded_enemy_relic_and_event_counts() -> bool:
 	var catalog := ContentCatalog.new()
 	catalog.load_default()
 	var normal_ids := _ids(catalog.get_enemies_by_tier("normal"))
@@ -183,31 +183,33 @@ func test_wave_2_catalog_loads_expanded_enemy_relic_and_event_counts() -> bool:
 	var uncommon_relic_ids := _ids(catalog.get_relics_by_tier("uncommon"))
 	var rare_relic_ids := _ids(catalog.get_relics_by_tier("rare"))
 	var event_ids := _ids(catalog.get_events())
-	var passed: bool = catalog.enemies_by_id.size() == 12 \
-		and catalog.relics_by_id.size() == 12 \
-		and catalog.events_by_id.size() == 6 \
-		and normal_ids.size() == 5 \
-		and elite_ids.size() == 4 \
-		and boss_ids.size() == 3 \
-		and common_relic_ids.size() == 6 \
-		and uncommon_relic_ids.size() == 4 \
-		and rare_relic_ids.size() == 2 \
-		and normal_ids.has("wild_fox_spirit") \
-		and normal_ids.has("scarlet_mantis_acolyte") \
-		and elite_ids.has("mirror_blade_adept") \
-		and elite_ids.has("jade_armor_sentinel") \
-		and boss_ids.has("boss_storm_dragon") \
-		and boss_ids.has("boss_void_tiger") \
-		and common_relic_ids.has("mist_vein_bracelet") \
-		and common_relic_ids.has("verdant_antidote_gourd") \
-		and common_relic_ids.has("copper_mantis_hook") \
-		and uncommon_relic_ids.has("white_tiger_tally") \
-		and uncommon_relic_ids.has("nine_smoke_censer") \
-		and rare_relic_ids.has("dragon_bone_flute") \
-		and rare_relic_ids.has("starforged_meridian") \
-		and event_ids.has("sealed_sword_tomb") \
-		and event_ids.has("alchemist_market") \
-		and event_ids.has("spirit_beast_tracks")
+	var passed: bool = catalog.enemies_by_id.size() == 16 \
+		and catalog.relics_by_id.size() == 20 \
+		and catalog.events_by_id.size() == 12 \
+		and normal_ids.size() == 7 \
+		and elite_ids.size() == 5 \
+		and boss_ids.size() == 4 \
+		and common_relic_ids.size() == 9 \
+		and uncommon_relic_ids.size() == 7 \
+		and rare_relic_ids.size() == 4 \
+		and normal_ids.has("plague_jade_imp") \
+		and normal_ids.has("iron_oath_duelist") \
+		and elite_ids.has("miasma_cauldron_elder") \
+		and boss_ids.has("boss_sword_ghost") \
+		and common_relic_ids.has("paper_lantern_charm") \
+		and common_relic_ids.has("mothwing_sachet") \
+		and common_relic_ids.has("rusted_meridian_ring") \
+		and uncommon_relic_ids.has("silk_thread_prayer") \
+		and uncommon_relic_ids.has("black_pill_vial") \
+		and uncommon_relic_ids.has("cloudstep_sandals") \
+		and rare_relic_ids.has("immortal_peach_core") \
+		and rare_relic_ids.has("void_tiger_eye") \
+		and event_ids.has("forgotten_armory") \
+		and event_ids.has("jade_debt_collector") \
+		and event_ids.has("moonlit_ferry") \
+		and event_ids.has("spirit_compact") \
+		and event_ids.has("tea_house_rumor") \
+		and event_ids.has("withered_master")
 	assert(passed)
 	return passed
 
@@ -215,14 +217,20 @@ func test_default_catalog_loads_event_pool() -> bool:
 	var catalog := ContentCatalog.new()
 	catalog.load_default()
 	var event_ids := _ids(catalog.get_events())
-	var passed: bool = catalog.events_by_id.size() == 6 \
+	var passed: bool = catalog.events_by_id.size() == 12 \
 		and event_ids.has("wandering_physician") \
 		and event_ids.has("spirit_toll") \
 		and event_ids.has("quiet_shrine") \
 		and event_ids.has("sealed_sword_tomb") \
 		and event_ids.has("alchemist_market") \
 		and event_ids.has("spirit_beast_tracks") \
-		and catalog.get_event("spirit_beast_tracks") != null
+		and event_ids.has("forgotten_armory") \
+		and event_ids.has("jade_debt_collector") \
+		and event_ids.has("moonlit_ferry") \
+		and event_ids.has("spirit_compact") \
+		and event_ids.has("tea_house_rumor") \
+		and event_ids.has("withered_master") \
+		and catalog.get_event("withered_master") != null
 	assert(passed)
 	return passed
 
@@ -244,6 +252,27 @@ func test_validation_reports_event_without_options() -> bool:
 	catalog.events_by_id[event.id] = event
 	var errors := catalog.validate()
 	var passed := _any_contains(errors, "empty_event has no options")
+	assert(passed)
+	return passed
+
+func test_validation_reports_event_reward_references_missing_catalog_ids() -> bool:
+	var catalog := ContentCatalog.new()
+	var event := EventDef.new()
+	event.id = "bad_rewards"
+	event.title_key = "event.bad_rewards.title"
+	event.body_key = "event.bad_rewards.body"
+	var option := preload("res://scripts/data/event_option_def.gd").new()
+	option.id = "bad"
+	option.label_key = "event.bad_rewards.option.bad"
+	option.grant_card_ids = ["missing.card"]
+	option.grant_relic_ids = ["missing_relic"]
+	option.remove_card_id = "missing.remove_card"
+	event.options = [option]
+	catalog.events_by_id[event.id] = event
+	var errors := catalog.validate()
+	var passed := _any_contains(errors, "missing card missing.card") \
+		and _any_contains(errors, "missing relic missing_relic") \
+		and _any_contains(errors, "missing remove card missing.remove_card")
 	assert(passed)
 	return passed
 

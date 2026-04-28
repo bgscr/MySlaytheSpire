@@ -68,6 +68,10 @@ const DEFAULT_ENEMY_PATHS: Array[String] = [
 	"res://resources/enemies/scarlet_mantis_acolyte.tres",
 	"res://resources/enemies/jade_armor_sentinel.tres",
 	"res://resources/enemies/boss_void_tiger.tres",
+	"res://resources/enemies/plague_jade_imp.tres",
+	"res://resources/enemies/iron_oath_duelist.tres",
+	"res://resources/enemies/miasma_cauldron_elder.tres",
+	"res://resources/enemies/boss_sword_ghost.tres",
 ]
 
 const DEFAULT_RELIC_PATHS: Array[String] = [
@@ -83,6 +87,14 @@ const DEFAULT_RELIC_PATHS: Array[String] = [
 	"res://resources/relics/white_tiger_tally.tres",
 	"res://resources/relics/nine_smoke_censer.tres",
 	"res://resources/relics/starforged_meridian.tres",
+	"res://resources/relics/paper_lantern_charm.tres",
+	"res://resources/relics/mothwing_sachet.tres",
+	"res://resources/relics/rusted_meridian_ring.tres",
+	"res://resources/relics/silk_thread_prayer.tres",
+	"res://resources/relics/black_pill_vial.tres",
+	"res://resources/relics/cloudstep_sandals.tres",
+	"res://resources/relics/immortal_peach_core.tres",
+	"res://resources/relics/void_tiger_eye.tres",
 ]
 
 const DEFAULT_EVENT_PATHS: Array[String] = [
@@ -92,6 +104,12 @@ const DEFAULT_EVENT_PATHS: Array[String] = [
 	"res://resources/events/sealed_sword_tomb.tres",
 	"res://resources/events/alchemist_market.tres",
 	"res://resources/events/spirit_beast_tracks.tres",
+	"res://resources/events/forgotten_armory.tres",
+	"res://resources/events/jade_debt_collector.tres",
+	"res://resources/events/moonlit_ferry.tres",
+	"res://resources/events/spirit_compact.tres",
+	"res://resources/events/tea_house_rumor.tres",
+	"res://resources/events/withered_master.tres",
 ]
 
 var cards_by_id: Dictionary = {}
@@ -308,8 +326,19 @@ func _validate_event_options(errors: Array[String]) -> void:
 		for option in event.options:
 			if option == null:
 				errors.append("Event %s has null option" % event.id)
-			elif option.id.is_empty():
+				continue
+			if option.id.is_empty():
 				errors.append("Event %s has option with empty id" % event.id)
+			for card_id in option.grant_card_ids:
+				if not cards_by_id.has(card_id):
+					errors.append("Event %s option %s references missing card %s" % [event.id, option.id, card_id])
+			if not option.remove_card_id.is_empty() and not cards_by_id.has(option.remove_card_id):
+				errors.append("Event %s option %s references missing remove card %s" % [event.id, option.id, option.remove_card_id])
+			for relic_id in option.grant_relic_ids:
+				if not relics_by_id.has(relic_id):
+					errors.append("Event %s option %s references missing relic %s" % [event.id, option.id, relic_id])
+			if not option.relic_reward_tier.is_empty() and get_relics_by_tier(option.relic_reward_tier).is_empty():
+				errors.append("Event %s option %s references empty relic tier %s" % [event.id, option.id, option.relic_reward_tier])
 
 func _require_locale_key(key: String, label: String, locale_keys: Dictionary, errors: Array[String]) -> void:
 	if key.is_empty():

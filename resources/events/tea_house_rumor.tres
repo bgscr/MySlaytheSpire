@@ -1,0 +1,34 @@
+[gd_resource type="Resource" script_class="EventDef" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/event_def.gd" id="1_event"]
+[ext_resource type="Script" path="res://scripts/data/event_option_def.gd" id="2_option"]
+
+[sub_resource type="Resource" id="Resource_rest"]
+script = ExtResource("2_option")
+id = "rest"
+label_key = "event.tea_house_rumor.option.rest"
+description_key = "event.tea_house_rumor.option.rest.desc"
+hp_delta = 6
+
+[sub_resource type="Resource" id="Resource_buy_rumor"]
+script = ExtResource("2_option")
+id = "buy_rumor"
+label_key = "event.tea_house_rumor.option.buy_rumor"
+description_key = "event.tea_house_rumor.option.buy_rumor.desc"
+min_gold = 18
+gold_delta = -18
+card_reward_count = 3
+
+[sub_resource type="Resource" id="Resource_leave"]
+script = ExtResource("2_option")
+id = "leave"
+label_key = "event.tea_house_rumor.option.leave"
+description_key = "event.tea_house_rumor.option.leave.desc"
+
+[resource]
+script = ExtResource("1_event")
+id = "tea_house_rumor"
+title_key = "event.tea_house_rumor.title"
+body_key = "event.tea_house_rumor.body"
+event_weight = 100
+options = Array[ExtResource("2_option")]([SubResource("Resource_rest"), SubResource("Resource_buy_rumor"), SubResource("Resource_leave")])

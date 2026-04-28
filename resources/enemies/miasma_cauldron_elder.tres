@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="EnemyDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/enemy_def.gd" id="1_enemy"]
+
+[resource]
+script = ExtResource("1_enemy")
+id = "miasma_cauldron_elder"
+name_key = "enemy.miasma_cauldron_elder.name"
+max_hp = 62
+intent_sequence = Array[String](["apply_status_poison_3_player", "block_12", "attack_12"])
+reward_tier = "elite"
+tier = "elite"
+encounter_weight = 100
+gold_reward_min = 24
+gold_reward_max = 34

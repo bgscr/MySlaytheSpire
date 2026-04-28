@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="EnemyDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/enemy_def.gd" id="1_enemy"]
+
+[resource]
+script = ExtResource("1_enemy")
+id = "boss_sword_ghost"
+name_key = "enemy.boss_sword_ghost.name"
+max_hp = 125
+intent_sequence = Array[String](["self_status_sword_focus_2", "apply_status_broken_stance_2_player", "attack_20"])
+reward_tier = "boss"
+tier = "boss"
+encounter_weight = 100
+gold_reward_min = 55
+gold_reward_max = 75
