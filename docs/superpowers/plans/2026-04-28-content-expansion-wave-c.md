@@ -970,7 +970,7 @@ rtk proxy git commit -m "feat: route event rewards through reward screen"
 - Modify: `scripts/combat/combat_session.gd`
 - Modify: `tests/unit/test_combat_session.gd`
 
-- [ ] **Step 1: Add failing enemy status intent tests**
+- [x] **Step 1: Add failing enemy status intent tests**
 
 Append these tests to `tests/unit/test_combat_session.gd` before helper functions:
 
@@ -1028,7 +1028,7 @@ func _catalog_with_single_enemy_intent(enemy_id: String, tier: String, intents: 
 	return catalog
 ```
 
-- [ ] **Step 2: Run tests and verify RED**
+- [x] **Step 2: Run tests and verify RED**
 
 Run:
 
@@ -1038,7 +1038,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: enemy status intent tests fail because current parser only supports two-part intent strings.
 
-- [ ] **Step 3: Implement status intent parsing and execution**
+- [x] **Step 3: Implement status intent parsing and execution**
 
 In `scripts/combat/combat_session.gd`, add:
 
@@ -1123,7 +1123,7 @@ func _parse_status_intent_payload(payload: String) -> Dictionary:
 	}
 ```
 
-- [ ] **Step 4: Run tests and verify GREEN for Task 4**
+- [x] **Step 4: Run tests and verify GREEN for Task 4**
 
 Run:
 
@@ -1137,7 +1137,7 @@ Expected:
 TESTS PASSED
 ```
 
-- [ ] **Step 5: Run Task 4 review gates**
+- [x] **Step 5: Run Task 4 review gates**
 
 Stage 1 Spec Compliance Review:
 
@@ -1153,7 +1153,7 @@ Stage 2 Code Quality Review:
 - Status ids with underscores, such as `broken_stance` and `sword_focus`, parse correctly.
 - The implementation reuses `EffectExecutor.execute_in_state()` for generic `apply_status`.
 
-- [ ] **Step 6: Commit Task 4**
+- [x] **Step 6: Commit Task 4**
 
 Run:
 
