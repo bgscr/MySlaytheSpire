@@ -215,6 +215,29 @@ func test_layer_target_highlight_applies_and_clears(tree: SceneTree) -> bool:
 	assert(passed)
 	return passed
 
+func test_layer_ignores_float_events_without_bound_targets(tree: SceneTree) -> bool:
+	var layer := CombatPresentationLayer.new()
+	tree.root.add_child(layer)
+
+	var damage := CombatPresentationEvent.new("damage_number")
+	damage.target_id = "missing"
+	damage.amount = 5
+	layer.play_event(damage)
+	var block := CombatPresentationEvent.new("block_number")
+	block.target_id = "missing"
+	block.amount = 3
+	layer.play_event(block)
+	var status := CombatPresentationEvent.new("status_number")
+	status.target_id = "missing"
+	status.status_id = "poison"
+	status.amount = 2
+	layer.play_event(status)
+
+	var passed: bool = layer.get_node_or_null("FloatText_0") == null
+	layer.free()
+	assert(passed)
+	return passed
+
 func _has_event(events: Array, event_type: String, target_id: String, amount: int, status_id: String) -> bool:
 	for event in events:
 		if event.event_type != event_type:

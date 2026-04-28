@@ -58,6 +58,8 @@ func play_event(event: CombatPresentationEvent) -> void:
 			_set_card_lift(event.target_id, false)
 
 func _show_float_text(event: CombatPresentationEvent, text: String, color: Color) -> void:
+	if not targets.has(event.target_id):
+		return
 	var label := Label.new()
 	label.name = "FloatText_%s" % _float_index
 	_float_index += 1
