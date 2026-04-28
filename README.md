@@ -48,9 +48,10 @@ $env:GODOT4="C:\Tools\Godot\Godot_v4.6.2-stable_win64_console.exe"
 - Content expansion wave C: complete; events can grant cards, relics, card removal, and pending reward choices, enemies can use status intents, combat shows compact status names, and default content has 16 enemies, 20 relics, and 12 events.
 - High-presentation foundation: complete; combat now routes feedback through a presentation event queue, supports mouse drag play with click fallback, and shows programmatic hover, target highlight, floating number, flash, and status pulse feedback.
 - High-presentation polish hooks: complete; successful card play can now emit explicit or inferred polish events for slash, particle, camera impulse, slow-motion, and audio-cue placeholders without coupling presentation to combat rules.
+- High-presentation asset pass: complete; combat polish hooks now resolve project-owned texture/audio assets through a cue-id asset catalog for slash, mist, camera impulse, local slow-motion, and audio cue playback.
 
 ## Next Plans
 
-1. High-presentation asset pass: generated assets, richer sword-qi trails, medicine mist, camera tuning, and real audio routing.
-2. Developer tools: card browser, enemy sandbox, event tester, reward inspector, save inspector.
-3. Release readiness: CI, artifact export, changelog, release draft, Steam adapter.
+1. Developer tools: card browser, enemy sandbox, event tester, reward inspector, save inspector.
+2. Release readiness: CI, artifact export, changelog, release draft, Steam adapter.
+3. Presentation expansion: more per-card cue ids, enemy intent polish, card art, richer combat backgrounds, and formal audio mixing.

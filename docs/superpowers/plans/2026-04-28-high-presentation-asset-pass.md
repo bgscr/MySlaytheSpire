@@ -934,7 +934,7 @@ Stage 2 Code Quality Review:
 
 Classify findings as Critical, Important, or Minor. Fix Critical and Important issues before committing.
 
-- [ ] **Step 9: Commit Task 3**
+- [x] **Step 9: Commit Task 3**
 
 Run:
 
@@ -1083,7 +1083,7 @@ rtk proxy git commit -m "test: verify asset-backed polish in combat"
 - Modify: `README.md`
 - Modify: `docs/superpowers/plans/2026-04-28-high-presentation-asset-pass.md`
 
-- [ ] **Step 1: Run full local tests**
+- [x] **Step 1: Run full local tests**
 
 Run:
 
@@ -1097,7 +1097,7 @@ Expected:
 TESTS PASSED
 ```
 
-- [ ] **Step 2: Run Godot import check**
+- [x] **Step 2: Run Godot import check**
 
 Run:
 
@@ -1107,7 +1107,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: process exits 0.
 
-- [ ] **Step 3: Verify core combat classes remain presentation-free**
+- [x] **Step 3: Verify core combat classes remain presentation-free**
 
 Run:
 
@@ -1117,7 +1117,7 @@ rtk proxy rg -n "presentation|CombatPresentation|assets/presentation" scripts/co
 
 Expected: no output from core combat rule files. Existing data classes may mention presentation only in `scripts/data/card_def.gd` and `scripts/data/card_presentation_cue_def.gd`, which are outside the command above.
 
-- [ ] **Step 4: Update README Phase 2 progress**
+- [x] **Step 4: Update README Phase 2 progress**
 
 Modify `README.md`.
 
@@ -1137,11 +1137,11 @@ Update `## Next Plans` to:
 3. Presentation expansion: more per-card cue ids, enemy intent polish, card art, richer combat backgrounds, and formal audio mixing.
 ```
 
-- [ ] **Step 5: Mark completed plan steps**
+- [x] **Step 5: Mark completed plan steps**
 
 Update completed checkboxes in this plan from `[ ]` to `[x]` after verifying implementation and reviews.
 
-- [ ] **Step 6: Run final two-stage review**
+- [x] **Step 6: Run final two-stage review**
 
 Stage 1 Spec Compliance Review:
 
@@ -1167,7 +1167,7 @@ Stage 2 Code Quality Review:
 
 Classify findings as Critical, Important, or Minor. Fix Critical and Important issues before acceptance.
 
-- [ ] **Step 7: Commit final acceptance docs**
+- [x] **Step 7: Commit final acceptance docs**
 
 Run:
 
