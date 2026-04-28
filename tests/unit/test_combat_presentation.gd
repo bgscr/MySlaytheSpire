@@ -39,12 +39,39 @@ func test_queue_drains_fifo_and_clears() -> bool:
 	assert(passed)
 	return passed
 
+func test_queue_enqueue_copies_event_without_aliasing_original() -> bool:
+	var queue := CombatPresentationQueue.new()
+	var event := CombatPresentationEvent.new("damage_number")
+	event.target_id = "enemy:0"
+	event.amount = 9
+	event.tags = ["impact"]
+	event.payload = {"points": [Vector2(5, 6)]}
+	queue.enqueue(event)
+
+	event.target_id = "enemy:1"
+	event.amount = 99
+	event.tags.append("mutated")
+	event.payload["points"].append(Vector2(7, 8))
+
+	var drained := queue.drain()
+	var queued_event = drained[0] if drained.size() > 0 else null
+	var queued_points: Array = queued_event.payload.get("points", []) if queued_event != null else []
+	var passed: bool = drained.size() == 1 \
+		and queued_event.event_type == "damage_number" \
+		and queued_event.target_id == "enemy:0" \
+		and queued_event.amount == 9 \
+		and queued_event.tags == ["impact"] \
+		and queued_points.size() == 1
+	assert(passed)
+	return passed
+
 func test_queue_filters_disabled_floating_text_flash_highlight_drag_and_cinematic() -> bool:
 	var config := CombatPresentationConfig.new()
 	config.floating_text_enabled = false
 	config.flash_enabled = false
 	config.target_highlight_enabled = false
 	config.drag_enabled = false
+	config.status_pulse_enabled = false
 	config.cinematic_enabled = false
 
 	var queue := CombatPresentationQueue.new()
@@ -55,6 +82,7 @@ func test_queue_filters_disabled_floating_text_flash_highlight_drag_and_cinemati
 	queue.enqueue(CombatPresentationEvent.new("combatant_flash"))
 	queue.enqueue(CombatPresentationEvent.new("target_highlighted"))
 	queue.enqueue(CombatPresentationEvent.new("card_drag_started"))
+	queue.enqueue(CombatPresentationEvent.new("status_badge_pulse"))
 	var cinematic := CombatPresentationEvent.new("cinematic_slash")
 	cinematic.tags = ["cinematic"]
 	queue.enqueue(cinematic)
