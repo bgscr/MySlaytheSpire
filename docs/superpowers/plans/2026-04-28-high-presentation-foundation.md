@@ -79,7 +79,7 @@ Expected: process exits 0.
 - Create: `tests/unit/test_combat_presentation.gd`
 - Modify: `scripts/testing/test_runner.gd`
 
-- [ ] **Step 1: Write failing primitive tests**
+- [x] **Step 1: Write failing primitive tests**
 
 Create `tests/unit/test_combat_presentation.gd`:
 
@@ -169,7 +169,7 @@ Modify `scripts/testing/test_runner.gd` and insert the new file before `test_com
 	"res://tests/unit/test_combat_presentation.gd",
 ```
 
-- [ ] **Step 2: Run tests to verify red**
+- [x] **Step 2: Run tests to verify red**
 
 Run:
 
@@ -179,7 +179,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: failures loading missing presentation scripts.
 
-- [ ] **Step 3: Implement event envelope**
+- [x] **Step 3: Implement event envelope**
 
 Create `scripts/presentation/combat_presentation_event.gd`:
 
@@ -215,7 +215,7 @@ func copy() -> CombatPresentationEvent:
 	return copied
 ```
 
-- [ ] **Step 4: Implement config**
+- [x] **Step 4: Implement config**
 
 Create `scripts/presentation/combat_presentation_config.gd`:
 
@@ -257,7 +257,7 @@ func _is_floating_text_event(event_type: String) -> bool:
 		or event_type == "status_number"
 ```
 
-- [ ] **Step 5: Implement queue**
+- [x] **Step 5: Implement queue**
 
 Create `scripts/presentation/combat_presentation_queue.gd`:
 
@@ -290,7 +290,7 @@ func size() -> int:
 	return _events.size()
 ```
 
-- [ ] **Step 6: Run full tests to verify green**
+- [x] **Step 6: Run full tests to verify green**
 
 Run:
 
@@ -300,7 +300,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: `TESTS PASSED`.
 
-- [ ] **Step 7: Review and commit Task 1**
+- [x] **Step 7: Review and commit Task 1**
 
 Stage 1 Spec Compliance Review:
 
