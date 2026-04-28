@@ -28,6 +28,9 @@ func resolve(catalog: ContentCatalog, run: RunState) -> Array[Dictionary]:
 	var node := _current_node(run)
 	if node == null:
 		return rewards
+	var pending_rewards := _pending_event_rewards(run, node)
+	if not pending_rewards.is_empty():
+		return pending_rewards
 	match node.node_type:
 		"elite":
 			_append_weighted_card_choice(rewards, catalog, run, node, ELITE_CARD_WEIGHTS)
@@ -119,6 +122,21 @@ func _append_relic(
 func _should_offer_elite_relic(run: RunState, node: MapNodeState) -> bool:
 	var rng := RngService.new(run.seed_value).fork("reward:elite_relic:%s" % node.id)
 	return rng.next_float() < ELITE_RELIC_CHANCE
+
+func _pending_event_rewards(run: RunState, node: MapNodeState) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	var reward_state := run.current_reward_state
+	if reward_state.is_empty():
+		return result
+	if String(reward_state.get("source", "")) != "event":
+		return result
+	if String(reward_state.get("node_id", "")) != node.id:
+		return result
+	var rewards: Array = reward_state.get("rewards", [])
+	for reward in rewards:
+		if reward is Dictionary:
+			result.append((reward as Dictionary).duplicate(true))
+	return result
 
 func _current_node(run: RunState) -> MapNodeState:
 	for candidate in run.map_nodes:

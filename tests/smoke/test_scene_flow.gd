@@ -224,6 +224,45 @@ func test_event_screen_disables_unavailable_option(tree: SceneTree) -> bool:
 	_delete_test_save(save_path)
 	return passed
 
+func test_reward_screen_claims_pending_event_reward_then_advances_event(tree: SceneTree) -> bool:
+	var save_path := "user://test_event_reward_screen_save.json"
+	var app = _create_app_with_save_service(tree, save_path)
+	var run := _reward_run("event", true)
+	run.current_reward_state = {
+		"source": "event",
+		"node_id": "node_0",
+		"event_id": "forgotten_armory",
+		"option_id": "train",
+		"rewards": [
+			{
+				"id": "event-card:node_0:train",
+				"type": "card_choice",
+				"card_ids": ["sword.flash_cut", "sword.guard"],
+			},
+		],
+	}
+	app.game.current_run = run
+
+	var reward_screen = app.game.router.go_to(SceneRouterScript.REWARD)
+	var claim_card := _find_node_by_name(reward_screen, "ClaimCard_0_0") as Button
+	if claim_card != null:
+		claim_card.pressed.emit()
+	var continue_button := _find_node_by_name(reward_screen, "ContinueButton") as Button
+	if continue_button != null:
+		continue_button.pressed.emit()
+	var loaded_run = app.game.save_service.load_run()
+	var passed: bool = claim_card != null \
+		and continue_button != null \
+		and loaded_run != null \
+		and loaded_run.current_reward_state.is_empty() \
+		and loaded_run.deck_ids.has("sword.flash_cut") \
+		and loaded_run.map_nodes[0].visited \
+		and loaded_run.map_nodes[1].unlocked \
+		and app.game.router.current_scene != reward_screen
+	app.free()
+	_delete_test_save(save_path)
+	return passed
+
 func test_map_shop_node_routes_to_shop_screen(tree: SceneTree) -> bool:
 	var save_path := "user://test_shop_route_save.json"
 	var app = _create_app_with_save_service(tree, save_path)
@@ -346,6 +385,37 @@ func test_main_menu_continue_resumes_in_progress_shop(tree: SceneTree) -> bool:
 		continue_button.pressed.emit()
 	var passed: bool = app.game.router.current_scene != null \
 		and app.game.router.current_scene.name == "ShopScreen"
+	app.free()
+	_delete_test_save(save_path)
+	return passed
+
+func test_main_menu_continue_resumes_pending_event_reward(tree: SceneTree) -> bool:
+	var save_path := "user://test_event_reward_continue_save.json"
+	var app = _create_app_with_save_service(tree, save_path)
+	var run := _reward_run("event", true)
+	run.current_reward_state = {
+		"source": "event",
+		"node_id": "node_0",
+		"event_id": "forgotten_armory",
+		"option_id": "train",
+		"rewards": [
+			{
+				"id": "event-card:node_0:train",
+				"type": "card_choice",
+				"card_ids": ["sword.flash_cut", "sword.guard"],
+			},
+		],
+	}
+	app.game.save_service.save_run(run)
+	var main_menu = app.game.router.go_to(SceneRouterScript.MAIN_MENU)
+	var continue_button := _find_continue_button(main_menu)
+	if continue_button != null:
+		continue_button.pressed.emit()
+	var claim_card := _find_node_by_name(app.game.router.current_scene, "ClaimCard_0_0") as Button
+	var passed: bool = continue_button != null \
+		and app.game.router.current_scene != null \
+		and app.game.router.current_scene.name == "RewardScreen" \
+		and claim_card != null
 	app.free()
 	_delete_test_save(save_path)
 	return passed

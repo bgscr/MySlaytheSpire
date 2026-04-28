@@ -110,6 +110,49 @@ func test_resolver_is_deterministic_for_same_run_context() -> bool:
 	assert(passed)
 	return passed
 
+func test_pending_event_reward_state_is_returned_for_current_event_node() -> bool:
+	var run := _run_for_node("event", 777)
+	run.current_reward_state = {
+		"source": "event",
+		"node_id": "node_0",
+		"event_id": "forgotten_armory",
+		"option_id": "train",
+		"rewards": [
+			{
+				"id": "event-card:node_0:train",
+				"type": "card_choice",
+				"card_ids": ["sword.flash_cut", "sword.guard"],
+			},
+		],
+	}
+	var rewards := RewardResolver.new().resolve(_catalog(), run)
+	var card := _find_reward(rewards, "card_choice")
+	var passed: bool = rewards.size() == 1 \
+		and card.get("id") == "event-card:node_0:train" \
+		and _array_value_count(card.get("card_ids", [])) == 2
+	assert(passed)
+	return passed
+
+func test_pending_event_reward_state_ignored_for_different_node() -> bool:
+	var run := _run_for_node("event", 777)
+	run.current_reward_state = {
+		"source": "event",
+		"node_id": "other_node",
+		"event_id": "forgotten_armory",
+		"option_id": "train",
+		"rewards": [
+			{
+				"id": "event-card:other_node:train",
+				"type": "card_choice",
+				"card_ids": ["sword.flash_cut"],
+			},
+		],
+	}
+	var rewards := RewardResolver.new().resolve(_catalog(), run)
+	var passed: bool = rewards.is_empty()
+	assert(passed)
+	return passed
+
 func _catalog() -> ContentCatalog:
 	var catalog := ContentCatalog.new()
 	catalog.load_default()

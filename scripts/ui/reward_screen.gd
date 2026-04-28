@@ -3,6 +3,7 @@ extends Control
 const ContentCatalog := preload("res://scripts/content/content_catalog.gd")
 const RewardResolver := preload("res://scripts/reward/reward_resolver.gd")
 const RunProgression := preload("res://scripts/run/run_progression.gd")
+const RunStateScript := preload("res://scripts/run/run_state.gd")
 const SceneRouterScript := preload("res://scripts/app/scene_router.gd")
 
 const STATE_AVAILABLE := "available"
@@ -196,6 +197,9 @@ func _on_continue_pressed() -> void:
 	advance_requested = true
 	if continue_button != null:
 		continue_button.disabled = true
+	var clear_event_reward_state := _has_pending_event_rewards(app.game.current_run)
+	if clear_event_reward_state:
+		app.game.current_run.current_reward_state.clear()
 	if not RunProgression.new().advance_current_node(app.game.current_run):
 		push_error("Cannot advance run; current map node is missing.")
 		return
@@ -216,6 +220,11 @@ func _all_rewards_resolved() -> bool:
 		if state == STATE_AVAILABLE:
 			return false
 	return true
+
+func _has_pending_event_rewards(run: RunStateScript) -> bool:
+	return run != null \
+		and not run.current_reward_state.is_empty() \
+		and String(run.current_reward_state.get("source", "")) == "event"
 
 func _refresh_continue_button() -> void:
 	if continue_button == null:

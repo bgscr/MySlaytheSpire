@@ -34,7 +34,9 @@ func _on_continue_pressed() -> void:
 		_refresh_continue_button(app)
 		return
 	app.game.current_run = loaded_run
-	if _should_resume_shop(loaded_run):
+	if _should_resume_reward(loaded_run):
+		app.game.router.go_to(SceneRouterScript.REWARD)
+	elif _should_resume_shop(loaded_run):
 		app.game.router.go_to(SceneRouterScript.SHOP)
 	else:
 		app.game.router.go_to(SceneRouterScript.MAP)
@@ -57,6 +59,18 @@ func _refresh_continue_button(app) -> void:
 	if continue_button == null:
 		return
 	continue_button.disabled = not app.game.save_service or not app.game.save_service.has_save()
+
+func _should_resume_reward(run: RunStateScript) -> bool:
+	if run == null or run.current_reward_state.is_empty():
+		return false
+	if String(run.current_reward_state.get("source", "")) != "event":
+		return false
+	if String(run.current_reward_state.get("node_id", "")) != run.current_node_id:
+		return false
+	for node in run.map_nodes:
+		if node.id == run.current_node_id:
+			return node.node_type == "event"
+	return false
 
 func _should_resume_shop(run) -> bool:
 	if run == null or run.current_shop_state.is_empty():
