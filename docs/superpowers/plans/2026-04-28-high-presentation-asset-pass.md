@@ -86,7 +86,7 @@ Modify:
 - Modify: `tests/unit/test_combat_presentation.gd`
 - Modify: `docs/superpowers/plans/2026-04-28-high-presentation-asset-pass.md`
 
-- [ ] **Step 1: Verify branch and workspace state**
+- [x] **Step 1: Verify branch and workspace state**
 
 Run:
 
@@ -103,7 +103,7 @@ main
 
 `git status --short` should show only intentional plan/doc changes before implementation starts.
 
-- [ ] **Step 2: Write failing catalog tests**
+- [x] **Step 2: Write failing catalog tests**
 
 Modify `tests/unit/test_combat_presentation.gd`.
 
@@ -178,7 +178,7 @@ func test_asset_catalog_registered_resources_load() -> bool:
 	return true
 ```
 
-- [ ] **Step 3: Run catalog tests to verify they fail**
+- [x] **Step 3: Run catalog tests to verify they fail**
 
 Run:
 
@@ -188,7 +188,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: FAIL because `res://scripts/presentation/combat_presentation_asset_catalog.gd` does not exist yet, or because the referenced assets do not load yet.
 
-- [ ] **Step 4: Generate first-party texture and audio assets**
+- [x] **Step 4: Generate first-party texture and audio assets**
 
 Run this one-time asset generation command:
 
@@ -298,7 +298,7 @@ Save-Wav "assets/presentation/audio/spirit_impact_heavy.wav" 0.34 96.0 288.0 0.0
 
 Expected: eight files exist under `assets/presentation/`.
 
-- [ ] **Step 5: Create the asset catalog**
+- [x] **Step 5: Create the asset catalog**
 
 Create `scripts/presentation/combat_presentation_asset_catalog.gd`:
 
@@ -415,7 +415,7 @@ func _append_asset_paths(paths: Array[String], asset: Dictionary) -> void:
 			paths.append(path)
 ```
 
-- [ ] **Step 6: Run catalog tests to verify they pass**
+- [x] **Step 6: Run catalog tests to verify they pass**
 
 Run:
 
@@ -429,7 +429,7 @@ Expected:
 TESTS PASSED
 ```
 
-- [ ] **Step 7: Run Godot import check**
+- [x] **Step 7: Run Godot import check**
 
 Run:
 
@@ -439,7 +439,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: process exits 0.
 
-- [ ] **Step 8: Run two-stage review for Task 1**
+- [x] **Step 8: Run two-stage review for Task 1**
 
 Stage 1 Spec Compliance Review:
 
@@ -459,7 +459,7 @@ Stage 2 Code Quality Review:
 
 Classify findings as Critical, Important, or Minor. Fix Critical and Important issues before committing.
 
-- [ ] **Step 9: Commit Task 1**
+- [x] **Step 9: Commit Task 1**
 
 Run:
 

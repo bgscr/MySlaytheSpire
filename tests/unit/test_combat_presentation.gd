@@ -2,6 +2,7 @@ extends RefCounted
 
 const CardDef := preload("res://scripts/data/card_def.gd")
 const CardPresentationCueDef := preload("res://scripts/data/card_presentation_cue_def.gd")
+const CombatPresentationAssetCatalog := preload("res://scripts/presentation/combat_presentation_asset_catalog.gd")
 const CombatPresentationConfig := preload("res://scripts/presentation/combat_presentation_config.gd")
 const CombatPresentationCueResolver := preload("res://scripts/presentation/combat_presentation_cue_resolver.gd")
 const CombatPresentationDelta := preload("res://scripts/presentation/combat_presentation_delta.gd")
@@ -479,6 +480,67 @@ func test_layer_records_slow_motion_and_audio_cue_without_global_timescale(tree:
 	layer.free()
 	assert(passed)
 	return passed
+
+func test_asset_catalog_resolves_exact_cue_before_event_fallback() -> bool:
+	var catalog := CombatPresentationAssetCatalog.new()
+	var event := CombatPresentationEvent.new("particle_burst")
+	event.payload = {"cue_id": "alchemy.toxic_pill"}
+
+	var resolved := catalog.resolve(event)
+	var passed: bool = resolved.get("texture_path", "") == "res://assets/presentation/textures/mist_violet.png" \
+		and int(resolved.get("particle_count", 0)) == 7 \
+		and is_equal_approx(float(resolved.get("radius", 0.0)), 30.0)
+
+	resolved["texture_path"] = "res://mutated.png"
+	var resolved_again := catalog.resolve(event)
+	passed = passed \
+		and resolved_again.get("texture_path", "") == "res://assets/presentation/textures/mist_violet.png"
+
+	assert(passed)
+	return passed
+
+func test_asset_catalog_resolves_event_fallbacks_and_unknown_safely() -> bool:
+	var catalog := CombatPresentationAssetCatalog.new()
+	var slash := catalog.resolve(CombatPresentationEvent.new("cinematic_slash"))
+	var camera := catalog.resolve(CombatPresentationEvent.new("camera_impulse"))
+	var unknown := catalog.resolve(CombatPresentationEvent.new("unknown_event"))
+	var audio := catalog.resolve(CombatPresentationEvent.new("audio_cue"))
+
+	var passed: bool = slash.get("texture_path", "") == "res://assets/presentation/textures/slash_cyan.png" \
+		and is_equal_approx(float(camera.get("strength", 0.0)), 4.0) \
+		and is_equal_approx(float(camera.get("duration", 0.0)), 0.18) \
+		and unknown.is_empty() \
+		and audio.is_empty()
+	assert(passed)
+	return passed
+
+func test_asset_catalog_resolves_heaven_cutting_arc_slow_and_audio_separately() -> bool:
+	var catalog := CombatPresentationAssetCatalog.new()
+	var slow := CombatPresentationEvent.new("slow_motion")
+	slow.payload = {"cue_id": "sword.heaven_cutting_arc"}
+	var audio := CombatPresentationEvent.new("audio_cue")
+	audio.payload = {"cue_id": "sword.heaven_cutting_arc"}
+
+	var slow_asset := catalog.resolve(slow)
+	var audio_asset := catalog.resolve(audio)
+
+	var passed: bool = slow_asset.get("texture_path", "") == "res://assets/presentation/textures/slow_motion_wash.png" \
+		and is_equal_approx(float(slow_asset.get("scale", 1.0)), 0.45) \
+		and audio_asset.get("audio_path", "") == "res://assets/presentation/audio/spirit_impact_heavy.wav" \
+		and not audio_asset.has("texture_path")
+	assert(passed)
+	return passed
+
+func test_asset_catalog_registered_resources_load() -> bool:
+	var catalog := CombatPresentationAssetCatalog.new()
+	for path in catalog.resource_paths():
+		var resource := load(path)
+		if resource == null:
+			push_error("Presentation asset failed to load: %s" % path)
+			assert(false)
+			return false
+	assert(true)
+	return true
 
 func _has_event(events: Array, event_type: String, target_id: String, amount: int, status_id: String) -> bool:
 	for event in events:
