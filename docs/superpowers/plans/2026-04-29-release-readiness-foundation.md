@@ -123,7 +123,7 @@ Do not modify:
 - Create: `tools/tests/test_release_scripts.ps1`
 - Create: `tools/common/godot.ps1`
 
-- [ ] **Step 1: Verify branch and clean working tree**
+- [x] **Step 1: Verify branch and clean working tree**
 
 Run:
 
@@ -140,7 +140,7 @@ codex/release-readiness-foundation
 
 `git status --short` may show this plan file while it is being executed. Stop and ask the user if the branch is not `codex/release-readiness-foundation`.
 
-- [ ] **Step 2: Add failing helper tests**
+- [x] **Step 2: Add failing helper tests**
 
 Create `tools/tests/test_release_scripts.ps1`:
 
@@ -228,7 +228,7 @@ if ($script:FailureCount -gt 0) {
 Write-Host "Release script tests passed."
 ```
 
-- [ ] **Step 3: Run helper tests to verify RED**
+- [x] **Step 3: Run helper tests to verify RED**
 
 Run:
 
@@ -238,7 +238,7 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File tools/tests/test_r
 
 Expected: FAIL because `tools/common/godot.ps1` does not exist.
 
-- [ ] **Step 4: Implement shared Godot helper**
+- [x] **Step 4: Implement shared Godot helper**
 
 Create `tools/common/godot.ps1`:
 
@@ -287,7 +287,7 @@ function Invoke-GodotCommand {
 }
 ```
 
-- [ ] **Step 5: Run helper tests to verify GREEN**
+- [x] **Step 5: Run helper tests to verify GREEN**
 
 Run:
 
@@ -301,7 +301,7 @@ Expected:
 Release script tests passed.
 ```
 
-- [ ] **Step 6: Commit Task 1**
+- [x] **Step 6: Commit Task 1**
 
 Run:
 
