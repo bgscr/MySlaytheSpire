@@ -1,10 +1,10 @@
 # Agent Development Protocol
 
 ## 1. Branch and Workspace Rule
-All project development must happen directly in the local `main` workspace.
-- **No Worktrees**: Do not create or use git worktrees for this project.
-- **No New Branches**: Do not create feature branches or switch away from `main` for development.
-- **Main-Only Workflow**: Before editing, verify the current branch is `main`; if it is not, stop and ask the user how to proceed.
+Project development may use git branches, git worktrees, and subagents when useful.
+- **Branches Allowed**: Use feature branches with the `codex/` prefix by default.
+- **Worktrees Allowed**: Use the default worktree location selected by the active agent workflow unless the user specifies a path.
+- **Subagents Allowed**: Use subagents for implementation and review work when the task benefits from delegation.
 
 ## 2. Code Review Process
 After each completed Godot feature, run code review in two strict stages. 
