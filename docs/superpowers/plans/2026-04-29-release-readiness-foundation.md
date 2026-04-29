@@ -457,7 +457,7 @@ rtk proxy git commit -m "build: add shared Godot checks"
 - Modify: `tools/tests/test_release_scripts.ps1`
 - Create: `tools/release/export_windows.ps1`
 
-- [ ] **Step 1: Add failing tests for export wrapper shape**
+- [x] **Step 1: Add failing tests for export wrapper shape**
 
 Append this block before the final failure check in `tools/tests/test_release_scripts.ps1`:
 
@@ -468,7 +468,7 @@ Assert-FileContains "tools\release\export_windows.ps1" "--export-release" "Windo
 Assert-FileContains "tools\release\export_windows.ps1" "-DryRun" "Windows export script should expose a dry-run path for script verification."
 ```
 
-- [ ] **Step 2: Run script tests to verify RED**
+- [x] **Step 2: Run script tests to verify RED**
 
 Run:
 
@@ -478,14 +478,14 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File tools/tests/test_r
 
 Expected: FAIL because `tools/release/export_windows.ps1` does not exist.
 
-- [ ] **Step 3: Implement Windows export wrapper**
+- [x] **Step 3: Implement Windows export wrapper**
 
 Create `tools/release/export_windows.ps1`:
 
 ```powershell
 [CmdletBinding()]
 param(
-	[string]$ProjectRoot = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot "..\..")).Path,
+	[string]$ProjectRoot,
 	[string]$Preset = "Windows Desktop",
 	[string]$ExportPath = "export/MySlaytheSpire.exe",
 	[switch]$DryRun
@@ -494,12 +494,27 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
-. (Join-Path $PSScriptRoot "..\common\godot.ps1")
+$scriptRoot = $PSScriptRoot
+if ([string]::IsNullOrWhiteSpace($scriptRoot)) {
+	$scriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
+}
+if ([string]::IsNullOrWhiteSpace($ProjectRoot)) {
+	$ProjectRoot = (Resolve-Path -LiteralPath (Join-Path $scriptRoot "..\..")).Path
+}
+
+. (Join-Path $scriptRoot "..\common\godot.ps1")
 
 $resolvedProjectRoot = (Resolve-Path -LiteralPath $ProjectRoot).Path
 $exportDirectory = Join-Path $resolvedProjectRoot "export"
 $artifactsDirectory = Join-Path $exportDirectory "artifacts"
-$resolvedExportPath = Join-Path $resolvedProjectRoot $ExportPath
+$resolvedExportPath = [System.IO.Path]::GetFullPath((Join-Path $resolvedProjectRoot $ExportPath))
+$resolvedExportDirectory = [System.IO.Path]::GetFullPath($exportDirectory)
+if (-not $resolvedExportDirectory.EndsWith([System.IO.Path]::DirectorySeparatorChar)) {
+	$resolvedExportDirectory = $resolvedExportDirectory + [System.IO.Path]::DirectorySeparatorChar
+}
+if (-not $resolvedExportPath.StartsWith($resolvedExportDirectory, [System.StringComparison]::OrdinalIgnoreCase)) {
+	throw "ExportPath must stay under $resolvedExportDirectory"
+}
 
 New-Item -ItemType Directory -Path $exportDirectory -Force | Out-Null
 New-Item -ItemType Directory -Path $artifactsDirectory -Force | Out-Null
@@ -528,8 +543,13 @@ if ($DryRun) {
 
 Invoke-GodotCommand -Arguments $arguments
 
+$artifactDeadline = (Get-Date).AddSeconds(30)
+while ((-not (Test-Path -LiteralPath $resolvedExportPath)) -and ((Get-Date) -lt $artifactDeadline)) {
+	Start-Sleep -Milliseconds 250
+}
+
 if (-not (Test-Path -LiteralPath $resolvedExportPath)) {
-	throw "Windows export did not produce expected artifact: $resolvedExportPath"
+	throw "Windows export did not produce expected artifact after waiting up to 30 seconds: $resolvedExportPath. Check the export preset output path, export templates, and Godot export logs."
 }
 
 $artifactCopy = Join-Path $artifactsDirectory (Split-Path -Leaf $resolvedExportPath)
@@ -540,7 +560,9 @@ Write-Host "Primary artifact: $resolvedExportPath"
 Write-Host "Artifact copy: $artifactCopy"
 ```
 
-- [ ] **Step 4: Run script tests to verify GREEN**
+`ProjectRoot` is resolved in the script body because `$PSScriptRoot` can be empty during parameter-default evaluation in this PowerShell invocation mode. The wrapper waits briefly for the artifact path because GUI Godot can return before the exported executable is visible on disk.
+
+- [x] **Step 4: Run script tests to verify GREEN**
 
 Run:
 
@@ -554,7 +576,7 @@ Expected:
 Release script tests passed.
 ```
 
-- [ ] **Step 5: Run export dry run**
+- [x] **Step 5: Run export dry run**
 
 Run:
 
@@ -570,7 +592,7 @@ Export preset: Windows Desktop
 Export path:
 ```
 
-- [ ] **Step 6: Run real Windows export**
+- [x] **Step 6: Run real Windows export**
 
 Run:
 
@@ -588,7 +610,9 @@ Artifact copy:
 
 If this fails because Godot export templates are missing, do not change unrelated code. Confirm that the error clearly says export templates are missing and record the blocker in the final report. The script itself is acceptable only if it prints the preset and artifact path before the Godot failure.
 
-- [ ] **Step 7: Commit Task 3**
+Result: `Windows export complete:` produced both `export/MySlaytheSpire.exe` and `export/artifacts/MySlaytheSpire.exe`.
+
+- [x] **Step 7: Commit Task 3**
 
 Run:
 

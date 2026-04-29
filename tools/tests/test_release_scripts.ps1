@@ -138,6 +138,13 @@ function Assert-FileContains {
 Assert-FileContains "tools\ci\run_godot_checks.ps1" "res://scripts/testing/test_runner.gd" "Godot check script should run the test runner."
 Assert-FileContains "tools\ci\run_godot_checks.ps1" "--quit" "Godot check script should run the import check."
 Assert-FileContains "tools\ci\run_godot_checks.ps1" "Invoke-GodotCommand" "Godot check script should use the shared helper."
+Assert-FileContains "tools\release\export_windows.ps1" "Windows Desktop" "Windows export script should use the existing preset."
+Assert-FileContains "tools\release\export_windows.ps1" "export/MySlaytheSpire.exe" "Windows export script should preserve the configured artifact path."
+Assert-FileContains "tools\release\export_windows.ps1" "--export-release" "Windows export script should use Godot release export."
+Assert-FileContains "tools\release\export_windows.ps1" "-DryRun" "Windows export script should expose a dry-run path for script verification."
+Assert-ThrowsContaining {
+	& (Join-Path $ProjectRoot "tools\release\export_windows.ps1") -ExportPath "..\outside\game.exe" -DryRun
+} "ExportPath must stay under" "Windows export script should reject paths outside export directory."
 
 if ($script:FailureCount -gt 0) {
 	throw "Release script tests failed: $script:FailureCount"
