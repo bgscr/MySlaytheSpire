@@ -2,6 +2,7 @@ extends RefCounted
 
 const AppScene := preload("res://scenes/app/App.tscn")
 const DebugOverlayScene := preload("res://scenes/dev/DebugOverlay.tscn")
+const DevToolsScene := preload("res://scenes/dev/DevToolsScreen.tscn")
 const CardDefScript := preload("res://scripts/data/card_def.gd")
 const ContentCatalogScript := preload("res://scripts/content/content_catalog.gd")
 const EventResolverScript := preload("res://scripts/event/event_resolver.gd")
@@ -265,6 +266,48 @@ func test_debug_overlay_updates_polish_presentation_config(tree: SceneTree) -> b
 		and app.game.presentation_config.audio_cue_enabled == false
 	app.free()
 	_delete_test_save("user://test_debug_polish_config_save.json")
+	return passed
+
+func test_debug_overlay_routes_to_dev_tools_screen(tree: SceneTree) -> bool:
+	var app = _create_app_with_save_service(tree, "user://test_debug_dev_tools_save.json")
+	var debug_overlay: Node = app.get_node_or_null("DebugLayer/DebugOverlay")
+	var dev_tools_button := _find_node_by_name(debug_overlay, "DebugDevTools") as Button
+	if dev_tools_button != null:
+		dev_tools_button.pressed.emit()
+	var current_scene: Node = app.game.router.current_scene
+	var passed: bool = dev_tools_button != null \
+		and current_scene != null \
+		and current_scene.name == "DevToolsScreen"
+	app.free()
+	_delete_test_save("user://test_debug_dev_tools_save.json")
+	return passed
+
+func test_dev_tools_screen_starts_on_card_browser_and_selects_strike(tree: SceneTree) -> bool:
+	var screen := DevToolsScene.instantiate()
+	tree.root.add_child(screen)
+	screen.set_filters("sword", "common", "attack")
+	screen.select_card("sword.strike")
+	var panel := _find_node_by_name(screen, "CardBrowserPanel")
+	var detail := _find_node_by_name(screen, "CardDetailLabel") as Label
+	var passed: bool = screen.active_tool_id == "card_browser" \
+		and panel != null \
+		and detail != null \
+		and detail.text.contains("id: sword.strike")
+	screen.free()
+	return passed
+
+func test_dev_tools_deferred_tool_button_shows_planned_placeholder(tree: SceneTree) -> bool:
+	var screen := DevToolsScene.instantiate()
+	tree.root.add_child(screen)
+	var button := _find_node_by_name(screen, "ToolButton_enemy_sandbox") as Button
+	if button != null:
+		button.pressed.emit()
+	var placeholder := _find_node_by_name(screen, "ToolPlaceholder_enemy_sandbox") as Label
+	var passed: bool = button != null \
+		and screen.active_tool_id == "enemy_sandbox" \
+		and placeholder != null \
+		and placeholder.text.contains("Planned tool")
+	screen.free()
 	return passed
 
 func test_combat_screen_drag_disabled_keeps_click_fallback(tree: SceneTree) -> bool:

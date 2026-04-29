@@ -22,6 +22,12 @@ func _ready() -> void:
 	map.pressed.connect(_go_map)
 	box.add_child(map)
 
+	var dev_tools := Button.new()
+	dev_tools.name = "DebugDevTools"
+	dev_tools.text = "Debug: Dev Tools"
+	dev_tools.pressed.connect(_go_dev_tools)
+	box.add_child(dev_tools)
+
 	_add_presentation_toggle(box, "DebugPresentationEnabled", "Presentation", "enabled")
 	_add_presentation_toggle(box, "DebugPresentationDrag", "Drag Play", "drag_enabled")
 	_add_presentation_toggle(box, "DebugPresentationFloatingText", "Float Text", "floating_text_enabled")
@@ -68,3 +74,9 @@ func _go_map() -> void:
 		return
 	if app.game.current_run:
 		app.game.router.go_to(SceneRouterScript.MAP)
+
+func _go_dev_tools() -> void:
+	var app := _get_app()
+	if app == null:
+		return
+	app.game.router.go_to(SceneRouterScript.DEV_TOOLS)

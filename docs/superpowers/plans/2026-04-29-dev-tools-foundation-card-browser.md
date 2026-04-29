@@ -306,7 +306,7 @@ func card_detail_text(card: CardDef) -> String:
 	return "\n".join(lines)
 
 func placeholder_text(tool_id: String) -> String:
-	return "%s\nPlanned tool" % TOOL_LABELS.get(tool_id, tool_id)
+	return "%s\nPlanned tool" % String(TOOL_LABELS.get(tool_id, tool_id))
 
 func _build_layout() -> void:
 	var root := VBoxContainer.new()
@@ -325,7 +325,7 @@ func _build_layout() -> void:
 	for tool_id in tool_ids():
 		var button := Button.new()
 		button.name = "ToolButton_%s" % tool_id
-		button.text = TOOL_LABELS.get(tool_id, tool_id)
+		button.text = String(TOOL_LABELS.get(tool_id, tool_id))
 		var selected_tool_id := tool_id
 		button.pressed.connect(func(): _show_tool(selected_tool_id))
 		tool_nav.add_child(button)
@@ -539,7 +539,7 @@ rtk proxy git commit -m "feat: add dev tools card browser"
 - Modify: `tests/smoke/test_scene_flow.gd`
 - Modify: `docs/superpowers/plans/2026-04-29-dev-tools-foundation-card-browser.md`
 
-- [ ] **Step 1: Add failing smoke tests**
+- [x] **Step 1: Add failing smoke tests**
 
 Modify `tests/smoke/test_scene_flow.gd`.
 
@@ -595,7 +595,7 @@ func test_dev_tools_deferred_tool_button_shows_planned_placeholder(tree: SceneTr
 	return passed
 ```
 
-- [ ] **Step 2: Run tests to verify RED**
+- [x] **Step 2: Run tests to verify RED**
 
 Run:
 
@@ -605,7 +605,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: FAIL because `DevToolsScreen.tscn`, `SceneRouter.DEV_TOOLS`, or `DebugDevTools` does not exist yet.
 
-- [ ] **Step 3: Add DevTools scene**
+- [x] **Step 3: Add DevTools scene**
 
 Create `scenes/dev/DevToolsScreen.tscn`:
 
@@ -622,7 +622,7 @@ anchor_bottom = 1.0
 script = ExtResource("1_devtools")
 ```
 
-- [ ] **Step 4: Add route constant**
+- [x] **Step 4: Add route constant**
 
 Modify `scripts/app/scene_router.gd`.
 
@@ -632,7 +632,7 @@ Add after `const SUMMARY`:
 const DEV_TOOLS := "res://scenes/dev/DevToolsScreen.tscn"
 ```
 
-- [ ] **Step 5: Add DebugOverlay route button**
+- [x] **Step 5: Add DebugOverlay route button**
 
 Modify `scripts/ui/debug_overlay.gd`.
 
@@ -656,7 +656,7 @@ func _go_dev_tools() -> void:
 	app.game.router.go_to(SceneRouterScript.DEV_TOOLS)
 ```
 
-- [ ] **Step 6: Run tests to verify GREEN for Task 2**
+- [x] **Step 6: Run tests to verify GREEN for Task 2**
 
 Run:
 
@@ -666,7 +666,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: `TESTS PASSED`.
 
-- [ ] **Step 7: Run Task 2 review gates**
+- [x] **Step 7: Run Task 2 review gates**
 
 Stage 1 Spec Compliance Review:
 
@@ -685,7 +685,7 @@ Stage 2 Code Quality Review:
 - Smoke tests use stable node names.
 - Deferred tool button behavior does not imply working functionality.
 
-- [ ] **Step 8: Commit Task 2**
+- [x] **Step 8: Commit Task 2**
 
 Run:
 

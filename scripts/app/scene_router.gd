@@ -8,6 +8,7 @@ const EVENT := "res://scenes/event/EventScreen.tscn"
 const REWARD := "res://scenes/reward/RewardScreen.tscn"
 const SHOP := "res://scenes/shop/ShopScreen.tscn"
 const SUMMARY := "res://scenes/summary/RunSummaryScreen.tscn"
+const DEV_TOOLS := "res://scenes/dev/DevToolsScreen.tscn"
 
 var host: Control
 var current_scene: Node
