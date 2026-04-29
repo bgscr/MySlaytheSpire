@@ -135,7 +135,29 @@ function Assert-FileContains {
 	Assert-True ($text.Contains($Needle)) $Message
 }
 
+function Assert-FileContainsBefore {
+	param(
+		[string]$RelativePath,
+		[string]$FirstNeedle,
+		[string]$SecondNeedle,
+		[string]$Message
+	)
+	$path = Join-Path $ProjectRoot $RelativePath
+	if (-not (Test-Path -LiteralPath $path)) {
+		Add-Failure "$Message Missing file: $RelativePath"
+		return
+	}
+	$text = Get-Content -LiteralPath $path -Raw
+	$firstIndex = $text.IndexOf($FirstNeedle, [System.StringComparison]::Ordinal)
+	$secondIndex = $text.IndexOf($SecondNeedle, [System.StringComparison]::Ordinal)
+	if ($firstIndex -lt 0 -or $secondIndex -lt 0 -or $firstIndex -ge $secondIndex) {
+		Add-Failure "$Message Expected '$FirstNeedle' before '$SecondNeedle'."
+	}
+}
+
 Assert-FileContains "tools\ci\run_godot_checks.ps1" "res://scripts/testing/test_runner.gd" "Godot check script should run the test runner."
+Assert-FileContains "tools\ci\run_godot_checks.ps1" "--import" "Godot check script should import assets before running tests."
+Assert-FileContainsBefore "tools\ci\run_godot_checks.ps1" "--import" "res://scripts/testing/test_runner.gd" "Godot check script should import before the test runner."
 Assert-FileContains "tools\ci\run_godot_checks.ps1" "--quit" "Godot check script should run the import check."
 Assert-FileContains "tools\ci\run_godot_checks.ps1" "Invoke-GodotCommand" "Godot check script should use the shared helper."
 Assert-FileContains "tools\release\export_windows.ps1" "Windows Desktop" "Windows export script should use the existing preset."

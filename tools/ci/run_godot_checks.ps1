@@ -19,6 +19,14 @@ if ([string]::IsNullOrWhiteSpace($ProjectRoot)) {
 $resolvedProjectRoot = (Resolve-Path -LiteralPath $ProjectRoot).Path
 Write-Host "Project root: $resolvedProjectRoot"
 
+Write-Host "Importing Godot assets..."
+Invoke-GodotCommand -Arguments @(
+	"--headless",
+	"--path",
+	$resolvedProjectRoot,
+	"--import"
+)
+
 Write-Host "Running Godot test runner..."
 Invoke-GodotCommand -Arguments @(
 	"--headless",
