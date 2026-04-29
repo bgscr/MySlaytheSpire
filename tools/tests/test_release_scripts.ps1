@@ -86,6 +86,26 @@ try {
 	Assert-True (Test-Path -LiteralPath $successOutput) "Invoke-GodotCommand should run the resolved command."
 	Assert-Equal "--headless --quit " ((Get-Content -LiteralPath $successOutput -Raw).TrimEnd("`r", "`n")) "Invoke-GodotCommand should pass arguments to the command."
 
+	$scriptSuccessCommand = Join-Path $tempDir "godot_script_success.ps1"
+	$scriptSuccessOutput = Join-Path $tempDir "script_success_args.txt"
+	Set-Content -LiteralPath $scriptSuccessCommand -Value @(
+		"Set-Content -LiteralPath '$scriptSuccessOutput' -Value (`$args -join ' ') -Encoding ASCII"
+	) -Encoding ASCII
+	$env:GODOT4 = $scriptSuccessCommand
+	Remove-Variable -Name LASTEXITCODE -Scope Global -ErrorAction SilentlyContinue
+	Invoke-GodotCommand -Arguments @("--headless", "--script") -FallbackPaths @()
+	Assert-True (Test-Path -LiteralPath $scriptSuccessOutput) "Invoke-GodotCommand should allow successful commands that do not set LASTEXITCODE."
+	Assert-Equal "--headless --script" ((Get-Content -LiteralPath $scriptSuccessOutput -Raw).TrimEnd("`r", "`n")) "Invoke-GodotCommand should pass arguments to script commands."
+
+	$scriptStaleOutput = Join-Path $tempDir "script_stale_args.txt"
+	Set-Content -LiteralPath $scriptSuccessCommand -Value @(
+		"Set-Content -LiteralPath '$scriptStaleOutput' -Value (`$args -join ' ') -Encoding ASCII"
+	) -Encoding ASCII
+	$global:LASTEXITCODE = 9
+	Invoke-GodotCommand -Arguments @("--headless", "--quit") -FallbackPaths @()
+	Assert-True (Test-Path -LiteralPath $scriptStaleOutput) "Invoke-GodotCommand should ignore stale nonzero LASTEXITCODE after successful script commands."
+	Assert-Equal "--headless --quit" ((Get-Content -LiteralPath $scriptStaleOutput -Raw).TrimEnd("`r", "`n")) "Invoke-GodotCommand should pass arguments when LASTEXITCODE is stale."
+
 	$failureCommand = Join-Path $tempDir "godot_failure.cmd"
 	Set-Content -LiteralPath $failureCommand -Value @(
 		"@echo off",

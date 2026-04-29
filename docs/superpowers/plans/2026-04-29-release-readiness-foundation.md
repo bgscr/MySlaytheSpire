@@ -369,13 +369,21 @@ Create `tools/ci/run_godot_checks.ps1`:
 ```powershell
 [CmdletBinding()]
 param(
-	[string]$ProjectRoot = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot "..\..")).Path
+	[string]$ProjectRoot
 )
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
-. (Join-Path $PSScriptRoot "..\common\godot.ps1")
+$scriptRoot = $PSScriptRoot
+if ([string]::IsNullOrWhiteSpace($scriptRoot)) {
+	$scriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
+}
+if ([string]::IsNullOrWhiteSpace($ProjectRoot)) {
+	$ProjectRoot = (Resolve-Path -LiteralPath (Join-Path $scriptRoot "..\..")).Path
+}
+
+. (Join-Path $scriptRoot "..\common\godot.ps1")
 
 $resolvedProjectRoot = (Resolve-Path -LiteralPath $ProjectRoot).Path
 Write-Host "Project root: $resolvedProjectRoot"
@@ -399,6 +407,8 @@ Invoke-GodotCommand -Arguments @(
 
 Write-Host "Godot checks passed."
 ```
+
+`ProjectRoot` is resolved in the script body because `$PSScriptRoot` can be empty during parameter-default evaluation in this PowerShell invocation mode.
 
 - [x] **Step 4: Run script tests to verify GREEN**
 

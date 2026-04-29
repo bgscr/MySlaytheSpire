@@ -36,7 +36,13 @@ function Invoke-GodotCommand {
 	Write-Host "Godot: $godot"
 	Write-Host "Args: $($Arguments -join ' ')"
 	& $godot @Arguments
-	if ($LASTEXITCODE -ne 0) {
-		throw "Godot exited with code $LASTEXITCODE."
+	$commandSucceeded = $?
+	if (-not $commandSucceeded) {
+		$exitCode = 1
+		$lastExitCodeVariable = Get-Variable -Name LASTEXITCODE -Scope Global -ErrorAction SilentlyContinue
+		if ($null -ne $lastExitCodeVariable) {
+			$exitCode = $lastExitCodeVariable.Value
+		}
+		throw "Godot exited with code $exitCode."
 	}
 }
