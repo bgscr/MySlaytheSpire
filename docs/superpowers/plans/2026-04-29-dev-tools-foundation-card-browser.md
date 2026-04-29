@@ -74,7 +74,7 @@ Modify:
 - Modify: `scripts/testing/test_runner.gd`
 - Modify: `docs/superpowers/plans/2026-04-29-dev-tools-foundation-card-browser.md`
 
-- [ ] **Step 1: Verify branch and clean workspace**
+- [x] **Step 1: Verify branch and clean workspace**
 
 Run:
 
@@ -91,7 +91,7 @@ main
 
 `git status --short` should show only this plan file before implementation starts.
 
-- [ ] **Step 2: Register the new unit test file**
+- [x] **Step 2: Register the new unit test file**
 
 Modify `scripts/testing/test_runner.gd` and insert this path after `test_content_catalog.gd`:
 
@@ -99,7 +99,7 @@ Modify `scripts/testing/test_runner.gd` and insert this path after `test_content
 	"res://tests/unit/test_dev_tools_screen.gd",
 ```
 
-- [ ] **Step 3: Write failing DevTools unit tests**
+- [x] **Step 3: Write failing DevTools unit tests**
 
 Create `tests/unit/test_dev_tools_screen.gd`:
 
@@ -191,7 +191,7 @@ func _all_cards_match(cards: Array, character_id: String, rarity: String, card_t
 	return true
 ```
 
-- [ ] **Step 4: Run tests to verify RED**
+- [x] **Step 4: Run tests to verify RED**
 
 Run:
 
@@ -201,7 +201,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: FAIL because `res://scripts/ui/dev_tools_screen.gd` does not exist.
 
-- [ ] **Step 5: Implement `DevToolsScreen`**
+- [x] **Step 5: Implement `DevToolsScreen`**
 
 Create `scripts/ui/dev_tools_screen.gd`:
 
@@ -491,7 +491,7 @@ func _clear_children(node: Node) -> void:
 		child.free()
 ```
 
-- [ ] **Step 6: Run tests to verify GREEN for Task 1**
+- [x] **Step 6: Run tests to verify GREEN for Task 1**
 
 Run:
 
@@ -501,7 +501,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: `TESTS PASSED`.
 
-- [ ] **Step 7: Run Task 1 review gates**
+- [x] **Step 7: Run Task 1 review gates**
 
 Stage 1 Spec Compliance Review:
 
@@ -520,7 +520,7 @@ Stage 2 Code Quality Review:
 - `DevToolsScreen` does not mutate run state, saves, or resources.
 - Tests inspect raw ids and keys, not translated copy.
 
-- [ ] **Step 8: Commit Task 1**
+- [x] **Step 8: Commit Task 1**
 
 Run:
 

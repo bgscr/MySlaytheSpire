@@ -4,6 +4,7 @@ const TEST_FILES := [
 	"res://tests/unit/test_rng_service.gd",
 	"res://tests/unit/test_resource_schemas.gd",
 	"res://tests/unit/test_content_catalog.gd",
+	"res://tests/unit/test_dev_tools_screen.gd",
 	"res://tests/unit/test_reward_generator.gd",
 	"res://tests/unit/test_reward_resolver.gd",
 	"res://tests/unit/test_event_resolver.gd",
