@@ -660,6 +660,9 @@ on:
   pull_request:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   godot-checks:
     name: Godot checks
@@ -1045,7 +1048,7 @@ Expected: process exits 0.
 Run:
 
 ```powershell
-rtk proxy rg -n "secrets\\.|contents:\\s*write|id-token|release|upload" .github/workflows/ci.yml
+rtk proxy rg -n "secrets\\.|contents:\\s*write|id-token|actions/(upload|create).*release|softprops/action-gh-release|gh\\s+release|upload-artifact" .github/workflows/ci.yml
 ```
 
 Expected: no matches.
