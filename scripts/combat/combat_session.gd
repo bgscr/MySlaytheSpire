@@ -78,16 +78,20 @@ func start_sandbox(
 	if character == null:
 		_set_invalid("CombatSession sandbox character is missing: %s" % character_id)
 		return
-	rng = RngService.new(seed_value).fork("sandbox:%s:%s" % [character_id, ",".join(enemy_ids)])
-	state.player = CombatantState.new(character.id, max(1, character.max_hp))
-	state.energy = 3
-	state.turn = 1
-	state.draw_pile = _shuffle_card_ids(deck_ids)
+	var enemy_defs: Array[EnemyDef] = []
 	for enemy_id in enemy_ids:
 		var enemy_def := catalog.get_enemy(enemy_id)
 		if enemy_def == null:
 			_set_invalid("CombatSession sandbox enemy is missing: %s" % enemy_id)
 			return
+		enemy_defs.append(enemy_def)
+	rng = RngService.new(seed_value).fork("sandbox:%s:%s" % [character_id, ",".join(enemy_ids)])
+	state.player = CombatantState.new(character.id, max(1, character.max_hp))
+	state.energy = 3
+	state.turn = 1
+	state.draw_pile = _shuffle_card_ids(deck_ids)
+	for enemy_def in enemy_defs:
+		var enemy_id := enemy_def.id
 		enemy_defs_by_id[enemy_id] = enemy_def
 		state.enemies.append(CombatantState.new(enemy_id, enemy_def.max_hp))
 		enemy_intent_indices.append(0)
