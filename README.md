@@ -53,9 +53,9 @@ $env:GODOT4="C:\Tools\Godot\Godot_v4.6.2-stable_win64_console.exe"
 - Enemy Sandbox: complete; DevTools can now choose a character, select one to three catalog enemies, preview the starter deck and enemy intents, and launch isolated sandbox combat without touching saves or the active run.
 - Developer tools event tester: complete; DevTools can now apply catalog event options against an isolated test run without writing saves, routing away, or mutating the active run.
 - Developer tools reward inspector: complete; DevTools can now preview generated reward packages and simulate card, gold, relic, and skip choices against an isolated run without touching saves or the active run.
+- Developer tools save inspector: complete; DevTools can now diagnose save presence, validity, terminal state, map/shop/reward resume targets, and run state sections without writing, deleting, repairing, routing, or mutating the active run.
 
 ## Next Plans
 
-1. Developer tools: save inspector.
-2. Release readiness: CI, artifact export, changelog, release draft, Steam adapter.
-3. Presentation expansion: more per-card cue ids, enemy intent polish, card art, richer combat backgrounds, and formal audio mixing.
+1. Release readiness: CI, artifact export, changelog, release draft, Steam adapter.
+2. Presentation expansion: more per-card cue ids, enemy intent polish, card art, richer combat backgrounds, and formal audio mixing.

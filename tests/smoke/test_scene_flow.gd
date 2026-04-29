@@ -469,6 +469,147 @@ func test_dev_tools_reward_inspector_node_type_selection_refreshes_rewards(tree:
 	screen.free()
 	return passed
 
+func test_dev_tools_save_inspector_button_shows_read_only_panel(tree: SceneTree) -> bool:
+	var screen := DevToolsScene.instantiate()
+	tree.root.add_child(screen)
+	var button := _find_node_by_name(screen, "ToolButton_save_inspector") as Button
+	if button != null:
+		button.pressed.emit()
+	var panel := _find_node_by_name(screen, "SaveInspectorPanel")
+	var status := _find_node_by_name(screen, "SaveInspectorStatusLabel") as Label
+	var target := _find_node_by_name(screen, "SaveInspectorResumeTargetLabel") as Label
+	var reload := _find_node_by_name(screen, "SaveInspectorReloadButton") as Button
+	var delete_button := _find_node_by_name(screen, "SaveInspectorDeleteButton") as Button
+	var export_button := _find_node_by_name(screen, "SaveInspectorExportButton") as Button
+	var copy_button := _find_node_by_name(screen, "SaveInspectorCopyJsonButton") as Button
+	var repair_button := _find_node_by_name(screen, "SaveInspectorRepairButton") as Button
+	var passed: bool = button != null \
+		and screen.active_tool_id == "save_inspector" \
+		and panel != null \
+		and status != null \
+		and status.text.contains("status: missing_service") \
+		and target != null \
+		and target.text.contains("continue_target: none") \
+		and reload != null \
+		and not reload.disabled \
+		and delete_button != null \
+		and delete_button.disabled \
+		and export_button != null \
+		and export_button.disabled \
+		and copy_button != null \
+		and copy_button.disabled \
+		and repair_button != null \
+		and repair_button.disabled
+	screen.free()
+	return passed
+
+func test_dev_tools_save_inspector_displays_saved_run_and_stays_in_dev_tools(tree: SceneTree) -> bool:
+	var save_path := "user://test_save_inspector_panel_save.json"
+	var app = _create_app_with_save_service(tree, save_path)
+	var run := _reward_run("combat", true)
+	app.game.save_service.save_run(run)
+	var dev_tools = app.game.router.go_to(SceneRouterScript.DEV_TOOLS)
+	var button := _find_node_by_name(dev_tools, "ToolButton_save_inspector") as Button
+	if button != null:
+		button.pressed.emit()
+	var status := _find_node_by_name(dev_tools, "SaveInspectorStatusLabel") as Label
+	var target := _find_node_by_name(dev_tools, "SaveInspectorResumeTargetLabel") as Label
+	var summary := _find_node_by_name(dev_tools, "SaveInspectorRunSummaryLabel") as Label
+	var map_section := _find_node_by_name(dev_tools, "SaveInspectorMapSectionLabel") as Label
+	var passed: bool = status != null \
+		and status.text.contains("status: active") \
+		and target != null \
+		and target.text.contains("continue_target: map") \
+		and summary != null \
+		and summary.text.contains("character: sword") \
+		and summary.text.contains("current_node_type: combat") \
+		and map_section != null \
+		and map_section.text.contains("map_nodes: 2") \
+		and app.game.current_run == null \
+		and app.game.router.current_scene == dev_tools
+	app.free()
+	_delete_test_save(save_path)
+	return passed
+
+func test_dev_tools_save_inspector_reload_refreshes_without_routing_or_current_run(tree: SceneTree) -> bool:
+	var save_path := "user://test_save_inspector_reload_save.json"
+	var app = _create_app_with_save_service(tree, save_path)
+	var dev_tools = app.game.router.go_to(SceneRouterScript.DEV_TOOLS)
+	var button := _find_node_by_name(dev_tools, "ToolButton_save_inspector") as Button
+	if button != null:
+		button.pressed.emit()
+	var status_before := _find_node_by_name(dev_tools, "SaveInspectorStatusLabel") as Label
+	var before_text := status_before.text if status_before != null else ""
+	app.game.save_service.save_run(_reward_run("shop", true))
+	var reload := _find_node_by_name(dev_tools, "SaveInspectorReloadButton") as Button
+	if reload != null:
+		reload.pressed.emit()
+	var status_after := _find_node_by_name(dev_tools, "SaveInspectorStatusLabel") as Label
+	var target_after := _find_node_by_name(dev_tools, "SaveInspectorResumeTargetLabel") as Label
+	var passed: bool = before_text.contains("status: no_save") \
+		and reload != null \
+		and status_after != null \
+		and status_after.text.contains("status: active") \
+		and target_after != null \
+		and target_after.text.contains("continue_target: map") \
+		and app.game.current_run == null \
+		and app.game.router.current_scene == dev_tools
+	app.free()
+	_delete_test_save(save_path)
+	return passed
+
+func test_dev_tools_save_inspector_does_not_delete_invalid_save(tree: SceneTree) -> bool:
+	var save_path := "user://test_save_inspector_invalid_kept.json"
+	var app = _create_app_with_save_service(tree, save_path)
+	var file := FileAccess.open(save_path, FileAccess.WRITE)
+	if file == null:
+		app.free()
+		return false
+	file.store_string("{")
+	file.close()
+	var dev_tools = app.game.router.go_to(SceneRouterScript.DEV_TOOLS)
+	var button := _find_node_by_name(dev_tools, "ToolButton_save_inspector") as Button
+	if button != null:
+		button.pressed.emit()
+	var status := _find_node_by_name(dev_tools, "SaveInspectorStatusLabel") as Label
+	var target := _find_node_by_name(dev_tools, "SaveInspectorResumeTargetLabel") as Label
+	var passed: bool = status != null \
+		and status.text.contains("status: invalid") \
+		and target != null \
+		and target.text.contains("continue_target: invalid_delete_on_continue") \
+		and app.game.save_service.has_save() \
+		and app.game.current_run == null \
+		and app.game.router.current_scene == dev_tools
+	app.free()
+	_delete_test_save(save_path)
+	return passed
+
+func test_dev_tools_save_inspector_can_reopen_after_switching_tools(tree: SceneTree) -> bool:
+	var screen := DevToolsScene.instantiate()
+	tree.root.add_child(screen)
+	var save_button := _find_node_by_name(screen, "ToolButton_save_inspector") as Button
+	if save_button != null:
+		save_button.pressed.emit()
+	var card_button := _find_node_by_name(screen, "ToolButton_card_browser") as Button
+	if card_button != null:
+		card_button.pressed.emit()
+	var refs_cleared_after_switch: bool = screen.save_inspector_status_label == null \
+		and screen.save_inspector_resume_target_label == null \
+		and screen.save_inspector_run_summary_label == null
+	if save_button != null:
+		save_button.pressed.emit()
+	var panel := _find_node_by_name(screen, "SaveInspectorPanel")
+	var status := _find_node_by_name(screen, "SaveInspectorStatusLabel") as Label
+	var passed: bool = save_button != null \
+		and card_button != null \
+		and refs_cleared_after_switch \
+		and screen.active_tool_id == "save_inspector" \
+		and panel != null \
+		and status != null \
+		and status.text.contains("status: missing_service")
+	screen.free()
+	return passed
+
 func test_combat_screen_drag_disabled_keeps_click_fallback(tree: SceneTree) -> bool:
 	var app = _create_app_with_save_service(tree, "user://test_drag_disabled_click_save.json")
 	var config: Variant = app.game.get("presentation_config")

@@ -12,8 +12,7 @@
 
 ## Project Constraints
 
-- Work directly on local `main`; do not create branches or worktrees.
-- Before editing code, verify `git branch --show-current` is `main`; stop if it is not.
+- Execute under the current `AGENTS.md` branch/workspace rule. This run used the allowed `codex/save-inspector` branch in an isolated worktree.
 - Prefix shell commands with `rtk proxy`.
 - Use red/green TDD for behavior changes.
 - After each completed Godot feature, run the two-stage review from `AGENTS.md`.
@@ -66,7 +65,7 @@ Do not create a new runtime script in this pass. If resume classification grows 
 - Modify: `tests/unit/test_dev_tools_screen.gd`
 - Modify: `scripts/ui/dev_tools_screen.gd`
 
-- [ ] **Step 1: Verify branch and working tree**
+- [x] **Step 1: Verify branch and working tree**
 
 Run:
 
@@ -75,15 +74,9 @@ rtk proxy git branch --show-current
 rtk proxy git status --short
 ```
 
-Expected:
+Expected: current branch matches the active workspace rule and intended feature branch.
 
-```text
-main
-```
-
-`git status --short` may show this plan file while it is being executed. Stop and ask the user if the branch is not `main`.
-
-- [ ] **Step 2: Add failing Save Inspector unit tests**
+- [x] **Step 2: Add failing Save Inspector unit tests**
 
 In `tests/unit/test_dev_tools_screen.gd`, add these preloads near the existing constants:
 
@@ -267,13 +260,13 @@ func _write_test_save(path: String, text: String) -> bool:
 	return true
 ```
 
-- [ ] **Step 3: Run tests to verify RED**
+- [x] **Step 3: Run tests to verify RED**
 
 Run the full test command.
 
 Expected: FAIL because `set_save_inspector_save_service_override()`, `save_inspector_snapshot()`, and the Save Inspector text helpers do not exist.
 
-- [ ] **Step 4: Add Save Inspector constants and state**
+- [x] **Step 4: Add Save Inspector constants and state**
 
 In `scripts/ui/dev_tools_screen.gd`, add this preload near the existing preloads:
 
@@ -332,7 +325,7 @@ func tool_ids() -> Array[String]:
 	]
 ```
 
-- [ ] **Step 5: Implement public Save Inspector helper API**
+- [x] **Step 5: Implement public Save Inspector helper API**
 
 Add these methods near the other public DevTools helper methods:
 
@@ -440,7 +433,7 @@ func save_inspector_reward_text() -> String:
 	])
 ```
 
-- [ ] **Step 6: Implement private Save Inspector snapshot helpers**
+- [x] **Step 6: Implement private Save Inspector snapshot helpers**
 
 Add these methods near the other private DevTools helpers:
 
@@ -535,13 +528,13 @@ func _get_app() -> Node:
 	return tree.root.get_node_or_null("App")
 ```
 
-- [ ] **Step 7: Run tests to verify GREEN for Task 1**
+- [x] **Step 7: Run tests to verify GREEN for Task 1**
 
 Run the full test command.
 
 Expected: `TESTS PASSED`.
 
-- [ ] **Step 8: Task 1 review gates**
+- [x] **Step 8: Task 1 review gates**
 
 Stage 1:
 
@@ -564,7 +557,7 @@ Stage 2:
 - Modify: `tests/smoke/test_scene_flow.gd`
 - Modify: `scripts/ui/dev_tools_screen.gd`
 
-- [ ] **Step 1: Add failing Save Inspector smoke tests**
+- [x] **Step 1: Add failing Save Inspector smoke tests**
 
 In `tests/smoke/test_scene_flow.gd`, append these tests near the other DevTools tests:
 
@@ -685,13 +678,13 @@ func test_dev_tools_save_inspector_does_not_delete_invalid_save(tree: SceneTree)
 	return passed
 ```
 
-- [ ] **Step 2: Run tests to verify RED**
+- [x] **Step 2: Run tests to verify RED**
 
 Run the full test command.
 
 Expected: FAIL because `SaveInspectorPanel`, labels, and action buttons do not exist.
 
-- [ ] **Step 3: Implement Save Inspector panel builder**
+- [x] **Step 3: Implement Save Inspector panel builder**
 
 In `scripts/ui/dev_tools_screen.gd`, add:
 
@@ -763,7 +756,7 @@ func _on_save_inspector_reload_pressed() -> void:
 	refresh_save_inspector()
 ```
 
-- [ ] **Step 4: Implement Save Inspector panel refresh**
+- [x] **Step 4: Implement Save Inspector panel refresh**
 
 Add:
 
@@ -791,13 +784,13 @@ func _refresh_save_inspector_if_ready() -> void:
 		_refresh_save_inspector_panel()
 ```
 
-- [ ] **Step 5: Run tests to verify GREEN for Task 2**
+- [x] **Step 5: Run tests to verify GREEN for Task 2**
 
 Run the full test command.
 
 Expected: `TESTS PASSED`.
 
-- [ ] **Step 6: Task 2 review gates**
+- [x] **Step 6: Task 2 review gates**
 
 Stage 1:
 
@@ -822,7 +815,7 @@ Stage 2:
 - Modify: `README.md`
 - Modify: `docs/superpowers/plans/2026-04-29-dev-tools-save-inspector.md`
 
-- [ ] **Step 1: Verify no Save Inspector destructive or routing calls were added**
+- [x] **Step 1: Verify no Save Inspector destructive or routing calls were added**
 
 Run:
 
@@ -838,19 +831,19 @@ scripts/ui/dev_tools_screen.gd:<line>:	app.game.router.go_to(SceneRouterScript.C
 
 If the scan finds Save Inspector matches, fix them before continuing.
 
-- [ ] **Step 2: Run full local tests**
+- [x] **Step 2: Run full local tests**
 
 Run the full test command.
 
 Expected: `TESTS PASSED`.
 
-- [ ] **Step 3: Run Godot import check**
+- [x] **Step 3: Run Godot import check**
 
 Run the import check command.
 
 Expected: process exits 0.
 
-- [ ] **Step 4: Update README progress**
+- [x] **Step 4: Update README progress**
 
 In `README.md`, add this progress bullet near the other DevTools bullets:
 
@@ -867,11 +860,11 @@ Update `## Next Plans` to remove Save Inspector from the first slot:
 2. Presentation expansion: more per-card cue ids, enemy intent polish, card art, richer combat backgrounds, and formal audio mixing.
 ```
 
-- [ ] **Step 5: Mark completed plan steps**
+- [x] **Step 5: Mark completed plan steps**
 
 Update completed checkboxes in this plan from `[ ]` to `[x]` after verifying implementation and reviews.
 
-- [ ] **Step 6: Run final two-stage review**
+- [x] **Step 6: Run final two-stage review**
 
 Stage 1 Spec Compliance Review:
 

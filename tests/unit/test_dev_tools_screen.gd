@@ -1,7 +1,10 @@
 extends RefCounted
 
 const DevToolsScreen := preload("res://scripts/ui/dev_tools_screen.gd")
+const MapNodeState := preload("res://scripts/run/map_node_state.gd")
 const RewardResolver := preload("res://scripts/reward/reward_resolver.gd")
+const RunState := preload("res://scripts/run/run_state.gd")
+const SaveService := preload("res://scripts/save/save_service.gd")
 
 func test_dev_tools_card_browser_loads_all_cards_with_all_filters() -> bool:
 	var screen := DevToolsScreen.new()
@@ -284,6 +287,143 @@ func test_reward_inspector_skip_and_reset_clear_reward_state() -> bool:
 	assert(passed)
 	return passed
 
+func test_save_inspector_reports_missing_service_without_tree_app() -> bool:
+	var screen := DevToolsScreen.new()
+	var snapshot: Dictionary = screen.save_inspector_snapshot()
+	var passed: bool = snapshot.get("has_service") == false \
+		and snapshot.get("has_save") == false \
+		and snapshot.get("status") == "missing_service" \
+		and snapshot.get("resume_target") == "none" \
+		and screen.save_inspector_status_text().contains("status: missing_service")
+	screen.free()
+	assert(passed)
+	return passed
+
+func test_save_inspector_reports_no_save() -> bool:
+	var save_path := "user://test_dev_tools_save_inspector_no_save.json"
+	_delete_test_save(save_path)
+	var screen := DevToolsScreen.new()
+	screen.set_save_inspector_save_service_override(SaveService.new(save_path))
+	var snapshot: Dictionary = screen.save_inspector_snapshot()
+	var passed: bool = snapshot.get("has_service") == true \
+		and snapshot.get("has_save") == false \
+		and snapshot.get("status") == "no_save" \
+		and snapshot.get("resume_target") == "none" \
+		and screen.save_inspector_summary_text().contains("run: none")
+	screen.free()
+	_delete_test_save(save_path)
+	assert(passed)
+	return passed
+
+func test_save_inspector_reports_invalid_save_without_deleting() -> bool:
+	var save_path := "user://test_dev_tools_save_inspector_invalid.json"
+	_delete_test_save(save_path)
+	_write_test_save(save_path, "{")
+	var service := SaveService.new(save_path)
+	var screen := DevToolsScreen.new()
+	screen.set_save_inspector_save_service_override(service)
+	var snapshot: Dictionary = screen.save_inspector_snapshot()
+	var passed: bool = snapshot.get("status") == "invalid" \
+		and snapshot.get("resume_target") == "invalid_delete_on_continue" \
+		and service.has_save() \
+		and screen.save_inspector_status_text().contains("has_save: true")
+	screen.free()
+	_delete_test_save(save_path)
+	assert(passed)
+	return passed
+
+func test_save_inspector_reports_terminal_save_without_deleting() -> bool:
+	var save_path := "user://test_dev_tools_save_inspector_terminal.json"
+	_delete_test_save(save_path)
+	var run := _save_inspector_run("combat")
+	run.completed = true
+	var service := SaveService.new(save_path)
+	service.save_run(run)
+	var screen := DevToolsScreen.new()
+	screen.set_save_inspector_save_service_override(service)
+	var snapshot: Dictionary = screen.save_inspector_snapshot()
+	var passed: bool = snapshot.get("status") == "terminal" \
+		and snapshot.get("resume_target") == "terminal_delete_on_continue" \
+		and service.has_save() \
+		and screen.save_inspector_summary_text().contains("completed: true")
+	screen.free()
+	_delete_test_save(save_path)
+	assert(passed)
+	return passed
+
+func test_save_inspector_predicts_map_resume_for_active_run() -> bool:
+	var save_path := "user://test_dev_tools_save_inspector_map.json"
+	_delete_test_save(save_path)
+	var service := SaveService.new(save_path)
+	service.save_run(_save_inspector_run("combat"))
+	var screen := DevToolsScreen.new()
+	screen.set_save_inspector_save_service_override(service)
+	var snapshot: Dictionary = screen.save_inspector_snapshot()
+	var passed: bool = snapshot.get("status") == "active" \
+		and snapshot.get("resume_target") == "map" \
+		and screen.save_inspector_resume_target() == "map" \
+		and screen.save_inspector_summary_text().contains("current_node_type: combat") \
+		and screen.save_inspector_map_text().contains("visited_count: 0") \
+		and screen.save_inspector_map_text().contains("unlocked_count: 1")
+	screen.free()
+	_delete_test_save(save_path)
+	assert(passed)
+	return passed
+
+func test_save_inspector_predicts_shop_resume_for_matching_shop_state() -> bool:
+	var save_path := "user://test_dev_tools_save_inspector_shop.json"
+	_delete_test_save(save_path)
+	var run := _save_inspector_run("shop")
+	run.current_shop_state = {
+		"node_id": "node_0",
+		"offers": [
+			{"id": "card_0", "type": "card", "sold": true},
+			{"id": "relic_0", "type": "relic", "sold": false},
+		],
+	}
+	var service := SaveService.new(save_path)
+	service.save_run(run)
+	var screen := DevToolsScreen.new()
+	screen.set_save_inspector_save_service_override(service)
+	var passed: bool = screen.save_inspector_snapshot().get("resume_target") == "shop" \
+		and screen.save_inspector_shop_text().contains("shop_state: matching") \
+		and screen.save_inspector_shop_text().contains("offers: 2") \
+		and screen.save_inspector_shop_text().contains("sold: 1")
+	screen.free()
+	_delete_test_save(save_path)
+	assert(passed)
+	return passed
+
+func test_save_inspector_predicts_reward_resume_for_matching_event_reward() -> bool:
+	var save_path := "user://test_dev_tools_save_inspector_reward.json"
+	_delete_test_save(save_path)
+	var run := _save_inspector_run("event")
+	run.current_reward_state = {
+		"source": "event",
+		"node_id": "node_0",
+		"event_id": "forgotten_armory",
+		"option_id": "train",
+		"rewards": [
+			{
+				"id": "event-card:node_0:train",
+				"type": "card_choice",
+				"card_ids": ["sword.flash_cut", "sword.guard"],
+			},
+		],
+	}
+	var service := SaveService.new(save_path)
+	service.save_run(run)
+	var screen := DevToolsScreen.new()
+	screen.set_save_inspector_save_service_override(service)
+	var passed: bool = screen.save_inspector_snapshot().get("resume_target") == "reward" \
+		and screen.save_inspector_reward_text().contains("reward_state: matching") \
+		and screen.save_inspector_reward_text().contains("source: event") \
+		and screen.save_inspector_reward_text().contains("rewards: 1")
+	screen.free()
+	_delete_test_save(save_path)
+	assert(passed)
+	return passed
+
 func _ids(cards: Array) -> Array[String]:
 	var result: Array[String] = []
 	for card in cards:
@@ -294,4 +434,33 @@ func _all_cards_match(cards: Array, character_id: String, rarity: String, card_t
 	for card in cards:
 		if card.character_id != character_id or card.rarity != rarity or card.card_type != card_type:
 			return false
+	return true
+
+func _save_inspector_run(node_type: String) -> RunState:
+	var run := RunState.new()
+	run.version = 1
+	run.seed_value = 12345
+	run.character_id = "sword"
+	run.current_hp = 55
+	run.max_hp = 72
+	run.gold = 99
+	run.deck_ids = ["sword.strike", "sword.guard", "sword.flash_cut"]
+	run.relic_ids = ["jade_talisman"]
+	run.current_node_id = "node_0"
+	var current := MapNodeState.new("node_0", 0, node_type)
+	current.unlocked = true
+	run.map_nodes = [current, MapNodeState.new("node_1", 1, "combat")]
+	return run
+
+func _delete_test_save(path: String) -> void:
+	if FileAccess.file_exists(path):
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
+
+func _write_test_save(path: String, text: String) -> bool:
+	var file := FileAccess.open(path, FileAccess.WRITE)
+	if file == null:
+		return false
+	file.store_string(text)
+	file.flush()
+	file.close()
 	return true

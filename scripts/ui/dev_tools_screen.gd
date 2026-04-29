@@ -12,12 +12,14 @@ const MapNodeState := preload("res://scripts/run/map_node_state.gd")
 const RewardApplier := preload("res://scripts/reward/reward_applier.gd")
 const RewardResolver := preload("res://scripts/reward/reward_resolver.gd")
 const RunState := preload("res://scripts/run/run_state.gd")
+const SaveService := preload("res://scripts/save/save_service.gd")
 const SceneRouterScript := preload("res://scripts/app/scene_router.gd")
 
 const TOOL_CARD_BROWSER := "card_browser"
 const TOOL_ENEMY_SANDBOX := "enemy_sandbox"
 const TOOL_EVENT_TESTER := "event_tester"
 const TOOL_REWARD_INSPECTOR := "reward_inspector"
+const TOOL_SAVE_INSPECTOR := "save_inspector"
 const FILTER_ALL := "all"
 const DEFAULT_SANDBOX_CHARACTER := "sword"
 const DEFAULT_SANDBOX_ENEMY := "training_puppet"
@@ -33,6 +35,17 @@ const REWARD_INSPECTOR_NODE_TYPES: Array[String] = ["combat", "elite", "boss"]
 const REWARD_STATE_AVAILABLE := "available"
 const REWARD_STATE_CLAIMED := "claimed"
 const REWARD_STATE_SKIPPED := "skipped"
+const SAVE_STATUS_MISSING_SERVICE := "missing_service"
+const SAVE_STATUS_NO_SAVE := "no_save"
+const SAVE_STATUS_INVALID := "invalid"
+const SAVE_STATUS_TERMINAL := "terminal"
+const SAVE_STATUS_ACTIVE := "active"
+const SAVE_RESUME_NONE := "none"
+const SAVE_RESUME_INVALID_DELETE_ON_CONTINUE := "invalid_delete_on_continue"
+const SAVE_RESUME_TERMINAL_DELETE_ON_CONTINUE := "terminal_delete_on_continue"
+const SAVE_RESUME_REWARD := "reward"
+const SAVE_RESUME_SHOP := "shop"
+const SAVE_RESUME_MAP := "map"
 const RARITY_ORDER := {"common": 0, "uncommon": 1, "rare": 2}
 const TYPE_ORDER := {"attack": 0, "skill": 1, "power": 2}
 const ENEMY_TIER_ORDER := {"normal": 0, "elite": 1, "boss": 2}
@@ -63,6 +76,15 @@ var selected_reward_inspector_seed := DEFAULT_REWARD_INSPECTOR_SEED
 var reward_inspector_run: RunState
 var reward_inspector_rewards: Array[Dictionary] = []
 var reward_inspector_reward_states: Array[String] = []
+var save_inspector_save_service_override: Variant
+var save_inspector_current_snapshot: Dictionary = {}
+var save_inspector_status_label: Label
+var save_inspector_resume_target_label: Label
+var save_inspector_run_summary_label: Label
+var save_inspector_state_sections: VBoxContainer
+var save_inspector_map_section_label: Label
+var save_inspector_shop_section_label: Label
+var save_inspector_reward_section_label: Label
 var reward_applier := RewardApplier.new()
 var tool_content: VBoxContainer
 var card_list: VBoxContainer
@@ -103,11 +125,11 @@ func load_default_catalog() -> void:
 
 func tool_ids() -> Array[String]:
 	return [
-		"card_browser",
-		"enemy_sandbox",
-		"event_tester",
-		"reward_inspector",
-		"save_inspector",
+		TOOL_CARD_BROWSER,
+		TOOL_ENEMY_SANDBOX,
+		TOOL_EVENT_TESTER,
+		TOOL_REWARD_INSPECTOR,
+		TOOL_SAVE_INSPECTOR,
 	]
 
 func set_filters(character_id: String, rarity: String, card_type: String) -> void:
@@ -436,6 +458,108 @@ func skip_reward_inspector_reward(reward_index: int) -> bool:
 	_refresh_reward_inspector_after_resolution(reward_index)
 	return true
 
+func set_save_inspector_save_service_override(service: Variant) -> void:
+	save_inspector_save_service_override = service
+	refresh_save_inspector()
+
+func refresh_save_inspector() -> void:
+	save_inspector_current_snapshot = _build_save_inspector_snapshot()
+	_refresh_save_inspector_if_ready()
+
+func save_inspector_snapshot() -> Dictionary:
+	if save_inspector_current_snapshot.is_empty():
+		save_inspector_current_snapshot = _build_save_inspector_snapshot()
+	return save_inspector_current_snapshot
+
+func save_inspector_resume_target() -> String:
+	return String(save_inspector_snapshot().get("resume_target", SAVE_RESUME_NONE))
+
+func save_inspector_status_text() -> String:
+	var snapshot := save_inspector_snapshot()
+	return "\n".join([
+		"status: %s" % String(snapshot.get("status", SAVE_STATUS_MISSING_SERVICE)),
+		"has_service: %s" % _bool_text(bool(snapshot.get("has_service", false))),
+		"has_save: %s" % _bool_text(bool(snapshot.get("has_save", false))),
+		"reason: %s" % String(snapshot.get("reason", "")),
+	])
+
+func save_inspector_summary_text() -> String:
+	var snapshot := save_inspector_snapshot()
+	var run: RunState = snapshot.get("run", null)
+	if run == null:
+		return "run: none"
+	return "\n".join([
+		"version: %s" % run.version,
+		"seed: %s" % run.seed_value,
+		"character: %s" % run.character_id,
+		"hp: %s/%s" % [run.current_hp, run.max_hp],
+		"gold: %s" % run.gold,
+		"deck_count: %s" % run.deck_ids.size(),
+		"relic_count: %s" % run.relic_ids.size(),
+		"current_node_id: %s" % run.current_node_id,
+		"current_node_type: %s" % _save_inspector_current_node_type(run),
+		"completed: %s" % _bool_text(run.completed),
+		"failed: %s" % _bool_text(run.failed),
+	])
+
+func save_inspector_map_text() -> String:
+	var run: RunState = save_inspector_snapshot().get("run", null)
+	if run == null:
+		return "map: none"
+	var visited_count := 0
+	var unlocked_count := 0
+	for node in run.map_nodes:
+		if node.visited:
+			visited_count += 1
+		if node.unlocked:
+			unlocked_count += 1
+	return "\n".join([
+		"map_nodes: %s" % run.map_nodes.size(),
+		"current_node_id: %s" % run.current_node_id,
+		"current_node_type: %s" % _save_inspector_current_node_type(run),
+		"visited_count: %s" % visited_count,
+		"unlocked_count: %s" % unlocked_count,
+	])
+
+func save_inspector_shop_text() -> String:
+	var run: RunState = save_inspector_snapshot().get("run", null)
+	if run == null:
+		return "shop_state: none"
+	if run.current_shop_state.is_empty():
+		return "shop_state: empty"
+	var offers: Array = run.current_shop_state.get("offers", [])
+	var sold_count := 0
+	for offer in offers:
+		if not offer is Dictionary:
+			continue
+		var payload: Dictionary = offer
+		if bool(payload.get("sold", false)):
+			sold_count += 1
+	var matching := _save_inspector_shop_state_matches(run)
+	return "\n".join([
+		"shop_state: %s" % ("matching" if matching else "mismatched"),
+		"node_id: %s" % String(run.current_shop_state.get("node_id", "")),
+		"offers: %s" % offers.size(),
+		"sold: %s" % sold_count,
+	])
+
+func save_inspector_reward_text() -> String:
+	var run: RunState = save_inspector_snapshot().get("run", null)
+	if run == null:
+		return "reward_state: none"
+	if run.current_reward_state.is_empty():
+		return "reward_state: empty"
+	var rewards: Array = run.current_reward_state.get("rewards", [])
+	var matching := _save_inspector_reward_state_matches(run)
+	return "\n".join([
+		"reward_state: %s" % ("matching" if matching else "mismatched"),
+		"source: %s" % String(run.current_reward_state.get("source", "")),
+		"node_id: %s" % String(run.current_reward_state.get("node_id", "")),
+		"event_id: %s" % String(run.current_reward_state.get("event_id", "")),
+		"option_id: %s" % String(run.current_reward_state.get("option_id", "")),
+		"rewards: %s" % rewards.size(),
+	])
+
 func _build_layout() -> void:
 	var root := VBoxContainer.new()
 	root.name = "DevToolsRoot"
@@ -464,6 +588,7 @@ func _build_layout() -> void:
 
 func _show_tool(tool_id: String) -> void:
 	active_tool_id = tool_id
+	_clear_save_inspector_refs()
 	_clear_children(tool_content)
 	if tool_id == TOOL_CARD_BROWSER:
 		_build_card_browser()
@@ -473,6 +598,8 @@ func _show_tool(tool_id: String) -> void:
 		_build_event_tester()
 	elif tool_id == TOOL_REWARD_INSPECTOR:
 		_build_reward_inspector()
+	elif tool_id == TOOL_SAVE_INSPECTOR:
+		_build_save_inspector()
 	else:
 		var placeholder := Label.new()
 		placeholder.name = "ToolPlaceholder_%s" % tool_id
@@ -1074,6 +1201,181 @@ func _refresh_reward_inspector_if_ready() -> void:
 	if reward_inspector_reward_list != null and reward_inspector_run_summary_label != null:
 		_refresh_reward_inspector_panel()
 
+func _build_save_inspector_snapshot() -> Dictionary:
+	var service: Variant = _save_inspector_save_service()
+	var snapshot := {
+		"has_service": service != null,
+		"has_save": false,
+		"status": SAVE_STATUS_MISSING_SERVICE,
+		"resume_target": SAVE_RESUME_NONE,
+		"reason": "save_service: missing",
+		"run": null,
+	}
+	if service == null:
+		return snapshot
+	if not service.has_method("has_save") or not service.has_method("load_run"):
+		return snapshot
+	snapshot["has_save"] = service.has_save()
+	if not bool(snapshot["has_save"]):
+		snapshot["status"] = SAVE_STATUS_NO_SAVE
+		snapshot["reason"] = "save_file: missing"
+		return snapshot
+	var loaded_run: RunState = service.load_run()
+	if loaded_run == null:
+		snapshot["status"] = SAVE_STATUS_INVALID
+		snapshot["resume_target"] = SAVE_RESUME_INVALID_DELETE_ON_CONTINUE
+		snapshot["reason"] = "load_run: invalid"
+		return snapshot
+	snapshot["run"] = loaded_run
+	if loaded_run.failed or loaded_run.completed:
+		snapshot["status"] = SAVE_STATUS_TERMINAL
+		snapshot["resume_target"] = SAVE_RESUME_TERMINAL_DELETE_ON_CONTINUE
+		snapshot["reason"] = "run: terminal"
+		return snapshot
+	var resume_target := _save_inspector_resume_target_for_run(loaded_run)
+	snapshot["status"] = SAVE_STATUS_ACTIVE
+	snapshot["resume_target"] = resume_target
+	snapshot["reason"] = "continue_target: %s" % resume_target
+	return snapshot
+
+func _save_inspector_save_service() -> Variant:
+	if save_inspector_save_service_override != null:
+		return save_inspector_save_service_override
+	var app := _get_app()
+	if app == null or app.get("game") == null:
+		return null
+	return app.game.save_service
+
+func _save_inspector_resume_target_for_run(run: RunState) -> String:
+	if _save_inspector_reward_state_matches(run):
+		return SAVE_RESUME_REWARD
+	if _save_inspector_shop_state_matches(run):
+		return SAVE_RESUME_SHOP
+	return SAVE_RESUME_MAP
+
+func _save_inspector_reward_state_matches(run: RunState) -> bool:
+	if run == null or run.current_reward_state.is_empty():
+		return false
+	if String(run.current_reward_state.get("source", "")) != "event":
+		return false
+	if String(run.current_reward_state.get("node_id", "")) != run.current_node_id:
+		return false
+	return _save_inspector_current_node_type(run) == "event"
+
+func _save_inspector_shop_state_matches(run: RunState) -> bool:
+	if run == null or run.current_shop_state.is_empty():
+		return false
+	if String(run.current_shop_state.get("node_id", "")) != run.current_node_id:
+		return false
+	return _save_inspector_current_node_type(run) == "shop"
+
+func _save_inspector_current_node_type(run: RunState) -> String:
+	if run == null:
+		return "none"
+	for node in run.map_nodes:
+		if node.id == run.current_node_id:
+			return node.node_type
+	return "missing"
+
+func _refresh_save_inspector_if_ready() -> void:
+	if save_inspector_status_label != null and save_inspector_resume_target_label != null:
+		_refresh_save_inspector_panel()
+
+func _build_save_inspector() -> void:
+	var panel := VBoxContainer.new()
+	panel.name = "SaveInspectorPanel"
+	tool_content.add_child(panel)
+
+	save_inspector_status_label = Label.new()
+	save_inspector_status_label.name = "SaveInspectorStatusLabel"
+	save_inspector_status_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	panel.add_child(save_inspector_status_label)
+
+	save_inspector_resume_target_label = Label.new()
+	save_inspector_resume_target_label.name = "SaveInspectorResumeTargetLabel"
+	panel.add_child(save_inspector_resume_target_label)
+
+	save_inspector_run_summary_label = Label.new()
+	save_inspector_run_summary_label.name = "SaveInspectorRunSummaryLabel"
+	save_inspector_run_summary_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	panel.add_child(save_inspector_run_summary_label)
+
+	save_inspector_state_sections = VBoxContainer.new()
+	save_inspector_state_sections.name = "SaveInspectorStateSections"
+	panel.add_child(save_inspector_state_sections)
+
+	save_inspector_map_section_label = Label.new()
+	save_inspector_map_section_label.name = "SaveInspectorMapSectionLabel"
+	save_inspector_map_section_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	save_inspector_state_sections.add_child(save_inspector_map_section_label)
+
+	save_inspector_shop_section_label = Label.new()
+	save_inspector_shop_section_label.name = "SaveInspectorShopSectionLabel"
+	save_inspector_shop_section_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	save_inspector_state_sections.add_child(save_inspector_shop_section_label)
+
+	save_inspector_reward_section_label = Label.new()
+	save_inspector_reward_section_label.name = "SaveInspectorRewardSectionLabel"
+	save_inspector_reward_section_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	save_inspector_state_sections.add_child(save_inspector_reward_section_label)
+
+	var action_bar := HBoxContainer.new()
+	action_bar.name = "SaveInspectorActionBar"
+	panel.add_child(action_bar)
+
+	var reload := Button.new()
+	reload.name = "SaveInspectorReloadButton"
+	reload.text = "Reload"
+	reload.pressed.connect(_on_save_inspector_reload_pressed)
+	action_bar.add_child(reload)
+
+	action_bar.add_child(_disabled_save_inspector_action("SaveInspectorDeleteButton", "Delete"))
+	action_bar.add_child(_disabled_save_inspector_action("SaveInspectorExportButton", "Export"))
+	action_bar.add_child(_disabled_save_inspector_action("SaveInspectorCopyJsonButton", "Copy JSON"))
+	action_bar.add_child(_disabled_save_inspector_action("SaveInspectorRepairButton", "Repair"))
+
+	refresh_save_inspector()
+
+func _disabled_save_inspector_action(node_name: String, label: String) -> Button:
+	var button := Button.new()
+	button.name = node_name
+	button.text = label
+	button.disabled = true
+	return button
+
+func _on_save_inspector_reload_pressed() -> void:
+	refresh_save_inspector()
+
+func _refresh_save_inspector_panel() -> void:
+	var snapshot := save_inspector_snapshot()
+	if save_inspector_status_label != null:
+		save_inspector_status_label.text = save_inspector_status_text()
+	if save_inspector_resume_target_label != null:
+		save_inspector_resume_target_label.text = "continue_target: %s\nreason: %s" % [
+			String(snapshot.get("resume_target", SAVE_RESUME_NONE)),
+			String(snapshot.get("reason", "")),
+		]
+	if save_inspector_run_summary_label != null:
+		save_inspector_run_summary_label.text = save_inspector_summary_text()
+	if save_inspector_map_section_label != null:
+		save_inspector_map_section_label.text = save_inspector_map_text()
+	if save_inspector_shop_section_label != null:
+		save_inspector_shop_section_label.text = save_inspector_shop_text()
+	if save_inspector_reward_section_label != null:
+		save_inspector_reward_section_label.text = save_inspector_reward_text()
+
+func _clear_save_inspector_refs() -> void:
+	save_inspector_status_label = null
+	save_inspector_resume_target_label = null
+	save_inspector_run_summary_label = null
+	save_inspector_state_sections = null
+	save_inspector_map_section_label = null
+	save_inspector_shop_section_label = null
+	save_inspector_reward_section_label = null
+
+func _bool_text(value: bool) -> String:
+	return "true" if value else "false"
+
 func _copy_string_array(values: Array[String]) -> Array[String]:
 	var result: Array[String] = []
 	for value in values:
@@ -1081,7 +1383,12 @@ func _copy_string_array(values: Array[String]) -> Array[String]:
 	return result
 
 func _get_app() -> Node:
-	return get_tree().root.get_node_or_null("App")
+	if not is_inside_tree():
+		return null
+	var tree := get_tree()
+	if tree == null:
+		return null
+	return tree.root.get_node_or_null("App")
 
 func _clear_children(node: Node) -> void:
 	if node == null:
