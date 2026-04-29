@@ -317,7 +317,7 @@ rtk proxy git commit -m "build: add shared Godot script helper"
 - Modify: `tools/tests/test_release_scripts.ps1`
 - Create: `tools/ci/run_godot_checks.ps1`
 
-- [ ] **Step 1: Add failing tests for check script shape**
+- [x] **Step 1: Add failing tests for check script shape**
 
 Append this block before the final failure check in `tools/tests/test_release_scripts.ps1`:
 
@@ -352,7 +352,7 @@ if ($script:FailureCount -gt 0) {
 Write-Host "Release script tests passed."
 ```
 
-- [ ] **Step 2: Run script tests to verify RED**
+- [x] **Step 2: Run script tests to verify RED**
 
 Run:
 
@@ -362,7 +362,7 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File tools/tests/test_r
 
 Expected: FAIL because `tools/ci/run_godot_checks.ps1` does not exist.
 
-- [ ] **Step 3: Implement shared Godot check script**
+- [x] **Step 3: Implement shared Godot check script**
 
 Create `tools/ci/run_godot_checks.ps1`:
 
@@ -400,7 +400,7 @@ Invoke-GodotCommand -Arguments @(
 Write-Host "Godot checks passed."
 ```
 
-- [ ] **Step 4: Run script tests to verify GREEN**
+- [x] **Step 4: Run script tests to verify GREEN**
 
 Run:
 
@@ -414,7 +414,7 @@ Expected:
 Release script tests passed.
 ```
 
-- [ ] **Step 5: Run shared Godot checks**
+- [x] **Step 5: Run shared Godot checks**
 
 Run:
 
@@ -431,7 +431,7 @@ Godot checks passed.
 
 The known `poison_player` error log may appear after `TESTS PASSED`.
 
-- [ ] **Step 6: Commit Task 2**
+- [x] **Step 6: Commit Task 2**
 
 Run:
 

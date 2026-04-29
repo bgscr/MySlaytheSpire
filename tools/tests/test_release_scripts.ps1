@@ -100,6 +100,25 @@ try {
 	}
 }
 
+function Assert-FileContains {
+	param(
+		[string]$RelativePath,
+		[string]$Needle,
+		[string]$Message
+	)
+	$path = Join-Path $ProjectRoot $RelativePath
+	if (-not (Test-Path -LiteralPath $path)) {
+		Add-Failure "$Message Missing file: $RelativePath"
+		return
+	}
+	$text = Get-Content -LiteralPath $path -Raw
+	Assert-True ($text.Contains($Needle)) $Message
+}
+
+Assert-FileContains "tools\ci\run_godot_checks.ps1" "res://scripts/testing/test_runner.gd" "Godot check script should run the test runner."
+Assert-FileContains "tools\ci\run_godot_checks.ps1" "--quit" "Godot check script should run the import check."
+Assert-FileContains "tools\ci\run_godot_checks.ps1" "Invoke-GodotCommand" "Godot check script should use the shared helper."
+
 if ($script:FailureCount -gt 0) {
 	throw "Release script tests failed: $script:FailureCount"
 }
