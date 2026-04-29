@@ -149,6 +149,12 @@ Assert-FileContains ".github\workflows\ci.yml" "tools/ci/run_godot_checks.ps1" "
 Assert-FileContains ".github\workflows\ci.yml" "pull_request" "CI workflow should run on pull requests."
 Assert-FileContains ".github\workflows\ci.yml" "workflow_dispatch" "CI workflow should support manual dispatch."
 Assert-FileContains ".github\workflows\ci.yml" "GODOT4=" "CI workflow should publish GODOT4 for the shared script."
+Assert-FileContains "CHANGELOG.md" "## Unreleased" "Changelog should keep an Unreleased section."
+Assert-FileContains "docs\release\release-process.md" "tools/ci/run_godot_checks.ps1" "Release process should call the shared check script."
+Assert-FileContains "docs\release\release-process.md" "tools/release/export_windows.ps1" "Release process should call the Windows export wrapper."
+Assert-FileContains "docs\release\github-release-template.md" "Artifacts" "GitHub release template should include artifact notes."
+Assert-FileContains "docs\release\steam-adapter.md" "PlatformService" "Steam adapter doc should name the platform boundary."
+Assert-FileContains "docs\release\steam-adapter.md" "No Steam SDK" "Steam adapter doc should state SDK work is not included yet."
 
 if ($script:FailureCount -gt 0) {
 	throw "Release script tests failed: $script:FailureCount"

@@ -729,7 +729,7 @@ rtk proxy git commit -m "ci: add Godot checks workflow"
 - Create: `docs/release/github-release-template.md`
 - Create: `docs/release/steam-adapter.md`
 
-- [ ] **Step 1: Add failing tests for release docs**
+- [x] **Step 1: Add failing tests for release docs**
 
 Append this block before the final failure check in `tools/tests/test_release_scripts.ps1`:
 
@@ -742,7 +742,7 @@ Assert-FileContains "docs\release\steam-adapter.md" "PlatformService" "Steam ada
 Assert-FileContains "docs\release\steam-adapter.md" "No Steam SDK" "Steam adapter doc should state SDK work is not included yet."
 ```
 
-- [ ] **Step 2: Run script tests to verify RED**
+- [x] **Step 2: Run script tests to verify RED**
 
 Run:
 
@@ -752,7 +752,7 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File tools/tests/test_r
 
 Expected: FAIL because release documentation files do not exist.
 
-- [ ] **Step 3: Add changelog**
+- [x] **Step 3: Add changelog**
 
 Create `CHANGELOG.md`:
 
@@ -774,7 +774,7 @@ All notable project changes will be recorded here.
 - Godot vertical slice with seeded map flow, combat, rewards, events, shop, save/continue, presentation hooks, project-owned polish assets, and DevTools panels for cards, enemy sandbox, event tester, reward inspector, and save inspector.
 ```
 
-- [ ] **Step 4: Add release process document**
+- [x] **Step 4: Add release process document**
 
 Create `docs/release/release-process.md`:
 
@@ -838,7 +838,7 @@ Before publishing a release:
 - Add Steam depot upload after the Steam adapter implementation exists.
 ````
 
-- [ ] **Step 5: Add GitHub release template**
+- [x] **Step 5: Add GitHub release template**
 
 Create `docs/release/github-release-template.md`:
 
@@ -868,7 +868,7 @@ Create `docs/release/github-release-template.md`:
 - 
 ```
 
-- [ ] **Step 6: Add Steam adapter boundary doc**
+- [x] **Step 6: Add Steam adapter boundary doc**
 
 Create `docs/release/steam-adapter.md`:
 
@@ -907,7 +907,7 @@ Current platform capabilities:
 - No leaderboard or cloud save implementation.
 ```
 
-- [ ] **Step 7: Run docs tests to verify GREEN**
+- [x] **Step 7: Run docs tests to verify GREEN**
 
 Run:
 
@@ -921,7 +921,7 @@ Expected:
 Release script tests passed.
 ```
 
-- [ ] **Step 8: Commit Task 5**
+- [x] **Step 8: Commit Task 5**
 
 Run:
 
