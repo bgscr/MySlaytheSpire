@@ -16,6 +16,7 @@ var presentation_queue := CombatPresentationQueue.new()
 var presentation_delta := CombatPresentationDelta.new()
 var presentation_cue_resolver := CombatPresentationCueResolver.new()
 var presentation_layer: CombatPresentationLayer
+var is_sandbox := false
 var enemy_buttons: Array[Button] = []
 var card_buttons: Array[Button] = []
 var dragging_hand_index := -1
@@ -104,7 +105,21 @@ func _start_session() -> void:
 	var catalog := ContentCatalog.new()
 	catalog.load_default()
 	session = CombatSession.new()
-	session.start(catalog, app.game.current_run)
+	is_sandbox = false
+	var sandbox_config: Dictionary = {}
+	if app.game.has_method("take_debug_combat_sandbox_config"):
+		sandbox_config = app.game.take_debug_combat_sandbox_config()
+	if sandbox_config.is_empty():
+		session.start(catalog, app.game.current_run)
+	else:
+		is_sandbox = true
+		session.start_sandbox(
+			catalog,
+			String(sandbox_config.get("character_id", "")),
+			_string_array_from_variant(sandbox_config.get("deck_ids", [])),
+			_string_array_from_variant(sandbox_config.get("enemy_ids", [])),
+			int(sandbox_config.get("seed_value", 1))
+		)
 	presentation_config = app.game.presentation_config
 	presentation_queue.config = presentation_config
 	presentation_layer.queue = presentation_queue
@@ -394,7 +409,16 @@ func _pending_card_id() -> String:
 		return ""
 	return session.pending_card.id
 
+func _string_array_from_variant(values: Variant) -> Array[String]:
+	var result: Array[String] = []
+	if values is Array:
+		for value in values:
+			result.append(String(value))
+	return result
+
 func _route_if_terminal() -> void:
+	if is_sandbox:
+		return
 	if session.phase == CombatSession.PHASE_WON:
 		var app = get_tree().root.get_node("App")
 		app.game.router.go_to(SceneRouterScript.REWARD)

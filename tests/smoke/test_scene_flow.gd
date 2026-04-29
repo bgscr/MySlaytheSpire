@@ -328,6 +328,29 @@ func test_dev_tools_deferred_event_tester_button_shows_planned_placeholder(tree:
 	screen.free()
 	return passed
 
+func test_dev_tools_enemy_sandbox_launch_routes_to_sandbox_combat(tree: SceneTree) -> bool:
+	var app = _create_app_with_save_service(tree, "user://test_enemy_sandbox_launch_save.json")
+	var dev_tools = app.game.router.go_to(SceneRouterScript.DEV_TOOLS)
+	var enemy_sandbox_button := _find_node_by_name(dev_tools, "ToolButton_enemy_sandbox") as Button
+	if enemy_sandbox_button != null:
+		enemy_sandbox_button.pressed.emit()
+	var launch_button := _find_node_by_name(dev_tools, "EnemySandboxLaunchButton") as Button
+	if launch_button != null:
+		launch_button.pressed.emit()
+	var combat = app.game.router.current_scene
+	var passed: bool = launch_button != null \
+		and combat != null \
+		and combat.name == "CombatScreen" \
+		and combat.is_sandbox \
+		and app.game.current_run == null \
+		and combat.session != null \
+		and combat.session.run == null \
+		and combat.session.state.enemies.size() == 1 \
+		and combat.session.state.enemies[0].id == "training_puppet"
+	app.free()
+	_delete_test_save("user://test_enemy_sandbox_launch_save.json")
+	return passed
+
 func test_combat_screen_drag_disabled_keeps_click_fallback(tree: SceneTree) -> bool:
 	var app = _create_app_with_save_service(tree, "user://test_drag_disabled_click_save.json")
 	var config: Variant = app.game.get("presentation_config")

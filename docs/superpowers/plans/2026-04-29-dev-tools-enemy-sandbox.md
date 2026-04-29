@@ -186,27 +186,27 @@ Stage 2:
 - Modify: `scripts/ui/combat_screen.gd`
 - Modify: `scripts/ui/dev_tools_screen.gd`
 
-- [ ] **Step 1: Add failing smoke launch test**
+- [x] **Step 1: Add failing smoke launch test**
 
 Add a smoke test that opens Enemy Sandbox, presses `EnemySandboxLaunchButton`, and verifies `CombatScreen` starts sandbox combat against `training_puppet` while `app.game.current_run == null`.
 
-- [ ] **Step 2: Run tests to verify RED**
+- [x] **Step 2: Run tests to verify RED**
 
 Run the full test command. Expected: FAIL because launch config and CombatScreen sandbox startup do not exist.
 
-- [ ] **Step 3: Add transient sandbox config to `Game`**
+- [x] **Step 3: Add transient sandbox config to `Game`**
 
 Add `debug_combat_sandbox_config`, `set_debug_combat_sandbox_config()`, and `take_debug_combat_sandbox_config()`.
 
-- [ ] **Step 4: Wire DevTools launch and CombatScreen startup**
+- [x] **Step 4: Wire DevTools launch and CombatScreen startup**
 
 DevTools writes config then routes to `SceneRouter.COMBAT`. CombatScreen consumes the config, starts sandbox session, marks `is_sandbox`, and skips reward/summary routing when terminal.
 
-- [ ] **Step 5: Run tests to verify GREEN for Task 3**
+- [x] **Step 5: Run tests to verify GREEN for Task 3**
 
 Run the full test command. Expected: `TESTS PASSED`.
 
-- [ ] **Step 6: Task 3 review gates**
+- [x] **Step 6: Task 3 review gates**
 
 Stage 1:
 
