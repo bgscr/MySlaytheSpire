@@ -66,7 +66,7 @@ Modify:
 - Modify: `tests/unit/test_combat_session.gd`
 - Modify: `scripts/combat/combat_session.gd`
 
-- [ ] **Step 1: Verify branch and clean workspace**
+- [x] **Step 1: Verify branch and clean workspace**
 
 Run:
 
@@ -83,7 +83,7 @@ main
 
 `git status --short` should show only docs created for this plan before implementation starts.
 
-- [ ] **Step 2: Add failing sandbox session tests**
+- [x] **Step 2: Add failing sandbox session tests**
 
 Append these tests before helper functions in `tests/unit/test_combat_session.gd`:
 
@@ -114,19 +114,19 @@ func test_sandbox_session_rejects_missing_enemy() -> bool:
 	return passed
 ```
 
-- [ ] **Step 3: Run tests to verify RED**
+- [x] **Step 3: Run tests to verify RED**
 
 Run the full test command. Expected: FAIL because `CombatSession.start_sandbox()` does not exist.
 
-- [ ] **Step 4: Implement `CombatSession.start_sandbox()`**
+- [x] **Step 4: Implement `CombatSession.start_sandbox()`**
 
 Add a typed method that resets runtime state, validates catalog, character, deck, and enemy ids, builds player/enemy combatants from catalog data, and calls `_start_player_turn()`.
 
-- [ ] **Step 5: Run tests to verify GREEN for Task 1**
+- [x] **Step 5: Run tests to verify GREEN for Task 1**
 
 Run the full test command. Expected: `TESTS PASSED`.
 
-- [ ] **Step 6: Task 1 review gates**
+- [x] **Step 6: Task 1 review gates**
 
 Stage 1:
 

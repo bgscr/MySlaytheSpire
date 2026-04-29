@@ -42,19 +42,7 @@ var terminal_rewards_applied := false
 func start(input_catalog: ContentCatalog, input_run: RunState) -> void:
 	catalog = input_catalog
 	run = input_run
-	state = CombatState.new()
-	engine = CombatEngine.new()
-	status_runtime = CombatStatusRuntime.new()
-	engine.executor.status_runtime = status_runtime
-	relic_runtime.reset()
-	phase = PHASE_INVALID
-	error_text = ""
-	pending_hand_index = -1
-	pending_card = null
-	enemy_defs_by_id.clear()
-	enemy_intent_indices.clear()
-	rng = RngService.new(1)
-	terminal_rewards_applied = false
+	_reset_runtime_state()
 	if run == null:
 		_set_invalid("CombatSession cannot start without a run.")
 		return
@@ -63,6 +51,47 @@ func start(input_catalog: ContentCatalog, input_run: RunState) -> void:
 		return
 	rng = RngService.new(run.seed_value).fork("combat:%s" % run.current_node_id)
 	_initialize_from_run()
+
+func start_sandbox(
+	input_catalog: ContentCatalog,
+	character_id: String,
+	deck_ids: Array[String],
+	enemy_ids: Array[String],
+	seed_value: int = 1
+) -> void:
+	catalog = input_catalog
+	run = null
+	_reset_runtime_state()
+	if catalog == null:
+		_set_invalid("CombatSession sandbox cannot start without a catalog.")
+		return
+	if deck_ids.is_empty():
+		_set_invalid("CombatSession sandbox cannot start with an empty deck.")
+		return
+	if enemy_ids.is_empty():
+		_set_invalid("CombatSession sandbox cannot start without enemies.")
+		return
+	if enemy_ids.size() > 3:
+		_set_invalid("CombatSession sandbox requires one to three enemies.")
+		return
+	var character := catalog.get_character(character_id)
+	if character == null:
+		_set_invalid("CombatSession sandbox character is missing: %s" % character_id)
+		return
+	rng = RngService.new(seed_value).fork("sandbox:%s:%s" % [character_id, ",".join(enemy_ids)])
+	state.player = CombatantState.new(character.id, max(1, character.max_hp))
+	state.energy = 3
+	state.turn = 1
+	state.draw_pile = _shuffle_card_ids(deck_ids)
+	for enemy_id in enemy_ids:
+		var enemy_def := catalog.get_enemy(enemy_id)
+		if enemy_def == null:
+			_set_invalid("CombatSession sandbox enemy is missing: %s" % enemy_id)
+			return
+		enemy_defs_by_id[enemy_id] = enemy_def
+		state.enemies.append(CombatantState.new(enemy_id, enemy_def.max_hp))
+		enemy_intent_indices.append(0)
+	_start_player_turn()
 
 func get_enemy_intent(enemy_index: int) -> String:
 	if enemy_index < 0 or enemy_index >= state.enemies.size():
@@ -154,6 +183,21 @@ func draw_cards(count: int) -> void:
 			state.draw_pile = _shuffle_card_ids(state.discard_pile)
 			state.discard_pile.clear()
 		state.hand.append(state.draw_pile.pop_back())
+
+func _reset_runtime_state() -> void:
+	state = CombatState.new()
+	engine = CombatEngine.new()
+	status_runtime = CombatStatusRuntime.new()
+	engine.executor.status_runtime = status_runtime
+	relic_runtime.reset()
+	phase = PHASE_INVALID
+	error_text = ""
+	pending_hand_index = -1
+	pending_card = null
+	enemy_defs_by_id.clear()
+	enemy_intent_indices.clear()
+	rng = RngService.new(1)
+	terminal_rewards_applied = false
 
 func _run_enemy_turn() -> void:
 	_clear_enemy_blocks()

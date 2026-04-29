@@ -580,6 +580,45 @@ func test_malformed_status_intent_advances_without_mutation() -> bool:
 	assert(passed)
 	return passed
 
+func test_sandbox_session_starts_with_explicit_enemies_without_run() -> bool:
+	var catalog := _default_catalog()
+	var session := CombatSession.new()
+	session.start_sandbox(catalog, "alchemy", ["alchemy.toxic_pill"], ["training_puppet", "forest_bandit"], 7)
+	var passed: bool = session.phase == CombatSession.PHASE_PLAYER_TURN \
+		and session.run == null \
+		and session.state.player.id == "alchemy" \
+		and session.state.player.max_hp == 68 \
+		and session.state.enemies.size() == 2 \
+		and session.state.enemies[0].id == "training_puppet" \
+		and session.state.enemies[1].id == "forest_bandit" \
+		and session.get_enemy_intent(0) == "attack_5" \
+		and session.state.hand == ["alchemy.toxic_pill"]
+	assert(passed)
+	return passed
+
+func test_sandbox_session_rejects_missing_enemy() -> bool:
+	var catalog := _default_catalog()
+	var session := CombatSession.new()
+	session.start_sandbox(catalog, "sword", ["sword.strike"], ["missing_enemy"], 1)
+	var passed: bool = session.phase == CombatSession.PHASE_INVALID \
+		and session.error_text.contains("enemy is missing")
+	assert(passed)
+	return passed
+
+func test_sandbox_session_rejects_more_than_three_enemies() -> bool:
+	var catalog := _default_catalog()
+	var session := CombatSession.new()
+	session.start_sandbox(catalog, "sword", ["sword.strike"], [
+		"training_puppet",
+		"wild_fox_spirit",
+		"ash_lantern_cultist",
+		"stone_grove_guardian",
+	], 1)
+	var passed: bool = session.phase == CombatSession.PHASE_INVALID \
+		and session.error_text.contains("one to three enemies")
+	assert(passed)
+	return passed
+
 func _catalog_with_single_enemy_intent(enemy_id: String, tier: String, intents: Array[String]) -> ContentCatalog:
 	var catalog := _default_catalog()
 	catalog.enemies_by_id.clear()
