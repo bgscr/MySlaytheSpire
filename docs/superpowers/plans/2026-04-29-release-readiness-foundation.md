@@ -937,7 +937,7 @@ rtk proxy git commit -m "docs: add release process foundation"
 - Modify: `README.md`
 - Modify: `docs/superpowers/plans/2026-04-29-release-readiness-foundation.md`
 
-- [ ] **Step 1: Update README commands**
+- [x] **Step 1: Update README commands**
 
 In `README.md`, replace the `## Local Commands` section with:
 
@@ -957,7 +957,7 @@ $env:GODOT4="C:\Tools\Godot\Godot_v4.6.2-stable_win64_console.exe"
 ```
 ````
 
-- [ ] **Step 2: Update README progress and Next Plans**
+- [x] **Step 2: Update README progress and Next Plans**
 
 In `README.md`, add this progress bullet after the DevTools bullets:
 
@@ -974,7 +974,7 @@ Update `## Next Plans` to:
 2. Release expansion: artifact packaging, checksums, version bump automation, signed builds, and eventual Steam adapter implementation.
 ```
 
-- [ ] **Step 3: Run script tests**
+- [x] **Step 3: Run script tests**
 
 Run:
 
@@ -988,7 +988,7 @@ Expected:
 Release script tests passed.
 ```
 
-- [ ] **Step 4: Run shared Godot checks**
+- [x] **Step 4: Run shared Godot checks**
 
 Run:
 
@@ -1003,7 +1003,7 @@ TESTS PASSED
 Godot checks passed.
 ```
 
-- [ ] **Step 5: Run Windows export dry run**
+- [x] **Step 5: Run Windows export dry run**
 
 Run:
 
@@ -1017,7 +1017,7 @@ Expected:
 Dry run: Godot export command resolved.
 ```
 
-- [ ] **Step 6: Run Windows export**
+- [x] **Step 6: Run Windows export**
 
 Run:
 
@@ -1033,7 +1033,7 @@ Windows export complete:
 
 If templates are missing, record the exact error and confirm it is clear and actionable.
 
-- [ ] **Step 7: Run direct import check**
+- [x] **Step 7: Run direct import check**
 
 Run:
 
@@ -1043,7 +1043,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: process exits 0.
 
-- [ ] **Step 8: Verify CI workflow has no secrets or publishing permissions**
+- [x] **Step 8: Verify CI workflow has no secrets or publishing permissions**
 
 Run:
 
@@ -1053,7 +1053,7 @@ rtk proxy rg -n "secrets\\.|contents:\\s*write|id-token|actions/(upload|create).
 
 Expected: no matches.
 
-- [ ] **Step 9: Final two-stage review**
+- [x] **Step 9: Final two-stage review**
 
 Stage 1 Spec Compliance Review:
 
@@ -1074,11 +1074,11 @@ Stage 2 Code Quality Review:
 
 Fix any Critical or Important findings before acceptance.
 
-- [ ] **Step 10: Mark completed plan steps**
+- [x] **Step 10: Mark completed plan steps**
 
 Update completed checkboxes in this plan from `[ ]` to `[x]` after each step has been completed and verified.
 
-- [ ] **Step 11: Commit Task 6**
+- [x] **Step 11: Commit Task 6**
 
 Run:
 

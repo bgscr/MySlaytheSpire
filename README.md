@@ -12,7 +12,14 @@
 
 ```powershell
 $env:GODOT4="C:\Tools\Godot\Godot_v4.6.2-stable_win64_console.exe"
-& $env:GODOT4 --headless --path . --script res://scripts/testing/test_runner.gd
+.\tools\ci\run_godot_checks.ps1
+```
+
+Run Windows export:
+
+```powershell
+$env:GODOT4="C:\Tools\Godot\Godot_v4.6.2-stable_win64_console.exe"
+.\tools\release\export_windows.ps1
 ```
 
 ## Phase 1 Status
@@ -54,8 +61,9 @@ $env:GODOT4="C:\Tools\Godot\Godot_v4.6.2-stable_win64_console.exe"
 - Developer tools event tester: complete; DevTools can now apply catalog event options against an isolated test run without writing saves, routing away, or mutating the active run.
 - Developer tools reward inspector: complete; DevTools can now preview generated reward packages and simulate card, gold, relic, and skip choices against an isolated run without touching saves or the active run.
 - Developer tools save inspector: complete; DevTools can now diagnose save presence, validity, terminal state, map/shop/reward resume targets, and run state sections without writing, deleting, repairing, routing, or mutating the active run.
+- Release readiness foundation: complete; local and CI Godot checks now share a PowerShell entry point, Windows export has a wrapper around the existing preset, release notes/checklists/templates are documented, and future Steam work is bounded behind `PlatformService`.
 
 ## Next Plans
 
-1. Release readiness: CI, artifact export, changelog, release draft, Steam adapter.
-2. Presentation expansion: more per-card cue ids, enemy intent polish, card art, richer combat backgrounds, and formal audio mixing.
+1. Presentation expansion: more per-card cue ids, enemy intent polish, card art, richer combat backgrounds, and formal audio mixing.
+2. Release expansion: artifact packaging, checksums, version bump automation, signed builds, and eventual Steam adapter implementation.
