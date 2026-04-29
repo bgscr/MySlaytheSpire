@@ -2,13 +2,20 @@ extends Control
 
 const CardDef := preload("res://scripts/data/card_def.gd")
 const CardPresentationCueDef := preload("res://scripts/data/card_presentation_cue_def.gd")
+const CharacterDef := preload("res://scripts/data/character_def.gd")
 const ContentCatalog := preload("res://scripts/content/content_catalog.gd")
 const EffectDef := preload("res://scripts/data/effect_def.gd")
+const EnemyDef := preload("res://scripts/data/enemy_def.gd")
+const SceneRouterScript := preload("res://scripts/app/scene_router.gd")
 
 const TOOL_CARD_BROWSER := "card_browser"
+const TOOL_ENEMY_SANDBOX := "enemy_sandbox"
 const FILTER_ALL := "all"
+const DEFAULT_SANDBOX_CHARACTER := "sword"
+const DEFAULT_SANDBOX_ENEMY := "training_puppet"
 const RARITY_ORDER := {"common": 0, "uncommon": 1, "rare": 2}
 const TYPE_ORDER := {"attack": 0, "skill": 1, "power": 2}
+const ENEMY_TIER_ORDER := {"normal": 0, "elite": 1, "boss": 2}
 const TOOL_LABELS := {
 	"card_browser": "Card Browser",
 	"enemy_sandbox": "Enemy Sandbox",
@@ -23,22 +30,30 @@ var selected_card_id := ""
 var character_filter := FILTER_ALL
 var rarity_filter := FILTER_ALL
 var card_type_filter := FILTER_ALL
+var selected_sandbox_character_id := DEFAULT_SANDBOX_CHARACTER
+var selected_sandbox_enemy_ids: Array[String] = []
 var tool_content: VBoxContainer
 var card_list: VBoxContainer
 var card_detail_label: Label
 var character_filter_button: OptionButton
 var rarity_filter_button: OptionButton
 var type_filter_button: OptionButton
+var enemy_sandbox_character_select: OptionButton
+var enemy_sandbox_deck_label: Label
+var enemy_sandbox_enemy_list: VBoxContainer
+var enemy_sandbox_summary_label: Label
 
 func _ready() -> void:
 	if catalog.cards_by_id.is_empty():
 		catalog.load_default()
+	_ensure_enemy_sandbox_defaults()
 	_build_layout()
 	_show_tool(TOOL_CARD_BROWSER)
 
 func load_default_catalog() -> void:
 	catalog.load_default()
 	_refresh_selected_card()
+	_ensure_enemy_sandbox_defaults()
 
 func tool_ids() -> Array[String]:
 	return [
@@ -100,6 +115,68 @@ func card_detail_text(card: CardDef) -> String:
 func placeholder_text(tool_id: String) -> String:
 	return "%s\nPlanned tool" % String(TOOL_LABELS.get(tool_id, tool_id))
 
+func enemy_sandbox_enemy_ids() -> Array[String]:
+	var enemies: Array[EnemyDef] = []
+	for enemy: EnemyDef in catalog.enemies_by_id.values():
+		enemies.append(enemy)
+	enemies.sort_custom(func(a: EnemyDef, b: EnemyDef): return _enemy_less(a, b))
+	var result: Array[String] = []
+	for enemy in enemies:
+		result.append(enemy.id)
+	return result
+
+func set_enemy_sandbox_character(character_id: String) -> void:
+	if catalog.get_character(character_id) == null:
+		return
+	selected_sandbox_character_id = character_id
+	_refresh_enemy_sandbox_if_ready()
+
+func set_enemy_sandbox_enemies(enemy_ids: Array[String]) -> void:
+	selected_sandbox_enemy_ids = _normalized_enemy_ids(enemy_ids)
+	_refresh_enemy_sandbox_if_ready()
+
+func toggle_enemy_sandbox_enemy(enemy_id: String) -> void:
+	if catalog.get_enemy(enemy_id) == null:
+		return
+	if selected_sandbox_enemy_ids.has(enemy_id):
+		if selected_sandbox_enemy_ids.size() > 1:
+			selected_sandbox_enemy_ids.erase(enemy_id)
+	elif selected_sandbox_enemy_ids.size() < 3:
+		selected_sandbox_enemy_ids.append(enemy_id)
+	_refresh_enemy_sandbox_if_ready()
+
+func enemy_sandbox_config() -> Dictionary:
+	_ensure_enemy_sandbox_defaults()
+	var character := catalog.get_character(selected_sandbox_character_id)
+	var deck_ids: Array[String] = []
+	if character != null:
+		deck_ids = _copy_string_array(character.starting_deck_ids)
+	return {
+		"character_id": selected_sandbox_character_id,
+		"deck_ids": deck_ids,
+		"enemy_ids": selected_sandbox_enemy_ids.duplicate(),
+		"seed_value": 1,
+	}
+
+func enemy_sandbox_summary_text() -> String:
+	_ensure_enemy_sandbox_defaults()
+	var config := enemy_sandbox_config()
+	var lines: Array[String] = [
+		"character: %s" % String(config.get("character_id", "")),
+		"deck: %s" % _join_string_array(config.get("deck_ids", [])),
+	]
+	for enemy_id: String in config.get("enemy_ids", []):
+		var enemy := catalog.get_enemy(enemy_id)
+		if enemy == null:
+			continue
+		lines.append("enemy: %s tier=%s hp=%s intents=%s" % [
+			enemy.id,
+			enemy.tier,
+			enemy.max_hp,
+			_join_string_array(enemy.intent_sequence),
+		])
+	return "\n".join(lines)
+
 func _build_layout() -> void:
 	var root := VBoxContainer.new()
 	root.name = "DevToolsRoot"
@@ -131,6 +208,8 @@ func _show_tool(tool_id: String) -> void:
 	_clear_children(tool_content)
 	if tool_id == TOOL_CARD_BROWSER:
 		_build_card_browser()
+	elif tool_id == TOOL_ENEMY_SANDBOX:
+		_build_enemy_sandbox()
 	else:
 		var placeholder := Label.new()
 		placeholder.name = "ToolPlaceholder_%s" % tool_id
@@ -211,6 +290,92 @@ func _refresh_card_browser() -> void:
 		card_list.add_child(button)
 	card_detail_label.text = card_detail_text(catalog.get_card(selected_card_id))
 
+func _build_enemy_sandbox() -> void:
+	_ensure_enemy_sandbox_defaults()
+	var panel := VBoxContainer.new()
+	panel.name = "EnemySandboxPanel"
+	tool_content.add_child(panel)
+
+	enemy_sandbox_character_select = OptionButton.new()
+	enemy_sandbox_character_select.name = "EnemySandboxCharacterSelect"
+	for character_id in _enemy_sandbox_character_ids():
+		enemy_sandbox_character_select.add_item(character_id)
+		if character_id == selected_sandbox_character_id:
+			enemy_sandbox_character_select.select(enemy_sandbox_character_select.get_item_count() - 1)
+	enemy_sandbox_character_select.item_selected.connect(_on_enemy_sandbox_character_selected)
+	panel.add_child(enemy_sandbox_character_select)
+
+	enemy_sandbox_deck_label = Label.new()
+	enemy_sandbox_deck_label.name = "EnemySandboxDeckLabel"
+	panel.add_child(enemy_sandbox_deck_label)
+
+	enemy_sandbox_enemy_list = VBoxContainer.new()
+	enemy_sandbox_enemy_list.name = "EnemySandboxEnemyList"
+	panel.add_child(enemy_sandbox_enemy_list)
+
+	enemy_sandbox_summary_label = Label.new()
+	enemy_sandbox_summary_label.name = "EnemySandboxSummaryLabel"
+	enemy_sandbox_summary_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	panel.add_child(enemy_sandbox_summary_label)
+
+	var launch := Button.new()
+	launch.name = "EnemySandboxLaunchButton"
+	launch.text = "Launch Sandbox"
+	launch.pressed.connect(_launch_enemy_sandbox)
+	panel.add_child(launch)
+
+	_refresh_enemy_sandbox_panel()
+
+func _on_enemy_sandbox_character_selected(index: int) -> void:
+	if enemy_sandbox_character_select == null:
+		return
+	set_enemy_sandbox_character(enemy_sandbox_character_select.get_item_text(index))
+
+func _refresh_enemy_sandbox_if_ready() -> void:
+	if enemy_sandbox_enemy_list != null and enemy_sandbox_summary_label != null:
+		_refresh_enemy_sandbox_panel()
+
+func _refresh_enemy_sandbox_panel() -> void:
+	_ensure_enemy_sandbox_defaults()
+	var character := catalog.get_character(selected_sandbox_character_id)
+	var deck_ids: Array[String] = []
+	if character != null:
+		deck_ids = _copy_string_array(character.starting_deck_ids)
+	if enemy_sandbox_deck_label != null:
+		enemy_sandbox_deck_label.text = "Starter deck: %s" % _join_string_array(deck_ids)
+	if enemy_sandbox_enemy_list != null:
+		_clear_children(enemy_sandbox_enemy_list)
+		for enemy_id in enemy_sandbox_enemy_ids():
+			var enemy := catalog.get_enemy(enemy_id)
+			if enemy == null:
+				continue
+			var button := Button.new()
+			button.name = "EnemySandboxEnemy_%s" % enemy.id
+			var selected := selected_sandbox_enemy_ids.has(enemy.id)
+			var marker := "[x]" if selected else "[ ]"
+			button.text = "%s %s | %s | HP %s | %s" % [
+				marker,
+				enemy.id,
+				enemy.tier,
+				enemy.max_hp,
+				_join_string_array(enemy.intent_sequence),
+			]
+			button.disabled = not selected and selected_sandbox_enemy_ids.size() >= 3
+			var selected_enemy_id := enemy.id
+			button.pressed.connect(func(): toggle_enemy_sandbox_enemy(selected_enemy_id))
+			enemy_sandbox_enemy_list.add_child(button)
+	if enemy_sandbox_summary_label != null:
+		enemy_sandbox_summary_label.text = enemy_sandbox_summary_text()
+
+func _launch_enemy_sandbox() -> void:
+	var app := _get_app()
+	if app == null or app.get("game") == null:
+		return
+	if not app.game.has_method("set_debug_combat_sandbox_config"):
+		return
+	app.game.set_debug_combat_sandbox_config(enemy_sandbox_config())
+	app.game.router.go_to(SceneRouterScript.COMBAT)
+
 func _refresh_selected_card() -> void:
 	var cards := filtered_cards()
 	if cards.is_empty():
@@ -240,6 +405,13 @@ func _card_less(a: CardDef, b: CardDef) -> bool:
 	var type_b := int(TYPE_ORDER.get(b.card_type, 99))
 	if type_a != type_b:
 		return type_a < type_b
+	return a.id < b.id
+
+func _enemy_less(a: EnemyDef, b: EnemyDef) -> bool:
+	var tier_a := int(ENEMY_TIER_ORDER.get(a.tier, 99))
+	var tier_b := int(ENEMY_TIER_ORDER.get(b.tier, 99))
+	if tier_a != tier_b:
+		return tier_a < tier_b
 	return a.id < b.id
 
 func _card_id_in_cards(card_id: String, cards: Array[CardDef]) -> bool:
@@ -275,6 +447,48 @@ func _join_string_array(values: Array[String]) -> String:
 	if values.is_empty():
 		return "none"
 	return ", ".join(values)
+
+func _enemy_sandbox_character_ids() -> Array[String]:
+	var result: Array[String] = []
+	for character_id in catalog.characters_by_id.keys():
+		result.append(String(character_id))
+	result.sort()
+	if result.has(DEFAULT_SANDBOX_CHARACTER):
+		result.erase(DEFAULT_SANDBOX_CHARACTER)
+		result.push_front(DEFAULT_SANDBOX_CHARACTER)
+	return result
+
+func _ensure_enemy_sandbox_defaults() -> void:
+	if catalog.get_character(selected_sandbox_character_id) == null:
+		var character_ids := _enemy_sandbox_character_ids()
+		selected_sandbox_character_id = character_ids[0] if not character_ids.is_empty() else ""
+	selected_sandbox_enemy_ids = _normalized_enemy_ids(selected_sandbox_enemy_ids)
+
+func _normalized_enemy_ids(enemy_ids: Array[String]) -> Array[String]:
+	var result: Array[String] = []
+	for enemy_id in enemy_ids:
+		if result.size() >= 3:
+			break
+		if result.has(enemy_id) or catalog.get_enemy(enemy_id) == null:
+			continue
+		result.append(enemy_id)
+	if result.is_empty():
+		if catalog.get_enemy(DEFAULT_SANDBOX_ENEMY) != null:
+			result.append(DEFAULT_SANDBOX_ENEMY)
+		else:
+			var available_enemy_ids := enemy_sandbox_enemy_ids()
+			if not available_enemy_ids.is_empty():
+				result.append(available_enemy_ids[0])
+	return result
+
+func _copy_string_array(values: Array[String]) -> Array[String]:
+	var result: Array[String] = []
+	for value in values:
+		result.append(value)
+	return result
+
+func _get_app() -> Node:
+	return get_tree().root.get_node_or_null("App")
 
 func _clear_children(node: Node) -> void:
 	if node == null:

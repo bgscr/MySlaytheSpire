@@ -147,23 +147,23 @@ Stage 2:
 - Modify: `tests/unit/test_dev_tools_screen.gd`
 - Modify: `scripts/ui/dev_tools_screen.gd`
 
-- [ ] **Step 1: Add failing DevTools helper tests**
+- [x] **Step 1: Add failing DevTools helper tests**
 
 Append tests covering deterministic enemy ids, default config, capped selection, and summary text.
 
-- [ ] **Step 2: Run tests to verify RED**
+- [x] **Step 2: Run tests to verify RED**
 
 Run the full test command. Expected: FAIL because Enemy Sandbox helpers do not exist.
 
-- [ ] **Step 3: Implement Enemy Sandbox helpers and panel**
+- [x] **Step 3: Implement Enemy Sandbox helpers and panel**
 
 Update `DevToolsScreen` so `enemy_sandbox` builds `EnemySandboxPanel` with character select, deck summary, enemy toggle buttons, summary label, and launch button.
 
-- [ ] **Step 4: Run tests to verify GREEN for Task 2**
+- [x] **Step 4: Run tests to verify GREEN for Task 2**
 
 Run the full test command. Expected: `TESTS PASSED`.
 
-- [ ] **Step 5: Task 2 review gates**
+- [x] **Step 5: Task 2 review gates**
 
 Stage 1:
 

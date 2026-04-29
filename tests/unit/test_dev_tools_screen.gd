@@ -78,6 +78,63 @@ func test_dev_tools_exposes_deferred_tool_placeholders() -> bool:
 	assert(passed)
 	return passed
 
+func test_enemy_sandbox_exposes_deterministic_enemy_ids() -> bool:
+	var screen := DevToolsScreen.new()
+	screen.load_default_catalog()
+	var enemy_ids: Array[String] = screen.enemy_sandbox_enemy_ids()
+	var passed: bool = enemy_ids.size() == 16 \
+		and enemy_ids.has("training_puppet") \
+		and enemy_ids.find("training_puppet") < enemy_ids.find("forest_bandit") \
+		and enemy_ids.find("forest_bandit") < enemy_ids.find("boss_heart_demon")
+	screen.free()
+	assert(passed)
+	return passed
+
+func test_enemy_sandbox_default_config_uses_sword_starter_and_training_puppet() -> bool:
+	var screen := DevToolsScreen.new()
+	screen.load_default_catalog()
+	var config: Dictionary = screen.enemy_sandbox_config()
+	var passed: bool = config.get("character_id") == "sword" \
+		and config.get("deck_ids") == ["sword.strike", "sword.strike", "sword.strike"] \
+		and config.get("enemy_ids") == ["training_puppet"] \
+		and config.get("seed_value") == 1
+	screen.free()
+	assert(passed)
+	return passed
+
+func test_enemy_sandbox_selection_keeps_unique_valid_first_three_enemies() -> bool:
+	var screen := DevToolsScreen.new()
+	screen.load_default_catalog()
+	screen.set_enemy_sandbox_enemies([
+		"training_puppet",
+		"missing_enemy",
+		"training_puppet",
+		"wild_fox_spirit",
+		"ash_lantern_cultist",
+		"stone_grove_guardian",
+	])
+	var passed: bool = screen.selected_sandbox_enemy_ids == [
+		"training_puppet",
+		"wild_fox_spirit",
+		"ash_lantern_cultist",
+	]
+	screen.free()
+	assert(passed)
+	return passed
+
+func test_enemy_sandbox_summary_includes_character_deck_and_enemy_details() -> bool:
+	var screen := DevToolsScreen.new()
+	screen.load_default_catalog()
+	screen.set_enemy_sandbox_character("alchemy")
+	screen.set_enemy_sandbox_enemies(["training_puppet"])
+	var summary: String = screen.enemy_sandbox_summary_text()
+	var passed: bool = summary.contains("character: alchemy") \
+		and summary.contains("deck: alchemy.toxic_pill, alchemy.toxic_pill, alchemy.toxic_pill") \
+		and summary.contains("enemy: training_puppet tier=normal hp=20 intents=attack_5")
+	screen.free()
+	assert(passed)
+	return passed
+
 func _ids(cards: Array) -> Array[String]:
 	var result: Array[String] = []
 	for card in cards:

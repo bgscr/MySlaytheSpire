@@ -296,15 +296,33 @@ func test_dev_tools_screen_starts_on_card_browser_and_selects_strike(tree: Scene
 	screen.free()
 	return passed
 
-func test_dev_tools_deferred_tool_button_shows_planned_placeholder(tree: SceneTree) -> bool:
+func test_dev_tools_enemy_sandbox_button_shows_panel(tree: SceneTree) -> bool:
 	var screen := DevToolsScene.instantiate()
 	tree.root.add_child(screen)
 	var button := _find_node_by_name(screen, "ToolButton_enemy_sandbox") as Button
 	if button != null:
 		button.pressed.emit()
-	var placeholder := _find_node_by_name(screen, "ToolPlaceholder_enemy_sandbox") as Label
+	var panel := _find_node_by_name(screen, "EnemySandboxPanel")
+	var summary := _find_node_by_name(screen, "EnemySandboxSummaryLabel") as Label
+	var launch := _find_node_by_name(screen, "EnemySandboxLaunchButton") as Button
 	var passed: bool = button != null \
 		and screen.active_tool_id == "enemy_sandbox" \
+		and panel != null \
+		and summary != null \
+		and summary.text.contains("enemy: training_puppet") \
+		and launch != null
+	screen.free()
+	return passed
+
+func test_dev_tools_deferred_event_tester_button_shows_planned_placeholder(tree: SceneTree) -> bool:
+	var screen := DevToolsScene.instantiate()
+	tree.root.add_child(screen)
+	var button := _find_node_by_name(screen, "ToolButton_event_tester") as Button
+	if button != null:
+		button.pressed.emit()
+	var placeholder := _find_node_by_name(screen, "ToolPlaceholder_event_tester") as Label
+	var passed: bool = button != null \
+		and screen.active_tool_id == "event_tester" \
 		and placeholder != null \
 		and placeholder.text.contains("Planned tool")
 	screen.free()
