@@ -226,7 +226,7 @@ Stage 2:
 - Modify: `README.md`
 - Modify: `docs/superpowers/plans/2026-04-29-dev-tools-enemy-sandbox.md`
 
-- [ ] **Step 1: Verify no persistence/resource writes were added**
+- [x] **Step 1: Verify no persistence/resource writes were added**
 
 Run:
 
@@ -236,23 +236,23 @@ rtk proxy rg -n "save_run|delete_save|FileAccess.open|ResourceSaver|store_|curre
 
 Expected: no new save/resource write path for Enemy Sandbox.
 
-- [ ] **Step 2: Run full local tests**
+- [x] **Step 2: Run full local tests**
 
 Run the full test command. Expected: `TESTS PASSED`.
 
-- [ ] **Step 3: Run Godot import check**
+- [x] **Step 3: Run Godot import check**
 
 Run the import check command. Expected: process exits 0.
 
-- [ ] **Step 4: Update README progress**
+- [x] **Step 4: Update README progress**
 
 Record Enemy Sandbox completion and update Next Plans to leave Event Tester, Reward Inspector, and Save Inspector.
 
-- [ ] **Step 5: Run final two-stage review**
+- [x] **Step 5: Run final two-stage review**
 
 Run Stage 1 Spec Compliance Review, then Stage 2 Code Quality Review only if Stage 1 passes. Fix Critical and Important findings before acceptance.
 
-- [ ] **Step 6: Commit final result**
+- [x] **Step 6: Commit final result**
 
 Commit all accepted changes with:
 
