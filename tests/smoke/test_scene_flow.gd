@@ -784,6 +784,111 @@ func test_explicit_slow_motion_and_audio_cues_are_recorded(tree: SceneTree) -> b
 	_delete_test_save("user://test_explicit_slow_audio_save.json")
 	return passed
 
+func test_combat_screen_end_turn_triggers_enemy_attack_polish(tree: SceneTree) -> bool:
+	var app = _create_app_with_save_service(tree, "user://test_enemy_attack_polish_save.json")
+	app.game.set_debug_combat_sandbox_config({
+		"character_id": "sword",
+		"deck_ids": ["sword.guard"],
+		"enemy_ids": ["training_puppet"],
+		"seed_value": 101,
+	})
+	var combat = app.game.router.go_to(SceneRouterScript.COMBAT)
+	combat.session.state.hand.clear()
+	combat.session.state.hand.append("sword.guard")
+	combat.session.state.draw_pile.clear()
+	combat._refresh()
+	var hp_before: int = combat.session.state.player.current_hp
+	var end_turn := _find_node_by_name(combat, "EndTurnButton") as Button
+	if end_turn != null:
+		end_turn.pressed.emit()
+	combat.presentation_layer.process_queue()
+	var slash := _find_node_by_name(combat.presentation_layer, "CinematicSlash_0") as TextureRect
+	var passed: bool = end_turn != null \
+		and combat.session.state.player.current_hp < hp_before \
+		and slash != null \
+		and slash.texture != null
+	app.free()
+	_delete_test_save("user://test_enemy_attack_polish_save.json")
+	return passed
+
+func test_combat_screen_end_turn_triggers_enemy_block_polish(tree: SceneTree) -> bool:
+	var app = _create_app_with_save_service(tree, "user://test_enemy_block_polish_save.json")
+	app.game.set_debug_combat_sandbox_config({
+		"character_id": "sword",
+		"deck_ids": ["sword.guard"],
+		"enemy_ids": ["stone_grove_guardian"],
+		"seed_value": 102,
+	})
+	var combat = app.game.router.go_to(SceneRouterScript.COMBAT)
+	combat.session.state.hand.clear()
+	combat.session.state.hand.append("sword.guard")
+	combat.session.state.draw_pile.clear()
+	combat._refresh()
+	var end_turn := _find_node_by_name(combat, "EndTurnButton") as Button
+	if end_turn != null:
+		end_turn.pressed.emit()
+	combat.presentation_layer.process_queue()
+	var particle := _find_node_by_name(combat.presentation_layer, "ParticleBurst_0_0") as TextureRect
+	var passed: bool = end_turn != null \
+		and combat.session.state.enemies[0].block > 0 \
+		and particle != null \
+		and particle.texture != null
+	app.free()
+	_delete_test_save("user://test_enemy_block_polish_save.json")
+	return passed
+
+func test_combat_screen_end_turn_triggers_enemy_status_polish(tree: SceneTree) -> bool:
+	var app = _create_app_with_save_service(tree, "user://test_enemy_status_polish_save.json")
+	app.game.set_debug_combat_sandbox_config({
+		"character_id": "sword",
+		"deck_ids": ["sword.guard"],
+		"enemy_ids": ["plague_jade_imp"],
+		"seed_value": 103,
+	})
+	var combat = app.game.router.go_to(SceneRouterScript.COMBAT)
+	combat.session.state.hand.clear()
+	combat.session.state.hand.append("sword.guard")
+	combat.session.state.draw_pile.clear()
+	combat._refresh()
+	var end_turn := _find_node_by_name(combat, "EndTurnButton") as Button
+	if end_turn != null:
+		end_turn.pressed.emit()
+	combat.presentation_layer.process_queue()
+	var particle := _find_node_by_name(combat.presentation_layer, "ParticleBurst_0_0") as TextureRect
+	var passed: bool = end_turn != null \
+		and int(combat.session.state.player.statuses.get("poison", 0)) > 0 \
+		and particle != null \
+		and particle.texture != null
+	app.free()
+	_delete_test_save("user://test_enemy_status_polish_save.json")
+	return passed
+
+func test_enemy_intent_polish_respects_particle_toggle(tree: SceneTree) -> bool:
+	var app = _create_app_with_save_service(tree, "user://test_enemy_particle_toggle_save.json")
+	app.game.presentation_config.particle_enabled = false
+	app.game.set_debug_combat_sandbox_config({
+		"character_id": "sword",
+		"deck_ids": ["sword.guard"],
+		"enemy_ids": ["stone_grove_guardian"],
+		"seed_value": 104,
+	})
+	var combat = app.game.router.go_to(SceneRouterScript.COMBAT)
+	combat.session.state.hand.clear()
+	combat.session.state.hand.append("sword.guard")
+	combat.session.state.draw_pile.clear()
+	combat._refresh()
+	var end_turn := _find_node_by_name(combat, "EndTurnButton") as Button
+	if end_turn != null:
+		end_turn.pressed.emit()
+	combat.presentation_layer.process_queue()
+	var particle := _find_node_by_name(combat.presentation_layer, "ParticleBurst_0_0")
+	var passed: bool = end_turn != null \
+		and combat.session.state.enemies[0].block > 0 \
+		and particle == null
+	app.free()
+	_delete_test_save("user://test_enemy_particle_toggle_save.json")
+	return passed
+
 func test_reward_screen_claims_card_skips_gold_and_saves_on_continue(tree: SceneTree) -> bool:
 	var save_path := "user://test_reward_screen_claim_skip_save.json"
 	var app = _create_app_with_save_service(tree, save_path)

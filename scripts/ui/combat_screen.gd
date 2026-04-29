@@ -5,6 +5,7 @@ const CombatPresentationConfig := preload("res://scripts/presentation/combat_pre
 const CombatPresentationCueResolver := preload("res://scripts/presentation/combat_presentation_cue_resolver.gd")
 const CombatPresentationDelta := preload("res://scripts/presentation/combat_presentation_delta.gd")
 const CombatPresentationEvent := preload("res://scripts/presentation/combat_presentation_event.gd")
+const CombatPresentationIntentCueResolver := preload("res://scripts/presentation/combat_presentation_intent_cue_resolver.gd")
 const CombatPresentationLayer := preload("res://scripts/presentation/combat_presentation_layer.gd")
 const CombatPresentationQueue := preload("res://scripts/presentation/combat_presentation_queue.gd")
 const ContentCatalog := preload("res://scripts/content/content_catalog.gd")
@@ -15,6 +16,7 @@ var presentation_config: CombatPresentationConfig
 var presentation_queue := CombatPresentationQueue.new()
 var presentation_delta := CombatPresentationDelta.new()
 var presentation_cue_resolver := CombatPresentationCueResolver.new()
+var presentation_intent_resolver := CombatPresentationIntentCueResolver.new()
 var presentation_layer: CombatPresentationLayer
 var is_sandbox := false
 var enemy_buttons: Array[Button] = []
@@ -370,10 +372,35 @@ func _cancel_selection() -> void:
 	_refresh()
 
 func _on_end_turn_pressed() -> void:
-	_run_with_feedback(func(): return session.end_player_turn())
+	var intent_snapshots := _capture_enemy_intent_snapshots()
+	_run_with_feedback(func(): return session.end_player_turn(), "", "", intent_snapshots)
 	_refresh()
 
-func _run_with_feedback(action: Callable, played_card_id: String = "", played_target_id: String = "") -> bool:
+func _capture_enemy_intent_snapshots() -> Array[Dictionary]:
+	var snapshots: Array[Dictionary] = []
+	if session == null:
+		return snapshots
+	for enemy_index in range(session.state.enemies.size()):
+		var enemy = session.state.enemies[enemy_index]
+		if enemy == null or enemy.is_defeated():
+			continue
+		var source_id := "enemy:%s" % enemy_index
+		var intent := session.get_enemy_intent(enemy_index)
+		if intent.is_empty():
+			continue
+		snapshots.append({
+			"source_id": source_id,
+			"target_id": "player",
+			"intent": intent,
+		})
+	return snapshots
+
+func _run_with_feedback(
+	action: Callable,
+	played_card_id: String = "",
+	played_target_id: String = "",
+	enemy_intent_snapshots: Array[Dictionary] = []
+) -> bool:
 	var before := presentation_delta.capture_state(session.state)
 	var played_card = session.catalog.get_card(played_card_id) if not played_card_id.is_empty() else null
 	var succeeded := bool(action.call())
@@ -391,6 +418,9 @@ func _run_with_feedback(action: Callable, played_card_id: String = "", played_ta
 				played_target_id,
 				delta_events
 			):
+				presentation_queue.enqueue(event)
+		if not enemy_intent_snapshots.is_empty():
+			for event in presentation_intent_resolver.resolve_enemy_turn(enemy_intent_snapshots, delta_events):
 				presentation_queue.enqueue(event)
 		for event in delta_events:
 			presentation_queue.enqueue(event)

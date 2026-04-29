@@ -626,7 +626,7 @@ rtk proxy git commit -m "feat: map enemy intent presentation assets"
 - Modify: `tests/smoke/test_scene_flow.gd`
 - Modify: `scripts/ui/combat_screen.gd`
 
-- [ ] **Step 1: Add failing smoke tests for enemy end-turn polish**
+- [x] **Step 1: Add failing smoke tests for enemy end-turn polish**
 
 Add these tests after `test_explicit_slow_motion_and_audio_cues_are_recorded()`:
 
@@ -737,7 +737,7 @@ func test_enemy_intent_polish_respects_particle_toggle(tree: SceneTree) -> bool:
 	return passed
 ```
 
-- [ ] **Step 2: Run smoke tests to verify RED**
+- [x] **Step 2: Run smoke tests to verify RED**
 
 Run:
 
@@ -747,7 +747,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: FAIL because End Turn does not generate enemy intent polish yet.
 
-- [ ] **Step 3: Add intent resolver to CombatScreen**
+- [x] **Step 3: Add intent resolver to CombatScreen**
 
 At the top of `scripts/ui/combat_screen.gd`, add:
 
@@ -761,7 +761,7 @@ Near the existing presentation fields, add:
 var presentation_intent_resolver := CombatPresentationIntentCueResolver.new()
 ```
 
-- [ ] **Step 4: Capture enemy intent snapshots before end turn**
+- [x] **Step 4: Capture enemy intent snapshots before end turn**
 
 Add this helper near `_on_end_turn_pressed()`:
 
@@ -795,7 +795,7 @@ func _on_end_turn_pressed() -> void:
 	_refresh()
 ```
 
-- [ ] **Step 5: Enqueue enemy intent polish before delta events**
+- [x] **Step 5: Enqueue enemy intent polish before delta events**
 
 Change `_run_with_feedback()` signature to:
 
@@ -822,7 +822,7 @@ The resulting order should be:
 2. Enemy intent polish, when snapshots are present.
 3. Delta events.
 
-- [ ] **Step 6: Run full tests to verify GREEN**
+- [x] **Step 6: Run full tests to verify GREEN**
 
 Run:
 
