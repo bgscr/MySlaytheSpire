@@ -7,6 +7,7 @@ const CombatPresentationConfig := preload("res://scripts/presentation/combat_pre
 const CombatPresentationCueResolver := preload("res://scripts/presentation/combat_presentation_cue_resolver.gd")
 const CombatPresentationDelta := preload("res://scripts/presentation/combat_presentation_delta.gd")
 const CombatPresentationEvent := preload("res://scripts/presentation/combat_presentation_event.gd")
+const CombatPresentationIntentCueResolver := preload("res://scripts/presentation/combat_presentation_intent_cue_resolver.gd")
 const CombatPresentationLayer := preload("res://scripts/presentation/combat_presentation_layer.gd")
 const CombatPresentationQueue := preload("res://scripts/presentation/combat_presentation_queue.gd")
 const CombatState := preload("res://scripts/combat/combat_state.gd")
@@ -550,6 +551,85 @@ func test_layer_overlapping_slow_motion_ignores_stale_reset(tree: SceneTree) -> 
 	assert(passed)
 	return passed
 
+func test_intent_cue_resolver_emits_attack_slash_and_damage_camera() -> bool:
+	var damage := CombatPresentationEvent.new("damage_number")
+	damage.target_id = "player"
+	damage.amount = 6
+	var events := CombatPresentationIntentCueResolver.new().resolve_enemy_turn([
+		{"source_id": "enemy:0", "target_id": "player", "intent": "attack_6"},
+	], [damage])
+	var slash: CombatPresentationEvent = _first_event(events, "cinematic_slash")
+	var impulse: CombatPresentationEvent = _first_event(events, "camera_impulse")
+	var passed: bool = slash != null \
+		and slash.source_id == "enemy:0" \
+		and slash.target_id == "player" \
+		and slash.amount == 6 \
+		and slash.payload.get("cue_id") == "enemy.attack" \
+		and slash.tags.has("enemy_intent") \
+		and slash.tags.has("cinematic") \
+		and impulse != null \
+		and impulse.target_id == "" \
+		and impulse.amount == 6 \
+		and impulse.payload.get("cue_id") == "enemy.attack"
+	assert(passed)
+	return passed
+
+func test_intent_cue_resolver_emits_block_burst_on_actor() -> bool:
+	var events := CombatPresentationIntentCueResolver.new().resolve_enemy_turn([
+		{"source_id": "enemy:1", "target_id": "player", "intent": "block_10"},
+	], [])
+	var burst: CombatPresentationEvent = _first_event(events, "particle_burst")
+	var passed: bool = events.size() == 1 \
+		and burst != null \
+		and burst.source_id == "enemy:1" \
+		and burst.target_id == "enemy:1" \
+		and burst.amount == 10 \
+		and burst.payload.get("cue_id") == "enemy.block" \
+		and burst.tags.has("block")
+	assert(passed)
+	return passed
+
+func test_intent_cue_resolver_emits_player_status_burst() -> bool:
+	var events := CombatPresentationIntentCueResolver.new().resolve_enemy_turn([
+		{"source_id": "enemy:0", "target_id": "player", "intent": "apply_status_poison_2_player"},
+	], [])
+	var burst: CombatPresentationEvent = _first_event(events, "particle_burst")
+	var passed: bool = events.size() == 1 \
+		and burst != null \
+		and burst.source_id == "enemy:0" \
+		and burst.target_id == "player" \
+		and burst.amount == 2 \
+		and burst.status_id == "poison" \
+		and burst.payload.get("cue_id") == "enemy.status.poison"
+	assert(passed)
+	return passed
+
+func test_intent_cue_resolver_emits_self_status_burst_and_parses_multi_token_status() -> bool:
+	var events := CombatPresentationIntentCueResolver.new().resolve_enemy_turn([
+		{"source_id": "enemy:0", "target_id": "player", "intent": "self_status_broken_stance_1"},
+	], [])
+	var burst: CombatPresentationEvent = _first_event(events, "particle_burst")
+	var passed: bool = events.size() == 1 \
+		and burst != null \
+		and burst.source_id == "enemy:0" \
+		and burst.target_id == "enemy:0" \
+		and burst.amount == 1 \
+		and burst.status_id == "broken_stance" \
+		and burst.payload.get("cue_id") == "enemy.status.broken_stance" \
+		and burst.tags.has("self")
+	assert(passed)
+	return passed
+
+func test_intent_cue_resolver_ignores_unknown_and_malformed_intents() -> bool:
+	var events := CombatPresentationIntentCueResolver.new().resolve_enemy_turn([
+		{"source_id": "enemy:0", "target_id": "player", "intent": "attack_bad"},
+		{"source_id": "enemy:1", "target_id": "player", "intent": "apply_status_poison_player"},
+		{"source_id": "enemy:2", "target_id": "player", "intent": "wait"},
+	], [])
+	var passed: bool = events.is_empty()
+	assert(passed)
+	return passed
+
 func test_asset_catalog_resolves_exact_cue_before_event_fallback() -> bool:
 	var catalog := CombatPresentationAssetCatalog.new()
 	var event := CombatPresentationEvent.new("particle_burst")
@@ -652,6 +732,12 @@ func _event_count(events: Array, event_type: String) -> int:
 		if event.event_type == event_type:
 			count += 1
 	return count
+
+func _first_event(events: Array, event_type: String) -> CombatPresentationEvent:
+	for event in events:
+		if event.event_type == event_type:
+			return event
+	return null
 
 func _finish_processed_tweens(tree: SceneTree) -> void:
 	for tween in tree.get_processed_tweens():

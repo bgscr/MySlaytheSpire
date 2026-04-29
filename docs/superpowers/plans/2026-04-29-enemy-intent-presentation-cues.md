@@ -97,7 +97,7 @@ Do not modify:
 - Modify: `tools/tests/test_release_scripts.ps1`
 - Modify: `tools/ci/run_godot_checks.ps1`
 
-- [ ] **Step 1: Add failing release script shape tests**
+- [x] **Step 1: Add failing release script shape tests**
 
 In `tools/tests/test_release_scripts.ps1`, add this helper after `Assert-FileContains`:
 
@@ -130,7 +130,7 @@ Assert-FileContains "tools\ci\run_godot_checks.ps1" "--import" "Godot check scri
 Assert-FileContainsBefore "tools\ci\run_godot_checks.ps1" "--import" "res://scripts/testing/test_runner.gd" "Godot check script should import before the test runner."
 ```
 
-- [ ] **Step 2: Run script tests to verify RED**
+- [x] **Step 2: Run script tests to verify RED**
 
 Run:
 
@@ -140,7 +140,7 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File tools/tests/test_r
 
 Expected: FAIL because `tools/ci/run_godot_checks.ps1` does not contain `--import`.
 
-- [ ] **Step 3: Import assets before tests**
+- [x] **Step 3: Import assets before tests**
 
 In `tools/ci/run_godot_checks.ps1`, insert this block after the project root output and before `Running Godot test runner...`:
 
@@ -154,7 +154,7 @@ Invoke-GodotCommand -Arguments @(
 )
 ```
 
-- [ ] **Step 4: Run script tests to verify GREEN**
+- [x] **Step 4: Run script tests to verify GREEN**
 
 Run:
 
@@ -168,7 +168,7 @@ Expected:
 Release script tests passed.
 ```
 
-- [ ] **Step 5: Run shared Godot checks**
+- [x] **Step 5: Run shared Godot checks**
 
 Run:
 
@@ -183,7 +183,7 @@ TESTS PASSED
 Godot checks passed.
 ```
 
-- [ ] **Step 6: Commit Task 1**
+- [x] **Step 6: Commit Task 1**
 
 Run:
 
@@ -199,7 +199,7 @@ rtk proxy git commit -m "build: import Godot assets before checks"
 - Modify: `tests/unit/test_combat_presentation.gd`
 - Create: `scripts/presentation/combat_presentation_intent_cue_resolver.gd`
 
-- [ ] **Step 1: Register resolver preload in unit tests**
+- [x] **Step 1: Register resolver preload in unit tests**
 
 At the top of `tests/unit/test_combat_presentation.gd`, add:
 
@@ -207,7 +207,7 @@ At the top of `tests/unit/test_combat_presentation.gd`, add:
 const CombatPresentationIntentCueResolver := preload("res://scripts/presentation/combat_presentation_intent_cue_resolver.gd")
 ```
 
-- [ ] **Step 2: Add failing resolver tests**
+- [x] **Step 2: Add failing resolver tests**
 
 Add these tests before `test_asset_catalog_resolves_exact_cue_before_event_fallback()`:
 
@@ -302,7 +302,7 @@ func _first_event(events: Array, event_type: String):
 	return null
 ```
 
-- [ ] **Step 3: Run presentation unit tests to verify RED**
+- [x] **Step 3: Run presentation unit tests to verify RED**
 
 Run:
 
@@ -312,7 +312,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: FAIL because `combat_presentation_intent_cue_resolver.gd` does not exist.
 
-- [ ] **Step 4: Implement resolver**
+- [x] **Step 4: Implement resolver**
 
 Create `scripts/presentation/combat_presentation_intent_cue_resolver.gd`:
 
@@ -464,7 +464,7 @@ func _max_player_damage(delta_events: Array[CombatPresentationEvent]) -> int:
 	return max_damage
 ```
 
-- [ ] **Step 5: Run presentation unit tests to verify GREEN for resolver**
+- [x] **Step 5: Run presentation unit tests to verify GREEN for resolver**
 
 Run:
 
