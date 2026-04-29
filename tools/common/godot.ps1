@@ -17,7 +17,7 @@ function Resolve-Godot {
 		if ([string]::IsNullOrWhiteSpace($candidate)) {
 			continue
 		}
-		if (Test-Path -LiteralPath $candidate) {
+		if (Test-Path -LiteralPath $candidate -PathType Leaf) {
 			return (Resolve-Path -LiteralPath $candidate).Path
 		}
 	}
