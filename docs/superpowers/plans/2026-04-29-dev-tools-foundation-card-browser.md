@@ -110,7 +110,7 @@ const DevToolsScreen := preload("res://scripts/ui/dev_tools_screen.gd")
 
 func test_dev_tools_card_browser_loads_all_cards_with_all_filters() -> bool:
 	var screen := DevToolsScreen.new()
-	screen.load_default_catalog_for_tests()
+	screen.load_default_catalog()
 	screen.set_filters("all", "all", "all")
 	var cards := screen.filtered_cards()
 	var passed: bool = cards.size() == 40 \
@@ -120,7 +120,7 @@ func test_dev_tools_card_browser_loads_all_cards_with_all_filters() -> bool:
 
 func test_dev_tools_card_browser_filters_with_and_semantics() -> bool:
 	var screen := DevToolsScreen.new()
-	screen.load_default_catalog_for_tests()
+	screen.load_default_catalog()
 	screen.set_filters("sword", "common", "attack")
 	var cards := screen.filtered_cards()
 	var ids := _ids(cards)
@@ -133,7 +133,7 @@ func test_dev_tools_card_browser_filters_with_and_semantics() -> bool:
 
 func test_dev_tools_card_browser_keeps_matching_selection_after_filter_change() -> bool:
 	var screen := DevToolsScreen.new()
-	screen.load_default_catalog_for_tests()
+	screen.load_default_catalog()
 	screen.set_filters("all", "all", "all")
 	screen.select_card("sword.strike")
 	screen.set_filters("sword", "common", "attack")
@@ -143,7 +143,7 @@ func test_dev_tools_card_browser_keeps_matching_selection_after_filter_change() 
 
 func test_dev_tools_card_browser_selects_first_match_when_selection_is_filtered_out() -> bool:
 	var screen := DevToolsScreen.new()
-	screen.load_default_catalog_for_tests()
+	screen.load_default_catalog()
 	screen.set_filters("all", "all", "all")
 	screen.select_card("alchemy.toxic_pill")
 	screen.set_filters("sword", "common", "attack")
@@ -153,7 +153,7 @@ func test_dev_tools_card_browser_selects_first_match_when_selection_is_filtered_
 
 func test_dev_tools_card_detail_text_includes_effects_and_presentation_cues() -> bool:
 	var screen := DevToolsScreen.new()
-	screen.load_default_catalog_for_tests()
+	screen.load_default_catalog()
 	var card = screen.catalog.get_card("sword.strike")
 	var detail := screen.card_detail_text(card)
 	var passed: bool = detail.contains("id: sword.strike") \
@@ -244,7 +244,7 @@ func _ready() -> void:
 	_build_layout()
 	_show_tool(TOOL_CARD_BROWSER)
 
-func load_default_catalog_for_tests() -> void:
+func load_default_catalog() -> void:
 	catalog.load_default()
 	_refresh_selected_card()
 
@@ -701,7 +701,7 @@ rtk proxy git commit -m "feat: route debug dev tools"
 - Modify: `README.md`
 - Modify: `docs/superpowers/plans/2026-04-29-dev-tools-foundation-card-browser.md`
 
-- [ ] **Step 1: Run full local tests**
+- [x] **Step 1: Run full local tests**
 
 Run:
 
@@ -715,7 +715,7 @@ Expected:
 TESTS PASSED
 ```
 
-- [ ] **Step 2: Run Godot import check**
+- [x] **Step 2: Run Godot import check**
 
 Run:
 
@@ -725,7 +725,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: process exits 0.
 
-- [ ] **Step 3: Verify DevTools has no persistence/resource writes**
+- [x] **Step 3: Verify DevTools has no persistence/resource writes**
 
 Run:
 
@@ -735,7 +735,7 @@ rtk proxy rg -n "save_run|delete_save|FileAccess.open|ResourceSaver|store_|curre
 
 Expected: no output.
 
-- [ ] **Step 4: Update README Phase 2 progress**
+- [x] **Step 4: Update README Phase 2 progress**
 
 Modify `README.md`.
 
@@ -755,11 +755,11 @@ Update `## Next Plans` to:
 3. Presentation expansion: more per-card cue ids, enemy intent polish, card art, richer combat backgrounds, and formal audio mixing.
 ```
 
-- [ ] **Step 5: Mark completed plan steps**
+- [x] **Step 5: Mark completed plan steps**
 
 Update completed checkboxes in this plan from `[ ]` to `[x]` after verifying implementation and reviews.
 
-- [ ] **Step 6: Run final two-stage review**
+- [x] **Step 6: Run final two-stage review**
 
 Stage 1 Spec Compliance Review:
 
@@ -784,7 +784,7 @@ Stage 2 Code Quality Review:
 
 Classify findings as Critical, Important, or Minor. Fix Critical and Important issues before acceptance.
 
-- [ ] **Step 7: Commit final acceptance docs**
+- [x] **Step 7: Commit final acceptance docs**
 
 Run:
 

@@ -36,7 +36,7 @@ func _ready() -> void:
 	_build_layout()
 	_show_tool(TOOL_CARD_BROWSER)
 
-func load_default_catalog_for_tests() -> void:
+func load_default_catalog() -> void:
 	catalog.load_default()
 	_refresh_selected_card()
 

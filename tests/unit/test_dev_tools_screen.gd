@@ -4,7 +4,7 @@ const DevToolsScreen := preload("res://scripts/ui/dev_tools_screen.gd")
 
 func test_dev_tools_card_browser_loads_all_cards_with_all_filters() -> bool:
 	var screen := DevToolsScreen.new()
-	screen.load_default_catalog_for_tests()
+	screen.load_default_catalog()
 	screen.set_filters("all", "all", "all")
 	var cards := screen.filtered_cards()
 	var passed: bool = cards.size() == 40 \
@@ -15,7 +15,7 @@ func test_dev_tools_card_browser_loads_all_cards_with_all_filters() -> bool:
 
 func test_dev_tools_card_browser_filters_with_and_semantics() -> bool:
 	var screen := DevToolsScreen.new()
-	screen.load_default_catalog_for_tests()
+	screen.load_default_catalog()
 	screen.set_filters("sword", "common", "attack")
 	var cards := screen.filtered_cards()
 	var ids := _ids(cards)
@@ -29,7 +29,7 @@ func test_dev_tools_card_browser_filters_with_and_semantics() -> bool:
 
 func test_dev_tools_card_browser_keeps_matching_selection_after_filter_change() -> bool:
 	var screen := DevToolsScreen.new()
-	screen.load_default_catalog_for_tests()
+	screen.load_default_catalog()
 	screen.set_filters("all", "all", "all")
 	screen.select_card("sword.strike")
 	screen.set_filters("sword", "common", "attack")
@@ -40,7 +40,7 @@ func test_dev_tools_card_browser_keeps_matching_selection_after_filter_change() 
 
 func test_dev_tools_card_browser_selects_first_match_when_selection_is_filtered_out() -> bool:
 	var screen := DevToolsScreen.new()
-	screen.load_default_catalog_for_tests()
+	screen.load_default_catalog()
 	screen.set_filters("all", "all", "all")
 	screen.select_card("alchemy.toxic_pill")
 	screen.set_filters("sword", "common", "attack")
@@ -51,7 +51,7 @@ func test_dev_tools_card_browser_selects_first_match_when_selection_is_filtered_
 
 func test_dev_tools_card_detail_text_includes_effects_and_presentation_cues() -> bool:
 	var screen := DevToolsScreen.new()
-	screen.load_default_catalog_for_tests()
+	screen.load_default_catalog()
 	var card = screen.catalog.get_card("sword.strike")
 	var detail := screen.card_detail_text(card)
 	var passed: bool = detail.contains("id: sword.strike") \

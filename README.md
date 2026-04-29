@@ -49,9 +49,10 @@ $env:GODOT4="C:\Tools\Godot\Godot_v4.6.2-stable_win64_console.exe"
 - High-presentation foundation: complete; combat now routes feedback through a presentation event queue, supports mouse drag play with click fallback, and shows programmatic hover, target highlight, floating number, flash, and status pulse feedback.
 - High-presentation polish hooks: complete; successful card play can now emit explicit or inferred polish events for slash, particle, camera impulse, slow-motion, and audio-cue placeholders without coupling presentation to combat rules.
 - High-presentation asset pass: complete; combat polish hooks now resolve project-owned texture/audio assets through a cue-id asset catalog for slash, mist, camera impulse, local slow-motion, and audio cue playback.
+- Developer tools foundation: complete; debug builds now include a DevTools hub with stable entries for Card Browser, Enemy Sandbox, Event Tester, Reward Inspector, and Save Inspector, plus a read-only Card Browser for filtering and inspecting catalog cards, effects, and presentation cues.
 
 ## Next Plans
 
-1. Developer tools: card browser, enemy sandbox, event tester, reward inspector, save inspector.
+1. Developer tools: enemy sandbox, event tester, reward inspector, and save inspector.
 2. Release readiness: CI, artifact export, changelog, release draft, Steam adapter.
 3. Presentation expansion: more per-card cue ids, enemy intent polish, card art, richer combat backgrounds, and formal audio mixing.
