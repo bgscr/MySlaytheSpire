@@ -490,7 +490,7 @@ rtk proxy git commit -m "feat: add enemy intent cue resolver"
 - Modify: `tests/unit/test_combat_presentation.gd`
 - Modify: `scripts/presentation/combat_presentation_asset_catalog.gd`
 
-- [ ] **Step 1: Add failing asset catalog tests**
+- [x] **Step 1: Add failing asset catalog tests**
 
 Add these tests before `test_asset_catalog_registered_resources_load()`:
 
@@ -537,7 +537,7 @@ func test_asset_catalog_unknown_enemy_status_uses_particle_fallback() -> bool:
 	return passed
 ```
 
-- [ ] **Step 2: Run presentation unit tests to verify RED**
+- [x] **Step 2: Run presentation unit tests to verify RED**
 
 Run:
 
@@ -547,7 +547,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: FAIL because enemy cue-id mappings are missing.
 
-- [ ] **Step 3: Add enemy cue mappings**
+- [x] **Step 3: Add enemy cue mappings**
 
 In `scripts/presentation/combat_presentation_asset_catalog.gd`, add these entries to `_cue_assets`:
 
@@ -600,7 +600,7 @@ In `scripts/presentation/combat_presentation_asset_catalog.gd`, add these entrie
 	},
 ```
 
-- [ ] **Step 4: Run presentation unit tests to verify GREEN for mappings**
+- [x] **Step 4: Run presentation unit tests to verify GREEN for mappings**
 
 Run:
 

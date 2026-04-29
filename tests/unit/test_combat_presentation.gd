@@ -680,6 +680,47 @@ func test_asset_catalog_resolves_heaven_cutting_arc_slow_and_audio_separately() 
 	assert(passed)
 	return passed
 
+func test_asset_catalog_resolves_enemy_intent_cues() -> bool:
+	var catalog := CombatPresentationAssetCatalog.new()
+	var attack := CombatPresentationEvent.new("cinematic_slash")
+	attack.payload = {"cue_id": "enemy.attack"}
+	var attack_impulse := CombatPresentationEvent.new("camera_impulse")
+	attack_impulse.payload = {"cue_id": "enemy.attack"}
+	var block := CombatPresentationEvent.new("particle_burst")
+	block.payload = {"cue_id": "enemy.block"}
+	var poison := CombatPresentationEvent.new("particle_burst")
+	poison.payload = {"cue_id": "enemy.status.poison"}
+	var broken := CombatPresentationEvent.new("particle_burst")
+	broken.payload = {"cue_id": "enemy.status.broken_stance"}
+	var focus := CombatPresentationEvent.new("particle_burst")
+	focus.payload = {"cue_id": "enemy.status.sword_focus"}
+
+	var attack_asset := catalog.resolve(attack)
+	var impulse_asset := catalog.resolve(attack_impulse)
+	var block_asset := catalog.resolve(block)
+	var poison_asset := catalog.resolve(poison)
+	var broken_asset := catalog.resolve(broken)
+	var focus_asset := catalog.resolve(focus)
+
+	var passed: bool = attack_asset.get("texture_path", "") == "res://assets/presentation/textures/slash_gold.png" \
+		and float(impulse_asset.get("strength", 0.0)) > 4.0 \
+		and block_asset.get("texture_path", "") == "res://assets/presentation/textures/mist_green.png" \
+		and poison_asset.get("texture_path", "") == "res://assets/presentation/textures/mist_violet.png" \
+		and not broken_asset.is_empty() \
+		and not focus_asset.is_empty()
+	assert(passed)
+	return passed
+
+func test_asset_catalog_unknown_enemy_status_uses_particle_fallback() -> bool:
+	var catalog := CombatPresentationAssetCatalog.new()
+	var event := CombatPresentationEvent.new("particle_burst")
+	event.payload = {"cue_id": "enemy.status.unknown"}
+	var asset := catalog.resolve(event)
+	var passed: bool = asset.get("texture_path", "") == "res://assets/presentation/textures/mist_green.png" \
+		and int(asset.get("particle_count", 0)) == 6
+	assert(passed)
+	return passed
+
 func test_asset_catalog_registered_resources_load() -> bool:
 	var catalog := CombatPresentationAssetCatalog.new()
 	for path in catalog.resource_paths():
