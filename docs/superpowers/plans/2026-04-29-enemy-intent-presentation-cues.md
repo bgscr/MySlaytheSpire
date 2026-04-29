@@ -474,7 +474,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: the new resolver tests pass. Other feature tests may still fail until later tasks if they reference asset mappings or integration not implemented yet.
 
-- [ ] **Step 6: Commit Task 2**
+- [x] **Step 6: Commit Task 2**
 
 Run:
 
@@ -610,7 +610,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: the new asset catalog tests pass.
 
-- [ ] **Step 5: Commit Task 3**
+- [x] **Step 5: Commit Task 3**
 
 Run:
 
@@ -837,7 +837,7 @@ TESTS PASSED
 Godot checks passed.
 ```
 
-- [ ] **Step 7: Commit Task 4**
+- [x] **Step 7: Commit Task 4**
 
 Run:
 
@@ -853,7 +853,7 @@ rtk proxy git commit -m "feat: route enemy intent presentation cues"
 - Modify: `README.md`
 - Modify: `docs/superpowers/plans/2026-04-29-enemy-intent-presentation-cues.md`
 
-- [ ] **Step 1: Update README progress**
+- [x] **Step 1: Update README progress**
 
 In `README.md`, add this Phase 2 progress bullet after the release readiness foundation bullet:
 
@@ -870,7 +870,7 @@ Update `## Next Plans` to:
 2. Release expansion: artifact packaging, checksums, version bump automation, signed builds, and eventual Steam adapter implementation.
 ```
 
-- [ ] **Step 2: Run release script tests**
+- [x] **Step 2: Run release script tests**
 
 Run:
 
@@ -884,7 +884,7 @@ Expected:
 Release script tests passed.
 ```
 
-- [ ] **Step 3: Run shared Godot checks**
+- [x] **Step 3: Run shared Godot checks**
 
 Run:
 
@@ -899,7 +899,7 @@ TESTS PASSED
 Godot checks passed.
 ```
 
-- [ ] **Step 4: Run direct import check**
+- [x] **Step 4: Run direct import check**
 
 Run:
 
@@ -909,7 +909,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: process exits 0.
 
-- [ ] **Step 5: Verify presentation boundary**
+- [x] **Step 5: Verify presentation boundary**
 
 Run:
 
@@ -919,7 +919,7 @@ rtk proxy rg -n "presentation|CombatPresentation" scripts/combat scripts/data/en
 
 Expected: no matches in `scripts/combat`, `enemy_def.gd`, or `effect_def.gd`.
 
-- [ ] **Step 6: Verify no new assets were added**
+- [x] **Step 6: Verify no new assets were added**
 
 Run:
 
@@ -930,7 +930,7 @@ rtk proxy git diff --name-only -- assets/presentation resources scenes
 
 Expected: no intentional new files under `assets/presentation`, `resources`, or `scenes` for this feature. Ignore existing Godot import-cache line-ending noise unless a real content diff appears.
 
-- [ ] **Step 7: Run Stage 1 Spec Compliance Review**
+- [x] **Step 7: Run Stage 1 Spec Compliance Review**
 
 Verify:
 
@@ -946,7 +946,7 @@ Verify:
 
 Stop and fix any missing requirement before continuing.
 
-- [ ] **Step 8: Run Stage 2 Code Quality Review**
+- [x] **Step 8: Run Stage 2 Code Quality Review**
 
 Classify any findings as Critical, Important, or Minor. Check:
 
@@ -959,11 +959,11 @@ Classify any findings as Critical, Important, or Minor. Check:
 
 Fix all Critical and Important findings before acceptance.
 
-- [ ] **Step 9: Mark completed plan steps**
+- [x] **Step 9: Mark completed plan steps**
 
 Update completed checkboxes in this plan from `[ ]` to `[x]` after each step has been completed and verified.
 
-- [ ] **Step 10: Commit final acceptance docs**
+- [x] **Step 10: Commit final acceptance docs**
 
 Run:
 

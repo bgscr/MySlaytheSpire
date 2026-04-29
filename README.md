@@ -62,8 +62,9 @@ $env:GODOT4="C:\Tools\Godot\Godot_v4.6.2-stable_win64_console.exe"
 - Developer tools reward inspector: complete; DevTools can now preview generated reward packages and simulate card, gold, relic, and skip choices against an isolated run without touching saves or the active run.
 - Developer tools save inspector: complete; DevTools can now diagnose save presence, validity, terminal state, map/shop/reward resume targets, and run state sections without writing, deleting, repairing, routing, or mutating the active run.
 - Release readiness foundation: complete; local and CI Godot checks now share a PowerShell entry point, Windows export has a wrapper around the existing preset, release notes/checklists/templates are documented, and future Steam work is bounded behind `PlatformService`.
+- Enemy intent presentation cues: complete; enemy attack, block, and status intents now route presentation-only polish cues through the existing queue and asset catalog, while shared Godot checks import assets before running tests in fresh worktrees.
 
 ## Next Plans
 
-1. Presentation expansion: more per-card cue ids, enemy intent polish, card art, richer combat backgrounds, and formal audio mixing.
+1. Presentation expansion: full card cue migration, intent icons, card art, richer combat backgrounds, reduced-motion profiles, and formal audio mixing.
 2. Release expansion: artifact packaging, checksums, version bump automation, signed builds, and eventual Steam adapter implementation.
