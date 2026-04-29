@@ -145,6 +145,10 @@ Assert-FileContains "tools\release\export_windows.ps1" "-DryRun" "Windows export
 Assert-ThrowsContaining {
 	& (Join-Path $ProjectRoot "tools\release\export_windows.ps1") -ExportPath "..\outside\game.exe" -DryRun
 } "ExportPath must stay under" "Windows export script should reject paths outside export directory."
+Assert-FileContains ".github\workflows\ci.yml" "tools/ci/run_godot_checks.ps1" "CI workflow should call the shared Godot check script."
+Assert-FileContains ".github\workflows\ci.yml" "pull_request" "CI workflow should run on pull requests."
+Assert-FileContains ".github\workflows\ci.yml" "workflow_dispatch" "CI workflow should support manual dispatch."
+Assert-FileContains ".github\workflows\ci.yml" "GODOT4=" "CI workflow should publish GODOT4 for the shared script."
 
 if ($script:FailureCount -gt 0) {
 	throw "Release script tests failed: $script:FailureCount"

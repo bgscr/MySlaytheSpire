@@ -628,7 +628,7 @@ rtk proxy git commit -m "build: add Windows export wrapper"
 - Modify: `tools/tests/test_release_scripts.ps1`
 - Create: `.github/workflows/ci.yml`
 
-- [ ] **Step 1: Add failing tests for workflow shape**
+- [x] **Step 1: Add failing tests for workflow shape**
 
 Append this block before the final failure check in `tools/tests/test_release_scripts.ps1`:
 
@@ -639,7 +639,7 @@ Assert-FileContains ".github\workflows\ci.yml" "workflow_dispatch" "CI workflow 
 Assert-FileContains ".github\workflows\ci.yml" "GODOT4=" "CI workflow should publish GODOT4 for the shared script."
 ```
 
-- [ ] **Step 2: Run script tests to verify RED**
+- [x] **Step 2: Run script tests to verify RED**
 
 Run:
 
@@ -649,7 +649,7 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File tools/tests/test_r
 
 Expected: FAIL because `.github/workflows/ci.yml` does not exist.
 
-- [ ] **Step 3: Implement CI workflow**
+- [x] **Step 3: Implement CI workflow**
 
 Create `.github/workflows/ci.yml`:
 
@@ -693,7 +693,7 @@ jobs:
         run: ./tools/ci/run_godot_checks.ps1
 ```
 
-- [ ] **Step 4: Run script tests to verify GREEN**
+- [x] **Step 4: Run script tests to verify GREEN**
 
 Run:
 
@@ -707,7 +707,7 @@ Expected:
 Release script tests passed.
 ```
 
-- [ ] **Step 5: Commit Task 4**
+- [x] **Step 5: Commit Task 4**
 
 Run:
 
