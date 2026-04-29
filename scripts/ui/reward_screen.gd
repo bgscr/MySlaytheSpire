@@ -1,6 +1,7 @@
 extends Control
 
 const ContentCatalog := preload("res://scripts/content/content_catalog.gd")
+const RewardApplier := preload("res://scripts/reward/reward_applier.gd")
 const RewardResolver := preload("res://scripts/reward/reward_resolver.gd")
 const RunProgression := preload("res://scripts/run/run_progression.gd")
 const RunStateScript := preload("res://scripts/run/run_state.gd")
@@ -18,6 +19,7 @@ var status_label: Label
 var reward_container: VBoxContainer
 var continue_button: Button
 var advance_requested := false
+var reward_applier := RewardApplier.new()
 
 func _ready() -> void:
 	_build_layout()
@@ -130,53 +132,35 @@ func _skip_button(reward_index: int) -> Button:
 func _claim_card(reward_index: int, card_index: int) -> void:
 	if not _is_reward_available(reward_index):
 		return
-	var reward := rewards[reward_index]
-	if String(reward.get("type", "")) != "card_choice":
-		return
-	var card_ids: Array = reward.get("card_ids", [])
-	if card_index < 0 or card_index >= card_ids.size():
-		return
-	var card_id := String(card_ids[card_index])
-	if card_id.is_empty():
-		return
 	var app = _app()
 	if app == null or app.game.current_run == null:
 		return
-	app.game.current_run.deck_ids.append(card_id)
-	reward_states[reward_index] = STATE_CLAIMED
-	_render_rewards()
-	_refresh_continue_button()
+	if reward_applier.claim_card(app.game.current_run, rewards[reward_index], card_index):
+		reward_states[reward_index] = STATE_CLAIMED
+		_render_rewards()
+		_refresh_continue_button()
 
 func _claim_gold(reward_index: int) -> void:
 	if not _is_reward_available(reward_index):
 		return
-	var reward := rewards[reward_index]
-	if String(reward.get("type", "")) != "gold":
-		return
 	var app = _app()
 	if app == null or app.game.current_run == null:
 		return
-	app.game.current_run.gold += int(reward.get("amount", 0))
-	reward_states[reward_index] = STATE_CLAIMED
-	_render_rewards()
-	_refresh_continue_button()
+	if reward_applier.claim_gold(app.game.current_run, rewards[reward_index]):
+		reward_states[reward_index] = STATE_CLAIMED
+		_render_rewards()
+		_refresh_continue_button()
 
 func _claim_relic(reward_index: int) -> void:
 	if not _is_reward_available(reward_index):
 		return
-	var reward := rewards[reward_index]
-	if String(reward.get("type", "")) != "relic":
-		return
-	var relic_id := String(reward.get("relic_id", ""))
-	if relic_id.is_empty():
-		return
 	var app = _app()
 	if app == null or app.game.current_run == null:
 		return
-	app.game.current_run.relic_ids.append(relic_id)
-	reward_states[reward_index] = STATE_CLAIMED
-	_render_rewards()
-	_refresh_continue_button()
+	if reward_applier.claim_relic(app.game.current_run, rewards[reward_index]):
+		reward_states[reward_index] = STATE_CLAIMED
+		_render_rewards()
+		_refresh_continue_button()
 
 func _skip_reward(reward_index: int) -> void:
 	if not _is_reward_available(reward_index):

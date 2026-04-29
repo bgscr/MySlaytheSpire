@@ -72,7 +72,7 @@ Modify:
 - Create: `scripts/reward/reward_applier.gd`
 - Modify: `scripts/ui/reward_screen.gd`
 
-- [ ] **Step 1: Verify branch and inspect working tree**
+- [x] **Step 1: Verify branch and inspect working tree**
 
 Run:
 
@@ -89,7 +89,7 @@ main
 
 `git status --short` may show existing Event Tester files and this Reward Inspector plan. Do not revert or overwrite those changes.
 
-- [ ] **Step 2: Register the new RewardApplier test file**
+- [x] **Step 2: Register the new RewardApplier test file**
 
 In `scripts/testing/test_runner.gd`, insert the new test file immediately after `test_reward_resolver.gd`:
 
@@ -99,7 +99,7 @@ In `scripts/testing/test_runner.gd`, insert the new test file immediately after 
 	"res://tests/unit/test_event_resolver.gd",
 ```
 
-- [ ] **Step 3: Add failing RewardApplier unit tests**
+- [x] **Step 3: Add failing RewardApplier unit tests**
 
 Create `tests/unit/test_reward_applier.gd`:
 
@@ -179,13 +179,13 @@ func test_claim_relic_rejects_empty_relic_id() -> bool:
 	return passed
 ```
 
-- [ ] **Step 4: Run tests to verify RED**
+- [x] **Step 4: Run tests to verify RED**
 
 Run the full test command.
 
 Expected: FAIL because `res://scripts/reward/reward_applier.gd` does not exist.
 
-- [ ] **Step 5: Implement RewardApplier**
+- [x] **Step 5: Implement RewardApplier**
 
 Create `scripts/reward/reward_applier.gd`:
 
@@ -227,7 +227,7 @@ func claim_relic(run: RunState, reward: Dictionary) -> bool:
 	return true
 ```
 
-- [ ] **Step 6: Refactor RewardScreen to use RewardApplier**
+- [x] **Step 6: Refactor RewardScreen to use RewardApplier**
 
 In `scripts/ui/reward_screen.gd`, add the preload:
 
@@ -286,13 +286,13 @@ func _claim_relic(reward_index: int) -> void:
 		_refresh_continue_button()
 ```
 
-- [ ] **Step 7: Run tests to verify GREEN for Task 1**
+- [x] **Step 7: Run tests to verify GREEN for Task 1**
 
 Run the full test command.
 
 Expected: `TESTS PASSED`.
 
-- [ ] **Step 8: Task 1 review gates**
+- [x] **Step 8: Task 1 review gates**
 
 Stage 1:
 
@@ -315,7 +315,7 @@ Stage 2:
 - Modify: `tests/unit/test_dev_tools_screen.gd`
 - Modify: `scripts/ui/dev_tools_screen.gd`
 
-- [ ] **Step 1: Add failing Reward Inspector unit tests**
+- [x] **Step 1: Add failing Reward Inspector unit tests**
 
 In `tests/unit/test_dev_tools_screen.gd`, add these constants near the existing DevTools preload:
 
@@ -389,13 +389,13 @@ func test_reward_inspector_skip_and_reset_clear_reward_state() -> bool:
 	return passed
 ```
 
-- [ ] **Step 2: Run tests to verify RED**
+- [x] **Step 2: Run tests to verify RED**
 
 Run the full test command.
 
 Expected: FAIL because Reward Inspector helper methods and fields do not exist.
 
-- [ ] **Step 3: Add Reward Inspector preloads, constants, and state**
+- [x] **Step 3: Add Reward Inspector preloads, constants, and state**
 
 In `scripts/ui/dev_tools_screen.gd`, add preloads:
 
@@ -432,7 +432,7 @@ var reward_applier := RewardApplier.new()
 
 Call `reset_reward_inspector_run()` from `_ready()` and `load_default_catalog()` after Event Tester defaults are set.
 
-- [ ] **Step 4: Implement Reward Inspector public helpers**
+- [x] **Step 4: Implement Reward Inspector public helpers**
 
 Add these methods to `scripts/ui/dev_tools_screen.gd` near the Event Tester helpers:
 
@@ -546,7 +546,7 @@ func skip_reward_inspector_reward(reward_index: int) -> bool:
 	return true
 ```
 
-- [ ] **Step 5: Implement Reward Inspector private helpers**
+- [x] **Step 5: Implement Reward Inspector private helpers**
 
 Add:
 
@@ -601,13 +601,13 @@ func _refresh_reward_inspector_if_ready() -> void:
 
 Do not add any save, router, or `Game.current_run` references in these helpers.
 
-- [ ] **Step 6: Run tests to verify GREEN for Task 2**
+- [x] **Step 6: Run tests to verify GREEN for Task 2**
 
 Run the full test command.
 
 Expected: `TESTS PASSED`.
 
-- [ ] **Step 7: Task 2 review gates**
+- [x] **Step 7: Task 2 review gates**
 
 Stage 1:
 
@@ -630,7 +630,7 @@ Stage 2:
 - Modify: `tests/smoke/test_scene_flow.gd`
 - Modify: `scripts/ui/dev_tools_screen.gd`
 
-- [ ] **Step 1: Add failing Reward Inspector smoke tests**
+- [x] **Step 1: Add failing Reward Inspector smoke tests**
 
 Append these smoke tests near the other DevTools tests in `tests/smoke/test_scene_flow.gd`:
 
@@ -699,13 +699,13 @@ func test_dev_tools_reward_inspector_node_type_selection_refreshes_rewards(tree:
 	return passed
 ```
 
-- [ ] **Step 2: Run tests to verify RED**
+- [x] **Step 2: Run tests to verify RED**
 
 Run the full test command.
 
 Expected: FAIL because Reward Inspector panel nodes do not exist.
 
-- [ ] **Step 3: Add Reward Inspector UI vars and routing**
+- [x] **Step 3: Add Reward Inspector UI vars and routing**
 
 In `scripts/ui/dev_tools_screen.gd`, add UI state vars:
 
@@ -724,7 +724,7 @@ Update `_show_tool()` so `TOOL_REWARD_INSPECTOR` calls `_build_reward_inspector(
 		_build_reward_inspector()
 ```
 
-- [ ] **Step 4: Implement Reward Inspector panel**
+- [x] **Step 4: Implement Reward Inspector panel**
 
 Add these methods:
 
@@ -799,7 +799,7 @@ func _on_reward_inspector_reset_pressed() -> void:
 	_refresh_reward_inspector_panel()
 ```
 
-- [ ] **Step 5: Implement Reward Inspector panel refresh**
+- [x] **Step 5: Implement Reward Inspector panel refresh**
 
 Add:
 
@@ -875,13 +875,13 @@ func _reward_inspector_skip_button(reward_index: int) -> Button:
 	return button
 ```
 
-- [ ] **Step 6: Run tests to verify GREEN for Task 3**
+- [x] **Step 6: Run tests to verify GREEN for Task 3**
 
 Run the full test command.
 
 Expected: `TESTS PASSED`.
 
-- [ ] **Step 7: Task 3 review gates**
+- [x] **Step 7: Task 3 review gates**
 
 Stage 1:
 
@@ -903,7 +903,7 @@ Stage 2:
 - Modify: `README.md`
 - Modify: `docs/superpowers/plans/2026-04-29-dev-tools-reward-inspector.md`
 
-- [ ] **Step 1: Verify no Reward Inspector persistence, resource writes, progression, or routing were added**
+- [x] **Step 1: Verify no Reward Inspector persistence, resource writes, progression, or routing were added**
 
 Run:
 
@@ -913,19 +913,19 @@ rtk proxy rg -n "save_run|delete_save|FileAccess.open|ResourceSaver|current_run\
 
 Expected: no matches that belong to Reward Inspector or `RewardApplier`.
 
-- [ ] **Step 2: Run full local tests**
+- [x] **Step 2: Run full local tests**
 
 Run the full test command.
 
 Expected: `TESTS PASSED`.
 
-- [ ] **Step 3: Run Godot import check**
+- [x] **Step 3: Run Godot import check**
 
 Run the import check command.
 
 Expected: process exits 0.
 
-- [ ] **Step 4: Update README progress**
+- [x] **Step 4: Update README progress**
 
 Record Reward Inspector completion and update Next Plans to leave Save Inspector:
 
@@ -939,11 +939,11 @@ Record Reward Inspector completion and update Next Plans to leave Save Inspector
 3. Presentation expansion: more per-card cue ids, enemy intent polish, card art, richer combat backgrounds, and formal audio mixing.
 ```
 
-- [ ] **Step 5: Mark completed plan steps**
+- [x] **Step 5: Mark completed plan steps**
 
 Update completed checkboxes in this plan from `[ ]` to `[x]` after verifying implementation and reviews.
 
-- [ ] **Step 6: Run final two-stage review**
+- [x] **Step 6: Run final two-stage review**
 
 Stage 1 Spec Compliance Review:
 
@@ -980,4 +980,3 @@ Fix any Critical or Important findings before acceptance.
 - `RewardScreen` and Reward Inspector use shared reward application logic.
 - Existing local tests pass.
 - Godot import check exits 0.
-

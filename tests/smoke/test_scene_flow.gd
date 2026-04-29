@@ -314,17 +314,23 @@ func test_dev_tools_enemy_sandbox_button_shows_panel(tree: SceneTree) -> bool:
 	screen.free()
 	return passed
 
-func test_dev_tools_deferred_event_tester_button_shows_planned_placeholder(tree: SceneTree) -> bool:
+func test_dev_tools_event_tester_button_shows_panel(tree: SceneTree) -> bool:
 	var screen := DevToolsScene.instantiate()
 	tree.root.add_child(screen)
 	var button := _find_node_by_name(screen, "ToolButton_event_tester") as Button
 	if button != null:
 		button.pressed.emit()
-	var placeholder := _find_node_by_name(screen, "ToolPlaceholder_event_tester") as Label
+	var panel := _find_node_by_name(screen, "EventTesterPanel")
+	var summary := _find_node_by_name(screen, "EventTesterRunSummaryLabel") as Label
+	var option := _find_node_by_name(screen, "EventTesterOption_0") as Button
+	var reset := _find_node_by_name(screen, "EventTesterResetButton") as Button
 	var passed: bool = button != null \
 		and screen.active_tool_id == "event_tester" \
-		and placeholder != null \
-		and placeholder.text.contains("Planned tool")
+		and panel != null \
+		and summary != null \
+		and summary.text.contains("event: alchemist_market") \
+		and option != null \
+		and reset != null
 	screen.free()
 	return passed
 
@@ -349,6 +355,118 @@ func test_dev_tools_enemy_sandbox_launch_routes_to_sandbox_combat(tree: SceneTre
 		and combat.session.state.enemies[0].id == "training_puppet"
 	app.free()
 	_delete_test_save("user://test_enemy_sandbox_launch_save.json")
+	return passed
+
+func test_dev_tools_event_tester_apply_option_stays_in_dev_tools_without_current_run(tree: SceneTree) -> bool:
+	var app = _create_app_with_save_service(tree, "user://test_event_tester_apply_save.json")
+	var dev_tools = app.game.router.go_to(SceneRouterScript.DEV_TOOLS)
+	var event_tester_button := _find_node_by_name(dev_tools, "ToolButton_event_tester") as Button
+	if event_tester_button != null:
+		event_tester_button.pressed.emit()
+	var option_button := _find_node_by_name(dev_tools, "EventTesterOption_0") as Button
+	if option_button != null:
+		option_button.pressed.emit()
+	var result := _find_node_by_name(dev_tools, "EventTesterResultLabel") as Label
+	var summary := _find_node_by_name(dev_tools, "EventTesterRunSummaryLabel") as Label
+	var passed: bool = option_button != null \
+		and result != null \
+		and result.text.contains("Applied option: buy_brew") \
+		and summary != null \
+		and summary.text.contains("gold: 30") \
+		and app.game.current_run == null \
+		and app.game.router.current_scene == dev_tools
+	app.free()
+	_delete_test_save("user://test_event_tester_apply_save.json")
+	return passed
+
+func test_dev_tools_reward_inspector_button_shows_panel(tree: SceneTree) -> bool:
+	var screen := DevToolsScene.instantiate()
+	tree.root.add_child(screen)
+	var button := _find_node_by_name(screen, "ToolButton_reward_inspector") as Button
+	if button != null:
+		button.pressed.emit()
+	var panel := _find_node_by_name(screen, "RewardInspectorPanel")
+	var summary := _find_node_by_name(screen, "RewardInspectorRunSummaryLabel") as Label
+	var reward := _find_node_by_name(screen, "RewardInspectorReward_0")
+	var claim := _find_node_by_name(screen, "RewardInspectorClaimCard_0_0") as Button
+	var reset := _find_node_by_name(screen, "RewardInspectorResetButton") as Button
+	var passed: bool = button != null \
+		and screen.active_tool_id == "reward_inspector" \
+		and panel != null \
+		and summary != null \
+		and summary.text.contains("node_type: combat") \
+		and summary.text.contains("seed: 1") \
+		and reward != null \
+		and claim != null \
+		and reset != null
+	screen.free()
+	return passed
+
+func test_dev_tools_reward_inspector_claim_stays_in_dev_tools_without_current_run(tree: SceneTree) -> bool:
+	var app = _create_app_with_save_service(tree, "user://test_reward_inspector_claim_save.json")
+	var dev_tools = app.game.router.go_to(SceneRouterScript.DEV_TOOLS)
+	var reward_button := _find_node_by_name(dev_tools, "ToolButton_reward_inspector") as Button
+	if reward_button != null:
+		reward_button.pressed.emit()
+	var claim := _find_node_by_name(dev_tools, "RewardInspectorClaimCard_0_0") as Button
+	if claim != null:
+		claim.pressed.emit()
+	var summary := _find_node_by_name(dev_tools, "RewardInspectorRunSummaryLabel") as Label
+	var passed: bool = claim != null \
+		and summary != null \
+		and summary.text.contains("deck_count: 4") \
+		and summary.text.contains("resolved: 1/2") \
+		and app.game.current_run == null \
+		and app.game.router.current_scene == dev_tools
+	app.free()
+	_delete_test_save("user://test_reward_inspector_claim_save.json")
+	return passed
+
+func test_dev_tools_reward_inspector_keeps_unresolved_rewards_enabled(tree: SceneTree) -> bool:
+	var screen := DevToolsScene.instantiate()
+	tree.root.add_child(screen)
+	var button := _find_node_by_name(screen, "ToolButton_reward_inspector") as Button
+	if button != null:
+		button.pressed.emit()
+	var claim_card := _find_node_by_name(screen, "RewardInspectorClaimCard_0_0") as Button
+	if claim_card != null:
+		claim_card.pressed.emit()
+	var claim_gold := _find_node_by_name(screen, "RewardInspectorClaimGold_1") as Button
+	var summary_after_card := _find_node_by_name(screen, "RewardInspectorRunSummaryLabel") as Label
+	var summary_text_after_card := summary_after_card.text if summary_after_card != null else ""
+	var gold_was_enabled := claim_gold != null and not claim_gold.disabled
+	if gold_was_enabled:
+		claim_gold.pressed.emit()
+	var summary_after_gold := _find_node_by_name(screen, "RewardInspectorRunSummaryLabel") as Label
+	var passed: bool = claim_card != null \
+		and claim_gold != null \
+		and gold_was_enabled \
+		and summary_after_card != null \
+		and summary_text_after_card.contains("resolved: 1/2") \
+		and summary_after_gold != null \
+		and summary_after_gold.text.contains("resolved: 2/2") \
+		and screen.reward_inspector_run.gold > 0
+	screen.free()
+	return passed
+
+func test_dev_tools_reward_inspector_node_type_selection_refreshes_rewards(tree: SceneTree) -> bool:
+	var screen := DevToolsScene.instantiate()
+	tree.root.add_child(screen)
+	var button := _find_node_by_name(screen, "ToolButton_reward_inspector") as Button
+	if button != null:
+		button.pressed.emit()
+	var node_select := _find_node_by_name(screen, "RewardInspectorNodeTypeSelect") as OptionButton
+	if node_select != null:
+		node_select.select(2)
+		node_select.item_selected.emit(2)
+	var summary := _find_node_by_name(screen, "RewardInspectorRunSummaryLabel") as Label
+	var relic_button := _find_node_by_name(screen, "RewardInspectorClaimRelic_2") as Button
+	var passed: bool = node_select != null \
+		and summary != null \
+		and summary.text.contains("node_type: boss") \
+		and summary.text.contains("resolved: 0/3") \
+		and relic_button != null
+	screen.free()
 	return passed
 
 func test_combat_screen_drag_disabled_keeps_click_fallback(tree: SceneTree) -> bool:

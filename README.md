@@ -51,9 +51,11 @@ $env:GODOT4="C:\Tools\Godot\Godot_v4.6.2-stable_win64_console.exe"
 - High-presentation asset pass: complete; combat polish hooks now resolve project-owned texture/audio assets through a cue-id asset catalog for slash, mist, camera impulse, local slow-motion, and audio cue playback.
 - Developer tools foundation: complete; debug builds now include a DevTools hub with stable entries for Card Browser, Enemy Sandbox, Event Tester, Reward Inspector, and Save Inspector, plus a read-only Card Browser for filtering and inspecting catalog cards, effects, and presentation cues.
 - Enemy Sandbox: complete; DevTools can now choose a character, select one to three catalog enemies, preview the starter deck and enemy intents, and launch isolated sandbox combat without touching saves or the active run.
+- Developer tools event tester: complete; DevTools can now apply catalog event options against an isolated test run without writing saves, routing away, or mutating the active run.
+- Developer tools reward inspector: complete; DevTools can now preview generated reward packages and simulate card, gold, relic, and skip choices against an isolated run without touching saves or the active run.
 
 ## Next Plans
 
-1. Developer tools: event tester, reward inspector, and save inspector.
+1. Developer tools: save inspector.
 2. Release readiness: CI, artifact export, changelog, release draft, Steam adapter.
 3. Presentation expansion: more per-card cue ids, enemy intent polish, card art, richer combat backgrounds, and formal audio mixing.
