@@ -424,6 +424,82 @@ func test_config_filters_polish_event_categories() -> bool:
 	assert(passed)
 	return passed
 
+func test_config_defaults_to_full_motion_profile() -> bool:
+	var config := CombatPresentationConfig.new()
+	var passed: bool = config.motion_profile == CombatPresentationConfig.MOTION_PROFILE_FULL \
+		and not config.is_reduced_motion()
+	assert(passed)
+	return passed
+
+func test_config_set_motion_profile_validates_known_values() -> bool:
+	var config := CombatPresentationConfig.new()
+	config.set_motion_profile(CombatPresentationConfig.MOTION_PROFILE_REDUCED)
+	var reduced_applied: bool = config.motion_profile == CombatPresentationConfig.MOTION_PROFILE_REDUCED \
+		and config.is_reduced_motion()
+	config.set_motion_profile("unknown_profile")
+	var unknown_reset: bool = config.motion_profile == CombatPresentationConfig.MOTION_PROFILE_FULL \
+		and not config.is_reduced_motion()
+	var passed: bool = reduced_applied and unknown_reset
+	assert(passed)
+	return passed
+
+func test_reduced_motion_filters_high_motion_events_but_keeps_low_motion_feedback() -> bool:
+	var config := CombatPresentationConfig.new()
+	config.set_motion_profile(CombatPresentationConfig.MOTION_PROFILE_REDUCED)
+	var queue := CombatPresentationQueue.new()
+	queue.config = config
+
+	queue.enqueue(CombatPresentationEvent.new("cinematic_slash"))
+	var tagged := CombatPresentationEvent.new("card_hovered")
+	tagged.tags = ["cinematic"]
+	queue.enqueue(tagged)
+	queue.enqueue(CombatPresentationEvent.new("particle_burst"))
+	queue.enqueue(CombatPresentationEvent.new("camera_impulse"))
+	queue.enqueue(CombatPresentationEvent.new("slow_motion"))
+	queue.enqueue(CombatPresentationEvent.new("damage_number"))
+	queue.enqueue(CombatPresentationEvent.new("block_number"))
+	queue.enqueue(CombatPresentationEvent.new("status_number"))
+	queue.enqueue(CombatPresentationEvent.new("combatant_flash"))
+	queue.enqueue(CombatPresentationEvent.new("status_badge_pulse"))
+	queue.enqueue(CombatPresentationEvent.new("target_highlighted"))
+	queue.enqueue(CombatPresentationEvent.new("target_unhighlighted"))
+	queue.enqueue(CombatPresentationEvent.new("card_hovered"))
+	queue.enqueue(CombatPresentationEvent.new("audio_cue"))
+
+	var event_types := _event_types(queue.drain())
+	var passed: bool = event_types == [
+		"damage_number",
+		"block_number",
+		"status_number",
+		"combatant_flash",
+		"status_badge_pulse",
+		"target_highlighted",
+		"target_unhighlighted",
+		"card_hovered",
+		"audio_cue",
+	]
+	assert(passed)
+	return passed
+
+func test_reduced_motion_preserves_individual_category_toggles() -> bool:
+	var config := CombatPresentationConfig.new()
+	config.set_motion_profile(CombatPresentationConfig.MOTION_PROFILE_REDUCED)
+	config.floating_text_enabled = false
+	config.flash_enabled = false
+	config.audio_cue_enabled = false
+	var queue := CombatPresentationQueue.new()
+	queue.config = config
+
+	queue.enqueue(CombatPresentationEvent.new("damage_number"))
+	queue.enqueue(CombatPresentationEvent.new("combatant_flash"))
+	queue.enqueue(CombatPresentationEvent.new("audio_cue"))
+	queue.enqueue(CombatPresentationEvent.new("target_highlighted"))
+
+	var event_types := _event_types(queue.drain())
+	var passed: bool = event_types == ["target_highlighted"]
+	assert(passed)
+	return passed
+
 func test_layer_plays_cinematic_slash_and_particle_assets(tree: SceneTree) -> bool:
 	var layer := CombatPresentationLayer.new()
 	tree.root.add_child(layer)
@@ -773,6 +849,12 @@ func _event_count(events: Array, event_type: String) -> int:
 		if event.event_type == event_type:
 			count += 1
 	return count
+
+func _event_types(events: Array) -> Array[String]:
+	var event_types: Array[String] = []
+	for event in events:
+		event_types.append(String(event.event_type))
+	return event_types
 
 func _first_event(events: Array, event_type: String) -> CombatPresentationEvent:
 	for event in events:

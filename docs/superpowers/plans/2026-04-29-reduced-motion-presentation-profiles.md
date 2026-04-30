@@ -83,7 +83,7 @@ Do not modify:
 - Modify: `tests/unit/test_combat_presentation.gd`
 - Modify: `tests/smoke/test_scene_flow.gd`
 
-- [ ] **Step 1: Add failing config and queue unit tests**
+- [x] **Step 1: Add failing config and queue unit tests**
 
 In `tests/unit/test_combat_presentation.gd`, add these tests after `test_config_filters_polish_event_categories()`:
 
@@ -175,7 +175,7 @@ func _event_types(events: Array) -> Array[String]:
 	return event_types
 ```
 
-- [ ] **Step 2: Add failing DebugOverlay smoke test**
+- [x] **Step 2: Add failing DebugOverlay smoke test**
 
 In `tests/smoke/test_scene_flow.gd`, add this test after `test_debug_overlay_updates_polish_presentation_config()`:
 
@@ -203,7 +203,7 @@ func test_debug_overlay_updates_reduced_motion_profile(tree: SceneTree) -> bool:
 	return passed
 ```
 
-- [ ] **Step 3: Add failing combat smoke tests**
+- [x] **Step 3: Add failing combat smoke tests**
 
 In `tests/smoke/test_scene_flow.gd`, add these tests after `test_explicit_slow_motion_and_audio_cues_are_recorded()`:
 
@@ -285,7 +285,7 @@ func test_reduced_motion_filters_explicit_slow_motion_but_keeps_audio_cue(tree: 
 	return passed
 ```
 
-- [ ] **Step 4: Run tests to verify RED**
+- [x] **Step 4: Run tests to verify RED**
 
 Run:
 
@@ -304,7 +304,7 @@ Do not commit failing tests.
 - Modify: `scripts/presentation/combat_presentation_config.gd`
 - Modify: `scripts/ui/debug_overlay.gd`
 
-- [ ] **Step 1: Implement motion profile API and filtering**
+- [x] **Step 1: Implement motion profile API and filtering**
 
 Modify `scripts/presentation/combat_presentation_config.gd`.
 
@@ -350,7 +350,7 @@ func _is_high_motion_event(event_type: String, event: Variant) -> bool:
 
 Keep the existing individual toggle checks intact.
 
-- [ ] **Step 2: Implement DebugOverlay reduced-motion toggle**
+- [x] **Step 2: Implement DebugOverlay reduced-motion toggle**
 
 Modify `scripts/ui/debug_overlay.gd`.
 
@@ -384,7 +384,7 @@ func _add_reduced_motion_toggle(box: VBoxContainer) -> void:
 	box.add_child(toggle)
 ```
 
-- [ ] **Step 3: Run tests to verify GREEN**
+- [x] **Step 3: Run tests to verify GREEN**
 
 Run:
 
@@ -399,7 +399,7 @@ TESTS PASSED
 Godot checks passed.
 ```
 
-- [ ] **Step 4: Run Task 2 review gates**
+- [x] **Step 4: Run Task 2 review gates**
 
 Stage 1 Spec Compliance Review:
 
@@ -421,7 +421,7 @@ Stage 2 Code Quality Review:
 - debug helper follows the existing `_add_presentation_toggle()` pattern.
 - tests cover allowed and rejected categories, debug UI, and real combat presentation.
 
-- [ ] **Step 5: Commit Tasks 1 and 2**
+- [x] **Step 5: Commit Tasks 1 and 2**
 
 Run:
 

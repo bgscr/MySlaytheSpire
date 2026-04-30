@@ -268,6 +268,28 @@ func test_debug_overlay_updates_polish_presentation_config(tree: SceneTree) -> b
 	_delete_test_save("user://test_debug_polish_config_save.json")
 	return passed
 
+func test_debug_overlay_updates_reduced_motion_profile(tree: SceneTree) -> bool:
+	var app = _create_app_with_save_service(tree, "user://test_debug_reduced_motion_save.json")
+	var debug_overlay: Node = app.get_node_or_null("DebugLayer/DebugOverlay")
+	var reduced_toggle := _find_node_by_name(debug_overlay, "DebugPresentationReducedMotion") as CheckBox
+	var initially_full: bool = reduced_toggle != null \
+		and not reduced_toggle.button_pressed \
+		and app.game.presentation_config.motion_profile == "full"
+	if reduced_toggle != null:
+		reduced_toggle.button_pressed = true
+		reduced_toggle.toggled.emit(true)
+	var reduced_applied: bool = app.game.presentation_config.motion_profile == "reduced" \
+		and app.game.presentation_config.is_reduced_motion()
+	if reduced_toggle != null:
+		reduced_toggle.button_pressed = false
+		reduced_toggle.toggled.emit(false)
+	var full_restored: bool = app.game.presentation_config.motion_profile == "full" \
+		and not app.game.presentation_config.is_reduced_motion()
+	var passed: bool = initially_full and reduced_applied and full_restored
+	app.free()
+	_delete_test_save("user://test_debug_reduced_motion_save.json")
+	return passed
+
 func test_debug_overlay_routes_to_dev_tools_screen(tree: SceneTree) -> bool:
 	var app = _create_app_with_save_service(tree, "user://test_debug_dev_tools_save.json")
 	var debug_overlay: Node = app.get_node_or_null("DebugLayer/DebugOverlay")
@@ -782,6 +804,83 @@ func test_explicit_slow_motion_and_audio_cues_are_recorded(tree: SceneTree) -> b
 		and audio_player.stream != null
 	app.free()
 	_delete_test_save("user://test_explicit_slow_audio_save.json")
+	return passed
+
+func test_reduced_motion_filters_card_play_motion_but_keeps_damage_feedback(tree: SceneTree) -> bool:
+	var app = _create_app_with_save_service(tree, "user://test_reduced_motion_card_feedback_save.json")
+	app.game.presentation_config.set_motion_profile("reduced")
+	var run := RunStateScript.new()
+	run.seed_value = 12345
+	run.character_id = "sword"
+	run.max_hp = 72
+	run.current_hp = 72
+	run.deck_ids = ["sword.strike"]
+	run.current_node_id = "node_0"
+	var node := preload("res://scripts/run/map_node_state.gd").new("node_0", 0, "combat")
+	node.unlocked = true
+	run.map_nodes = [node]
+	app.game.current_run = run
+
+	var combat = app.game.router.go_to(SceneRouterScript.COMBAT)
+	combat.session.state.hand.clear()
+	combat.session.state.hand.append("sword.strike")
+	combat.session.state.draw_pile.clear()
+	combat._refresh()
+	var enemy_hp_before: int = combat.session.state.enemies[0].current_hp
+	var layer_position_before: Vector2 = combat.presentation_layer.position
+	var played: bool = combat.try_play_dragged_card(0, "enemy", 0)
+	combat.presentation_layer.process_queue()
+
+	var float_text := _find_node_by_name(combat.presentation_layer, "FloatText_0") as Label
+	var slash := _find_node_by_name(combat.presentation_layer, "CinematicSlash_0")
+	var particle := _find_node_by_name(combat.presentation_layer, "ParticleBurst_0_0")
+	var passed: bool = played \
+		and combat.session.state.enemies[0].current_hp < enemy_hp_before \
+		and float_text != null \
+		and float_text.text.begins_with("-") \
+		and slash == null \
+		and particle == null \
+		and combat.presentation_layer.position == layer_position_before \
+		and is_equal_approx(combat.presentation_layer.active_slow_motion_scale, 1.0)
+	app.free()
+	_delete_test_save("user://test_reduced_motion_card_feedback_save.json")
+	return passed
+
+func test_reduced_motion_filters_explicit_slow_motion_but_keeps_audio_cue(tree: SceneTree) -> bool:
+	var app = _create_app_with_save_service(tree, "user://test_reduced_motion_slow_audio_save.json")
+	app.game.presentation_config.set_motion_profile("reduced")
+	var run := RunStateScript.new()
+	run.seed_value = 12345
+	run.character_id = "sword"
+	run.max_hp = 72
+	run.current_hp = 72
+	run.deck_ids = ["sword.heaven_cutting_arc"]
+	run.current_node_id = "node_0"
+	var node := preload("res://scripts/run/map_node_state.gd").new("node_0", 0, "combat")
+	node.unlocked = true
+	run.map_nodes = [node]
+	app.game.current_run = run
+
+	var combat = app.game.router.go_to(SceneRouterScript.COMBAT)
+	combat.session.state.energy = 3
+	combat.session.state.hand.clear()
+	combat.session.state.hand.append("sword.heaven_cutting_arc")
+	combat.session.state.draw_pile.clear()
+	combat._refresh()
+	var played: bool = combat.try_play_dragged_card(0, "enemy", 0)
+	combat.presentation_layer.process_queue()
+
+	var wash := _find_node_by_name(combat.presentation_layer, "SlowMotionWash_0")
+	var audio_player := _find_node_by_name(combat.presentation_layer, "PresentationAudioPlayer") as AudioStreamPlayer
+	var passed: bool = played \
+		and wash == null \
+		and is_equal_approx(combat.presentation_layer.active_slow_motion_scale, 1.0) \
+		and combat.presentation_layer.last_audio_cue_id == "sword.heaven_cutting_arc" \
+		and combat.presentation_layer.audio_cue_count == 1 \
+		and audio_player != null \
+		and audio_player.stream != null
+	app.free()
+	_delete_test_save("user://test_reduced_motion_slow_audio_save.json")
 	return passed
 
 func test_combat_screen_end_turn_triggers_enemy_attack_polish(tree: SceneTree) -> bool:

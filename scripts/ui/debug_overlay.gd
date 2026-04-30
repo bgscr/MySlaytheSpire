@@ -1,6 +1,7 @@
 extends PanelContainer
 
 const SceneRouterScript := preload("res://scripts/app/scene_router.gd")
+const CombatPresentationConfig := preload("res://scripts/presentation/combat_presentation_config.gd")
 
 func _ready() -> void:
 	visible = OS.is_debug_build()
@@ -29,6 +30,7 @@ func _ready() -> void:
 	box.add_child(dev_tools)
 
 	_add_presentation_toggle(box, "DebugPresentationEnabled", "Presentation", "enabled")
+	_add_reduced_motion_toggle(box)
 	_add_presentation_toggle(box, "DebugPresentationDrag", "Drag Play", "drag_enabled")
 	_add_presentation_toggle(box, "DebugPresentationFloatingText", "Float Text", "floating_text_enabled")
 	_add_presentation_toggle(box, "DebugPresentationFlash", "Hit Flash", "flash_enabled")
@@ -52,6 +54,20 @@ func _add_presentation_toggle(box: VBoxContainer, node_name: String, label: Stri
 	toggle.text = "Debug: %s" % label
 	toggle.button_pressed = bool(app.game.presentation_config.get(property_name))
 	toggle.toggled.connect(func(enabled: bool): app.game.presentation_config.set(property_name, enabled))
+	box.add_child(toggle)
+
+func _add_reduced_motion_toggle(box: VBoxContainer) -> void:
+	var app := _get_app()
+	if app == null or app.game == null or app.game.presentation_config == null:
+		return
+	var toggle := CheckBox.new()
+	toggle.name = "DebugPresentationReducedMotion"
+	toggle.text = "Debug: Reduced Motion"
+	toggle.button_pressed = app.game.presentation_config.is_reduced_motion()
+	toggle.toggled.connect(func(enabled: bool):
+		var profile := CombatPresentationConfig.MOTION_PROFILE_REDUCED if enabled else CombatPresentationConfig.MOTION_PROFILE_FULL
+		app.game.presentation_config.set_motion_profile(profile)
+	)
 	box.add_child(toggle)
 
 func _full_hp() -> void:

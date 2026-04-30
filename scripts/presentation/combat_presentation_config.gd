@@ -1,6 +1,10 @@
 class_name CombatPresentationConfig
 extends RefCounted
 
+const MOTION_PROFILE_FULL := "full"
+const MOTION_PROFILE_REDUCED := "reduced"
+
+var motion_profile := MOTION_PROFILE_FULL
 var enabled := true
 var drag_enabled := true
 var floating_text_enabled := true
@@ -19,6 +23,8 @@ func allows(event) -> bool:
 	if not enabled:
 		return false
 	var event_type := String(event.event_type)
+	if is_reduced_motion() and _is_high_motion_event(event_type, event):
+		return false
 	if not floating_text_enabled and _is_floating_text_event(event_type):
 		return false
 	if not flash_enabled and event_type == "combatant_flash":
@@ -40,6 +46,22 @@ func allows(event) -> bool:
 	if not audio_cue_enabled and event_type == "audio_cue":
 		return false
 	return true
+
+func set_motion_profile(profile: String) -> void:
+	if profile == MOTION_PROFILE_REDUCED:
+		motion_profile = MOTION_PROFILE_REDUCED
+	else:
+		motion_profile = MOTION_PROFILE_FULL
+
+func is_reduced_motion() -> bool:
+	return motion_profile == MOTION_PROFILE_REDUCED
+
+func _is_high_motion_event(event_type: String, event: Variant) -> bool:
+	return event_type == "cinematic_slash" \
+		or event_type == "particle_burst" \
+		or event_type == "camera_impulse" \
+		or event_type == "slow_motion" \
+		or event.tags.has("cinematic")
 
 func _is_floating_text_event(event_type: String) -> bool:
 	return event_type == "damage_number" \
