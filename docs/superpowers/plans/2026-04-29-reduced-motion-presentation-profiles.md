@@ -437,7 +437,7 @@ rtk git commit -m "feat: add reduced motion presentation profile"
 - Modify: `README.md`
 - Modify: `docs/superpowers/plans/2026-04-29-reduced-motion-presentation-profiles.md`
 
-- [ ] **Step 1: Update README progress**
+- [x] **Step 1: Update README progress**
 
 Add this bullet under `## Phase 2 Progress` after the enemy intent presentation cues bullet:
 
@@ -454,7 +454,7 @@ Update `## Next Plans` to remove reduced-motion profiles from the presentation e
 2. Release expansion: artifact packaging, checksums, version bump automation, signed builds, and eventual Steam adapter implementation.
 ```
 
-- [ ] **Step 2: Run full local verification**
+- [x] **Step 2: Run full local verification**
 
 Run:
 
@@ -469,7 +469,7 @@ TESTS PASSED
 Godot checks passed.
 ```
 
-- [ ] **Step 3: Run final direct import check**
+- [x] **Step 3: Run final direct import check**
 
 Run:
 
@@ -479,7 +479,7 @@ rtk powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_win64_
 
 Expected: process exits 0.
 
-- [ ] **Step 4: Verify presentation boundary**
+- [x] **Step 4: Verify presentation boundary**
 
 Run:
 
@@ -489,7 +489,7 @@ rtk rg -n "presentation|CombatPresentation|motion_profile|MOTION_PROFILE|reduced
 
 Expected: no output. `rg` may exit 1 when there are no matches; that is acceptable for this boundary check.
 
-- [ ] **Step 5: Run final two-stage review**
+- [x] **Step 5: Run final two-stage review**
 
 Stage 1 Spec Compliance Review:
 
@@ -515,11 +515,13 @@ Stage 2 Code Quality Review:
 
 Classify all issues as Critical, Important, or Minor. Fix Critical and Important issues before acceptance.
 
-- [ ] **Step 6: Mark completed plan steps**
+Review result: no Critical, Important, or Minor issues found.
+
+- [x] **Step 6: Mark completed plan steps**
 
 Update completed checkboxes in this plan from `[ ]` to `[x]` after verifying implementation and reviews.
 
-- [ ] **Step 7: Commit final acceptance docs**
+- [x] **Step 7: Commit final acceptance docs**
 
 Run:
 
