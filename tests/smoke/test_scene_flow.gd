@@ -771,6 +771,68 @@ func test_combat_screen_click_play_triggers_particle_asset_feedback(tree: SceneT
 	_delete_test_save("user://test_combat_particle_asset_save.json")
 	return passed
 
+func test_migrated_utility_card_triggers_explicit_particle_feedback(tree: SceneTree) -> bool:
+	var app = _create_app_with_save_service(tree, "user://test_migrated_utility_card_feedback_save.json")
+	var run := RunStateScript.new()
+	run.seed_value = 12345
+	run.character_id = "alchemy"
+	run.max_hp = 68
+	run.current_hp = 68
+	run.deck_ids = ["alchemy.quick_simmer"]
+	run.current_node_id = "node_0"
+	var node := preload("res://scripts/run/map_node_state.gd").new("node_0", 0, "combat")
+	node.unlocked = true
+	run.map_nodes = [node]
+	app.game.current_run = run
+
+	var combat = app.game.router.go_to(SceneRouterScript.COMBAT)
+	combat.session.state.hand.clear()
+	combat.session.state.hand.append("alchemy.quick_simmer")
+	combat.session.state.draw_pile.clear()
+	combat._refresh()
+	var played: bool = combat.try_play_dragged_card(0, "player", -1)
+	combat.presentation_layer.process_queue()
+
+	var particle := _find_node_by_name(combat.presentation_layer, "ParticleBurst_0_0") as TextureRect
+	var passed: bool = played \
+		and particle != null \
+		and particle.texture != null
+	app.free()
+	_delete_test_save("user://test_migrated_utility_card_feedback_save.json")
+	return passed
+
+func test_migrated_sword_card_uses_explicit_slash_and_camera_feedback(tree: SceneTree) -> bool:
+	var app = _create_app_with_save_service(tree, "user://test_migrated_sword_card_feedback_save.json")
+	var run := RunStateScript.new()
+	run.seed_value = 12345
+	run.character_id = "sword"
+	run.max_hp = 72
+	run.current_hp = 72
+	run.deck_ids = ["sword.flash_cut"]
+	run.current_node_id = "node_0"
+	var node := preload("res://scripts/run/map_node_state.gd").new("node_0", 0, "combat")
+	node.unlocked = true
+	run.map_nodes = [node]
+	app.game.current_run = run
+
+	var combat = app.game.router.go_to(SceneRouterScript.COMBAT)
+	combat.session.state.hand.clear()
+	combat.session.state.hand.append("sword.flash_cut")
+	combat.session.state.draw_pile.clear()
+	combat._refresh()
+	var layer_position_before: Vector2 = combat.presentation_layer.position
+	var played: bool = combat.try_play_dragged_card(0, "enemy", 0)
+	combat.presentation_layer.process_queue()
+
+	var slash := _find_node_by_name(combat.presentation_layer, "CinematicSlash_0") as TextureRect
+	var passed: bool = played \
+		and slash != null \
+		and slash.texture != null \
+		and combat.presentation_layer.position != layer_position_before
+	app.free()
+	_delete_test_save("user://test_migrated_sword_card_feedback_save.json")
+	return passed
+
 func test_explicit_slow_motion_and_audio_cues_are_recorded(tree: SceneTree) -> bool:
 	var app = _create_app_with_save_service(tree, "user://test_explicit_slow_audio_save.json")
 	var run := RunStateScript.new()

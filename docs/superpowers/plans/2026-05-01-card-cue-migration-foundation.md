@@ -555,7 +555,7 @@ rtk git commit -m "feat: migrate default cards to explicit presentation cues"
 - Modify: `README.md`
 - Modify: `docs/superpowers/plans/2026-05-01-card-cue-migration-foundation.md`
 
-- [ ] **Step 1: Add migrated utility card smoke test**
+- [x] **Step 1: Add migrated utility card smoke test**
 
 Add this test after `test_combat_screen_click_play_triggers_particle_asset_feedback()`:
 
@@ -591,7 +591,7 @@ func test_migrated_utility_card_triggers_explicit_particle_feedback(tree: SceneT
 	return passed
 ```
 
-- [ ] **Step 2: Add migrated sword card smoke test**
+- [x] **Step 2: Add migrated sword card smoke test**
 
 Add this test after the utility smoke test:
 
@@ -629,7 +629,7 @@ func test_migrated_sword_card_uses_explicit_slash_and_camera_feedback(tree: Scen
 	return passed
 ```
 
-- [ ] **Step 3: Run smoke tests with full Godot checks**
+- [x] **Step 3: Run smoke tests with full Godot checks**
 
 Run:
 
@@ -644,7 +644,7 @@ TESTS PASSED
 Godot checks passed.
 ```
 
-- [ ] **Step 4: Run final direct import check**
+- [x] **Step 4: Run final direct import check**
 
 Run:
 
@@ -654,7 +654,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: process exits 0.
 
-- [ ] **Step 5: Verify combat boundary**
+- [x] **Step 5: Verify combat boundary**
 
 Run:
 
@@ -664,7 +664,7 @@ rtk rg -n "presentation_cues|CombatPresentation|cue_id" scripts/combat scripts/r
 
 Expected: no output. `rg` may exit 1 when there are no matches; that is acceptable for this boundary check.
 
-- [ ] **Step 6: Update README progress**
+- [x] **Step 6: Update README progress**
 
 Add this bullet under `## Phase 2 Progress` after the reduced-motion bullet:
 
@@ -681,7 +681,7 @@ Update `## Next Plans` to remove full card cue migration from the first presenta
 2. Release expansion: artifact packaging, checksums, version bump automation, signed builds, and eventual Steam adapter implementation.
 ```
 
-- [ ] **Step 7: Run final two-stage review**
+- [x] **Step 7: Run final two-stage review**
 
 Stage 1 Spec Compliance Review:
 
@@ -704,11 +704,11 @@ Stage 2 Code Quality Review:
 
 Classify all issues as Critical, Important, or Minor. Fix Critical and Important issues before acceptance.
 
-- [ ] **Step 8: Mark completed plan steps**
+- [x] **Step 8: Mark completed plan steps**
 
 Update completed checkboxes in this plan from `[ ]` to `[x]` after each step has been completed and verified.
 
-- [ ] **Step 9: Commit final smoke/docs acceptance**
+- [x] **Step 9: Commit final smoke/docs acceptance**
 
 Run:
 
