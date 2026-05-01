@@ -4,6 +4,7 @@ const CardDef := preload("res://scripts/data/card_def.gd")
 const CardPresentationCueDef := preload("res://scripts/data/card_presentation_cue_def.gd")
 const CharacterDef := preload("res://scripts/data/character_def.gd")
 const EnemyDef := preload("res://scripts/data/enemy_def.gd")
+const EnemyIntentDisplayDef := preload("res://scripts/data/enemy_intent_display_def.gd")
 const EffectDef := preload("res://scripts/data/effect_def.gd")
 const EventBus := preload("res://scripts/core/event_bus.gd")
 const EventDef := preload("res://scripts/data/event_def.gd")
@@ -45,6 +46,25 @@ func test_enemy_def_has_intent_sequence() -> bool:
 	enemy.max_hp = 24
 	enemy.intent_sequence = ["attack_5", "block_4"]
 	var passed := enemy.intent_sequence[0] == "attack_5"
+	assert(passed)
+	return passed
+
+func test_enemy_intent_display_def_stores_display_fields() -> bool:
+	var display := EnemyIntentDisplayDef.new()
+	display.id = "status.poison"
+	display.intent_kind = "apply_status"
+	display.icon_key = "poison"
+	display.label = "Poison"
+	display.color = Color(0.62, 0.42, 0.9, 1.0)
+	display.show_amount = true
+	display.show_target = true
+	var passed: bool = display.id == "status.poison" \
+		and display.intent_kind == "apply_status" \
+		and display.icon_key == "poison" \
+		and display.label == "Poison" \
+		and display.color == Color(0.62, 0.42, 0.9, 1.0) \
+		and display.show_amount \
+		and display.show_target
 	assert(passed)
 	return passed
 
