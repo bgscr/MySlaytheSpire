@@ -101,7 +101,7 @@ Do not modify:
 - Create: `scripts/data/enemy_intent_display_def.gd`
 - Generated: `scripts/data/enemy_intent_display_def.gd.uid`
 
-- [ ] **Step 1: Add failing schema test**
+- [x] **Step 1: Add failing schema test**
 
 Add this preload near the other data preloads:
 
@@ -132,7 +132,7 @@ func test_enemy_intent_display_def_stores_display_fields() -> bool:
 	return passed
 ```
 
-- [ ] **Step 2: Run tests to verify RED**
+- [x] **Step 2: Run tests to verify RED**
 
 Run:
 
@@ -142,7 +142,7 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File tools/ci/run_godot
 
 Expected: `TESTS FAILED` or import error because `res://scripts/data/enemy_intent_display_def.gd` does not exist.
 
-- [ ] **Step 3: Create `EnemyIntentDisplayDef`**
+- [x] **Step 3: Create `EnemyIntentDisplayDef`**
 
 Create `scripts/data/enemy_intent_display_def.gd`:
 
@@ -159,7 +159,7 @@ extends Resource
 @export var show_target: bool = true
 ```
 
-- [ ] **Step 4: Run tests to verify GREEN for schema**
+- [x] **Step 4: Run tests to verify GREEN for schema**
 
 Run:
 
@@ -176,7 +176,7 @@ Godot checks passed.
 
 If Godot creates `scripts/data/enemy_intent_display_def.gd.uid`, include it in the task commit.
 
-- [ ] **Step 5: Commit schema**
+- [x] **Step 5: Commit schema**
 
 Run:
 
