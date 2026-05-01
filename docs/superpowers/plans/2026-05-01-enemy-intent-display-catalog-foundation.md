@@ -533,6 +533,7 @@ rtk git commit -m "feat: load enemy intent display resources"
 - Create: `scripts/presentation/enemy_intent_display_resolver.gd`
 - Create: `tests/unit/test_enemy_intent_display.gd`
 - Modify: `scripts/content/content_catalog.gd`
+- Modify: `scripts/testing/test_runner.gd`
 - Generated: `scripts/presentation/enemy_intent_display_resolver.gd.uid`
 - Generated: `tests/unit/test_enemy_intent_display.gd.uid`
 
@@ -806,7 +807,7 @@ If Godot creates `.uid` files for the new resolver or test script, include them 
 Run:
 
 ```powershell
-rtk git add scripts/presentation/enemy_intent_display_resolver.gd scripts/presentation/enemy_intent_display_resolver.gd.uid tests/unit/test_enemy_intent_display.gd tests/unit/test_enemy_intent_display.gd.uid scripts/content/content_catalog.gd docs/superpowers/plans/2026-05-01-enemy-intent-display-catalog-foundation.md
+rtk git add scripts/presentation/enemy_intent_display_resolver.gd scripts/presentation/enemy_intent_display_resolver.gd.uid tests/unit/test_enemy_intent_display.gd tests/unit/test_enemy_intent_display.gd.uid scripts/content/content_catalog.gd scripts/testing/test_runner.gd docs/superpowers/plans/2026-05-01-enemy-intent-display-catalog-foundation.md
 rtk git commit -m "feat: resolve enemy intent display data"
 ```
 
