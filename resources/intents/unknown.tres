@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="EnemyIntentDisplayDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/enemy_intent_display_def.gd" id="1_display"]
+
+[resource]
+script = ExtResource("1_display")
+id = "unknown"
+intent_kind = "unknown"
+icon_key = "unknown"
+label = "Unknown"
+color = Color(0.72, 0.72, 0.72, 1)
+show_amount = false
+show_target = false

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="EnemyIntentDisplayDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/enemy_intent_display_def.gd" id="1_display"]
+
+[resource]
+script = ExtResource("1_display")
+id = "status.sword_focus"
+intent_kind = "self_status"
+icon_key = "sword_focus"
+label = "Sword Focus"
+color = Color(0.45, 0.72, 1, 1)
+show_amount = true
+show_target = true

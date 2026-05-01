@@ -198,7 +198,7 @@ rtk git commit -m "feat: add enemy intent display schema"
 - Create: `resources/intents/status_sword_focus.tres`
 - Create: `resources/intents/unknown.tres`
 
-- [ ] **Step 1: Add failing catalog tests**
+- [x] **Step 1: Add failing catalog tests**
 
 Add this preload near the other test preloads in `tests/unit/test_content_catalog.gd`:
 
@@ -262,7 +262,7 @@ func test_validation_reports_missing_unknown_enemy_intent_display() -> bool:
 	return passed
 ```
 
-- [ ] **Step 2: Run tests to verify RED**
+- [x] **Step 2: Run tests to verify RED**
 
 Run:
 
@@ -272,7 +272,7 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File tools/ci/run_godot
 
 Expected: `TESTS FAILED` because `ContentCatalog` does not yet expose `enemy_intent_displays_by_id` or `get_enemy_intent_display()`.
 
-- [ ] **Step 3: Add catalog fields and loader**
+- [x] **Step 3: Add catalog fields and loader**
 
 Modify `scripts/content/content_catalog.gd`.
 
@@ -392,7 +392,7 @@ func _validate_enemy_intent_displays(errors: Array[String]) -> void:
 			errors.append("Enemy intent display %s has empty label" % display.id)
 ```
 
-- [ ] **Step 4: Create display resources**
+- [x] **Step 4: Create display resources**
 
 Create `resources/intents/attack.tres`:
 
@@ -502,7 +502,7 @@ show_amount = false
 show_target = false
 ```
 
-- [ ] **Step 5: Run tests to verify GREEN for catalog loading**
+- [x] **Step 5: Run tests to verify GREEN for catalog loading**
 
 Run:
 
@@ -517,7 +517,7 @@ TESTS PASSED
 Godot checks passed.
 ```
 
-- [ ] **Step 6: Commit catalog and resources**
+- [x] **Step 6: Commit catalog and resources**
 
 Run:
 

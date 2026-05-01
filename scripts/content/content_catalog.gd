@@ -4,6 +4,7 @@ extends RefCounted
 const CardDef := preload("res://scripts/data/card_def.gd")
 const CharacterDef := preload("res://scripts/data/character_def.gd")
 const EnemyDef := preload("res://scripts/data/enemy_def.gd")
+const EnemyIntentDisplayDef := preload("res://scripts/data/enemy_intent_display_def.gd")
 const EventDef := preload("res://scripts/data/event_def.gd")
 const RelicDef := preload("res://scripts/data/relic_def.gd")
 
@@ -112,11 +113,21 @@ const DEFAULT_EVENT_PATHS: Array[String] = [
 	"res://resources/events/withered_master.tres",
 ]
 
+const DEFAULT_ENEMY_INTENT_DISPLAY_PATHS: Array[String] = [
+	"res://resources/intents/attack.tres",
+	"res://resources/intents/block.tres",
+	"res://resources/intents/status_poison.tres",
+	"res://resources/intents/status_broken_stance.tres",
+	"res://resources/intents/status_sword_focus.tres",
+	"res://resources/intents/unknown.tres",
+]
+
 var cards_by_id: Dictionary = {}
 var characters_by_id: Dictionary = {}
 var enemies_by_id: Dictionary = {}
 var relics_by_id: Dictionary = {}
 var events_by_id: Dictionary = {}
+var enemy_intent_displays_by_id: Dictionary = {}
 var load_errors: Array[String] = []
 var locale_path := "res://localization/zh_CN.po"
 
@@ -126,7 +137,8 @@ func load_default() -> void:
 		DEFAULT_CHARACTER_PATHS,
 		DEFAULT_ENEMY_PATHS,
 		DEFAULT_RELIC_PATHS,
-		DEFAULT_EVENT_PATHS
+		DEFAULT_EVENT_PATHS,
+		DEFAULT_ENEMY_INTENT_DISPLAY_PATHS
 	)
 
 func load_from_paths(
@@ -134,7 +146,8 @@ func load_from_paths(
 	character_paths: Array[String],
 	enemy_paths: Array[String],
 	relic_paths: Array[String],
-	event_paths: Array[String] = []
+	event_paths: Array[String] = [],
+	enemy_intent_display_paths: Array[String] = []
 ) -> void:
 	clear()
 	_load_cards(card_paths)
@@ -142,6 +155,7 @@ func load_from_paths(
 	_load_enemies(enemy_paths)
 	_load_relics(relic_paths)
 	_load_events(event_paths)
+	_load_enemy_intent_displays(enemy_intent_display_paths)
 
 func clear() -> void:
 	cards_by_id.clear()
@@ -149,6 +163,7 @@ func clear() -> void:
 	enemies_by_id.clear()
 	relics_by_id.clear()
 	events_by_id.clear()
+	enemy_intent_displays_by_id.clear()
 	load_errors.clear()
 
 func get_card(card_id: String) -> CardDef:
@@ -165,6 +180,9 @@ func get_relic(relic_id: String) -> RelicDef:
 
 func get_event(event_id: String) -> EventDef:
 	return events_by_id.get(event_id) as EventDef
+
+func get_enemy_intent_display(display_id: String) -> EnemyIntentDisplayDef:
+	return enemy_intent_displays_by_id.get(display_id) as EnemyIntentDisplayDef
 
 func get_events() -> Array[EventDef]:
 	var result: Array[EventDef] = []
@@ -217,6 +235,8 @@ func validate() -> Array[String]:
 	_validate_ids("enemy", enemies_by_id, errors)
 	_validate_ids("relic", relics_by_id, errors)
 	_validate_ids("event", events_by_id, errors)
+	_validate_ids("enemy intent display", enemy_intent_displays_by_id, errors)
+	_validate_enemy_intent_displays(errors)
 	_validate_character_card_refs(errors)
 	_validate_event_options(errors)
 	if locale_loaded:
@@ -277,6 +297,17 @@ func _load_events(paths: Array[String]) -> void:
 			_record_load_error("ContentCatalog resource has empty id: %s" % path)
 			continue
 		events_by_id[event.id] = event
+
+func _load_enemy_intent_displays(paths: Array[String]) -> void:
+	for path in paths:
+		var display := load(path) as EnemyIntentDisplayDef
+		if display == null:
+			_record_load_error("ContentCatalog expected EnemyIntentDisplayDef resource: %s" % path)
+			continue
+		if display.id.is_empty():
+			_record_load_error("ContentCatalog resource has empty id: %s" % path)
+			continue
+		enemy_intent_displays_by_id[display.id] = display
 
 func _record_load_error(message: String) -> void:
 	load_errors.append(message)
@@ -339,6 +370,17 @@ func _validate_event_options(errors: Array[String]) -> void:
 					errors.append("Event %s option %s references missing relic %s" % [event.id, option.id, relic_id])
 			if not option.relic_reward_tier.is_empty() and get_relics_by_tier(option.relic_reward_tier).is_empty():
 				errors.append("Event %s option %s references empty relic tier %s" % [event.id, option.id, option.relic_reward_tier])
+
+func _validate_enemy_intent_displays(errors: Array[String]) -> void:
+	if not enemy_intent_displays_by_id.has("unknown"):
+		errors.append("Enemy intent display catalog is missing unknown fallback")
+	for display: EnemyIntentDisplayDef in enemy_intent_displays_by_id.values():
+		if display.intent_kind.is_empty():
+			errors.append("Enemy intent display %s has empty intent_kind" % display.id)
+		if display.icon_key.is_empty():
+			errors.append("Enemy intent display %s has empty icon_key" % display.id)
+		if display.label.is_empty():
+			errors.append("Enemy intent display %s has empty label" % display.id)
 
 func _require_locale_key(key: String, label: String, locale_keys: Dictionary, errors: Array[String]) -> void:
 	if key.is_empty():

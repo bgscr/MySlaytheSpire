@@ -4,6 +4,7 @@ const ContentCatalog := preload("res://scripts/content/content_catalog.gd")
 const CardDef := preload("res://scripts/data/card_def.gd")
 const CharacterDef := preload("res://scripts/data/character_def.gd")
 const EnemyDef := preload("res://scripts/data/enemy_def.gd")
+const EnemyIntentDisplayDef := preload("res://scripts/data/enemy_intent_display_def.gd")
 const EventDef := preload("res://scripts/data/event_def.gd")
 
 func test_default_catalog_loads_existing_resources() -> bool:
@@ -16,6 +17,58 @@ func test_default_catalog_loads_existing_resources() -> bool:
 		and catalog.get_enemy("training_puppet") != null \
 		and catalog.get_enemy("boss_heart_demon") != null \
 		and catalog.get_relic("jade_talisman") != null
+	assert(passed)
+	return passed
+
+func test_default_catalog_loads_enemy_intent_display_resources() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.load_default()
+	var attack := catalog.get_enemy_intent_display("attack")
+	var poison := catalog.get_enemy_intent_display("status.poison")
+	var unknown := catalog.get_enemy_intent_display("unknown")
+	var passed: bool = catalog.enemy_intent_displays_by_id.size() == 6 \
+		and attack != null \
+		and attack.intent_kind == "attack" \
+		and attack.icon_key == "attack" \
+		and poison != null \
+		and poison.intent_kind == "apply_status" \
+		and poison.icon_key == "poison" \
+		and unknown != null \
+		and unknown.intent_kind == "unknown"
+	assert(passed)
+	return passed
+
+func test_validation_reports_invalid_enemy_intent_display_resources() -> bool:
+	var catalog := ContentCatalog.new()
+	var unknown := EnemyIntentDisplayDef.new()
+	unknown.id = "unknown"
+	unknown.intent_kind = "unknown"
+	unknown.icon_key = "unknown"
+	unknown.label = "Unknown"
+	catalog.enemy_intent_displays_by_id[unknown.id] = unknown
+	var invalid := EnemyIntentDisplayDef.new()
+	invalid.id = "bad"
+	invalid.intent_kind = ""
+	invalid.icon_key = ""
+	invalid.label = ""
+	catalog.enemy_intent_displays_by_id[invalid.id] = invalid
+	var errors := catalog.validate()
+	var passed: bool = _any_contains(errors, "Enemy intent display bad has empty intent_kind") \
+		and _any_contains(errors, "Enemy intent display bad has empty icon_key") \
+		and _any_contains(errors, "Enemy intent display bad has empty label")
+	assert(passed)
+	return passed
+
+func test_validation_reports_missing_unknown_enemy_intent_display() -> bool:
+	var catalog := ContentCatalog.new()
+	var attack := EnemyIntentDisplayDef.new()
+	attack.id = "attack"
+	attack.intent_kind = "attack"
+	attack.icon_key = "attack"
+	attack.label = "Attack"
+	catalog.enemy_intent_displays_by_id[attack.id] = attack
+	var errors := catalog.validate()
+	var passed: bool = _any_contains(errors, "Enemy intent display catalog is missing unknown fallback")
 	assert(passed)
 	return passed
 
