@@ -8,10 +8,10 @@
 - **Goal-Driven Execution**: Transform instructions into verifiable goals. Before executing complex multi-step tasks, outline concise steps and verification criteria (e.g., `1. [Step] -> verify: [check]`). Use test-driven approaches whenever possible to ensure logic is correct before and after changes.
 
 ## 2. Branch and Workspace Rule
-Project development may use git branches, git worktrees, and subagents when useful.
-- **Branches Allowed**: Use feature branches with the `codex/` prefix by default.
-- **Worktrees Allowed**: Use the default worktree location selected by the active agent workflow unless the user specifies a path.
-- **Subagents Allowed**: Use subagents for implementation and review work when the task benefits from delegation.
+Project development must prioritize the main branch while utilizing git worktrees for isolated or parallel agent tasks.
+- **Default Workspace**: Always work directly on the `main` branch by default. Do not create or checkout feature branches in the primary repository directory.
+- **Worktrees for Branching**: When a new branch is necessary (e.g., for complex features, experiments, or delegation), **always use `git worktree`** to create an isolated workspace for it. Create feature branches with the `codex/` prefix strictly within these worktrees.
+- **Subagents & Parallel Work**: When delegating tasks, dispatch subagents to operate within these specific worktrees. Multiple subagents are allowed and encouraged to work concurrently across different worktrees on separate branches if the workload requires it.
 
 ## 3. Code Review Process
 After each completed Godot feature, run code review in two strict stages. 
