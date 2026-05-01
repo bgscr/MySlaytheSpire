@@ -536,7 +536,7 @@ rtk git commit -m "feat: load enemy intent display resources"
 - Generated: `scripts/presentation/enemy_intent_display_resolver.gd.uid`
 - Generated: `tests/unit/test_enemy_intent_display.gd.uid`
 
-- [ ] **Step 1: Add failing resolver tests**
+- [x] **Step 1: Add failing resolver tests**
 
 Create `tests/unit/test_enemy_intent_display.gd`:
 
@@ -628,7 +628,7 @@ func test_default_enemy_intents_resolve_to_known_displays() -> bool:
 	return true
 ```
 
-- [ ] **Step 2: Run tests to verify RED**
+- [x] **Step 2: Run tests to verify RED**
 
 Run:
 
@@ -638,7 +638,7 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File tools/ci/run_godot
 
 Expected: `TESTS FAILED` or import error because `res://scripts/presentation/enemy_intent_display_resolver.gd` does not exist.
 
-- [ ] **Step 3: Implement resolver**
+- [x] **Step 3: Implement resolver**
 
 Create `scripts/presentation/enemy_intent_display_resolver.gd`:
 
@@ -758,7 +758,7 @@ func _fallback_without_resource(intent: String) -> Dictionary:
 	}
 ```
 
-- [ ] **Step 4: Add catalog validation for default enemy intent displays**
+- [x] **Step 4: Add catalog validation for default enemy intent displays**
 
 Add this preload to `scripts/content/content_catalog.gd` near the other preloads:
 
@@ -784,7 +784,7 @@ func _validate_default_enemy_intent_displays(errors: Array[String]) -> void:
 				errors.append("Enemy %s intent %s has no known display" % [enemy.id, intent])
 ```
 
-- [ ] **Step 5: Run tests to verify GREEN**
+- [x] **Step 5: Run tests to verify GREEN**
 
 Run:
 
@@ -801,7 +801,7 @@ Godot checks passed.
 
 If Godot creates `.uid` files for the new resolver or test script, include them in the task commit.
 
-- [ ] **Step 6: Commit resolver**
+- [x] **Step 6: Commit resolver**
 
 Run:
 

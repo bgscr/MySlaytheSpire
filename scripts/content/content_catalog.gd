@@ -5,6 +5,7 @@ const CardDef := preload("res://scripts/data/card_def.gd")
 const CharacterDef := preload("res://scripts/data/character_def.gd")
 const EnemyDef := preload("res://scripts/data/enemy_def.gd")
 const EnemyIntentDisplayDef := preload("res://scripts/data/enemy_intent_display_def.gd")
+const EnemyIntentDisplayResolver := preload("res://scripts/presentation/enemy_intent_display_resolver.gd")
 const EventDef := preload("res://scripts/data/event_def.gd")
 const RelicDef := preload("res://scripts/data/relic_def.gd")
 
@@ -237,6 +238,7 @@ func validate() -> Array[String]:
 	_validate_ids("event", events_by_id, errors)
 	_validate_ids("enemy intent display", enemy_intent_displays_by_id, errors)
 	_validate_enemy_intent_displays(errors)
+	_validate_default_enemy_intent_displays(errors)
 	_validate_character_card_refs(errors)
 	_validate_event_options(errors)
 	if locale_loaded:
@@ -381,6 +383,14 @@ func _validate_enemy_intent_displays(errors: Array[String]) -> void:
 			errors.append("Enemy intent display %s has empty icon_key" % display.id)
 		if display.label.is_empty():
 			errors.append("Enemy intent display %s has empty label" % display.id)
+
+func _validate_default_enemy_intent_displays(errors: Array[String]) -> void:
+	var resolver := EnemyIntentDisplayResolver.new()
+	for enemy: EnemyDef in enemies_by_id.values():
+		for intent in enemy.intent_sequence:
+			var display := resolver.resolve(intent, self)
+			if not bool(display.get("is_known", false)):
+				errors.append("Enemy %s intent %s has no known display" % [enemy.id, intent])
 
 func _require_locale_key(key: String, label: String, locale_keys: Dictionary, errors: Array[String]) -> void:
 	if key.is_empty():
