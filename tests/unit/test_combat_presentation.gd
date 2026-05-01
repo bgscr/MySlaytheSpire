@@ -2,6 +2,7 @@ extends RefCounted
 
 const CardDef := preload("res://scripts/data/card_def.gd")
 const CardPresentationCueDef := preload("res://scripts/data/card_presentation_cue_def.gd")
+const ContentCatalog := preload("res://scripts/content/content_catalog.gd")
 const CombatPresentationAssetCatalog := preload("res://scripts/presentation/combat_presentation_asset_catalog.gd")
 const CombatPresentationConfig := preload("res://scripts/presentation/combat_presentation_config.gd")
 const CombatPresentationCueResolver := preload("res://scripts/presentation/combat_presentation_cue_resolver.gd")
@@ -399,6 +400,45 @@ func test_cue_resolver_does_not_infer_slow_motion_or_audio() -> bool:
 	var events := CombatPresentationCueResolver.new().resolve_card_play(card, "player", "enemy:0", [])
 	var passed: bool = _event_count(events, "slow_motion") == 0 \
 		and _event_count(events, "audio_cue") == 0
+	assert(passed)
+	return passed
+
+func test_resolver_uses_migrated_catalog_cues_with_card_cue_ids() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.load_default()
+	var card := catalog.get_card("sword.flash_cut")
+	var damage := CombatPresentationEvent.new("damage_number")
+	damage.target_id = "enemy:0"
+	damage.amount = 4
+
+	var events := CombatPresentationCueResolver.new().resolve_card_play(card, "player", "enemy:0", [damage])
+	var slash := _first_event(events, "cinematic_slash")
+	var camera := _first_event(events, "camera_impulse")
+	var passed: bool = slash != null \
+		and slash.payload.get("cue_id") == "sword.flash_cut" \
+		and slash.target_id == "enemy:0" \
+		and slash.tags.has("cinematic") \
+		and camera != null \
+		and camera.payload.get("cue_id") == "sword.flash_cut" \
+		and camera.target_id == ""
+	assert(passed)
+	return passed
+
+func test_resolver_uses_migrated_utility_and_status_cues() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.load_default()
+	var guard := catalog.get_card("sword.guard")
+	var poison := catalog.get_card("alchemy.poison_mist")
+	var guard_events := CombatPresentationCueResolver.new().resolve_card_play(guard, "player", "", [])
+	var poison_events := CombatPresentationCueResolver.new().resolve_card_play(poison, "player", "enemy:0", [])
+	var guard_particle := _first_event(guard_events, "particle_burst")
+	var poison_particle := _first_event(poison_events, "particle_burst")
+	var passed: bool = guard_particle != null \
+		and guard_particle.payload.get("cue_id") == "sword.guard" \
+		and guard_particle.target_id == "player" \
+		and poison_particle != null \
+		and poison_particle.payload.get("cue_id") == "alchemy.poison_mist" \
+		and poison_particle.target_id == "enemy:0"
 	assert(passed)
 	return passed
 

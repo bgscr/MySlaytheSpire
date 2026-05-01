@@ -189,7 +189,7 @@ Use the exact subresource list for the card from the cue matrix below.
 
 - Modify: `tests/unit/test_content_catalog.gd`
 
-- [ ] **Step 1: Add failing catalog cue coverage test**
+- [x] **Step 1: Add failing catalog cue coverage test**
 
 Add this test after `test_representative_cards_load_explicit_presentation_cues()`:
 
@@ -241,7 +241,7 @@ func test_default_catalog_cards_have_explicit_presentation_cues() -> bool:
 	return true
 ```
 
-- [ ] **Step 2: Strengthen representative cue coverage**
+- [x] **Step 2: Strengthen representative cue coverage**
 
 Replace the body of `test_representative_cards_load_explicit_presentation_cues()` with:
 
@@ -277,7 +277,7 @@ func test_representative_cards_load_explicit_presentation_cues() -> bool:
 	return passed
 ```
 
-- [ ] **Step 3: Run tests to verify RED**
+- [x] **Step 3: Run tests to verify RED**
 
 Run:
 
@@ -295,7 +295,7 @@ Do not commit failing tests.
 
 - Modify: `tests/unit/test_combat_presentation.gd`
 
-- [ ] **Step 1: Add ContentCatalog preload**
+- [x] **Step 1: Add ContentCatalog preload**
 
 Add this near the existing preloads:
 
@@ -303,7 +303,7 @@ Add this near the existing preloads:
 const ContentCatalog := preload("res://scripts/content/content_catalog.gd")
 ```
 
-- [ ] **Step 2: Add failing resolver test for card cue ids**
+- [x] **Step 2: Add failing resolver test for card cue ids**
 
 Add this test after `test_cue_resolver_does_not_infer_slow_motion_or_audio()`:
 
@@ -330,7 +330,7 @@ func test_resolver_uses_migrated_catalog_cues_with_card_cue_ids() -> bool:
 	return passed
 ```
 
-- [ ] **Step 3: Add failing resolver test for utility/status cues**
+- [x] **Step 3: Add failing resolver test for utility/status cues**
 
 Add this test after the previous new test:
 
@@ -354,7 +354,7 @@ func test_resolver_uses_migrated_utility_and_status_cues() -> bool:
 	return passed
 ```
 
-- [ ] **Step 4: Run tests to verify RED**
+- [x] **Step 4: Run tests to verify RED**
 
 Run:
 
@@ -373,7 +373,7 @@ Do not commit failing tests.
 - Modify: `resources/cards/sword/*.tres`
 - Modify: `docs/superpowers/plans/2026-05-01-card-cue-migration-foundation.md`
 
-- [ ] **Step 1: Add or update `3_cue` ext resources**
+- [x] **Step 1: Add or update `3_cue` ext resources**
 
 For each sword card in the cue matrix, ensure this ext resource exists:
 
@@ -383,7 +383,7 @@ For each sword card in the cue matrix, ensure this ext resource exists:
 
 If a card already has `3_cue`, keep the existing id and style.
 
-- [ ] **Step 2: Add sword cue subresources**
+- [x] **Step 2: Add sword cue subresources**
 
 For every sword card, add the subresources listed in the sword cue matrix.
 
@@ -418,7 +418,7 @@ cue_id = "<card id>"
 
 For `sword.heaven_cutting_arc`, update the existing slow-motion and audio cue ids to remain `sword.heaven_cutting_arc`, then include all five cue subresources in `presentation_cues`.
 
-- [ ] **Step 3: Update sword `presentation_cues` arrays**
+- [x] **Step 3: Update sword `presentation_cues` arrays**
 
 For each sword card, set `presentation_cues` to the exact subresource list from the cue matrix.
 
@@ -434,7 +434,7 @@ Example for `resources/cards/sword/break_stance.tres`:
 presentation_cues = Array[ExtResource("3_cue")]([SubResource("Resource_slash_cue"), SubResource("Resource_target_particle_cue"), SubResource("Resource_camera_cue")])
 ```
 
-- [ ] **Step 4: Run tests to verify partial GREEN for sword coverage**
+- [x] **Step 4: Run tests to verify partial GREEN for sword coverage**
 
 Run:
 
@@ -453,7 +453,7 @@ Do not commit partial feature unless only alchemy coverage remains failing.
 - Modify: `resources/cards/alchemy/*.tres`
 - Modify: `docs/superpowers/plans/2026-05-01-card-cue-migration-foundation.md`
 
-- [ ] **Step 1: Add or update `3_cue` ext resources**
+- [x] **Step 1: Add or update `3_cue` ext resources**
 
 For each alchemy card in the cue matrix, ensure this ext resource exists:
 
@@ -463,7 +463,7 @@ For each alchemy card in the cue matrix, ensure this ext resource exists:
 
 If a card already has `3_cue`, keep the existing id and style.
 
-- [ ] **Step 2: Add alchemy cue subresources**
+- [x] **Step 2: Add alchemy cue subresources**
 
 For every alchemy card, add the subresources listed in the alchemy cue matrix.
 
@@ -489,7 +489,7 @@ intensity = 1.0
 cue_id = "<card id>"
 ```
 
-- [ ] **Step 3: Update alchemy `presentation_cues` arrays**
+- [x] **Step 3: Update alchemy `presentation_cues` arrays**
 
 For each alchemy card, set `presentation_cues` to the exact subresource list from the cue matrix.
 
@@ -505,7 +505,7 @@ Example for `resources/cards/alchemy/cauldron_burst.tres`:
 presentation_cues = Array[ExtResource("3_cue")]([SubResource("Resource_target_particle_cue"), SubResource("Resource_player_particle_cue"), SubResource("Resource_camera_cue")])
 ```
 
-- [ ] **Step 4: Run tests to verify GREEN**
+- [x] **Step 4: Run tests to verify GREEN**
 
 Run:
 
@@ -520,7 +520,7 @@ TESTS PASSED
 Godot checks passed.
 ```
 
-- [ ] **Step 5: Run Task 3-4 review gates**
+- [x] **Step 5: Run Task 3-4 review gates**
 
 Stage 1 Spec Compliance Review:
 
@@ -538,7 +538,7 @@ Stage 2 Code Quality Review:
 - Existing exact asset mappings still resolve.
 - Fallback resolver behavior still exists for non-catalog cards.
 
-- [ ] **Step 6: Commit migrated resources and tests**
+- [x] **Step 6: Commit migrated resources and tests**
 
 Run:
 

@@ -304,20 +304,77 @@ func test_representative_cards_load_explicit_presentation_cues() -> bool:
 	var catalog := ContentCatalog.new()
 	catalog.load_default()
 	var strike := catalog.get_card("sword.strike")
-	var toxic := catalog.get_card("alchemy.toxic_pill")
+	var flash := catalog.get_card("sword.flash_cut")
+	var guard := catalog.get_card("sword.guard")
+	var poison := catalog.get_card("alchemy.poison_mist")
+	var quick := catalog.get_card("alchemy.quick_simmer")
 	var heaven := catalog.get_card("sword.heaven_cutting_arc")
 	var passed: bool = strike != null \
-		and toxic != null \
+		and flash != null \
+		and guard != null \
+		and poison != null \
+		and quick != null \
 		and heaven != null \
-		and strike.presentation_cues.size() == 1 \
-		and strike.presentation_cues[0].event_type == "cinematic_slash" \
-		and toxic.presentation_cues.size() == 1 \
-		and toxic.presentation_cues[0].event_type == "particle_burst" \
-		and heaven.presentation_cues.size() == 2 \
+		and _has_card_cue(strike, "cinematic_slash") \
+		and _has_card_cue(strike, "camera_impulse") \
+		and _has_card_cue(flash, "cinematic_slash") \
+		and _has_card_cue(flash, "camera_impulse") \
+		and _has_card_cue(guard, "particle_burst") \
+		and _has_card_cue(poison, "particle_burst") \
+		and _has_card_cue(quick, "particle_burst") \
+		and _has_card_cue(heaven, "cinematic_slash") \
+		and _has_card_cue(heaven, "particle_burst") \
+		and _has_card_cue(heaven, "camera_impulse") \
 		and _has_card_cue(heaven, "slow_motion") \
 		and _has_card_cue(heaven, "audio_cue")
 	assert(passed)
 	return passed
+
+func test_default_catalog_cards_have_explicit_presentation_cues() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.load_default()
+	var allowed_event_types := [
+		"cinematic_slash",
+		"particle_burst",
+		"camera_impulse",
+		"slow_motion",
+		"audio_cue",
+	]
+	var allowed_target_modes := [
+		"played_target",
+		"source",
+		"player",
+		"none",
+	]
+	for card in catalog.cards_by_id.values():
+		var typed_card := card as CardDef
+		if typed_card == null:
+			push_error("Catalog card is not CardDef: %s" % str(card))
+			assert(false)
+			return false
+		if typed_card.presentation_cues.is_empty():
+			push_error("Card has no explicit presentation cues: %s" % typed_card.id)
+			assert(false)
+			return false
+		for cue in typed_card.presentation_cues:
+			if cue == null:
+				push_error("Card has null presentation cue: %s" % typed_card.id)
+				assert(false)
+				return false
+			if not allowed_event_types.has(cue.event_type):
+				push_error("Card has unsupported cue event type: %s %s" % [typed_card.id, cue.event_type])
+				assert(false)
+				return false
+			if not allowed_target_modes.has(cue.target_mode):
+				push_error("Card has unsupported cue target mode: %s %s" % [typed_card.id, cue.target_mode])
+				assert(false)
+				return false
+			if cue.cue_id != typed_card.id:
+				push_error("Card cue id should equal card id: %s cue=%s" % [typed_card.id, cue.cue_id])
+				assert(false)
+				return false
+	assert(true)
+	return true
 
 func _ids(resources: Array) -> Array[String]:
 	var ids: Array[String] = []

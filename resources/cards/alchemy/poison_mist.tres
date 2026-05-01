@@ -1,7 +1,8 @@
-[gd_resource type="Resource" script_class="CardDef" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="CardDef" load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/data/card_def.gd" id="1_card"]
 [ext_resource type="Script" path="res://scripts/data/effect_def.gd" id="2_effect"]
+[ext_resource type="Script" path="res://scripts/data/card_presentation_cue_def.gd" id="3_cue"]
 
 [sub_resource type="Resource" id="Resource_status"]
 script = ExtResource("2_effect")
@@ -9,6 +10,14 @@ effect_type = "apply_status"
 amount = 3
 status_id = "poison"
 target = "enemy"
+
+
+[sub_resource type="Resource" id="Resource_target_particle_cue"]
+script = ExtResource("3_cue")
+event_type = "particle_burst"
+target_mode = "played_target"
+intensity = 1.0
+cue_id = "alchemy.poison_mist"
 
 [resource]
 script = ExtResource("1_card")
@@ -19,6 +28,7 @@ cost = 1
 card_type = "skill"
 rarity = "common"
 effects = Array[ExtResource("2_effect")]([SubResource("Resource_status")])
+presentation_cues = Array[ExtResource("3_cue")]([SubResource("Resource_target_particle_cue")])
 character_id = "alchemy"
 pool_tags = Array[String](["starter"])
 reward_weight = 100

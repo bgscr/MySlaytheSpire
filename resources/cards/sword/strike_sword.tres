@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="CardDef" load_steps=5 format=3]
+[gd_resource type="Resource" script_class="CardDef" load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scripts/data/card_def.gd" id="1_card"]
 [ext_resource type="Script" path="res://scripts/data/effect_def.gd" id="2_effect"]
@@ -10,6 +10,7 @@ effect_type = "damage"
 amount = 6
 target = "enemy"
 
+
 [sub_resource type="Resource" id="Resource_slash_cue"]
 script = ExtResource("3_cue")
 event_type = "cinematic_slash"
@@ -17,6 +18,13 @@ target_mode = "played_target"
 intensity = 1.0
 cue_id = "sword.strike"
 tags = Array[String](["cinematic"])
+
+[sub_resource type="Resource" id="Resource_camera_cue"]
+script = ExtResource("3_cue")
+event_type = "camera_impulse"
+target_mode = "none"
+intensity = 1.0
+cue_id = "sword.strike"
 
 [resource]
 script = ExtResource("1_card")
@@ -27,7 +35,7 @@ cost = 1
 card_type = "attack"
 rarity = "common"
 effects = Array[ExtResource("2_effect")]([SubResource("Resource_damage")])
-presentation_cues = Array[ExtResource("3_cue")]([SubResource("Resource_slash_cue")])
+presentation_cues = Array[ExtResource("3_cue")]([SubResource("Resource_slash_cue"), SubResource("Resource_camera_cue")])
 character_id = "sword"
 pool_tags = Array[String](["starter"])
 reward_weight = 100
