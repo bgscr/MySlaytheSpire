@@ -2,7 +2,9 @@ extends RefCounted
 
 const CardDef := preload("res://scripts/data/card_def.gd")
 const CardPresentationCueDef := preload("res://scripts/data/card_presentation_cue_def.gd")
+const CardVisualDef := preload("res://scripts/data/card_visual_def.gd")
 const CharacterDef := preload("res://scripts/data/character_def.gd")
+const CombatBackgroundDef := preload("res://scripts/data/combat_background_def.gd")
 const EnemyDef := preload("res://scripts/data/enemy_def.gd")
 const EnemyIntentDisplayDef := preload("res://scripts/data/enemy_intent_display_def.gd")
 const EffectDef := preload("res://scripts/data/effect_def.gd")
@@ -11,6 +13,7 @@ const EventDef := preload("res://scripts/data/event_def.gd")
 const EventOptionDef := preload("res://scripts/data/event_option_def.gd")
 const GameEvent := preload("res://scripts/core/game_event.gd")
 const RelicDef := preload("res://scripts/data/relic_def.gd")
+const VisualThemeDef := preload("res://scripts/data/visual_theme_def.gd")
 
 var _received_event = null
 
@@ -127,6 +130,59 @@ func test_card_def_exports_presentation_cues() -> bool:
 	var passed: bool = _has_property(card, "presentation_cues") \
 		and card.presentation_cues.size() == 1 \
 		and card.presentation_cues[0].event_type == "particle_burst"
+	assert(passed)
+	return passed
+
+func test_card_visual_def_stores_thumbnail_metadata() -> bool:
+	var visual := CardVisualDef.new()
+	visual.id = "sword.strike"
+	visual.card_id = "sword.strike"
+	visual.thumbnail_path = "res://assets/presentation/card_thumbnails/sword_attack.png"
+	visual.frame_style = "sword"
+	visual.accent_color = Color(0.55, 0.86, 1.0, 1.0)
+	visual.element_tag = "blade"
+	visual.thumbnail_alt_label = "Sword attack thumbnail"
+	var passed: bool = visual.id == "sword.strike" \
+		and visual.card_id == "sword.strike" \
+		and visual.thumbnail_path == "res://assets/presentation/card_thumbnails/sword_attack.png" \
+		and visual.frame_style == "sword" \
+		and visual.accent_color == Color(0.55, 0.86, 1.0, 1.0) \
+		and visual.element_tag == "blade" \
+		and visual.thumbnail_alt_label == "Sword attack thumbnail"
+	assert(passed)
+	return passed
+
+func test_combat_background_def_stores_backdrop_metadata() -> bool:
+	var background := CombatBackgroundDef.new()
+	background.id = "sword_training_ground"
+	background.texture_path = "res://assets/presentation/backgrounds/sword_training_ground.png"
+	background.environment_tag = "training_ground"
+	background.encounter_tier = "normal"
+	background.accent_color = Color(0.42, 0.72, 0.9, 1.0)
+	background.dim_opacity = 0.28
+	var passed: bool = background.id == "sword_training_ground" \
+		and background.texture_path == "res://assets/presentation/backgrounds/sword_training_ground.png" \
+		and background.environment_tag == "training_ground" \
+		and background.encounter_tier == "normal" \
+		and background.accent_color == Color(0.42, 0.72, 0.9, 1.0) \
+		and is_equal_approx(background.dim_opacity, 0.28)
+	assert(passed)
+	return passed
+
+func test_visual_theme_def_stores_character_visual_identity() -> bool:
+	var theme := VisualThemeDef.new()
+	theme.id = "sword"
+	theme.character_id = "sword"
+	theme.default_background_id = "sword_training_ground"
+	theme.card_frame_style = "sword"
+	theme.card_accent_color = Color(0.55, 0.86, 1.0, 1.0)
+	theme.background_accent_color = Color(0.25, 0.5, 0.72, 1.0)
+	var passed: bool = theme.id == "sword" \
+		and theme.character_id == "sword" \
+		and theme.default_background_id == "sword_training_ground" \
+		and theme.card_frame_style == "sword" \
+		and theme.card_accent_color == Color(0.55, 0.86, 1.0, 1.0) \
+		and theme.background_accent_color == Color(0.25, 0.5, 0.72, 1.0)
 	assert(passed)
 	return passed
 

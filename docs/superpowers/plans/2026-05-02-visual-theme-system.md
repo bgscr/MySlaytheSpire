@@ -109,7 +109,7 @@ Do not modify:
 - Generated: `scripts/data/combat_background_def.gd.uid`
 - Generated: `scripts/data/visual_theme_def.gd.uid`
 
-- [ ] **Step 1: Add failing schema tests**
+- [x] **Step 1: Add failing schema tests**
 
 Add these preloads near the other data preloads in `tests/unit/test_resource_schemas.gd`:
 
@@ -176,7 +176,7 @@ func test_visual_theme_def_stores_character_visual_identity() -> bool:
 	return passed
 ```
 
-- [ ] **Step 2: Run tests to verify RED**
+- [x] **Step 2: Run tests to verify RED**
 
 Run:
 
@@ -186,7 +186,7 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File tools/ci/run_godot
 
 Expected: `TESTS FAILED` or import errors because the three visual resource scripts do not exist.
 
-- [ ] **Step 3: Create visual resource scripts**
+- [x] **Step 3: Create visual resource scripts**
 
 Create `scripts/data/card_visual_def.gd`:
 
@@ -231,7 +231,7 @@ extends Resource
 @export var background_accent_color: Color = Color.WHITE
 ```
 
-- [ ] **Step 4: Run tests to verify GREEN for schema**
+- [x] **Step 4: Run tests to verify GREEN for schema**
 
 Run:
 
@@ -246,7 +246,7 @@ TESTS PASSED
 Godot checks passed.
 ```
 
-- [ ] **Step 5: Commit schema**
+- [x] **Step 5: Commit schema**
 
 Run:
 
