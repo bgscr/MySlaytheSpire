@@ -214,7 +214,7 @@ If Godot has not created `scripts/data/enemy_visual_def.gd.uid`, omit only that 
 - Modify: `tests/unit/test_content_catalog.gd`
 - Modify: `scripts/content/content_catalog.gd`
 
-- [ ] **Step 1: Add failing catalog preload**
+- [x] **Step 1: Add failing catalog preload**
 
 Add this preload near the other data preloads in `tests/unit/test_content_catalog.gd`:
 
@@ -222,7 +222,7 @@ Add this preload near the other data preloads in `tests/unit/test_content_catalo
 const EnemyVisualDef := preload("res://scripts/data/enemy_visual_def.gd")
 ```
 
-- [ ] **Step 2: Add failing catalog loading and validation tests**
+- [x] **Step 2: Add failing catalog loading and validation tests**
 
 Add these tests after `test_default_catalog_loads_visual_theme_resources()` in `tests/unit/test_content_catalog.gd`:
 
@@ -287,7 +287,7 @@ func test_validation_reports_invalid_enemy_visual_resources() -> bool:
 	return passed
 ```
 
-- [ ] **Step 3: Run tests to verify RED**
+- [x] **Step 3: Run tests to verify RED**
 
 Run:
 
@@ -297,7 +297,7 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File tools/ci/run_godot
 
 Expected: `TESTS FAILED` because `ContentCatalog` does not expose `enemy_visuals_by_enemy_id` or `get_enemy_visual()` yet.
 
-- [ ] **Step 4: Add enemy visual preload and default paths**
+- [x] **Step 4: Add enemy visual preload and default paths**
 
 Modify `scripts/content/content_catalog.gd`.
 
@@ -330,7 +330,7 @@ const DEFAULT_ENEMY_VISUAL_PATHS: Array[String] = [
 ]
 ```
 
-- [ ] **Step 5: Add catalog dictionary, getter, and loader arguments**
+- [x] **Step 5: Add catalog dictionary, getter, and loader arguments**
 
 In `scripts/content/content_catalog.gd`, add this dictionary near existing visual dictionaries:
 
@@ -408,7 +408,7 @@ func get_enemy_visual(enemy_id: String) -> EnemyVisualDef:
 	return enemy_visuals_by_enemy_id.get(enemy_id) as EnemyVisualDef
 ```
 
-- [ ] **Step 6: Add enemy visual loader and validation**
+- [x] **Step 6: Add enemy visual loader and validation**
 
 Add this loader after `_load_visual_themes()`:
 
@@ -461,7 +461,7 @@ func _validate_enemy_visual(visual: EnemyVisualDef, errors: Array[String]) -> vo
 		errors.append("Enemy visual %s has empty frame_style" % visual.id)
 ```
 
-- [ ] **Step 7: Run tests to verify expected resource RED**
+- [x] **Step 7: Run tests to verify expected resource RED**
 
 Run:
 
@@ -482,7 +482,7 @@ Do not commit this task until Task 3 supplies resources and tests pass.
 - Modify: `docs/superpowers/plans/2026-05-02-enemy-art-foundation.md`
 - Generated: `assets/presentation/enemy_portraits/*.png.import`
 
-- [ ] **Step 1: Generate first-batch enemy portrait PNG assets**
+- [x] **Step 1: Generate first-batch enemy portrait PNG assets**
 
 Run this command to create deterministic 128x96 foundation PNGs:
 
@@ -492,7 +492,7 @@ rtk proxy powershell -NoProfile -Command "New-Item -ItemType Directory -Force 'a
 
 Expected: command exits 0 and `assets/presentation/enemy_portraits` contains 17 `.png` files.
 
-- [ ] **Step 2: Create enemy visual resource directory**
+- [x] **Step 2: Create enemy visual resource directory**
 
 Run:
 
@@ -502,7 +502,7 @@ rtk proxy powershell -NoProfile -Command "New-Item -ItemType Directory -Force 'r
 
 Expected: command exits 0.
 
-- [ ] **Step 3: Create normal enemy visual resources**
+- [x] **Step 3: Create normal enemy visual resources**
 
 Create `resources/visuals/enemy_visuals/training_puppet.tres`:
 
@@ -630,7 +630,7 @@ silhouette_tag = "duelist"
 portrait_alt_label = "Iron oath duelist portrait"
 ```
 
-- [ ] **Step 4: Create elite enemy visual resources**
+- [x] **Step 4: Create elite enemy visual resources**
 
 Create `resources/visuals/enemy_visuals/forest_bandit.tres`:
 
@@ -722,7 +722,7 @@ silhouette_tag = "alchemist"
 portrait_alt_label = "Miasma cauldron elder portrait"
 ```
 
-- [ ] **Step 5: Create boss enemy visual resources**
+- [x] **Step 5: Create boss enemy visual resources**
 
 Create `resources/visuals/enemy_visuals/boss_heart_demon.tres`:
 
@@ -796,7 +796,7 @@ silhouette_tag = "spirit"
 portrait_alt_label = "Sword ghost portrait"
 ```
 
-- [ ] **Step 6: Run tests to verify catalog GREEN**
+- [x] **Step 6: Run tests to verify catalog GREEN**
 
 Run:
 
@@ -811,7 +811,7 @@ TESTS PASSED
 Godot checks passed.
 ```
 
-- [ ] **Step 7: Commit catalog and resources**
+- [x] **Step 7: Commit catalog and resources**
 
 Run:
 

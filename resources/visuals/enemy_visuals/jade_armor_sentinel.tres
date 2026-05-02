@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="EnemyVisualDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/enemy_visual_def.gd" id="1_visual"]
+
+[resource]
+script = ExtResource("1_visual")
+id = "jade_armor_sentinel"
+enemy_id = "jade_armor_sentinel"
+portrait_path = "res://assets/presentation/enemy_portraits/jade_sentinel.png"
+frame_style = "elite"
+accent_color = Color(0.31, 0.68, 0.54, 1)
+silhouette_tag = "sentinel"
+portrait_alt_label = "Jade armor sentinel portrait"

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="EnemyVisualDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/enemy_visual_def.gd" id="1_visual"]
+
+[resource]
+script = ExtResource("1_visual")
+id = "training_puppet"
+enemy_id = "training_puppet"
+portrait_path = "res://assets/presentation/enemy_portraits/construct_wood.png"
+frame_style = "normal"
+accent_color = Color(0.68, 0.52, 0.32, 1)
+silhouette_tag = "construct"
+portrait_alt_label = "Training puppet portrait"

@@ -8,6 +8,7 @@ const CombatBackgroundDef := preload("res://scripts/data/combat_background_def.g
 const EnemyDef := preload("res://scripts/data/enemy_def.gd")
 const EnemyIntentDisplayDef := preload("res://scripts/data/enemy_intent_display_def.gd")
 const EnemyIntentDisplayResolver := preload("res://scripts/presentation/enemy_intent_display_resolver.gd")
+const EnemyVisualDef := preload("res://scripts/data/enemy_visual_def.gd")
 const EventDef := preload("res://scripts/data/event_def.gd")
 const RelicDef := preload("res://scripts/data/relic_def.gd")
 const VisualThemeDef := preload("res://scripts/data/visual_theme_def.gd")
@@ -180,6 +181,25 @@ const DEFAULT_VISUAL_THEME_PATHS: Array[String] = [
 	"res://resources/visuals/themes/alchemy.tres",
 ]
 
+const DEFAULT_ENEMY_VISUAL_PATHS: Array[String] = [
+	"res://resources/visuals/enemy_visuals/training_puppet.tres",
+	"res://resources/visuals/enemy_visuals/forest_bandit.tres",
+	"res://resources/visuals/enemy_visuals/boss_heart_demon.tres",
+	"res://resources/visuals/enemy_visuals/wild_fox_spirit.tres",
+	"res://resources/visuals/enemy_visuals/ash_lantern_cultist.tres",
+	"res://resources/visuals/enemy_visuals/stone_grove_guardian.tres",
+	"res://resources/visuals/enemy_visuals/mirror_blade_adept.tres",
+	"res://resources/visuals/enemy_visuals/venom_cauldron_hermit.tres",
+	"res://resources/visuals/enemy_visuals/boss_storm_dragon.tres",
+	"res://resources/visuals/enemy_visuals/scarlet_mantis_acolyte.tres",
+	"res://resources/visuals/enemy_visuals/jade_armor_sentinel.tres",
+	"res://resources/visuals/enemy_visuals/boss_void_tiger.tres",
+	"res://resources/visuals/enemy_visuals/plague_jade_imp.tres",
+	"res://resources/visuals/enemy_visuals/iron_oath_duelist.tres",
+	"res://resources/visuals/enemy_visuals/miasma_cauldron_elder.tres",
+	"res://resources/visuals/enemy_visuals/boss_sword_ghost.tres",
+]
+
 var cards_by_id: Dictionary = {}
 var characters_by_id: Dictionary = {}
 var enemies_by_id: Dictionary = {}
@@ -189,6 +209,7 @@ var enemy_intent_displays_by_id: Dictionary = {}
 var card_visuals_by_card_id: Dictionary = {}
 var combat_backgrounds_by_id: Dictionary = {}
 var visual_themes_by_character_id: Dictionary = {}
+var enemy_visuals_by_enemy_id: Dictionary = {}
 var load_errors: Array[String] = []
 var locale_path := "res://localization/zh_CN.po"
 
@@ -202,7 +223,8 @@ func load_default() -> void:
 		DEFAULT_ENEMY_INTENT_DISPLAY_PATHS,
 		DEFAULT_CARD_VISUAL_PATHS,
 		DEFAULT_COMBAT_BACKGROUND_PATHS,
-		DEFAULT_VISUAL_THEME_PATHS
+		DEFAULT_VISUAL_THEME_PATHS,
+		DEFAULT_ENEMY_VISUAL_PATHS
 	)
 
 func load_from_paths(
@@ -214,7 +236,8 @@ func load_from_paths(
 	enemy_intent_display_paths: Array[String] = [],
 	card_visual_paths: Array[String] = [],
 	combat_background_paths: Array[String] = [],
-	visual_theme_paths: Array[String] = []
+	visual_theme_paths: Array[String] = [],
+	enemy_visual_paths: Array[String] = []
 ) -> void:
 	clear()
 	_load_cards(card_paths)
@@ -226,6 +249,7 @@ func load_from_paths(
 	_load_card_visuals(card_visual_paths)
 	_load_combat_backgrounds(combat_background_paths)
 	_load_visual_themes(visual_theme_paths)
+	_load_enemy_visuals(enemy_visual_paths)
 
 func clear() -> void:
 	cards_by_id.clear()
@@ -237,6 +261,7 @@ func clear() -> void:
 	card_visuals_by_card_id.clear()
 	combat_backgrounds_by_id.clear()
 	visual_themes_by_character_id.clear()
+	enemy_visuals_by_enemy_id.clear()
 	load_errors.clear()
 
 func get_card(card_id: String) -> CardDef:
@@ -265,6 +290,9 @@ func get_combat_background(background_id: String) -> CombatBackgroundDef:
 
 func get_visual_theme(character_id: String) -> VisualThemeDef:
 	return visual_themes_by_character_id.get(character_id) as VisualThemeDef
+
+func get_enemy_visual(enemy_id: String) -> EnemyVisualDef:
+	return enemy_visuals_by_enemy_id.get(enemy_id) as EnemyVisualDef
 
 func get_events() -> Array[EventDef]:
 	var result: Array[EventDef] = []
@@ -432,6 +460,20 @@ func _load_visual_themes(paths: Array[String]) -> void:
 			continue
 		visual_themes_by_character_id[theme.character_id] = theme
 
+func _load_enemy_visuals(paths: Array[String]) -> void:
+	for path in paths:
+		var visual := load(path) as EnemyVisualDef
+		if visual == null:
+			_record_load_error("ContentCatalog expected EnemyVisualDef resource: %s" % path)
+			continue
+		if visual.id.is_empty():
+			_record_load_error("ContentCatalog resource has empty id: %s" % path)
+			continue
+		if visual.enemy_id.is_empty():
+			_record_load_error("ContentCatalog enemy visual has empty enemy_id: %s" % path)
+			continue
+		enemy_visuals_by_enemy_id[visual.enemy_id] = visual
+
 func _record_load_error(message: String) -> void:
 	load_errors.append(message)
 
@@ -522,12 +564,17 @@ func _validate_visual_catalog(errors: Array[String]) -> void:
 	for character: CharacterDef in characters_by_id.values():
 		if not visual_themes_by_character_id.has(character.id):
 			errors.append("Character %s has no visual theme" % character.id)
+	for enemy: EnemyDef in enemies_by_id.values():
+		if not enemy_visuals_by_enemy_id.has(enemy.id):
+			errors.append("Enemy %s has no enemy visual" % enemy.id)
 	for visual: CardVisualDef in card_visuals_by_card_id.values():
 		_validate_card_visual(visual, errors)
 	for background: CombatBackgroundDef in combat_backgrounds_by_id.values():
 		_validate_combat_background(background, errors)
 	for theme: VisualThemeDef in visual_themes_by_character_id.values():
 		_validate_visual_theme(theme, errors)
+	for enemy_visual: EnemyVisualDef in enemy_visuals_by_enemy_id.values():
+		_validate_enemy_visual(enemy_visual, errors)
 
 func _validate_card_visual(visual: CardVisualDef, errors: Array[String]) -> void:
 	if visual.card_id.is_empty():
@@ -562,6 +609,20 @@ func _validate_visual_theme(theme: VisualThemeDef, errors: Array[String]) -> voi
 		errors.append("Visual theme %s references missing background %s" % [theme.id, theme.default_background_id])
 	if theme.card_frame_style.is_empty():
 		errors.append("Visual theme %s has empty card_frame_style" % theme.id)
+
+func _validate_enemy_visual(visual: EnemyVisualDef, errors: Array[String]) -> void:
+	if visual.enemy_id.is_empty():
+		errors.append("Enemy visual %s has empty enemy_id" % visual.id)
+	elif not enemies_by_id.has(visual.enemy_id):
+		errors.append("Enemy visual %s references missing enemy %s" % [visual.id, visual.enemy_id])
+	if visual.portrait_path.is_empty():
+		errors.append("Enemy visual %s has empty portrait_path" % visual.id)
+	else:
+		var texture := load(visual.portrait_path) as Texture2D
+		if texture == null:
+			errors.append("Enemy visual %s texture failed to load %s" % [visual.id, visual.portrait_path])
+	if visual.frame_style.is_empty():
+		errors.append("Enemy visual %s has empty frame_style" % visual.id)
 
 func _require_locale_key(key: String, label: String, locale_keys: Dictionary, errors: Array[String]) -> void:
 	if key.is_empty():

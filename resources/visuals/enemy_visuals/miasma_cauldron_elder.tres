@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="EnemyVisualDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/enemy_visual_def.gd" id="1_visual"]
+
+[resource]
+script = ExtResource("1_visual")
+id = "miasma_cauldron_elder"
+enemy_id = "miasma_cauldron_elder"
+portrait_path = "res://assets/presentation/enemy_portraits/miasma_elder.png"
+frame_style = "elite"
+accent_color = Color(0.48, 0.42, 0.69, 1)
+silhouette_tag = "alchemist"
+portrait_alt_label = "Miasma cauldron elder portrait"

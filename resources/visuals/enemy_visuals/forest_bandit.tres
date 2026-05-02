@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="EnemyVisualDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/enemy_visual_def.gd" id="1_visual"]
+
+[resource]
+script = ExtResource("1_visual")
+id = "forest_bandit"
+enemy_id = "forest_bandit"
+portrait_path = "res://assets/presentation/enemy_portraits/human_bandit.png"
+frame_style = "elite"
+accent_color = Color(0.69, 0.36, 0.27, 1)
+silhouette_tag = "bandit"
+portrait_alt_label = "Forest bandit portrait"

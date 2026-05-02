@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="EnemyVisualDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/enemy_visual_def.gd" id="1_visual"]
+
+[resource]
+script = ExtResource("1_visual")
+id = "iron_oath_duelist"
+enemy_id = "iron_oath_duelist"
+portrait_path = "res://assets/presentation/enemy_portraits/oath_duelist.png"
+frame_style = "normal"
+accent_color = Color(0.78, 0.63, 0.36, 1)
+silhouette_tag = "duelist"
+portrait_alt_label = "Iron oath duelist portrait"

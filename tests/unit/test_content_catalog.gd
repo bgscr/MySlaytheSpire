@@ -7,6 +7,7 @@ const CharacterDef := preload("res://scripts/data/character_def.gd")
 const CombatBackgroundDef := preload("res://scripts/data/combat_background_def.gd")
 const EnemyDef := preload("res://scripts/data/enemy_def.gd")
 const EnemyIntentDisplayDef := preload("res://scripts/data/enemy_intent_display_def.gd")
+const EnemyVisualDef := preload("res://scripts/data/enemy_visual_def.gd")
 const EventDef := preload("res://scripts/data/event_def.gd")
 const VisualThemeDef := preload("res://scripts/data/visual_theme_def.gd")
 
@@ -62,6 +63,65 @@ func test_default_catalog_loads_visual_theme_resources() -> bool:
 		and alchemy_theme.default_background_id == "alchemy_mist_grove" \
 		and default_background != null \
 		and default_background.texture_path.ends_with("default_combat.png")
+	assert(passed)
+	return passed
+
+func test_default_catalog_loads_enemy_visual_resources() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.load_default()
+	var puppet_visual: EnemyVisualDef = catalog.get_enemy_visual("training_puppet")
+	var elite_visual: EnemyVisualDef = catalog.get_enemy_visual("mirror_blade_adept")
+	var boss_visual: EnemyVisualDef = catalog.get_enemy_visual("boss_storm_dragon")
+	var passed: bool = catalog.enemy_visuals_by_enemy_id.size() == 16 \
+		and puppet_visual != null \
+		and puppet_visual.portrait_path.ends_with("construct_wood.png") \
+		and puppet_visual.frame_style == "normal" \
+		and elite_visual != null \
+		and elite_visual.frame_style == "elite" \
+		and boss_visual != null \
+		and boss_visual.frame_style == "boss"
+	assert(passed)
+	return passed
+
+func test_default_catalog_enemy_visual_texture_paths_load() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.load_default()
+	for visual: EnemyVisualDef in catalog.enemy_visuals_by_enemy_id.values():
+		var texture := load(visual.portrait_path) as Texture2D
+		if texture == null:
+			push_error("Enemy visual texture failed to load: %s" % visual.portrait_path)
+			assert(false)
+			return false
+	assert(true)
+	return true
+
+func test_validation_reports_missing_enemy_visual_for_default_enemy() -> bool:
+	var catalog := ContentCatalog.new()
+	var enemy := EnemyDef.new()
+	enemy.id = "training_puppet"
+	catalog.enemies_by_id[enemy.id] = enemy
+	var errors := catalog.validate()
+	var passed: bool = _any_contains(errors, "Enemy training_puppet has no enemy visual")
+	assert(passed)
+	return passed
+
+func test_validation_reports_invalid_enemy_visual_resources() -> bool:
+	var catalog := ContentCatalog.new()
+	var enemy := EnemyDef.new()
+	enemy.id = "training_puppet"
+	catalog.enemies_by_id[enemy.id] = enemy
+
+	var visual := EnemyVisualDef.new()
+	visual.id = "bad_visual"
+	visual.enemy_id = "missing_enemy"
+	visual.portrait_path = ""
+	visual.frame_style = ""
+	catalog.enemy_visuals_by_enemy_id["training_puppet"] = visual
+
+	var errors := catalog.validate()
+	var passed: bool = _any_contains(errors, "Enemy visual bad_visual references missing enemy missing_enemy") \
+		and _any_contains(errors, "Enemy visual bad_visual has empty portrait_path") \
+		and _any_contains(errors, "Enemy visual bad_visual has empty frame_style")
 	assert(passed)
 	return passed
 

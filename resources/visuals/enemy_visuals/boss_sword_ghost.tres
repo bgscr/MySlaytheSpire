@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="EnemyVisualDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/enemy_visual_def.gd" id="1_visual"]
+
+[resource]
+script = ExtResource("1_visual")
+id = "boss_sword_ghost"
+enemy_id = "boss_sword_ghost"
+portrait_path = "res://assets/presentation/enemy_portraits/sword_ghost.png"
+frame_style = "boss"
+accent_color = Color(0.56, 0.78, 0.91, 1)
+silhouette_tag = "spirit"
+portrait_alt_label = "Sword ghost portrait"

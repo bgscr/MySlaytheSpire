@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="EnemyVisualDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/enemy_visual_def.gd" id="1_visual"]
+
+[resource]
+script = ExtResource("1_visual")
+id = "plague_jade_imp"
+enemy_id = "plague_jade_imp"
+portrait_path = "res://assets/presentation/enemy_portraits/plague_imp.png"
+frame_style = "normal"
+accent_color = Color(0.46, 0.66, 0.27, 1)
+silhouette_tag = "imp"
+portrait_alt_label = "Plague jade imp portrait"

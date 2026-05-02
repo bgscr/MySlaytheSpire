@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="EnemyVisualDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/enemy_visual_def.gd" id="1_visual"]
+
+[resource]
+script = ExtResource("1_visual")
+id = "boss_heart_demon"
+enemy_id = "boss_heart_demon"
+portrait_path = "res://assets/presentation/enemy_portraits/heart_demon.png"
+frame_style = "boss"
+accent_color = Color(0.77, 0.29, 0.41, 1)
+silhouette_tag = "demon"
+portrait_alt_label = "Heart demon portrait"
