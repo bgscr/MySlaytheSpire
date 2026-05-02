@@ -884,7 +884,7 @@ If `.uid` files do not exist yet, omit only the missing `.uid` paths from `git a
 - Generated: `scripts/presentation/combat_visual_resolver.gd.uid`
 - Generated: `tests/unit/test_combat_visuals.gd.uid`
 
-- [ ] **Step 1: Register the new test file**
+- [x] **Step 1: Register the new test file**
 
 In `scripts/testing/test_runner.gd`, add this path after `test_combat_presentation.gd`:
 
@@ -892,7 +892,7 @@ In `scripts/testing/test_runner.gd`, add this path after `test_combat_presentati
 	"res://tests/unit/test_combat_visuals.gd",
 ```
 
-- [ ] **Step 2: Add failing resolver tests**
+- [x] **Step 2: Add failing resolver tests**
 
 Create `tests/unit/test_combat_visuals.gd`:
 
@@ -969,7 +969,7 @@ func test_resolver_falls_back_for_missing_visual_data() -> bool:
 	return passed
 ```
 
-- [ ] **Step 3: Run tests to verify RED**
+- [x] **Step 3: Run tests to verify RED**
 
 Run:
 
@@ -979,7 +979,7 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File tools/ci/run_godot
 
 Expected: `TESTS FAILED` or import error because `combat_visual_resolver.gd` does not exist.
 
-- [ ] **Step 4: Implement `CombatVisualResolver`**
+- [x] **Step 4: Implement `CombatVisualResolver`**
 
 Create `scripts/presentation/combat_visual_resolver.gd`:
 
@@ -1076,7 +1076,7 @@ func _background_for(catalog: Object, background_id: String):
 	return catalog.get_combat_background(background_id)
 ```
 
-- [ ] **Step 5: Run tests to verify GREEN**
+- [x] **Step 5: Run tests to verify GREEN**
 
 Run:
 
@@ -1091,7 +1091,7 @@ TESTS PASSED
 Godot checks passed.
 ```
 
-- [ ] **Step 6: Commit resolver**
+- [x] **Step 6: Commit resolver**
 
 Run:
 

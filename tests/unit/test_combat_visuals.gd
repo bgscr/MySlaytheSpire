@@ -1,0 +1,70 @@
+extends RefCounted
+
+const CombatVisualResolver := preload("res://scripts/presentation/combat_visual_resolver.gd")
+const ContentCatalog := preload("res://scripts/content/content_catalog.gd")
+
+func test_resolver_resolves_distinct_character_themes() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.load_default()
+	var resolver := CombatVisualResolver.new()
+	var sword := resolver.resolve_theme("sword", catalog)
+	var alchemy := resolver.resolve_theme("alchemy", catalog)
+	var passed: bool = sword.get("character_id") == "sword" \
+		and sword.get("default_background_id") == "sword_training_ground" \
+		and sword.get("frame_style") == "sword" \
+		and sword.get("is_known") == true \
+		and alchemy.get("character_id") == "alchemy" \
+		and alchemy.get("default_background_id") == "alchemy_mist_grove" \
+		and alchemy.get("frame_style") == "alchemy" \
+		and alchemy.get("is_known") == true \
+		and sword.get("accent_color") != alchemy.get("accent_color")
+	assert(passed)
+	return passed
+
+func test_resolver_resolves_card_visual_with_theme_fallback() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.load_default()
+	var resolver := CombatVisualResolver.new()
+	var theme := resolver.resolve_theme("sword", catalog)
+	var visual := resolver.resolve_card_visual("sword.strike", catalog, theme)
+	var passed: bool = visual.get("card_id") == "sword.strike" \
+		and String(visual.get("thumbnail_path", "")).ends_with("sword_attack.png") \
+		and visual.get("frame_style") == "sword" \
+		and visual.get("element_tag") == "blade" \
+		and visual.get("thumbnail_alt_label") == "Sword attack thumbnail" \
+		and visual.get("is_known") == true
+	assert(passed)
+	return passed
+
+func test_resolver_resolves_character_background() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.load_default()
+	var resolver := CombatVisualResolver.new()
+	var sword_background := resolver.resolve_combat_background("sword", catalog)
+	var alchemy_background := resolver.resolve_combat_background("alchemy", catalog)
+	var passed: bool = sword_background.get("background_id") == "sword_training_ground" \
+		and String(sword_background.get("texture_path", "")).ends_with("sword_training_ground.png") \
+		and sword_background.get("is_known") == true \
+		and alchemy_background.get("background_id") == "alchemy_mist_grove" \
+		and String(alchemy_background.get("texture_path", "")).ends_with("alchemy_mist_grove.png") \
+		and alchemy_background.get("is_known") == true
+	assert(passed)
+	return passed
+
+func test_resolver_falls_back_for_missing_visual_data() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.load_default()
+	var resolver := CombatVisualResolver.new()
+	var theme := resolver.resolve_theme("missing", catalog)
+	var card_visual := resolver.resolve_card_visual("missing.card", catalog, theme)
+	var background := resolver.resolve_combat_background("missing", catalog)
+	var passed: bool = theme.get("character_id") == "missing" \
+		and theme.get("default_background_id") == "default_combat" \
+		and theme.get("is_known") == false \
+		and card_visual.get("card_id") == "missing.card" \
+		and String(card_visual.get("thumbnail_path", "")).ends_with("fallback_card.png") \
+		and card_visual.get("is_known") == false \
+		and background.get("background_id") == "default_combat" \
+		and String(background.get("texture_path", "")).ends_with("default_combat.png")
+	assert(passed)
+	return passed
