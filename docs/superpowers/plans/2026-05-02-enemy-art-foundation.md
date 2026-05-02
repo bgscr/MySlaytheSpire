@@ -976,7 +976,7 @@ rtk git commit -m "feat: resolve enemy visual data"
 - Modify: `tests/smoke/test_scene_flow.gd`
 - Modify: `scripts/ui/combat_screen.gd`
 
-- [ ] **Step 1: Add failing combat portrait smoke tests**
+- [x] **Step 1: Add failing combat portrait smoke tests**
 
 Add these tests after `test_combat_screen_renders_card_thumbnail_children()` in `tests/smoke/test_scene_flow.gd`:
 
@@ -1052,7 +1052,7 @@ func _combat_screen_renders_enemy_portrait(
 	return passed
 ```
 
-- [ ] **Step 2: Strengthen targeting smoke test for portrait children**
+- [x] **Step 2: Strengthen targeting smoke test for portrait children**
 
 In `test_combat_screen_enemy_intent_row_keeps_targeting_clickable()`, add this local after `row`:
 
@@ -1079,7 +1079,7 @@ The full `passed` block should be:
 		and combat.session.state.hand.is_empty()
 ```
 
-- [ ] **Step 3: Run tests to verify RED**
+- [x] **Step 3: Run tests to verify RED**
 
 Run:
 
@@ -1089,7 +1089,7 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File tools/ci/run_godot
 
 Expected: `TESTS FAILED` because `EnemyVisualRoot_0`, `EnemyPortraitFrame_0`, and `EnemyPortrait_0` are not created yet.
 
-- [ ] **Step 4: Add enemy visual rendering helper**
+- [x] **Step 4: Add enemy visual rendering helper**
 
 Modify `scripts/ui/combat_screen.gd`.
 
@@ -1125,7 +1125,7 @@ func _add_enemy_visual(parent: Control, enemy_index: int, enemy) -> void:
 	root.add_child(portrait)
 ```
 
-- [ ] **Step 5: Call enemy visual helper from enemy refresh**
+- [x] **Step 5: Call enemy visual helper from enemy refresh**
 
 In `_refresh_enemies()` in `scripts/ui/combat_screen.gd`, add this call immediately before creating `summary`:
 
@@ -1154,7 +1154,7 @@ The relevant block should become:
 		content.add_child(summary)
 ```
 
-- [ ] **Step 6: Run tests to verify GREEN**
+- [x] **Step 6: Run tests to verify GREEN**
 
 Run:
 

@@ -224,6 +224,34 @@ func _enemy_summary_text(enemy, _enemy_index: int) -> String:
 		text += " Status %s" % statuses
 	return text
 
+func _add_enemy_visual(parent: Control, enemy_index: int, enemy) -> void:
+	var visual := combat_visual_resolver.resolve_enemy_visual(enemy.id, session.catalog)
+
+	var root := HBoxContainer.new()
+	root.name = "EnemyVisualRoot_%s" % enemy_index
+	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	parent.add_child(root)
+
+	var frame := ColorRect.new()
+	frame.name = "EnemyPortraitFrame_%s" % enemy_index
+	frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	frame.custom_minimum_size = Vector2(6, 54)
+	frame.color = visual.get("accent_color", Color.WHITE)
+	frame.set_meta("frame_style", String(visual.get("frame_style", "")))
+	root.add_child(frame)
+
+	var portrait := TextureRect.new()
+	portrait.name = "EnemyPortrait_%s" % enemy_index
+	portrait.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	portrait.custom_minimum_size = Vector2(72, 54)
+	portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	var texture_path := String(visual.get("portrait_path", ""))
+	portrait.texture = load(texture_path) as Texture2D if not texture_path.is_empty() else null
+	portrait.set_meta("enemy_id", String(visual.get("enemy_id", enemy.id)))
+	portrait.set_meta("silhouette_tag", String(visual.get("silhouette_tag", "")))
+	root.add_child(portrait)
+
 func _add_enemy_intent_row(parent: Control, enemy_index: int, raw_intent: String) -> void:
 	var display := enemy_intent_display_resolver.resolve(raw_intent, session.catalog)
 	var row := HBoxContainer.new()
@@ -303,6 +331,8 @@ func _refresh_enemies() -> void:
 		content.offset_right = -8
 		content.offset_bottom = -6
 		button.add_child(content)
+
+		_add_enemy_visual(content, enemy_index, enemy)
 
 		var summary := Label.new()
 		summary.name = "EnemySummaryLabel_%s" % enemy_index

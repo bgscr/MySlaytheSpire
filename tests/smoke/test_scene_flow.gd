@@ -256,6 +256,33 @@ func test_combat_screen_renders_card_thumbnail_children(tree: SceneTree) -> bool
 	_delete_test_save("user://test_card_thumbnail_children_save.json")
 	return passed
 
+func test_combat_screen_renders_normal_enemy_portrait(tree: SceneTree) -> bool:
+	return _combat_screen_renders_enemy_portrait(
+		tree,
+		"user://test_normal_enemy_portrait_save.json",
+		"training_puppet",
+		"normal",
+		"construct"
+	)
+
+func test_combat_screen_renders_elite_enemy_portrait(tree: SceneTree) -> bool:
+	return _combat_screen_renders_enemy_portrait(
+		tree,
+		"user://test_elite_enemy_portrait_save.json",
+		"mirror_blade_adept",
+		"elite",
+		"adept"
+	)
+
+func test_combat_screen_renders_boss_enemy_portrait(tree: SceneTree) -> bool:
+	return _combat_screen_renders_enemy_portrait(
+		tree,
+		"user://test_boss_enemy_portrait_save.json",
+		"boss_storm_dragon",
+		"boss",
+		"dragon"
+	)
+
 func test_combat_screen_click_play_enqueues_delta_feedback(tree: SceneTree) -> bool:
 	var app = _create_app_with_save_service(tree, "user://test_combat_presentation_click_save.json")
 	var run := RunStateScript.new()
@@ -321,9 +348,12 @@ func test_combat_screen_enemy_intent_row_keeps_targeting_clickable(tree: SceneTr
 	if enemy_button != null:
 		enemy_button.pressed.emit()
 	var row := _find_node_by_name(combat, "EnemyIntentRow_0") as HBoxContainer
+	var portrait := _find_node_by_name(combat, "EnemyPortrait_0") as TextureRect
 	var passed: bool = first_card != null \
 		and enemy_button != null \
 		and row != null \
+		and portrait != null \
+		and portrait.texture != null \
 		and combat.session.state.enemies[0].current_hp < enemy_hp_before \
 		and combat.session.state.hand.is_empty()
 	app.free()
@@ -1631,6 +1661,45 @@ func test_shop_screen_leave_clears_state_saves_and_advances(tree: SceneTree) -> 
 		and loaded_run.map_nodes[0].visited \
 		and loaded_run.map_nodes[1].unlocked \
 		and app.game.router.current_scene != shop_screen
+	app.free()
+	_delete_test_save(save_path)
+	return passed
+
+func _combat_screen_renders_enemy_portrait(
+	tree: SceneTree,
+	save_path: String,
+	enemy_id: String,
+	expected_frame_style: String,
+	expected_silhouette: String
+) -> bool:
+	var app = _create_app_with_save_service(tree, save_path)
+	app.game.set_debug_combat_sandbox_config({
+		"character_id": "sword",
+		"deck_ids": ["sword.strike"],
+		"enemy_ids": [enemy_id],
+		"seed_value": 401,
+	})
+	var combat = app.game.router.go_to(SceneRouterScript.COMBAT)
+	var button := _find_node_by_name(combat, "EnemyButton_0") as Button
+	var root := _find_node_by_name(combat, "EnemyVisualRoot_0") as HBoxContainer
+	var frame := _find_node_by_name(combat, "EnemyPortraitFrame_0") as ColorRect
+	var portrait := _find_node_by_name(combat, "EnemyPortrait_0") as TextureRect
+	var summary := _find_node_by_name(combat, "EnemySummaryLabel_0") as Label
+	var row := _find_node_by_name(combat, "EnemyIntentRow_0") as HBoxContainer
+	var passed: bool = button != null \
+		and root != null \
+		and root.mouse_filter == Control.MOUSE_FILTER_IGNORE \
+		and frame != null \
+		and frame.color.a > 0.0 \
+		and frame.get_meta("frame_style") == expected_frame_style \
+		and portrait != null \
+		and portrait.texture != null \
+		and portrait.mouse_filter == Control.MOUSE_FILTER_IGNORE \
+		and portrait.get_meta("enemy_id") == enemy_id \
+		and portrait.get_meta("silhouette_tag") == expected_silhouette \
+		and summary != null \
+		and summary.text.contains(enemy_id) \
+		and row != null
 	app.free()
 	_delete_test_save(save_path)
 	return passed
