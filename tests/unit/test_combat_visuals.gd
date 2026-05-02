@@ -36,6 +36,40 @@ func test_resolver_resolves_card_visual_with_theme_fallback() -> bool:
 	assert(passed)
 	return passed
 
+func test_resolver_resolves_enemy_visual() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.load_default()
+	var resolver := CombatVisualResolver.new()
+	var visual: Dictionary = resolver.resolve_enemy_visual("training_puppet", catalog)
+	var boss_visual: Dictionary = resolver.resolve_enemy_visual("boss_storm_dragon", catalog)
+	var passed: bool = visual.get("enemy_id") == "training_puppet" \
+		and String(visual.get("portrait_path", "")).ends_with("construct_wood.png") \
+		and visual.get("frame_style") == "normal" \
+		and visual.get("silhouette_tag") == "construct" \
+		and visual.get("portrait_alt_label") == "Training puppet portrait" \
+		and visual.get("is_known") == true \
+		and boss_visual.get("enemy_id") == "boss_storm_dragon" \
+		and boss_visual.get("frame_style") == "boss" \
+		and boss_visual.get("is_known") == true
+	assert(passed)
+	return passed
+
+func test_resolver_falls_back_for_missing_enemy_visual() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.load_default()
+	var resolver := CombatVisualResolver.new()
+	var visual: Dictionary = resolver.resolve_enemy_visual("missing_enemy", catalog)
+	var no_catalog: Dictionary = resolver.resolve_enemy_visual("training_puppet", null)
+	var passed: bool = visual.get("enemy_id") == "missing_enemy" \
+		and String(visual.get("portrait_path", "")).ends_with("fallback_enemy.png") \
+		and visual.get("frame_style") == "fallback" \
+		and visual.get("silhouette_tag") == "fallback" \
+		and visual.get("is_known") == false \
+		and no_catalog.get("enemy_id") == "training_puppet" \
+		and no_catalog.get("is_known") == false
+	assert(passed)
+	return passed
+
 func test_resolver_resolves_character_background() -> bool:
 	var catalog := ContentCatalog.new()
 	catalog.load_default()
@@ -57,6 +91,7 @@ func test_resolver_falls_back_for_missing_visual_data() -> bool:
 	var resolver := CombatVisualResolver.new()
 	var theme := resolver.resolve_theme("missing", catalog)
 	var card_visual := resolver.resolve_card_visual("missing.card", catalog, theme)
+	var enemy_visual: Dictionary = resolver.resolve_enemy_visual("missing_enemy", catalog)
 	var background := resolver.resolve_combat_background("missing", catalog)
 	var passed: bool = theme.get("character_id") == "missing" \
 		and theme.get("default_background_id") == "default_combat" \
@@ -64,6 +99,9 @@ func test_resolver_falls_back_for_missing_visual_data() -> bool:
 		and card_visual.get("card_id") == "missing.card" \
 		and String(card_visual.get("thumbnail_path", "")).ends_with("fallback_card.png") \
 		and card_visual.get("is_known") == false \
+		and enemy_visual.get("enemy_id") == "missing_enemy" \
+		and String(enemy_visual.get("portrait_path", "")).ends_with("fallback_enemy.png") \
+		and enemy_visual.get("is_known") == false \
 		and background.get("background_id") == "default_combat" \
 		and String(background.get("texture_path", "")).ends_with("default_combat.png")
 	assert(passed)

@@ -829,7 +829,7 @@ If Godot has not created `scripts/data/enemy_visual_def.gd.uid` or `.import` fil
 - Modify: `tests/unit/test_combat_visuals.gd`
 - Modify: `scripts/presentation/combat_visual_resolver.gd`
 
-- [ ] **Step 1: Add failing resolver tests**
+- [x] **Step 1: Add failing resolver tests**
 
 Add these tests after `test_resolver_resolves_card_visual_with_theme_fallback()` in `tests/unit/test_combat_visuals.gd`:
 
@@ -869,7 +869,7 @@ func test_resolver_falls_back_for_missing_enemy_visual() -> bool:
 	return passed
 ```
 
-- [ ] **Step 2: Run tests to verify RED**
+- [x] **Step 2: Run tests to verify RED**
 
 Run:
 
@@ -879,7 +879,7 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File tools/ci/run_godot
 
 Expected: `TESTS FAILED` because `CombatVisualResolver.resolve_enemy_visual()` does not exist yet.
 
-- [ ] **Step 3: Add enemy visual fallback constant and resolver**
+- [x] **Step 3: Add enemy visual fallback constant and resolver**
 
 Modify `scripts/presentation/combat_visual_resolver.gd`.
 
@@ -917,7 +917,7 @@ func resolve_enemy_visual(enemy_id: String, catalog: Object) -> Dictionary:
 	}
 ```
 
-- [ ] **Step 4: Include enemy fallback in existing fallback test**
+- [x] **Step 4: Include enemy fallback in existing fallback test**
 
 In `tests/unit/test_combat_visuals.gd`, replace the body of `test_resolver_falls_back_for_missing_visual_data()` with:
 
@@ -945,7 +945,7 @@ func test_resolver_falls_back_for_missing_visual_data() -> bool:
 	return passed
 ```
 
-- [ ] **Step 5: Run tests to verify GREEN**
+- [x] **Step 5: Run tests to verify GREEN**
 
 Run:
 
@@ -960,7 +960,7 @@ TESTS PASSED
 Godot checks passed.
 ```
 
-- [ ] **Step 6: Commit resolver**
+- [x] **Step 6: Commit resolver**
 
 Run:
 

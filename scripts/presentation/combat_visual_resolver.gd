@@ -3,6 +3,7 @@ extends RefCounted
 
 const FALLBACK_BACKGROUND_ID := "default_combat"
 const FALLBACK_THUMBNAIL_PATH := "res://assets/presentation/card_thumbnails/fallback_card.png"
+const FALLBACK_ENEMY_PORTRAIT_PATH := "res://assets/presentation/enemy_portraits/fallback_enemy.png"
 
 func resolve_theme(character_id: String, catalog: Object) -> Dictionary:
 	var theme = null
@@ -55,6 +56,30 @@ func resolve_card_visual(card_id: String, catalog: Object, theme: Dictionary = {
 		"accent_color": accent_color,
 		"element_tag": visual.element_tag,
 		"thumbnail_alt_label": visual.thumbnail_alt_label,
+		"is_known": true,
+	}
+
+func resolve_enemy_visual(enemy_id: String, catalog: Object) -> Dictionary:
+	var visual = null
+	if catalog != null and catalog.has_method("get_enemy_visual"):
+		visual = catalog.get_enemy_visual(enemy_id)
+	if visual == null:
+		return {
+			"enemy_id": enemy_id,
+			"portrait_path": FALLBACK_ENEMY_PORTRAIT_PATH,
+			"frame_style": "fallback",
+			"accent_color": Color.WHITE,
+			"silhouette_tag": "fallback",
+			"portrait_alt_label": "Fallback enemy portrait",
+			"is_known": false,
+		}
+	return {
+		"enemy_id": visual.enemy_id,
+		"portrait_path": visual.portrait_path,
+		"frame_style": visual.frame_style,
+		"accent_color": visual.accent_color,
+		"silhouette_tag": visual.silhouette_tag,
+		"portrait_alt_label": visual.portrait_alt_label,
 		"is_known": true,
 	}
 
