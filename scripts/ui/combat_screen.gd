@@ -9,6 +9,7 @@ const CombatPresentationIntentCueResolver := preload("res://scripts/presentation
 const CombatPresentationLayer := preload("res://scripts/presentation/combat_presentation_layer.gd")
 const CombatPresentationQueue := preload("res://scripts/presentation/combat_presentation_queue.gd")
 const ContentCatalog := preload("res://scripts/content/content_catalog.gd")
+const EnemyIntentDisplayResolver := preload("res://scripts/presentation/enemy_intent_display_resolver.gd")
 const SceneRouterScript := preload("res://scripts/app/scene_router.gd")
 
 var session: CombatSession
@@ -17,6 +18,7 @@ var presentation_queue := CombatPresentationQueue.new()
 var presentation_delta := CombatPresentationDelta.new()
 var presentation_cue_resolver := CombatPresentationCueResolver.new()
 var presentation_intent_resolver := CombatPresentationIntentCueResolver.new()
+var enemy_intent_display_resolver := EnemyIntentDisplayResolver.new()
 var presentation_layer: CombatPresentationLayer
 var is_sandbox := false
 var enemy_buttons: Array[Button] = []
@@ -168,6 +170,76 @@ func _player_status_text() -> String:
 		text += " Status %s" % statuses
 	return text
 
+func _enemy_summary_text(enemy, _enemy_index: int) -> String:
+	var text := "%s HP %s/%s Block %s" % [
+		enemy.id,
+		enemy.current_hp,
+		enemy.max_hp,
+		enemy.block,
+	]
+	var statuses := session.status_runtime.status_display_text(enemy)
+	if not statuses.is_empty():
+		text += " Status %s" % statuses
+	return text
+
+func _add_enemy_intent_row(parent: Control, enemy_index: int, raw_intent: String) -> void:
+	var display := enemy_intent_display_resolver.resolve(raw_intent, session.catalog)
+	var row := HBoxContainer.new()
+	row.name = "EnemyIntentRow_%s" % enemy_index
+	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	parent.add_child(row)
+
+	var icon := Label.new()
+	icon.name = "IntentIcon_%s" % enemy_index
+	icon.text = _intent_icon_text(String(display.get("icon_key", "unknown")))
+	icon.modulate = display.get("color", Color.WHITE)
+	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_child(icon)
+
+	var label := Label.new()
+	label.name = "IntentLabel_%s" % enemy_index
+	label.text = String(display.get("label", "Unknown"))
+	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_child(label)
+
+	var amount := Label.new()
+	amount.name = "IntentAmount_%s" % enemy_index
+	var amount_value := int(display.get("amount", 0))
+	amount.visible = bool(display.get("show_amount", true)) and amount_value > 0
+	amount.text = str(amount_value) if amount.visible else ""
+	amount.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_child(amount)
+
+	var target := Label.new()
+	target.name = "IntentTarget_%s" % enemy_index
+	var target_value := String(display.get("target", ""))
+	target.visible = bool(display.get("show_target", true)) and not target_value.is_empty()
+	target.text = _intent_target_text(target_value) if target.visible else ""
+	target.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_child(target)
+
+func _intent_icon_text(icon_key: String) -> String:
+	match icon_key:
+		"attack":
+			return "ATK"
+		"block":
+			return "BLK"
+		"poison":
+			return "PSN"
+		"broken_stance":
+			return "BRK"
+		"sword_focus":
+			return "FOC"
+	return "UNK"
+
+func _intent_target_text(target: String) -> String:
+	match target:
+		"player":
+			return "Player"
+		"self":
+			return "Self"
+	return target.capitalize()
+
 func _refresh_enemies() -> void:
 	_clear_children(enemy_container)
 	enemy_buttons.clear()
@@ -175,19 +247,28 @@ func _refresh_enemies() -> void:
 		var enemy = session.state.enemies[enemy_index]
 		var button := Button.new()
 		button.name = "EnemyButton_%s" % enemy_index
-		var text := "%s HP %s/%s Block %s Intent %s" % [
-			enemy.id,
-			enemy.current_hp,
-			enemy.max_hp,
-			enemy.block,
-			session.get_enemy_intent(enemy_index),
-		]
-		var statuses := session.status_runtime.status_display_text(enemy)
-		if not statuses.is_empty():
-			text += " Status %s" % statuses
-		button.text = text
+		button.text = ""
+		button.custom_minimum_size = Vector2(520, 72)
 		button.disabled = enemy.is_defeated()
 		button.pressed.connect(func(): _on_enemy_pressed(enemy_index))
+
+		var content := VBoxContainer.new()
+		content.name = "EnemyContent_%s" % enemy_index
+		content.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		content.set_anchors_preset(Control.PRESET_FULL_RECT)
+		content.offset_left = 8
+		content.offset_top = 6
+		content.offset_right = -8
+		content.offset_bottom = -6
+		button.add_child(content)
+
+		var summary := Label.new()
+		summary.name = "EnemySummaryLabel_%s" % enemy_index
+		summary.text = _enemy_summary_text(enemy, enemy_index)
+		content.add_child(summary)
+
+		_add_enemy_intent_row(content, enemy_index, session.get_enemy_intent(enemy_index))
+
 		enemy_container.add_child(button)
 		enemy_buttons.append(button)
 		if presentation_layer != null:

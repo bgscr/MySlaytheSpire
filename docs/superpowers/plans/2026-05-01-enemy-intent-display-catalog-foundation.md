@@ -818,7 +818,7 @@ rtk git commit -m "feat: resolve enemy intent display data"
 - Modify: `scripts/ui/combat_screen.gd`
 - Modify: `tests/smoke/test_scene_flow.gd`
 
-- [ ] **Step 1: Add failing combat UI smoke tests**
+- [x] **Step 1: Add failing combat UI smoke tests**
 
 Add this test after `test_combat_screen_creates_session_and_cancels_pending_card()`:
 
@@ -944,7 +944,7 @@ func test_combat_screen_enemy_intent_row_keeps_targeting_clickable(tree: SceneTr
 	return passed
 ```
 
-- [ ] **Step 2: Run tests to verify RED**
+- [x] **Step 2: Run tests to verify RED**
 
 Run:
 
@@ -954,7 +954,7 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File tools/ci/run_godot
 
 Expected: `TESTS FAILED` because `EnemyIntentRow_0`, `IntentIcon_0`, `IntentLabel_0`, `IntentAmount_0`, and `IntentTarget_0` are not created.
 
-- [ ] **Step 3: Add resolver preload and field to `CombatScreen`**
+- [x] **Step 3: Add resolver preload and field to `CombatScreen`**
 
 Modify `scripts/ui/combat_screen.gd`.
 
@@ -970,7 +970,7 @@ Add this field near `presentation_intent_resolver`:
 var enemy_intent_display_resolver := EnemyIntentDisplayResolver.new()
 ```
 
-- [ ] **Step 4: Replace enemy button text with child controls**
+- [x] **Step 4: Replace enemy button text with child controls**
 
 Replace `_refresh_enemies()` with:
 
@@ -1011,7 +1011,7 @@ func _refresh_enemies() -> void:
 			presentation_layer.bind_status_target(target_id, button)
 ```
 
-- [ ] **Step 5: Add enemy summary and intent row helpers**
+- [x] **Step 5: Add enemy summary and intent row helpers**
 
 Add these helpers after `_player_status_text()`:
 
@@ -1082,7 +1082,7 @@ func _intent_target_text(target: String) -> String:
 	return target.capitalize()
 ```
 
-- [ ] **Step 6: Run tests to verify GREEN**
+- [x] **Step 6: Run tests to verify GREEN**
 
 Run:
 
@@ -1097,7 +1097,7 @@ TESTS PASSED
 Godot checks passed.
 ```
 
-- [ ] **Step 7: Commit combat UI**
+- [x] **Step 7: Commit combat UI**
 
 Run:
 
