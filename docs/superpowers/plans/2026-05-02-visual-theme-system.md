@@ -1443,7 +1443,7 @@ rtk git commit -m "feat: render combat visual themes"
 - Modify: `README.md`
 - Modify: `docs/superpowers/plans/2026-05-02-visual-theme-system.md`
 
-- [ ] **Step 1: Run full Godot checks**
+- [x] **Step 1: Run full Godot checks**
 
 Run:
 
@@ -1458,7 +1458,7 @@ TESTS PASSED
 Godot checks passed.
 ```
 
-- [ ] **Step 2: Run direct import check**
+- [x] **Step 2: Run direct import check**
 
 Run:
 
@@ -1468,7 +1468,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: process exits 0.
 
-- [ ] **Step 3: Verify visual boundary**
+- [x] **Step 3: Verify visual boundary**
 
 Run:
 
@@ -1478,7 +1478,7 @@ rtk rg -n "CardVisual|CombatBackground|VisualTheme|CombatVisualResolver|card_vis
 
 Expected: no output. `rg` may exit 1 when there are no matches; that is acceptable for this boundary check.
 
-- [ ] **Step 4: Verify all default cards have visual resources**
+- [x] **Step 4: Verify all default cards have visual resources**
 
 Run:
 
@@ -1492,7 +1492,7 @@ Expected:
 40 card visual resources found
 ```
 
-- [ ] **Step 5: Update README progress**
+- [x] **Step 5: Update README progress**
 
 Add this bullet under `## Phase 2 Progress` after the enemy intent display catalog foundation bullet:
 
@@ -1509,7 +1509,7 @@ Update `## Next Plans` to:
 2. Release expansion: artifact packaging, checksums, version bump automation, signed builds, and eventual Steam adapter implementation.
 ```
 
-- [ ] **Step 6: Run final two-stage review**
+- [x] **Step 6: Run final two-stage review**
 
 Stage 1 Spec Compliance Review:
 
@@ -1535,11 +1535,11 @@ Stage 2 Code Quality Review:
 
 Classify all found issues as Critical, Important, or Minor. Fix Critical and Important issues before acceptance.
 
-- [ ] **Step 7: Mark completed plan steps**
+- [x] **Step 7: Mark completed plan steps**
 
 Update completed checkboxes in this plan from `[ ]` to `[x]` after each step has been completed and verified.
 
-- [ ] **Step 8: Commit final docs and acceptance**
+- [x] **Step 8: Commit final docs and acceptance**
 
 Run:
 
