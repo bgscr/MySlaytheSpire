@@ -121,7 +121,7 @@ const DEFAULT_ENEMY_VISUAL_PATHS: Array[String] = [
 - Create: `scripts/data/enemy_visual_def.gd`
 - Generated: `scripts/data/enemy_visual_def.gd.uid`
 
-- [ ] **Step 1: Add failing schema preload**
+- [x] **Step 1: Add failing schema preload**
 
 Add this preload near the other data preloads in `tests/unit/test_resource_schemas.gd`:
 
@@ -129,7 +129,7 @@ Add this preload near the other data preloads in `tests/unit/test_resource_schem
 const EnemyVisualDef := preload("res://scripts/data/enemy_visual_def.gd")
 ```
 
-- [ ] **Step 2: Add failing schema test**
+- [x] **Step 2: Add failing schema test**
 
 Add this test after `test_enemy_intent_display_def_stores_display_fields()` in `tests/unit/test_resource_schemas.gd`:
 
@@ -154,7 +154,7 @@ func test_enemy_visual_def_stores_portrait_metadata() -> bool:
 	return passed
 ```
 
-- [ ] **Step 3: Run tests to verify RED**
+- [x] **Step 3: Run tests to verify RED**
 
 Run:
 
@@ -164,7 +164,7 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File tools/ci/run_godot
 
 Expected: `TESTS FAILED` or import errors because `res://scripts/data/enemy_visual_def.gd` does not exist.
 
-- [ ] **Step 4: Create enemy visual resource script**
+- [x] **Step 4: Create enemy visual resource script**
 
 Create `scripts/data/enemy_visual_def.gd`:
 
@@ -181,7 +181,7 @@ extends Resource
 @export var portrait_alt_label: String = ""
 ```
 
-- [ ] **Step 5: Run tests to verify GREEN for schema**
+- [x] **Step 5: Run tests to verify GREEN for schema**
 
 Run:
 
@@ -196,7 +196,7 @@ TESTS PASSED
 Godot checks passed.
 ```
 
-- [ ] **Step 6: Commit schema**
+- [x] **Step 6: Commit schema**
 
 Run:
 

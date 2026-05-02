@@ -7,6 +7,7 @@ const CharacterDef := preload("res://scripts/data/character_def.gd")
 const CombatBackgroundDef := preload("res://scripts/data/combat_background_def.gd")
 const EnemyDef := preload("res://scripts/data/enemy_def.gd")
 const EnemyIntentDisplayDef := preload("res://scripts/data/enemy_intent_display_def.gd")
+const EnemyVisualDef := preload("res://scripts/data/enemy_visual_def.gd")
 const EffectDef := preload("res://scripts/data/effect_def.gd")
 const EventBus := preload("res://scripts/core/event_bus.gd")
 const EventDef := preload("res://scripts/data/event_def.gd")
@@ -68,6 +69,25 @@ func test_enemy_intent_display_def_stores_display_fields() -> bool:
 		and display.color == Color(0.62, 0.42, 0.9, 1.0) \
 		and display.show_amount \
 		and display.show_target
+	assert(passed)
+	return passed
+
+func test_enemy_visual_def_stores_portrait_metadata() -> bool:
+	var visual := EnemyVisualDef.new()
+	visual.id = "training_puppet"
+	visual.enemy_id = "training_puppet"
+	visual.portrait_path = "res://assets/presentation/enemy_portraits/construct_wood.png"
+	visual.frame_style = "normal"
+	visual.accent_color = Color(0.68, 0.52, 0.32, 1.0)
+	visual.silhouette_tag = "construct"
+	visual.portrait_alt_label = "Training puppet portrait"
+	var passed: bool = visual.id == "training_puppet" \
+		and visual.enemy_id == "training_puppet" \
+		and visual.portrait_path == "res://assets/presentation/enemy_portraits/construct_wood.png" \
+		and visual.frame_style == "normal" \
+		and visual.accent_color == Color(0.68, 0.52, 0.32, 1.0) \
+		and visual.silhouette_tag == "construct" \
+		and visual.portrait_alt_label == "Training puppet portrait"
 	assert(passed)
 	return passed
 
