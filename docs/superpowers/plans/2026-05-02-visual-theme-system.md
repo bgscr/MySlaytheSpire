@@ -1109,7 +1109,7 @@ If Godot has not created `.uid` files yet, omit only the missing `.uid` paths fr
 - Modify: `scripts/ui/combat_screen.gd`
 - Modify: `tests/smoke/test_scene_flow.gd`
 
-- [ ] **Step 1: Add failing combat visual smoke tests**
+- [x] **Step 1: Add failing combat visual smoke tests**
 
 In the existing `test_combat_screen_creates_session_and_cancels_pending_card()`, replace:
 
@@ -1264,7 +1264,7 @@ func test_combat_screen_visual_card_button_still_clicks_and_drags(tree: SceneTre
 	return passed
 ```
 
-- [ ] **Step 2: Run tests to verify RED**
+- [x] **Step 2: Run tests to verify RED**
 
 Run:
 
@@ -1274,7 +1274,7 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File tools/ci/run_godot
 
 Expected: `TESTS FAILED` because `CombatBackgroundLayer`, `CombatBackgroundTexture`, `CardThumbnail_0`, `CardFrame_0`, and `CardText_0` are not created yet.
 
-- [ ] **Step 3: Add resolver preload and fields to `CombatScreen`**
+- [x] **Step 3: Add resolver preload and fields to `CombatScreen`**
 
 Modify `scripts/ui/combat_screen.gd`.
 
@@ -1294,7 +1294,7 @@ var combat_background_texture: TextureRect
 var combat_background_dimmer: ColorRect
 ```
 
-- [ ] **Step 4: Build the background layer**
+- [x] **Step 4: Build the background layer**
 
 In `_build_layout()`, add this call before creating `status_label`:
 
@@ -1327,7 +1327,7 @@ func _build_background_layer() -> void:
 	combat_background_layer.add_child(combat_background_dimmer)
 ```
 
-- [ ] **Step 5: Resolve theme after session start**
+- [x] **Step 5: Resolve theme after session start**
 
 In `_start_session()`, after assigning `presentation_config`, add:
 
@@ -1351,7 +1351,7 @@ func _apply_combat_background() -> void:
 	combat_background_dimmer.color = Color(accent.r * 0.2, accent.g * 0.2, accent.b * 0.2, opacity)
 ```
 
-- [ ] **Step 6: Replace card button text with visual children**
+- [x] **Step 6: Replace card button text with visual children**
 
 In `_refresh_hand()`, replace the block that sets `button.text` with:
 
@@ -1412,7 +1412,7 @@ func _card_visual_text(card_id: String, card) -> String:
 	return "%s [%s] (%s)" % [card.id, card.card_type, card.cost]
 ```
 
-- [ ] **Step 7: Run tests to verify GREEN**
+- [x] **Step 7: Run tests to verify GREEN**
 
 Run:
 
@@ -1427,7 +1427,7 @@ TESTS PASSED
 Godot checks passed.
 ```
 
-- [ ] **Step 8: Commit combat visual rendering**
+- [x] **Step 8: Commit combat visual rendering**
 
 Run:
 

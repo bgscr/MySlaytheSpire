@@ -76,7 +76,10 @@ func test_combat_screen_creates_session_and_cancels_pending_card(tree: SceneTree
 	if first_card != null and combat.session.state.hand.size() > 0:
 		var first_card_id: String = combat.session.state.hand[0]
 		var first_card_def: CardDefScript = combat.session.catalog.get_card(first_card_id)
-		first_card_has_type = first_card_def != null and first_card.text.contains(first_card_def.card_type)
+		var first_card_text := _find_node_by_name(first_card, "CardText_0") as Label
+		first_card_has_type = first_card_def != null \
+			and first_card_text != null \
+			and first_card_text.text.contains(first_card_def.card_type)
 	if first_card != null:
 		first_card.pressed.emit()
 	var pending_phase: bool = combat.session.phase == "selecting_enemy_target" \
@@ -178,6 +181,81 @@ func test_combat_screen_shows_status_intent_row(tree: SceneTree) -> bool:
 	_delete_test_save("user://test_status_intent_row_save.json")
 	return passed
 
+func test_combat_screen_renders_sword_visual_theme_background(tree: SceneTree) -> bool:
+	var app = _create_app_with_save_service(tree, "user://test_sword_visual_background_save.json")
+	app.game.set_debug_combat_sandbox_config({
+		"character_id": "sword",
+		"deck_ids": ["sword.strike"],
+		"enemy_ids": ["training_puppet"],
+		"seed_value": 301,
+	})
+	var combat = app.game.router.go_to(SceneRouterScript.COMBAT)
+	var layer := _find_node_by_name(combat, "CombatBackgroundLayer") as Control
+	var texture := _find_node_by_name(combat, "CombatBackgroundTexture") as TextureRect
+	var dimmer := _find_node_by_name(combat, "CombatBackgroundDimmer") as ColorRect
+	var presentation_layer := _find_node_by_name(combat, "PresentationLayer")
+	var passed: bool = layer != null \
+		and texture != null \
+		and texture.texture != null \
+		and texture.get_meta("background_id") == "sword_training_ground" \
+		and dimmer != null \
+		and dimmer.color.a > 0.0 \
+		and presentation_layer != null \
+		and combat.get_children().find(layer) < combat.get_children().find(presentation_layer)
+	app.free()
+	_delete_test_save("user://test_sword_visual_background_save.json")
+	return passed
+
+func test_combat_screen_renders_alchemy_visual_theme_background(tree: SceneTree) -> bool:
+	var app = _create_app_with_save_service(tree, "user://test_alchemy_visual_background_save.json")
+	app.game.set_debug_combat_sandbox_config({
+		"character_id": "alchemy",
+		"deck_ids": ["alchemy.toxic_pill"],
+		"enemy_ids": ["training_puppet"],
+		"seed_value": 302,
+	})
+	var combat = app.game.router.go_to(SceneRouterScript.COMBAT)
+	var texture := _find_node_by_name(combat, "CombatBackgroundTexture") as TextureRect
+	var passed: bool = texture != null \
+		and texture.texture != null \
+		and texture.get_meta("background_id") == "alchemy_mist_grove"
+	app.free()
+	_delete_test_save("user://test_alchemy_visual_background_save.json")
+	return passed
+
+func test_combat_screen_renders_card_thumbnail_children(tree: SceneTree) -> bool:
+	var app = _create_app_with_save_service(tree, "user://test_card_thumbnail_children_save.json")
+	app.game.set_debug_combat_sandbox_config({
+		"character_id": "sword",
+		"deck_ids": ["sword.strike"],
+		"enemy_ids": ["training_puppet"],
+		"seed_value": 303,
+	})
+	var combat = app.game.router.go_to(SceneRouterScript.COMBAT)
+	combat.session.state.hand.clear()
+	combat.session.state.hand.append("sword.strike")
+	combat.session.state.draw_pile.clear()
+	combat._refresh()
+	var card := _find_node_by_name(combat, "CardButton_0") as Button
+	var root := _find_node_by_name(combat, "CardVisualRoot_0") as VBoxContainer
+	var thumbnail := _find_node_by_name(combat, "CardThumbnail_0") as TextureRect
+	var frame := _find_node_by_name(combat, "CardFrame_0") as ColorRect
+	var text := _find_node_by_name(combat, "CardText_0") as Label
+	var passed: bool = card != null \
+		and root != null \
+		and root.mouse_filter == Control.MOUSE_FILTER_IGNORE \
+		and thumbnail != null \
+		and thumbnail.texture != null \
+		and thumbnail.mouse_filter == Control.MOUSE_FILTER_IGNORE \
+		and frame != null \
+		and frame.color.a > 0.0 \
+		and text != null \
+		and text.text.contains("sword.strike") \
+		and card.text.is_empty()
+	app.free()
+	_delete_test_save("user://test_card_thumbnail_children_save.json")
+	return passed
+
 func test_combat_screen_click_play_enqueues_delta_feedback(tree: SceneTree) -> bool:
 	var app = _create_app_with_save_service(tree, "user://test_combat_presentation_click_save.json")
 	var run := RunStateScript.new()
@@ -250,6 +328,53 @@ func test_combat_screen_enemy_intent_row_keeps_targeting_clickable(tree: SceneTr
 		and combat.session.state.hand.is_empty()
 	app.free()
 	_delete_test_save("user://test_intent_row_targeting_save.json")
+	return passed
+
+func test_combat_screen_visual_card_button_still_clicks_and_drags(tree: SceneTree) -> bool:
+	var app = _create_app_with_save_service(tree, "user://test_visual_card_interaction_save.json")
+	var run := RunStateScript.new()
+	run.seed_value = 12345
+	run.character_id = "sword"
+	run.max_hp = 72
+	run.current_hp = 72
+	run.deck_ids = ["sword.strike", "sword.guard"]
+	run.current_node_id = "node_0"
+	var node := preload("res://scripts/run/map_node_state.gd").new("node_0", 0, "combat")
+	node.unlocked = true
+	run.map_nodes = [node]
+	app.game.current_run = run
+
+	var combat = app.game.router.go_to(SceneRouterScript.COMBAT)
+	combat.session.state.hand.clear()
+	combat.session.state.hand.append("sword.strike")
+	combat.session.state.hand.append("sword.guard")
+	combat.session.state.draw_pile.clear()
+	combat._refresh()
+	var enemy_hp_before: int = combat.session.state.enemies[0].current_hp
+	var click_card := _find_node_by_name(combat, "CardButton_0") as Button
+	if click_card != null:
+		click_card.pressed.emit()
+	var enemy_button := _find_node_by_name(combat, "EnemyButton_0") as Button
+	if enemy_button != null:
+		enemy_button.pressed.emit()
+	var click_played: bool = combat.session.state.enemies[0].current_hp < enemy_hp_before
+
+	combat.session.state.hand.clear()
+	combat.session.state.hand.append("sword.guard")
+	combat.session.state.draw_pile.clear()
+	combat._refresh()
+	var block_before: int = combat.session.state.player.block
+	var dragged: bool = combat.try_play_dragged_card(0, "upward", -1)
+	var thumbnail := _find_node_by_name(combat, "CardThumbnail_0") as TextureRect
+	var passed: bool = click_card != null \
+		and enemy_button != null \
+		and click_played \
+		and dragged \
+		and combat.session.state.player.block > block_before \
+		and thumbnail != null \
+		and thumbnail.texture != null
+	app.free()
+	_delete_test_save("user://test_visual_card_interaction_save.json")
 	return passed
 
 func test_combat_screen_drag_enemy_target_card_to_enemy(tree: SceneTree) -> bool:

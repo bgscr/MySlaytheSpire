@@ -8,6 +8,7 @@ const CombatPresentationEvent := preload("res://scripts/presentation/combat_pres
 const CombatPresentationIntentCueResolver := preload("res://scripts/presentation/combat_presentation_intent_cue_resolver.gd")
 const CombatPresentationLayer := preload("res://scripts/presentation/combat_presentation_layer.gd")
 const CombatPresentationQueue := preload("res://scripts/presentation/combat_presentation_queue.gd")
+const CombatVisualResolver := preload("res://scripts/presentation/combat_visual_resolver.gd")
 const ContentCatalog := preload("res://scripts/content/content_catalog.gd")
 const EnemyIntentDisplayResolver := preload("res://scripts/presentation/enemy_intent_display_resolver.gd")
 const SceneRouterScript := preload("res://scripts/app/scene_router.gd")
@@ -19,7 +20,12 @@ var presentation_delta := CombatPresentationDelta.new()
 var presentation_cue_resolver := CombatPresentationCueResolver.new()
 var presentation_intent_resolver := CombatPresentationIntentCueResolver.new()
 var enemy_intent_display_resolver := EnemyIntentDisplayResolver.new()
+var combat_visual_resolver := CombatVisualResolver.new()
+var visual_theme := {}
 var presentation_layer: CombatPresentationLayer
+var combat_background_layer: Control
+var combat_background_texture: TextureRect
+var combat_background_dimmer: ColorRect
 var is_sandbox := false
 var enemy_buttons: Array[Button] = []
 var card_buttons: Array[Button] = []
@@ -54,6 +60,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		_cancel_selection()
 
 func _build_layout() -> void:
+	_build_background_layer()
+
 	status_label = Label.new()
 	status_label.name = "PlayerStatus"
 	add_child(status_label)
@@ -104,6 +112,38 @@ func _build_layout() -> void:
 	presentation_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(presentation_layer)
 
+func _build_background_layer() -> void:
+	combat_background_layer = Control.new()
+	combat_background_layer.name = "CombatBackgroundLayer"
+	combat_background_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	combat_background_layer.set_anchors_preset(Control.PRESET_FULL_RECT)
+	add_child(combat_background_layer)
+
+	combat_background_texture = TextureRect.new()
+	combat_background_texture.name = "CombatBackgroundTexture"
+	combat_background_texture.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	combat_background_texture.set_anchors_preset(Control.PRESET_FULL_RECT)
+	combat_background_texture.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	combat_background_texture.stretch_mode = TextureRect.STRETCH_SCALE
+	combat_background_layer.add_child(combat_background_texture)
+
+	combat_background_dimmer = ColorRect.new()
+	combat_background_dimmer.name = "CombatBackgroundDimmer"
+	combat_background_dimmer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	combat_background_dimmer.set_anchors_preset(Control.PRESET_FULL_RECT)
+	combat_background_layer.add_child(combat_background_dimmer)
+
+func _apply_combat_background() -> void:
+	if session == null or combat_background_texture == null or combat_background_dimmer == null:
+		return
+	var background := combat_visual_resolver.resolve_combat_background(session.state.player.id, session.catalog)
+	var texture_path := String(background.get("texture_path", ""))
+	combat_background_texture.texture = load(texture_path) as Texture2D if not texture_path.is_empty() else null
+	combat_background_texture.set_meta("background_id", String(background.get("background_id", "")))
+	var accent := background.get("accent_color", Color.BLACK) as Color
+	var opacity := float(background.get("dim_opacity", 0.35))
+	combat_background_dimmer.color = Color(accent.r * 0.2, accent.g * 0.2, accent.b * 0.2, opacity)
+
 func _start_session() -> void:
 	var app = get_tree().root.get_node("App")
 	var catalog := ContentCatalog.new()
@@ -125,6 +165,8 @@ func _start_session() -> void:
 			int(sandbox_config.get("seed_value", 1))
 		)
 	presentation_config = app.game.presentation_config
+	visual_theme = combat_visual_resolver.resolve_theme(session.state.player.id, session.catalog)
+	_apply_combat_background()
 	presentation_queue.config = presentation_config
 	presentation_layer.queue = presentation_queue
 	for event in presentation_delta.events_from_initial_state(session.state):
@@ -284,19 +326,60 @@ func _refresh_hand() -> void:
 		var card = session.catalog.get_card(card_id)
 		var button := Button.new()
 		button.name = "CardButton_%s" % hand_index
-		if card == null:
-			button.text = "%s (?)" % card_id
-		else:
-			button.text = "%s [%s] (%s)" % [card.id, card.card_type, card.cost]
+		button.text = ""
 		button.disabled = session.phase != CombatSession.PHASE_PLAYER_TURN
 		button.pressed.connect(func(): _on_card_pressed(hand_index))
 		button.mouse_entered.connect(func(): _on_card_hovered(hand_index))
 		button.mouse_exited.connect(func(): _on_card_unhovered(hand_index))
 		button.gui_input.connect(func(event): _on_card_gui_input(event, hand_index, button))
+		_add_card_visual(button, hand_index, card)
 		hand_container.add_child(button)
 		card_buttons.append(button)
 		if presentation_layer != null:
 			presentation_layer.bind_target("card:%s" % hand_index, button)
+
+func _add_card_visual(button: Button, hand_index: int, card) -> void:
+	var card_id := session.state.hand[hand_index]
+	var visual := combat_visual_resolver.resolve_card_visual(card_id, session.catalog, visual_theme)
+	button.custom_minimum_size = Vector2(148, 116)
+
+	var root := VBoxContainer.new()
+	root.name = "CardVisualRoot_%s" % hand_index
+	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.set_anchors_preset(Control.PRESET_FULL_RECT)
+	root.offset_left = 6
+	root.offset_top = 6
+	root.offset_right = -6
+	root.offset_bottom = -6
+	button.add_child(root)
+
+	var frame := ColorRect.new()
+	frame.name = "CardFrame_%s" % hand_index
+	frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	frame.custom_minimum_size = Vector2(132, 6)
+	frame.color = visual.get("accent_color", Color.WHITE)
+	root.add_child(frame)
+
+	var thumbnail := TextureRect.new()
+	thumbnail.name = "CardThumbnail_%s" % hand_index
+	thumbnail.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	thumbnail.custom_minimum_size = Vector2(132, 58)
+	thumbnail.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	thumbnail.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	var texture_path := String(visual.get("thumbnail_path", ""))
+	thumbnail.texture = load(texture_path) as Texture2D if not texture_path.is_empty() else null
+	root.add_child(thumbnail)
+
+	var label := Label.new()
+	label.name = "CardText_%s" % hand_index
+	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	label.text = _card_visual_text(card_id, card)
+	root.add_child(label)
+
+func _card_visual_text(card_id: String, card) -> String:
+	if card == null:
+		return "%s (?)" % card_id
+	return "%s [%s] (%s)" % [card.id, card.card_type, card.cost]
 
 func _clear_children(node: Node) -> void:
 	for child in node.get_children():
