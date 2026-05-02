@@ -125,6 +125,14 @@ func test_validation_reports_invalid_enemy_visual_resources() -> bool:
 	assert(passed)
 	return passed
 
+func test_validation_reports_missing_enemy_fallback_portrait() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.enemy_fallback_portrait_path = "res://assets/presentation/enemy_portraits/missing_fallback.png"
+	var errors := catalog.validate()
+	var passed: bool = _any_contains(errors, "Enemy visual fallback portrait failed to load")
+	assert(passed)
+	return passed
+
 func test_default_catalog_visual_texture_paths_load() -> bool:
 	var catalog := ContentCatalog.new()
 	catalog.load_default()

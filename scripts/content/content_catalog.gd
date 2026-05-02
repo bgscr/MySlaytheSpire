@@ -212,6 +212,7 @@ var visual_themes_by_character_id: Dictionary = {}
 var enemy_visuals_by_enemy_id: Dictionary = {}
 var load_errors: Array[String] = []
 var locale_path := "res://localization/zh_CN.po"
+var enemy_fallback_portrait_path := "res://assets/presentation/enemy_portraits/fallback_enemy.png"
 
 func load_default() -> void:
 	load_from_paths(
@@ -558,6 +559,11 @@ func _validate_default_enemy_intent_displays(errors: Array[String]) -> void:
 func _validate_visual_catalog(errors: Array[String]) -> void:
 	if not combat_backgrounds_by_id.has("default_combat"):
 		errors.append("Combat background catalog is missing default_combat fallback")
+	var fallback_texture := load(enemy_fallback_portrait_path) as Texture2D \
+		if not enemy_fallback_portrait_path.is_empty() and ResourceLoader.exists(enemy_fallback_portrait_path) \
+		else null
+	if fallback_texture == null:
+		errors.append("Enemy visual fallback portrait failed to load %s" % enemy_fallback_portrait_path)
 	for card: CardDef in cards_by_id.values():
 		if not card_visuals_by_card_id.has(card.id):
 			errors.append("Card %s has no card visual" % card.id)
