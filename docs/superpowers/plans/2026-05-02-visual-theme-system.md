@@ -264,7 +264,7 @@ If Godot has not created `.uid` files yet, omit only the missing `.uid` paths fr
 - Modify: `scripts/content/content_catalog.gd`
 - Modify: `tests/unit/test_content_catalog.gd`
 
-- [ ] **Step 1: Add failing catalog preloads**
+- [x] **Step 1: Add failing catalog preloads**
 
 Add these preloads near the other test preloads in `tests/unit/test_content_catalog.gd`:
 
@@ -274,7 +274,7 @@ const CombatBackgroundDef := preload("res://scripts/data/combat_background_def.g
 const VisualThemeDef := preload("res://scripts/data/visual_theme_def.gd")
 ```
 
-- [ ] **Step 2: Add failing catalog loading and validation tests**
+- [x] **Step 2: Add failing catalog loading and validation tests**
 
 Add these tests after `test_default_catalog_loads_enemy_intent_display_resources()`:
 
@@ -381,7 +381,7 @@ func test_validation_reports_invalid_visual_resources() -> bool:
 	return passed
 ```
 
-- [ ] **Step 3: Run tests to verify RED**
+- [x] **Step 3: Run tests to verify RED**
 
 Run:
 
@@ -391,7 +391,7 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File tools/ci/run_godot
 
 Expected: `TESTS FAILED` because `ContentCatalog` does not expose visual dictionaries or getters yet.
 
-- [ ] **Step 4: Add visual preloads and default path constants**
+- [x] **Step 4: Add visual preloads and default path constants**
 
 Modify `scripts/content/content_catalog.gd`.
 
@@ -461,7 +461,7 @@ const DEFAULT_VISUAL_THEME_PATHS: Array[String] = [
 ]
 ```
 
-- [ ] **Step 5: Add dictionaries, getters, and loader arguments**
+- [x] **Step 5: Add dictionaries, getters, and loader arguments**
 
 In `scripts/content/content_catalog.gd`, add dictionaries near existing catalog dictionaries:
 
@@ -543,7 +543,7 @@ func get_visual_theme(character_id: String) -> VisualThemeDef:
 	return visual_themes_by_character_id.get(character_id) as VisualThemeDef
 ```
 
-- [ ] **Step 6: Add visual loaders**
+- [x] **Step 6: Add visual loaders**
 
 Add these helpers after `_load_enemy_intent_displays()`:
 
@@ -588,7 +588,7 @@ func _load_visual_themes(paths: Array[String]) -> void:
 		visual_themes_by_character_id[theme.character_id] = theme
 ```
 
-- [ ] **Step 7: Add visual validation**
+- [x] **Step 7: Add visual validation**
 
 Update `validate()` after `_validate_default_enemy_intent_displays(errors)`:
 
@@ -650,7 +650,7 @@ func _validate_visual_theme(theme: VisualThemeDef, errors: Array[String]) -> voi
 		errors.append("Visual theme %s has empty card_frame_style" % theme.id)
 ```
 
-- [ ] **Step 8: Run tests to verify RED from missing resources**
+- [x] **Step 8: Run tests to verify RED from missing resources**
 
 Run:
 
@@ -674,7 +674,7 @@ Do not commit this task until Task 3 supplies the resources and checks are green
 - Modify: `docs/superpowers/plans/2026-05-02-visual-theme-system.md`
 - Generated: new `.import` files for PNGs
 
-- [ ] **Step 1: Create first-batch PNG textures**
+- [x] **Step 1: Create first-batch PNG textures**
 
 Run this PowerShell command to generate simple project-owned PNG textures with .NET drawing APIs:
 
@@ -684,7 +684,7 @@ rtk proxy powershell -NoProfile -Command "Add-Type -AssemblyName System.Drawing;
 
 Expected: PNG files exist under `assets/presentation/card_thumbnails/` and `assets/presentation/backgrounds/`.
 
-- [ ] **Step 2: Run Godot import for new assets**
+- [x] **Step 2: Run Godot import for new assets**
 
 Run:
 
@@ -694,7 +694,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: process exits 0 and `.import` files are created for the new PNGs.
 
-- [ ] **Step 3: Create background resources**
+- [x] **Step 3: Create background resources**
 
 Create `resources/visuals/backgrounds/default_combat.tres`:
 
@@ -747,7 +747,7 @@ accent_color = Color(0.48, 0.82, 0.58, 1)
 dim_opacity = 0.32
 ```
 
-- [ ] **Step 4: Create visual theme resources**
+- [x] **Step 4: Create visual theme resources**
 
 Create `resources/visuals/themes/sword.tres`:
 
@@ -783,7 +783,7 @@ card_accent_color = Color(0.72, 0.94, 0.58, 1)
 background_accent_color = Color(0.42, 0.68, 0.48, 1)
 ```
 
-- [ ] **Step 5: Create card visual resources**
+- [x] **Step 5: Create card visual resources**
 
 Create one `.tres` file per path in `DEFAULT_CARD_VISUAL_PATHS`. Use this pattern, changing `id`, `card_id`, `thumbnail_path`, `frame_style`, `accent_color`, `element_tag`, and `thumbnail_alt_label` for each card:
 
@@ -848,7 +848,7 @@ Use this exact mapping:
 | `alchemy_cauldron_overflow.tres` | `alchemy.cauldron_overflow` | `res://assets/presentation/card_thumbnails/alchemy_attack_status.png` | `alchemy` | `Color(0.72, 0.94, 0.58, 1)` | `cauldron` | `Alchemy attack thumbnail` |
 | `alchemy_golden_core_detox.tres` | `alchemy.golden_core_detox` | `res://assets/presentation/card_thumbnails/alchemy_power.png` | `alchemy` | `Color(0.72, 0.94, 0.58, 1)` | `detox` | `Alchemy power thumbnail` |
 
-- [ ] **Step 6: Run tests to verify GREEN for catalog and resources**
+- [x] **Step 6: Run tests to verify GREEN for catalog and resources**
 
 Run:
 
@@ -863,7 +863,7 @@ TESTS PASSED
 Godot checks passed.
 ```
 
-- [ ] **Step 7: Commit catalog, resources, and assets**
+- [x] **Step 7: Commit catalog, resources, and assets**
 
 Run:
 

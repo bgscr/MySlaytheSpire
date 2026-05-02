@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="CombatBackgroundDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/combat_background_def.gd" id="1_background"]
+
+[resource]
+script = ExtResource("1_background")
+id = "default_combat"
+texture_path = "res://assets/presentation/backgrounds/default_combat.png"
+environment_tag = "default"
+encounter_tier = "any"
+accent_color = Color(0.42, 0.48, 0.56, 1)
+dim_opacity = 0.36

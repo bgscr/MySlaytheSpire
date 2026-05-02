@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="CardVisualDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/card_visual_def.gd" id="1_visual"]
+
+[resource]
+script = ExtResource("1_visual")
+id = "sword.wind_splitting_step"
+card_id = "sword.wind_splitting_step"
+thumbnail_path = "res://assets/presentation/card_thumbnails/sword_attack.png"
+frame_style = "sword"
+accent_color = Color(0.55, 0.86, 1, 1)
+element_tag = "blade"
+thumbnail_alt_label = "Sword attack thumbnail"

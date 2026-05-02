@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="VisualThemeDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/visual_theme_def.gd" id="1_theme"]
+
+[resource]
+script = ExtResource("1_theme")
+id = "sword"
+character_id = "sword"
+default_background_id = "sword_training_ground"
+card_frame_style = "sword"
+card_accent_color = Color(0.55, 0.86, 1, 1)
+background_accent_color = Color(0.25, 0.5, 0.72, 1)

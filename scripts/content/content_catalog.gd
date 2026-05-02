@@ -2,12 +2,15 @@ class_name ContentCatalog
 extends RefCounted
 
 const CardDef := preload("res://scripts/data/card_def.gd")
+const CardVisualDef := preload("res://scripts/data/card_visual_def.gd")
 const CharacterDef := preload("res://scripts/data/character_def.gd")
+const CombatBackgroundDef := preload("res://scripts/data/combat_background_def.gd")
 const EnemyDef := preload("res://scripts/data/enemy_def.gd")
 const EnemyIntentDisplayDef := preload("res://scripts/data/enemy_intent_display_def.gd")
 const EnemyIntentDisplayResolver := preload("res://scripts/presentation/enemy_intent_display_resolver.gd")
 const EventDef := preload("res://scripts/data/event_def.gd")
 const RelicDef := preload("res://scripts/data/relic_def.gd")
+const VisualThemeDef := preload("res://scripts/data/visual_theme_def.gd")
 
 const DEFAULT_CARD_PATHS: Array[String] = [
 	"res://resources/cards/sword/strike_sword.tres",
@@ -123,12 +126,69 @@ const DEFAULT_ENEMY_INTENT_DISPLAY_PATHS: Array[String] = [
 	"res://resources/intents/unknown.tres",
 ]
 
+const DEFAULT_CARD_VISUAL_PATHS: Array[String] = [
+	"res://resources/visuals/card_visuals/sword_strike.tres",
+	"res://resources/visuals/card_visuals/sword_guard.tres",
+	"res://resources/visuals/card_visuals/sword_flash_cut.tres",
+	"res://resources/visuals/card_visuals/sword_qi_surge.tres",
+	"res://resources/visuals/card_visuals/sword_break_stance.tres",
+	"res://resources/visuals/card_visuals/sword_cloud_step.tres",
+	"res://resources/visuals/card_visuals/sword_focused_slash.tres",
+	"res://resources/visuals/card_visuals/sword_sword_resonance.tres",
+	"res://resources/visuals/card_visuals/sword_horizon_arc.tres",
+	"res://resources/visuals/card_visuals/sword_iron_wind_cut.tres",
+	"res://resources/visuals/card_visuals/sword_rising_arc.tres",
+	"res://resources/visuals/card_visuals/sword_guardian_stance.tres",
+	"res://resources/visuals/card_visuals/sword_meridian_flash.tres",
+	"res://resources/visuals/card_visuals/sword_heart_piercer.tres",
+	"res://resources/visuals/card_visuals/sword_unbroken_focus.tres",
+	"res://resources/visuals/card_visuals/sword_wind_splitting_step.tres",
+	"res://resources/visuals/card_visuals/sword_clear_mind_guard.tres",
+	"res://resources/visuals/card_visuals/sword_thread_the_needle.tres",
+	"res://resources/visuals/card_visuals/sword_echoing_sword_heart.tres",
+	"res://resources/visuals/card_visuals/sword_heaven_cutting_arc.tres",
+	"res://resources/visuals/card_visuals/alchemy_toxic_pill.tres",
+	"res://resources/visuals/card_visuals/alchemy_healing_draught.tres",
+	"res://resources/visuals/card_visuals/alchemy_poison_mist.tres",
+	"res://resources/visuals/card_visuals/alchemy_inner_fire_pill.tres",
+	"res://resources/visuals/card_visuals/alchemy_cauldron_burst.tres",
+	"res://resources/visuals/card_visuals/alchemy_calming_powder.tres",
+	"res://resources/visuals/card_visuals/alchemy_toxin_needle.tres",
+	"res://resources/visuals/card_visuals/alchemy_spirit_distill.tres",
+	"res://resources/visuals/card_visuals/alchemy_cinnabar_seal.tres",
+	"res://resources/visuals/card_visuals/alchemy_bitter_extract.tres",
+	"res://resources/visuals/card_visuals/alchemy_smoke_screen.tres",
+	"res://resources/visuals/card_visuals/alchemy_quick_simmer.tres",
+	"res://resources/visuals/card_visuals/alchemy_white_jade_paste.tres",
+	"res://resources/visuals/card_visuals/alchemy_mercury_bloom.tres",
+	"res://resources/visuals/card_visuals/alchemy_ninefold_refine.tres",
+	"res://resources/visuals/card_visuals/alchemy_coiling_miasma.tres",
+	"res://resources/visuals/card_visuals/alchemy_needle_rain.tres",
+	"res://resources/visuals/card_visuals/alchemy_purifying_brew.tres",
+	"res://resources/visuals/card_visuals/alchemy_cauldron_overflow.tres",
+	"res://resources/visuals/card_visuals/alchemy_golden_core_detox.tres",
+]
+
+const DEFAULT_COMBAT_BACKGROUND_PATHS: Array[String] = [
+	"res://resources/visuals/backgrounds/default_combat.tres",
+	"res://resources/visuals/backgrounds/sword_training_ground.tres",
+	"res://resources/visuals/backgrounds/alchemy_mist_grove.tres",
+]
+
+const DEFAULT_VISUAL_THEME_PATHS: Array[String] = [
+	"res://resources/visuals/themes/sword.tres",
+	"res://resources/visuals/themes/alchemy.tres",
+]
+
 var cards_by_id: Dictionary = {}
 var characters_by_id: Dictionary = {}
 var enemies_by_id: Dictionary = {}
 var relics_by_id: Dictionary = {}
 var events_by_id: Dictionary = {}
 var enemy_intent_displays_by_id: Dictionary = {}
+var card_visuals_by_card_id: Dictionary = {}
+var combat_backgrounds_by_id: Dictionary = {}
+var visual_themes_by_character_id: Dictionary = {}
 var load_errors: Array[String] = []
 var locale_path := "res://localization/zh_CN.po"
 
@@ -139,7 +199,10 @@ func load_default() -> void:
 		DEFAULT_ENEMY_PATHS,
 		DEFAULT_RELIC_PATHS,
 		DEFAULT_EVENT_PATHS,
-		DEFAULT_ENEMY_INTENT_DISPLAY_PATHS
+		DEFAULT_ENEMY_INTENT_DISPLAY_PATHS,
+		DEFAULT_CARD_VISUAL_PATHS,
+		DEFAULT_COMBAT_BACKGROUND_PATHS,
+		DEFAULT_VISUAL_THEME_PATHS
 	)
 
 func load_from_paths(
@@ -148,7 +211,10 @@ func load_from_paths(
 	enemy_paths: Array[String],
 	relic_paths: Array[String],
 	event_paths: Array[String] = [],
-	enemy_intent_display_paths: Array[String] = []
+	enemy_intent_display_paths: Array[String] = [],
+	card_visual_paths: Array[String] = [],
+	combat_background_paths: Array[String] = [],
+	visual_theme_paths: Array[String] = []
 ) -> void:
 	clear()
 	_load_cards(card_paths)
@@ -157,6 +223,9 @@ func load_from_paths(
 	_load_relics(relic_paths)
 	_load_events(event_paths)
 	_load_enemy_intent_displays(enemy_intent_display_paths)
+	_load_card_visuals(card_visual_paths)
+	_load_combat_backgrounds(combat_background_paths)
+	_load_visual_themes(visual_theme_paths)
 
 func clear() -> void:
 	cards_by_id.clear()
@@ -165,6 +234,9 @@ func clear() -> void:
 	relics_by_id.clear()
 	events_by_id.clear()
 	enemy_intent_displays_by_id.clear()
+	card_visuals_by_card_id.clear()
+	combat_backgrounds_by_id.clear()
+	visual_themes_by_character_id.clear()
 	load_errors.clear()
 
 func get_card(card_id: String) -> CardDef:
@@ -184,6 +256,15 @@ func get_event(event_id: String) -> EventDef:
 
 func get_enemy_intent_display(display_id: String) -> EnemyIntentDisplayDef:
 	return enemy_intent_displays_by_id.get(display_id) as EnemyIntentDisplayDef
+
+func get_card_visual(card_id: String) -> CardVisualDef:
+	return card_visuals_by_card_id.get(card_id) as CardVisualDef
+
+func get_combat_background(background_id: String) -> CombatBackgroundDef:
+	return combat_backgrounds_by_id.get(background_id) as CombatBackgroundDef
+
+func get_visual_theme(character_id: String) -> VisualThemeDef:
+	return visual_themes_by_character_id.get(character_id) as VisualThemeDef
 
 func get_events() -> Array[EventDef]:
 	var result: Array[EventDef] = []
@@ -239,6 +320,7 @@ func validate() -> Array[String]:
 	_validate_ids("enemy intent display", enemy_intent_displays_by_id, errors)
 	_validate_enemy_intent_displays(errors)
 	_validate_default_enemy_intent_displays(errors)
+	_validate_visual_catalog(errors)
 	_validate_character_card_refs(errors)
 	_validate_event_options(errors)
 	if locale_loaded:
@@ -310,6 +392,45 @@ func _load_enemy_intent_displays(paths: Array[String]) -> void:
 			_record_load_error("ContentCatalog resource has empty id: %s" % path)
 			continue
 		enemy_intent_displays_by_id[display.id] = display
+
+func _load_card_visuals(paths: Array[String]) -> void:
+	for path in paths:
+		var visual := load(path) as CardVisualDef
+		if visual == null:
+			_record_load_error("ContentCatalog expected CardVisualDef resource: %s" % path)
+			continue
+		if visual.id.is_empty():
+			_record_load_error("ContentCatalog resource has empty id: %s" % path)
+			continue
+		if visual.card_id.is_empty():
+			_record_load_error("ContentCatalog card visual has empty card_id: %s" % path)
+			continue
+		card_visuals_by_card_id[visual.card_id] = visual
+
+func _load_combat_backgrounds(paths: Array[String]) -> void:
+	for path in paths:
+		var background := load(path) as CombatBackgroundDef
+		if background == null:
+			_record_load_error("ContentCatalog expected CombatBackgroundDef resource: %s" % path)
+			continue
+		if background.id.is_empty():
+			_record_load_error("ContentCatalog resource has empty id: %s" % path)
+			continue
+		combat_backgrounds_by_id[background.id] = background
+
+func _load_visual_themes(paths: Array[String]) -> void:
+	for path in paths:
+		var theme := load(path) as VisualThemeDef
+		if theme == null:
+			_record_load_error("ContentCatalog expected VisualThemeDef resource: %s" % path)
+			continue
+		if theme.id.is_empty():
+			_record_load_error("ContentCatalog resource has empty id: %s" % path)
+			continue
+		if theme.character_id.is_empty():
+			_record_load_error("ContentCatalog visual theme has empty character_id: %s" % path)
+			continue
+		visual_themes_by_character_id[theme.character_id] = theme
 
 func _record_load_error(message: String) -> void:
 	load_errors.append(message)
@@ -391,6 +512,56 @@ func _validate_default_enemy_intent_displays(errors: Array[String]) -> void:
 			var display := resolver.resolve(intent, self)
 			if not bool(display.get("is_known", false)):
 				errors.append("Enemy %s intent %s has no known display" % [enemy.id, intent])
+
+func _validate_visual_catalog(errors: Array[String]) -> void:
+	if not combat_backgrounds_by_id.has("default_combat"):
+		errors.append("Combat background catalog is missing default_combat fallback")
+	for card: CardDef in cards_by_id.values():
+		if not card_visuals_by_card_id.has(card.id):
+			errors.append("Card %s has no card visual" % card.id)
+	for character: CharacterDef in characters_by_id.values():
+		if not visual_themes_by_character_id.has(character.id):
+			errors.append("Character %s has no visual theme" % character.id)
+	for visual: CardVisualDef in card_visuals_by_card_id.values():
+		_validate_card_visual(visual, errors)
+	for background: CombatBackgroundDef in combat_backgrounds_by_id.values():
+		_validate_combat_background(background, errors)
+	for theme: VisualThemeDef in visual_themes_by_character_id.values():
+		_validate_visual_theme(theme, errors)
+
+func _validate_card_visual(visual: CardVisualDef, errors: Array[String]) -> void:
+	if visual.card_id.is_empty():
+		errors.append("Card visual %s has empty card_id" % visual.id)
+	elif not cards_by_id.has(visual.card_id):
+		errors.append("Card visual %s references missing card %s" % [visual.id, visual.card_id])
+	if visual.thumbnail_path.is_empty():
+		errors.append("Card visual %s has empty thumbnail_path" % visual.id)
+	else:
+		var texture := load(visual.thumbnail_path) as Texture2D
+		if texture == null:
+			errors.append("Card visual %s texture failed to load %s" % [visual.id, visual.thumbnail_path])
+	if visual.frame_style.is_empty():
+		errors.append("Card visual %s has empty frame_style" % visual.id)
+
+func _validate_combat_background(background: CombatBackgroundDef, errors: Array[String]) -> void:
+	if background.texture_path.is_empty():
+		errors.append("Combat background %s has empty texture_path" % background.id)
+	else:
+		var texture := load(background.texture_path) as Texture2D
+		if texture == null:
+			errors.append("Combat background %s texture failed to load %s" % [background.id, background.texture_path])
+
+func _validate_visual_theme(theme: VisualThemeDef, errors: Array[String]) -> void:
+	if theme.character_id.is_empty():
+		errors.append("Visual theme %s has empty character_id" % theme.id)
+	elif not characters_by_id.has(theme.character_id):
+		errors.append("Visual theme %s references missing character %s" % [theme.id, theme.character_id])
+	if theme.default_background_id.is_empty():
+		errors.append("Visual theme %s has empty default_background_id" % theme.id)
+	elif not combat_backgrounds_by_id.has(theme.default_background_id):
+		errors.append("Visual theme %s references missing background %s" % [theme.id, theme.default_background_id])
+	if theme.card_frame_style.is_empty():
+		errors.append("Visual theme %s has empty card_frame_style" % theme.id)
 
 func _require_locale_key(key: String, label: String, locale_keys: Dictionary, errors: Array[String]) -> void:
 	if key.is_empty():

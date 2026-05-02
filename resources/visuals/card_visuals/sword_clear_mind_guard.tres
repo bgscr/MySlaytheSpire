@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="CardVisualDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/card_visual_def.gd" id="1_visual"]
+
+[resource]
+script = ExtResource("1_visual")
+id = "sword.clear_mind_guard"
+card_id = "sword.clear_mind_guard"
+thumbnail_path = "res://assets/presentation/card_thumbnails/sword_skill.png"
+frame_style = "sword"
+accent_color = Color(0.55, 0.86, 1, 1)
+element_tag = "guard"
+thumbnail_alt_label = "Sword skill thumbnail"

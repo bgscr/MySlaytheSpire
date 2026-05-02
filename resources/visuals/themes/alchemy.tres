@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="VisualThemeDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/visual_theme_def.gd" id="1_theme"]
+
+[resource]
+script = ExtResource("1_theme")
+id = "alchemy"
+character_id = "alchemy"
+default_background_id = "alchemy_mist_grove"
+card_frame_style = "alchemy"
+card_accent_color = Color(0.72, 0.94, 0.58, 1)
+background_accent_color = Color(0.42, 0.68, 0.48, 1)

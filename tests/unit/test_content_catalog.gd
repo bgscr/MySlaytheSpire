@@ -2,10 +2,13 @@ extends RefCounted
 
 const ContentCatalog := preload("res://scripts/content/content_catalog.gd")
 const CardDef := preload("res://scripts/data/card_def.gd")
+const CardVisualDef := preload("res://scripts/data/card_visual_def.gd")
 const CharacterDef := preload("res://scripts/data/character_def.gd")
+const CombatBackgroundDef := preload("res://scripts/data/combat_background_def.gd")
 const EnemyDef := preload("res://scripts/data/enemy_def.gd")
 const EnemyIntentDisplayDef := preload("res://scripts/data/enemy_intent_display_def.gd")
 const EventDef := preload("res://scripts/data/event_def.gd")
+const VisualThemeDef := preload("res://scripts/data/visual_theme_def.gd")
 
 func test_default_catalog_loads_existing_resources() -> bool:
 	var catalog := ContentCatalog.new()
@@ -35,6 +38,107 @@ func test_default_catalog_loads_enemy_intent_display_resources() -> bool:
 		and poison.icon_key == "poison" \
 		and unknown != null \
 		and unknown.intent_kind == "unknown"
+	assert(passed)
+	return passed
+
+func test_default_catalog_loads_visual_theme_resources() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.load_default()
+	var sword_visual := catalog.get_card_visual("sword.strike")
+	var alchemy_visual := catalog.get_card_visual("alchemy.toxic_pill")
+	var sword_theme := catalog.get_visual_theme("sword")
+	var alchemy_theme := catalog.get_visual_theme("alchemy")
+	var default_background := catalog.get_combat_background("default_combat")
+	var passed: bool = catalog.card_visuals_by_card_id.size() == 40 \
+		and catalog.combat_backgrounds_by_id.size() == 3 \
+		and catalog.visual_themes_by_character_id.size() == 2 \
+		and sword_visual != null \
+		and sword_visual.thumbnail_path.ends_with("sword_attack.png") \
+		and alchemy_visual != null \
+		and alchemy_visual.thumbnail_path.ends_with("alchemy_attack_status.png") \
+		and sword_theme != null \
+		and sword_theme.default_background_id == "sword_training_ground" \
+		and alchemy_theme != null \
+		and alchemy_theme.default_background_id == "alchemy_mist_grove" \
+		and default_background != null \
+		and default_background.texture_path.ends_with("default_combat.png")
+	assert(passed)
+	return passed
+
+func test_default_catalog_visual_texture_paths_load() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.load_default()
+	for visual: CardVisualDef in catalog.card_visuals_by_card_id.values():
+		var texture := load(visual.thumbnail_path) as Texture2D
+		if texture == null:
+			push_error("Card visual texture failed to load: %s" % visual.thumbnail_path)
+			assert(false)
+			return false
+	for background: CombatBackgroundDef in catalog.combat_backgrounds_by_id.values():
+		var texture := load(background.texture_path) as Texture2D
+		if texture == null:
+			push_error("Combat background texture failed to load: %s" % background.texture_path)
+			assert(false)
+			return false
+	assert(true)
+	return true
+
+func test_validation_reports_missing_visual_theme_for_character() -> bool:
+	var catalog := ContentCatalog.new()
+	var character := CharacterDef.new()
+	character.id = "sword"
+	catalog.characters_by_id[character.id] = character
+	var errors := catalog.validate()
+	var passed: bool = _any_contains(errors, "Character sword has no visual theme")
+	assert(passed)
+	return passed
+
+func test_validation_reports_missing_card_visual_for_default_card() -> bool:
+	var catalog := ContentCatalog.new()
+	var card := CardDef.new()
+	card.id = "sword.strike"
+	catalog.cards_by_id[card.id] = card
+	var errors := catalog.validate()
+	var passed: bool = _any_contains(errors, "Card sword.strike has no card visual")
+	assert(passed)
+	return passed
+
+func test_validation_reports_invalid_visual_resources() -> bool:
+	var catalog := ContentCatalog.new()
+	var card := CardDef.new()
+	card.id = "sword.strike"
+	catalog.cards_by_id[card.id] = card
+	var character := CharacterDef.new()
+	character.id = "sword"
+	catalog.characters_by_id[character.id] = character
+
+	var visual := CardVisualDef.new()
+	visual.id = "bad_visual"
+	visual.card_id = "missing.card"
+	visual.thumbnail_path = ""
+	visual.frame_style = ""
+	catalog.card_visuals_by_card_id["sword.strike"] = visual
+
+	var background := CombatBackgroundDef.new()
+	background.id = "default_combat"
+	background.texture_path = ""
+	catalog.combat_backgrounds_by_id[background.id] = background
+
+	var theme := VisualThemeDef.new()
+	theme.id = "sword"
+	theme.character_id = "missing_character"
+	theme.default_background_id = "missing_background"
+	theme.card_frame_style = ""
+	catalog.visual_themes_by_character_id["sword"] = theme
+
+	var errors := catalog.validate()
+	var passed: bool = _any_contains(errors, "Card visual bad_visual references missing card missing.card") \
+		and _any_contains(errors, "Card visual bad_visual has empty thumbnail_path") \
+		and _any_contains(errors, "Card visual bad_visual has empty frame_style") \
+		and _any_contains(errors, "Combat background default_combat has empty texture_path") \
+		and _any_contains(errors, "Visual theme sword references missing character missing_character") \
+		and _any_contains(errors, "Visual theme sword references missing background missing_background") \
+		and _any_contains(errors, "Visual theme sword has empty card_frame_style")
 	assert(passed)
 	return passed
 

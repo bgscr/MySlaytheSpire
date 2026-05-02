@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="CardVisualDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/card_visual_def.gd" id="1_visual"]
+
+[resource]
+script = ExtResource("1_visual")
+id = "alchemy.toxic_pill"
+card_id = "alchemy.toxic_pill"
+thumbnail_path = "res://assets/presentation/card_thumbnails/alchemy_attack_status.png"
+frame_style = "alchemy"
+accent_color = Color(0.72, 0.94, 0.58, 1)
+element_tag = "poison"
+thumbnail_alt_label = "Alchemy attack thumbnail"
