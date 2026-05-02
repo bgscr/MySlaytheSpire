@@ -1113,7 +1113,7 @@ rtk git commit -m "feat: render enemy intent display rows"
 - Modify: `README.md`
 - Modify: `docs/superpowers/plans/2026-05-01-enemy-intent-display-catalog-foundation.md`
 
-- [ ] **Step 1: Run full Godot checks**
+- [x] **Step 1: Run full Godot checks**
 
 Run:
 
@@ -1128,7 +1128,7 @@ TESTS PASSED
 Godot checks passed.
 ```
 
-- [ ] **Step 2: Run direct import check**
+- [x] **Step 2: Run direct import check**
 
 Run:
 
@@ -1138,7 +1138,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: process exits 0.
 
-- [ ] **Step 3: Verify combat boundary**
+- [x] **Step 3: Verify combat boundary**
 
 Run:
 
@@ -1148,7 +1148,7 @@ rtk rg -n "EnemyIntentDisplay|enemy_intent_display|IntentDisplayResolver" script
 
 Expected: no output. `rg` may exit 1 when there are no matches; that is acceptable for this boundary check.
 
-- [ ] **Step 4: Verify enemy resources still use string intent sequences**
+- [x] **Step 4: Verify enemy resources still use string intent sequences**
 
 Run:
 
@@ -1158,7 +1158,7 @@ rtk rg -n "intent_sequence = Array\\[String\\]" resources/enemies
 
 Expected: output includes all 16 default enemy resources.
 
-- [ ] **Step 5: Update README progress**
+- [x] **Step 5: Update README progress**
 
 Add this bullet under `## Phase 2 Progress` after the card cue migration bullet:
 
@@ -1175,7 +1175,7 @@ Update `## Next Plans` to remove intent icons from the first presentation item:
 2. Release expansion: artifact packaging, checksums, version bump automation, signed builds, and eventual Steam adapter implementation.
 ```
 
-- [ ] **Step 6: Run final two-stage review**
+- [x] **Step 6: Run final two-stage review**
 
 Stage 1 Spec Compliance Review:
 
@@ -1197,11 +1197,11 @@ Stage 2 Code Quality Review:
 
 Classify all found issues as Critical, Important, or Minor. Fix Critical and Important issues before acceptance.
 
-- [ ] **Step 7: Mark completed plan steps**
+- [x] **Step 7: Mark completed plan steps**
 
 Update completed checkboxes in this plan from `[ ]` to `[x]` after each step has been completed and verified.
 
-- [ ] **Step 8: Commit final docs and acceptance**
+- [x] **Step 8: Commit final docs and acceptance**
 
 Run:
 

@@ -65,8 +65,9 @@ $env:GODOT4="C:\Tools\Godot\Godot_v4.6.2-stable_win64_console.exe"
 - Enemy intent presentation cues: complete; enemy attack, block, and status intents now route presentation-only polish cues through the existing queue and asset catalog, while shared Godot checks import assets before running tests in fresh worktrees.
 - Reduced-motion presentation profiles: complete; combat presentation now has a runtime full/reduced motion profile that filters high-motion slash, particle, camera impulse, and slow-motion polish while preserving readable low-motion feedback and independent audio-cue control.
 - Card cue migration foundation: complete; all default catalog cards now declare explicit presentation cues with stable card-id cue ids, while resolver fallback remains available for future content and prototypes.
+- Enemy intent display catalog foundation: complete; combat now renders data-backed intent rows for attack, block, and status previews while existing string intent execution remains unchanged.
 
 ## Next Plans
 
-1. Presentation expansion: intent icons, card art, richer combat backgrounds, and formal audio mixing.
+1. Presentation expansion: card art, richer combat backgrounds, and formal audio mixing.
 2. Release expansion: artifact packaging, checksums, version bump automation, signed builds, and eventual Steam adapter implementation.
