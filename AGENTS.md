@@ -10,7 +10,7 @@
 ## 2. Branch and Workspace Rule
 Project development must prioritize the main branch while utilizing git worktrees for isolated or parallel agent tasks.
 - **Default Workspace**: Always work directly on the `main` branch by default. Do not create or checkout feature branches in the primary repository directory.
-- **Worktrees for Branching**: When a new branch is necessary (e.g., for complex features, experiments, or delegation), **always use `git worktree`** to create an isolated workspace for it. Create feature branches with the `codex/` prefix strictly within these worktrees.
+- **Worktrees for Branching**: When a new branch is necessary (e.g., for complex features, experiments, or delegation), **always use `git worktree`** to create an isolated workspace for it. **All worktrees must be located in the `.worktrees/` directory at the project root.** Create feature branches with the `codex/` prefix strictly within these worktrees.
 - **Subagents & Parallel Work**: When delegating tasks, dispatch subagents to operate within these specific worktrees. Multiple subagents are allowed and encouraged to work concurrently across different worktrees on separate branches if the workload requires it.
 
 ## 3. Code Review Process
