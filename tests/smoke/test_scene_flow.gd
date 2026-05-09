@@ -1332,6 +1332,9 @@ func test_reward_screen_claims_card_skips_gold_and_saves_on_continue(tree: Scene
 	var reward_screen = app.game.router.go_to(SceneRouterScript.REWARD)
 	var continue_button := _find_node_by_name(reward_screen, "ContinueButton") as Button
 	var card_button := _find_node_by_name(reward_screen, "ClaimCard_0_0") as Button
+	var preview := _find_node_by_name(reward_screen, "RewardCardVisual_0_0") as VBoxContainer
+	var thumbnail := _find_node_by_name(reward_screen, "RewardCardThumbnail_0_0") as TextureRect
+	var preview_text := _find_node_by_name(reward_screen, "RewardCardText_0_0") as Label
 	var disabled_before: bool = continue_button != null and continue_button.disabled
 	if card_button != null:
 		card_button.pressed.emit()
@@ -1350,6 +1353,13 @@ func test_reward_screen_claims_card_skips_gold_and_saves_on_continue(tree: Scene
 	var loaded_run = app.game.save_service.load_run()
 	var passed: bool = disabled_before \
 		and deck_claimed \
+		and preview != null \
+		and preview.mouse_filter == Control.MOUSE_FILTER_IGNORE \
+		and thumbnail != null \
+		and thumbnail.texture != null \
+		and thumbnail.mouse_filter == Control.MOUSE_FILTER_IGNORE \
+		and preview_text != null \
+		and preview_text.text.contains("sword.") \
 		and still_disabled_after_card \
 		and enabled_after_all_resolved \
 		and disabled_after_continue \
@@ -1469,6 +1479,8 @@ func test_reward_screen_claims_pending_event_reward_then_advances_event(tree: Sc
 
 	var reward_screen = app.game.router.go_to(SceneRouterScript.REWARD)
 	var claim_card := _find_node_by_name(reward_screen, "ClaimCard_0_0") as Button
+	var preview := _find_node_by_name(reward_screen, "RewardCardVisual_0_0") as VBoxContainer
+	var thumbnail := _find_node_by_name(reward_screen, "RewardCardThumbnail_0_0") as TextureRect
 	if claim_card != null:
 		claim_card.pressed.emit()
 	var continue_button := _find_node_by_name(reward_screen, "ContinueButton") as Button
@@ -1476,6 +1488,9 @@ func test_reward_screen_claims_pending_event_reward_then_advances_event(tree: Sc
 		continue_button.pressed.emit()
 	var loaded_run = app.game.save_service.load_run()
 	var passed: bool = claim_card != null \
+		and preview != null \
+		and thumbnail != null \
+		and thumbnail.texture != null \
 		and continue_button != null \
 		and loaded_run != null \
 		and loaded_run.current_reward_state.is_empty() \

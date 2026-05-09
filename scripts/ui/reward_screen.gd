@@ -1,5 +1,7 @@
 extends Control
 
+const CardVisualPresenter := preload("res://scripts/ui/card_visual_presenter.gd")
+const CombatVisualResolver := preload("res://scripts/presentation/combat_visual_resolver.gd")
 const ContentCatalog := preload("res://scripts/content/content_catalog.gd")
 const RewardApplier := preload("res://scripts/reward/reward_applier.gd")
 const RewardResolver := preload("res://scripts/reward/reward_resolver.gd")
@@ -101,8 +103,17 @@ func _add_reward_actions(item: VBoxContainer, reward_index: int, reward: Diction
 				var card_id := String(card_ids[card_index])
 				var button := Button.new()
 				button.name = "ClaimCard_%s_%s" % [reward_index, card_index]
-				button.text = "Take %s" % _card_text(card_id)
+				button.text = ""
 				button.pressed.connect(func(): _claim_card(reward_index, card_index))
+				var theme := _visual_theme()
+				CardVisualPresenter.add_card_preview(
+					button,
+					"RewardCard",
+					"%s_%s" % [reward_index, card_index],
+					card_id,
+					catalog,
+					theme
+				)
 				item.add_child(button)
 			item.add_child(_skip_button(reward_index))
 		"gold":
@@ -247,6 +258,12 @@ func _relic_text(relic_id: String) -> String:
 	if relic == null:
 		return relic_id
 	return "%s [%s]" % [relic.id, relic.tier]
+
+func _visual_theme() -> Dictionary:
+	var app = _app()
+	if app == null or app.game.current_run == null or catalog == null:
+		return {}
+	return CombatVisualResolver.new().resolve_theme(app.game.current_run.character_id, catalog)
 
 func _clear_children(node: Node) -> void:
 	for child in node.get_children():

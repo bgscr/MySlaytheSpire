@@ -269,7 +269,7 @@ rtk git commit -m "feat: add card visual presenter"
 - Modify: `tests/smoke/test_scene_flow.gd`
 - Modify: `scripts/ui/reward_screen.gd`
 
-- [ ] **Step 1: Add failing reward preview assertions**
+- [x] **Step 1: Add failing reward preview assertions**
 
 In `test_reward_screen_claims_card_skips_gold_and_saves_on_continue()` in `tests/smoke/test_scene_flow.gd`, add these locals after `card_button`:
 
@@ -316,7 +316,7 @@ The full `passed` block should become:
 		and app.game.router.current_scene == routed_scene
 ```
 
-- [ ] **Step 2: Add failing pending event reward preview assertions**
+- [x] **Step 2: Add failing pending event reward preview assertions**
 
 In `test_reward_screen_claims_pending_event_reward_then_advances_event()`, add these locals after `claim_card`:
 
@@ -349,7 +349,7 @@ The full block should become:
 		and app.game.router.current_scene != reward_screen
 ```
 
-- [ ] **Step 3: Run tests to verify RED**
+- [x] **Step 3: Run tests to verify RED**
 
 Run:
 
@@ -359,7 +359,7 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File tools/ci/run_godot
 
 Expected: `TESTS FAILED` because reward previews are not rendered yet.
 
-- [ ] **Step 4: Add presenter preload to reward screen**
+- [x] **Step 4: Add presenter preload to reward screen**
 
 Add this preload to `scripts/ui/reward_screen.gd` near the other preloads:
 
@@ -368,7 +368,7 @@ const CardVisualPresenter := preload("res://scripts/ui/card_visual_presenter.gd"
 const CombatVisualResolver := preload("res://scripts/presentation/combat_visual_resolver.gd")
 ```
 
-- [ ] **Step 5: Render card previews inside reward card buttons**
+- [x] **Step 5: Render card previews inside reward card buttons**
 
 In `_add_reward_actions()` in `scripts/ui/reward_screen.gd`, replace the `"card_choice"` button creation block:
 
@@ -409,7 +409,7 @@ func _visual_theme() -> Dictionary:
 	return CombatVisualResolver.new().resolve_theme(app.game.current_run.character_id, catalog)
 ```
 
-- [ ] **Step 6: Run tests to verify GREEN for rewards**
+- [x] **Step 6: Run tests to verify GREEN for rewards**
 
 Run:
 
@@ -424,7 +424,7 @@ TESTS PASSED
 Godot checks passed.
 ```
 
-- [ ] **Step 7: Commit reward previews**
+- [x] **Step 7: Commit reward previews**
 
 Run:
 
