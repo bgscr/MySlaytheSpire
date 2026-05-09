@@ -1,6 +1,7 @@
 extends RefCounted
 
 const CombatVisualResolver := preload("res://scripts/presentation/combat_visual_resolver.gd")
+const CardVisualPresenter := preload("res://scripts/ui/card_visual_presenter.gd")
 const ContentCatalog := preload("res://scripts/content/content_catalog.gd")
 
 func test_resolver_resolves_distinct_character_themes() -> bool:
@@ -104,5 +105,67 @@ func test_resolver_falls_back_for_missing_visual_data() -> bool:
 		and enemy_visual.get("is_known") == false \
 		and background.get("background_id") == "default_combat" \
 		and String(background.get("texture_path", "")).ends_with("default_combat.png")
+	assert(passed)
+	return passed
+
+func test_card_visual_presenter_creates_known_card_preview() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.load_default()
+	var resolver := CombatVisualResolver.new()
+	var theme := resolver.resolve_theme("sword", catalog)
+	var parent := VBoxContainer.new()
+	var root := CardVisualPresenter.add_card_preview(parent, "RewardCard", "0_0", "sword.strike", catalog, theme)
+	var frame := parent.get_node_or_null("RewardCardVisual_0_0/RewardCardFrame_0_0") as ColorRect
+	var thumbnail := parent.get_node_or_null("RewardCardVisual_0_0/RewardCardThumbnail_0_0") as TextureRect
+	var text := parent.get_node_or_null("RewardCardVisual_0_0/RewardCardText_0_0") as Label
+	var passed: bool = root != null \
+		and root.name == "RewardCardVisual_0_0" \
+		and root.mouse_filter == Control.MOUSE_FILTER_IGNORE \
+		and frame != null \
+		and frame.color.a > 0.0 \
+		and frame.get_meta("frame_style") == "sword" \
+		and thumbnail != null \
+		and thumbnail.texture != null \
+		and thumbnail.mouse_filter == Control.MOUSE_FILTER_IGNORE \
+		and thumbnail.get_meta("card_id") == "sword.strike" \
+		and thumbnail.get_meta("element_tag") == "blade" \
+		and text != null \
+		and text.text.contains("sword.strike") \
+		and text.text.contains("attack")
+	parent.free()
+	assert(passed)
+	return passed
+
+func test_card_visual_presenter_falls_back_for_missing_card() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.load_default()
+	var parent := VBoxContainer.new()
+	CardVisualPresenter.add_card_preview(parent, "RewardCard", "missing", "missing.card", catalog)
+	var thumbnail := parent.get_node_or_null("RewardCardVisual_missing/RewardCardThumbnail_missing") as TextureRect
+	var text := parent.get_node_or_null("RewardCardVisual_missing/RewardCardText_missing") as Label
+	var passed: bool = thumbnail != null \
+		and thumbnail.texture != null \
+		and thumbnail.get_meta("card_id") == "missing.card" \
+		and thumbnail.get_meta("is_known") == false \
+		and text != null \
+		and text.text == "missing.card (?)"
+	parent.free()
+	assert(passed)
+	return passed
+
+func test_card_visual_presenter_uses_distinct_suffixes_for_duplicate_cards() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.load_default()
+	var parent := VBoxContainer.new()
+	CardVisualPresenter.add_card_preview(parent, "ShopRemoveCard", "0", "sword.strike", catalog)
+	CardVisualPresenter.add_card_preview(parent, "ShopRemoveCard", "1", "sword.strike", catalog)
+	var first := parent.get_node_or_null("ShopRemoveCardVisual_0/ShopRemoveCardThumbnail_0") as TextureRect
+	var second := parent.get_node_or_null("ShopRemoveCardVisual_1/ShopRemoveCardThumbnail_1") as TextureRect
+	var passed: bool = first != null \
+		and second != null \
+		and first != second \
+		and first.get_meta("card_id") == "sword.strike" \
+		and second.get_meta("card_id") == "sword.strike"
+	parent.free()
 	assert(passed)
 	return passed

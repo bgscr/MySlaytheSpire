@@ -88,7 +88,7 @@ Do not modify:
 - Modify: `tests/unit/test_combat_visuals.gd`
 - Create: `scripts/ui/card_visual_presenter.gd`
 
-- [ ] **Step 1: Add failing helper preload**
+- [x] **Step 1: Add failing helper preload**
 
 Add this preload near the top of `tests/unit/test_combat_visuals.gd`, after the existing `CombatVisualResolver` preload:
 
@@ -96,7 +96,7 @@ Add this preload near the top of `tests/unit/test_combat_visuals.gd`, after the 
 const CardVisualPresenter := preload("res://scripts/ui/card_visual_presenter.gd")
 ```
 
-- [ ] **Step 2: Add failing helper tests**
+- [x] **Step 2: Add failing helper tests**
 
 Add these tests after `test_resolver_falls_back_for_missing_visual_data()` in `tests/unit/test_combat_visuals.gd`:
 
@@ -164,7 +164,7 @@ func test_card_visual_presenter_uses_distinct_suffixes_for_duplicate_cards() -> 
 	return passed
 ```
 
-- [ ] **Step 3: Run tests to verify RED**
+- [x] **Step 3: Run tests to verify RED**
 
 Run:
 
@@ -174,7 +174,7 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File tools/ci/run_godot
 
 Expected: `TESTS FAILED` or import errors because `res://scripts/ui/card_visual_presenter.gd` does not exist.
 
-- [ ] **Step 4: Create the card visual presenter helper**
+- [x] **Step 4: Create the card visual presenter helper**
 
 Create `scripts/ui/card_visual_presenter.gd`:
 
@@ -238,7 +238,7 @@ static func _card_text(card_id: String, catalog: Object) -> String:
 	return "%s [%s] (%s)" % [card.id, card.card_type, card.cost]
 ```
 
-- [ ] **Step 5: Run tests to verify GREEN for helper**
+- [x] **Step 5: Run tests to verify GREEN for helper**
 
 Run:
 
@@ -253,7 +253,7 @@ TESTS PASSED
 Godot checks passed.
 ```
 
-- [ ] **Step 6: Commit helper**
+- [x] **Step 6: Commit helper**
 
 Run:
 
