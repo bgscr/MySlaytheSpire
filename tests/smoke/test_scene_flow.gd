@@ -1353,7 +1353,12 @@ func test_reward_screen_claims_card_skips_gold_and_saves_on_continue(tree: Scene
 	var loaded_run = app.game.save_service.load_run()
 	var passed: bool = disabled_before \
 		and deck_claimed \
+		and card_button != null \
+		and card_button.custom_minimum_size.x >= 132.0 \
+		and card_button.custom_minimum_size.y >= 86.0 \
 		and preview != null \
+		and preview.custom_minimum_size.x >= 132.0 \
+		and preview.custom_minimum_size.y >= 86.0 \
 		and preview.mouse_filter == Control.MOUSE_FILTER_IGNORE \
 		and thumbnail != null \
 		and thumbnail.texture != null \
@@ -1488,7 +1493,11 @@ func test_reward_screen_claims_pending_event_reward_then_advances_event(tree: Sc
 		continue_button.pressed.emit()
 	var loaded_run = app.game.save_service.load_run()
 	var passed: bool = claim_card != null \
+		and claim_card.custom_minimum_size.x >= 132.0 \
+		and claim_card.custom_minimum_size.y >= 86.0 \
 		and preview != null \
+		and preview.custom_minimum_size.x >= 132.0 \
+		and preview.custom_minimum_size.y >= 86.0 \
 		and thumbnail != null \
 		and thumbnail.texture != null \
 		and continue_button != null \

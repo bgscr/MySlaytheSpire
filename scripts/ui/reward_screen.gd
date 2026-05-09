@@ -104,6 +104,7 @@ func _add_reward_actions(item: VBoxContainer, reward_index: int, reward: Diction
 				var button := Button.new()
 				button.name = "ClaimCard_%s_%s" % [reward_index, card_index]
 				button.text = ""
+				button.custom_minimum_size = Vector2(148, 104)
 				button.pressed.connect(func(): _claim_card(reward_index, card_index))
 				var theme := _visual_theme()
 				CardVisualPresenter.add_card_preview(
