@@ -123,13 +123,16 @@ func test_card_visual_presenter_creates_known_card_preview() -> bool:
 		and root.mouse_filter == Control.MOUSE_FILTER_IGNORE \
 		and frame != null \
 		and frame.color.a > 0.0 \
+		and frame.mouse_filter == Control.MOUSE_FILTER_IGNORE \
 		and frame.get_meta("frame_style") == "sword" \
 		and thumbnail != null \
 		and thumbnail.texture != null \
 		and thumbnail.mouse_filter == Control.MOUSE_FILTER_IGNORE \
 		and thumbnail.get_meta("card_id") == "sword.strike" \
 		and thumbnail.get_meta("element_tag") == "blade" \
+		and thumbnail.get_meta("is_known") == true \
 		and text != null \
+		and text.mouse_filter == Control.MOUSE_FILTER_IGNORE \
 		and text.text.contains("sword.strike") \
 		and text.text.contains("attack")
 	parent.free()
