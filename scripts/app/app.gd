@@ -12,6 +12,8 @@ func _ready() -> void:
 	game.save_service = SaveServiceScript.new()
 	game.platform_service = LocalPlatformServiceScript.new()
 	add_child(game)
+	game.audio_mix_config.ensure_buses()
+	game.audio_mix_config.apply_all()
 	game.router.setup(self)
 	game.router.go_to(SceneRouterScript.MAIN_MENU)
 	if OS.is_debug_build():

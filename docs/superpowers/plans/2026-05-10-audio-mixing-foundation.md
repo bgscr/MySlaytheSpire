@@ -78,7 +78,7 @@ The test suite currently prints an expected error backtrace for the malformed en
 - Modify: `docs/superpowers/plans/2026-05-10-audio-mixing-foundation.md`
 - Generated: `scripts/presentation/audio_mix_config.gd.uid`
 
-- [ ] **Step 1: Add failing audio mix preload**
+- [x] **Step 1: Add failing audio mix preload**
 
 In `tests/unit/test_combat_presentation.gd`, add this preload after `const CombatPresentationQueue`:
 
@@ -86,7 +86,7 @@ In `tests/unit/test_combat_presentation.gd`, add this preload after `const Comba
 const AudioMixConfig := preload("res://scripts/presentation/audio_mix_config.gd")
 ```
 
-- [ ] **Step 2: Add failing audio mix config tests**
+- [x] **Step 2: Add failing audio mix config tests**
 
 In `tests/unit/test_combat_presentation.gd`, add these tests after `test_queue_enqueue_copies_event_without_aliasing_original`:
 
@@ -139,7 +139,7 @@ func test_audio_mix_config_ignores_unknown_bus_without_mutating_required_volumes
 	return passed
 ```
 
-- [ ] **Step 3: Run tests to verify RED**
+- [x] **Step 3: Run tests to verify RED**
 
 Run:
 
@@ -149,7 +149,7 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\ci\run_god
 
 Expected: non-zero exit with a load/preload failure because `res://scripts/presentation/audio_mix_config.gd` does not exist.
 
-- [ ] **Step 4: Create audio mix config**
+- [x] **Step 4: Create audio mix config**
 
 Create `scripts/presentation/audio_mix_config.gd`:
 
@@ -215,7 +215,7 @@ func _apply_bus_volume(bus_name: String) -> void:
 	AudioServer.set_bus_volume_db(bus_index, volume_to_db(get_bus_volume(bus_name)))
 ```
 
-- [ ] **Step 5: Add Game ownership**
+- [x] **Step 5: Add Game ownership**
 
 In `scripts/app/game.gd`, add this preload after `const CombatPresentationConfig`:
 
@@ -248,7 +248,7 @@ var audio_mix_config := AudioMixConfig.new()
 var debug_combat_sandbox_config: Dictionary = {}
 ```
 
-- [ ] **Step 6: Initialize audio buses at app startup**
+- [x] **Step 6: Initialize audio buses at app startup**
 
 In `scripts/app/app.gd`, update `_ready()` so the mixer is initialized after adding `game` and before routing:
 
@@ -269,7 +269,7 @@ func _ready() -> void:
 		debug_layer.add_child(DebugOverlayScene.instantiate())
 ```
 
-- [ ] **Step 7: Run tests to verify GREEN for mixer config**
+- [x] **Step 7: Run tests to verify GREEN for mixer config**
 
 Run:
 
@@ -279,7 +279,7 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\ci\run_god
 
 Expected: `Godot checks passed.` and `TESTS PASSED`.
 
-- [ ] **Step 8: Commit mixer foundation**
+- [x] **Step 8: Commit mixer foundation**
 
 Run:
 
