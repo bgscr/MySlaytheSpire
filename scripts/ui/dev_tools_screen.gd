@@ -9,6 +9,8 @@ const EnemyDef := preload("res://scripts/data/enemy_def.gd")
 const EventOptionDef := preload("res://scripts/data/event_option_def.gd")
 const EventRunner := preload("res://scripts/event/event_runner.gd")
 const MapNodeState := preload("res://scripts/run/map_node_state.gd")
+const ItemDetailPanel := preload("res://scripts/ui/item_detail_panel.gd")
+const ItemVisualPresenter := preload("res://scripts/ui/item_visual_presenter.gd")
 const RewardApplier := preload("res://scripts/reward/reward_applier.gd")
 const RewardResolver := preload("res://scripts/reward/reward_resolver.gd")
 const RunState := preload("res://scripts/run/run_state.gd")
@@ -106,6 +108,7 @@ var reward_inspector_node_type_select: OptionButton
 var reward_inspector_seed_spin_box: SpinBox
 var reward_inspector_run_summary_label: Label
 var reward_inspector_reward_list: VBoxContainer
+var reward_inspector_detail_panel: ItemDetailPanel
 
 func _ready() -> void:
 	if catalog.cards_by_id.is_empty():
@@ -910,6 +913,10 @@ func _build_reward_inspector() -> void:
 	reward_inspector_reward_list.name = "RewardInspectorRewardList"
 	panel.add_child(reward_inspector_reward_list)
 
+	reward_inspector_detail_panel = ItemDetailPanel.new()
+	reward_inspector_detail_panel.name = "RewardInspectorDetailPanel"
+	panel.add_child(reward_inspector_detail_panel)
+
 	var reset := Button.new()
 	reset.name = "RewardInspectorResetButton"
 	reset.text = "Reset Reward Run"
@@ -972,7 +979,14 @@ func _add_reward_inspector_reward_row(reward_index: int) -> void:
 		"relic":
 			var relic_button := Button.new()
 			relic_button.name = "RewardInspectorClaimRelic_%s" % reward_index
-			relic_button.text = "Claim %s" % String(reward.get("relic_id", ""))
+			var relic_id := String(reward.get("relic_id", ""))
+			relic_button.text = ""
+			relic_button.custom_minimum_size = Vector2(128, 104)
+			ItemVisualPresenter.add_relic_preview(relic_button, "RewardInspector", str(reward_index), relic_id, catalog)
+			relic_button.mouse_entered.connect(func(): _show_reward_inspector_relic_detail(relic_id))
+			relic_button.mouse_exited.connect(_hide_reward_inspector_detail)
+			relic_button.focus_entered.connect(func(): _show_reward_inspector_relic_detail(relic_id))
+			relic_button.focus_exited.connect(_hide_reward_inspector_detail)
 			var selected_relic_reward_index := reward_index
 			relic_button.pressed.connect(func(): claim_reward_inspector_relic(selected_relic_reward_index))
 			item.add_child(relic_button)
@@ -1002,6 +1016,14 @@ func _refresh_reward_inspector_after_resolution(reward_index: int) -> void:
 	for child in item.get_children():
 		if child is Button:
 			(child as Button).disabled = true
+
+func _show_reward_inspector_relic_detail(relic_id: String) -> void:
+	if reward_inspector_detail_panel != null:
+		reward_inspector_detail_panel.show_relic(relic_id, catalog)
+
+func _hide_reward_inspector_detail() -> void:
+	if reward_inspector_detail_panel != null:
+		reward_inspector_detail_panel.hide_detail()
 
 func _refresh_selected_card() -> void:
 	var cards := filtered_cards()

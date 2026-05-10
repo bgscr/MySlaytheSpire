@@ -852,11 +852,23 @@ func test_dev_tools_reward_inspector_node_type_selection_refreshes_rewards(tree:
 		node_select.item_selected.emit(2)
 	var summary := _find_node_by_name(screen, "RewardInspectorRunSummaryLabel") as Label
 	var relic_button := _find_node_by_name(screen, "RewardInspectorClaimRelic_2") as Button
+	var relic_preview := _find_node_by_prefix(screen, "RewardInspectorRelicVisual_") as VBoxContainer
+	var relic_icon := _find_node_by_prefix(screen, "RewardInspectorRelicIcon_") as TextureRect
+	if relic_button != null:
+		relic_button.mouse_entered.emit()
+	var reward_inspector_detail := _find_node_by_name(screen, "RewardInspectorDetailPanel") as ItemDetailPanel
+	var reward_inspector_detail_visible: bool = reward_inspector_detail != null \
+		and reward_inspector_detail.visible \
+		and reward_inspector_detail.get_meta("item_kind") == "relic"
 	var passed: bool = node_select != null \
 		and summary != null \
 		and summary.text.contains("node_type: boss") \
 		and summary.text.contains("resolved: 0/3") \
-		and relic_button != null
+		and relic_button != null \
+		and relic_preview != null \
+		and relic_icon != null \
+		and relic_icon.texture != null \
+		and reward_inspector_detail_visible
 	screen.free()
 	return passed
 
@@ -1599,13 +1611,45 @@ func test_event_screen_renders_direct_card_option_previews(tree: SceneTree) -> b
 	var option_button := _find_node_by_prefix(event_screen, "EventOption_") as Button
 	var loaded_before = app.game.save_service.load_run()
 	if option_button != null and not option_button.disabled:
+		option_button.mouse_entered.emit()
+	var detail := _find_node_by_name(event_screen, "ItemDetailPanel") as ItemDetailPanel
+	var detail_visible: bool = detail != null and detail.visible and detail.get_meta("item_kind") == "card"
+	if option_button != null and not option_button.disabled:
+		option_button.mouse_exited.emit()
 		option_button.pressed.emit()
 	var passed: bool = preview != null \
 		and preview.mouse_filter == Control.MOUSE_FILTER_IGNORE \
 		and thumbnail != null \
 		and thumbnail.texture != null \
+		and detail_visible \
 		and loaded_before == null \
 		and app.game.router.current_scene != null
+	app.free()
+	_delete_test_save(save_path)
+	return passed
+
+func test_event_screen_renders_direct_relic_option_previews(tree: SceneTree) -> bool:
+	var save_path := "user://test_event_relic_preview_save.json"
+	var app = _create_app_with_save_service(tree, save_path)
+	var run := _reward_run("event", true)
+	run.seed_value = _seed_for_event_with_relic_preview_option()
+	run.current_hp = 40
+	run.max_hp = 40
+	run.gold = 80
+	app.game.current_run = run
+	var event_screen = app.game.router.go_to(SceneRouterScript.EVENT)
+	var preview := _find_node_by_prefix(event_screen, "EventOptionRelicVisual_") as VBoxContainer
+	var icon := _find_node_by_prefix(event_screen, "EventOptionRelicIcon_") as TextureRect
+	var option_button := _find_node_by_prefix(event_screen, "EventOption_") as Button
+	if option_button != null:
+		option_button.mouse_entered.emit()
+	var detail := _find_node_by_name(event_screen, "ItemDetailPanel") as ItemDetailPanel
+	var detail_visible: bool = detail != null and detail.visible and detail.get_meta("item_kind") == "relic"
+	var passed: bool = preview != null \
+		and preview.mouse_filter == Control.MOUSE_FILTER_IGNORE \
+		and icon != null \
+		and icon.texture != null \
+		and detail_visible
 	app.free()
 	_delete_test_save(save_path)
 	return passed
@@ -2055,6 +2099,23 @@ func _seed_for_event_with_card_preview_option() -> int:
 		for option in event.options:
 			if not option.grant_card_ids.is_empty() or not option.remove_card_id.is_empty():
 				return seed_value
+	return 1
+
+func _seed_for_event_with_relic_preview_option() -> int:
+	for seed in range(1, 200):
+		var run := _reward_run("event", true)
+		run.seed_value = seed
+		run.current_hp = 40
+		run.max_hp = 40
+		run.gold = 80
+		var catalog := ContentCatalogScript.new()
+		catalog.load_default()
+		var event = EventResolverScript.new().resolve(catalog, run)
+		if event == null:
+			continue
+		for option in event.options:
+			if not option.grant_relic_ids.is_empty():
+				return seed
 	return 1
 
 func _first_button_with_prefix(root: Node, prefix: String) -> Button:

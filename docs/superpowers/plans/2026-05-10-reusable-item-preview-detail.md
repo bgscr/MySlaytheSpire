@@ -1736,7 +1736,7 @@ rtk git commit -m "feat: show shop item previews"
 - Modify: `tests/smoke/test_scene_flow.gd`
 - Modify: `docs/superpowers/plans/2026-05-10-reusable-item-preview-detail.md`
 
-- [ ] **Step 1: Extend event and DevTools tests**
+- [x] **Step 1: Extend event and DevTools tests**
 
 In `test_event_screen_renders_direct_card_option_previews()`, add card detail hover checks:
 
@@ -1828,7 +1828,7 @@ Add these conditions to that test's `passed` expression:
 		and reward_inspector_detail_visible \
 ```
 
-- [ ] **Step 2: Run tests to verify RED**
+- [x] **Step 2: Run tests to verify RED**
 
 Run:
 
@@ -1838,7 +1838,7 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\ci\run_god
 
 Expected: non-zero exit or `TESTS FAILED` because event relic previews and DevTools reward inspector relic previews are not wired.
 
-- [ ] **Step 3: Wire event screen**
+- [x] **Step 3: Wire event screen**
 
 In `scripts/ui/event_screen.gd`, replace `CardVisualPresenter` with:
 
@@ -1931,7 +1931,7 @@ func _hide_item_detail() -> void:
 		item_detail_panel.hide_detail()
 ```
 
-- [ ] **Step 4: Wire DevTools reward inspector relic previews**
+- [x] **Step 4: Wire DevTools reward inspector relic previews**
 
 In `scripts/ui/dev_tools_screen.gd`, add preloads:
 
@@ -1979,7 +1979,7 @@ func _hide_reward_inspector_detail() -> void:
 		reward_inspector_detail_panel.hide_detail()
 ```
 
-- [ ] **Step 5: Run event and DevTools tests to verify GREEN**
+- [x] **Step 5: Run event and DevTools tests to verify GREEN**
 
 Run:
 
@@ -1994,7 +1994,7 @@ Godot checks passed.
 TESTS PASSED
 ```
 
-- [ ] **Step 6: Commit event and DevTools wiring**
+- [x] **Step 6: Commit event and DevTools wiring**
 
 Run:
 
