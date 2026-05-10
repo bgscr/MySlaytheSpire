@@ -1538,11 +1538,17 @@ func test_shop_screen_buy_card_saves_immediately(tree: SceneTree) -> bool:
 	app.game.current_run = run
 	var shop_screen = app.game.router.go_to(SceneRouterScript.SHOP)
 	var card_button := _first_button_with_prefix(shop_screen, "BuyOffer_card_")
+	var offer_preview := _find_node_by_name(shop_screen, "ShopOfferCardVisual_card_0") as VBoxContainer
+	var offer_thumbnail := _find_node_by_name(shop_screen, "ShopOfferCardThumbnail_card_0") as TextureRect
 	var deck_size_before := run.deck_ids.size()
 	if card_button != null:
 		card_button.pressed.emit()
 	var loaded_run = app.game.save_service.load_run()
 	var passed: bool = card_button != null \
+		and offer_preview != null \
+		and offer_preview.mouse_filter == Control.MOUSE_FILTER_IGNORE \
+		and offer_thumbnail != null \
+		and offer_thumbnail.texture != null \
 		and loaded_run != null \
 		and loaded_run.deck_ids.size() == deck_size_before + 1 \
 		and not loaded_run.current_shop_state.is_empty() \
@@ -1606,10 +1612,20 @@ func test_shop_screen_remove_card_and_heal_services_sell_out(tree: SceneTree) ->
 	if remove_button != null:
 		remove_button.pressed.emit()
 	var remove_card := _find_node_by_name(app.game.router.current_scene, "RemoveCard_0") as Button
+	var remove_preview := _find_node_by_name(app.game.router.current_scene, "ShopRemoveCardVisual_0") as VBoxContainer
+	var remove_thumbnail := _find_node_by_name(app.game.router.current_scene, "ShopRemoveCardThumbnail_0") as TextureRect
 	if remove_card != null:
 		remove_card.pressed.emit()
 	var loaded_run = app.game.save_service.load_run()
 	var passed: bool = loaded_run != null \
+		and remove_card != null \
+		and remove_card.custom_minimum_size.x >= 132.0 \
+		and remove_card.custom_minimum_size.y >= 86.0 \
+		and remove_preview != null \
+		and remove_preview.custom_minimum_size.x >= 132.0 \
+		and remove_preview.custom_minimum_size.y >= 86.0 \
+		and remove_thumbnail != null \
+		and remove_thumbnail.texture != null \
 		and loaded_run.current_hp > 40 \
 		and loaded_run.deck_ids.size() == 2 \
 		and _offer_sold(loaded_run.current_shop_state, "heal_0") \

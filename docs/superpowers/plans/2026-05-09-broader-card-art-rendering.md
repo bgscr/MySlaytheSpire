@@ -440,7 +440,7 @@ rtk git commit -m "feat: render reward card previews"
 - Modify: `tests/smoke/test_scene_flow.gd`
 - Modify: `scripts/ui/shop_screen.gd`
 
-- [ ] **Step 1: Add failing shop offer preview assertions**
+- [x] **Step 1: Add failing shop offer preview assertions**
 
 In `test_shop_screen_buy_card_saves_immediately()` in `tests/smoke/test_scene_flow.gd`, add these locals after `card_button`:
 
@@ -472,7 +472,7 @@ The full block should become:
 		and _has_sold_offer(loaded_run.current_shop_state, "card")
 ```
 
-- [ ] **Step 2: Add failing shop removal preview assertions**
+- [x] **Step 2: Add failing shop removal preview assertions**
 
 In `test_shop_screen_remove_card_and_heal_services_sell_out()` in `tests/smoke/test_scene_flow.gd`, add these locals after `remove_card`:
 
@@ -502,7 +502,7 @@ The full block should become:
 		and _offer_sold(loaded_run.current_shop_state, "remove_0")
 ```
 
-- [ ] **Step 3: Run tests to verify RED**
+- [x] **Step 3: Run tests to verify RED**
 
 Run:
 
@@ -512,7 +512,7 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File tools/ci/run_godot
 
 Expected: `TESTS FAILED` because shop card previews are not rendered yet.
 
-- [ ] **Step 4: Add presenter preloads to shop screen**
+- [x] **Step 4: Add presenter preloads to shop screen**
 
 Add these preloads to `scripts/ui/shop_screen.gd` near the other preloads:
 
@@ -521,7 +521,7 @@ const CardVisualPresenter := preload("res://scripts/ui/card_visual_presenter.gd"
 const CombatVisualResolver := preload("res://scripts/presentation/combat_visual_resolver.gd")
 ```
 
-- [ ] **Step 5: Render card previews for card offers**
+- [x] **Step 5: Render card previews for card offers**
 
 In `_add_offer_row()` in `scripts/ui/shop_screen.gd`, after this block:
 
@@ -545,7 +545,7 @@ add:
 		)
 ```
 
-- [ ] **Step 6: Render card previews for remove choices**
+- [x] **Step 6: Render card previews for remove choices**
 
 In `_render_removal_choices()` in `scripts/ui/shop_screen.gd`, replace the remove card button block:
 
@@ -586,7 +586,7 @@ func _visual_theme() -> Dictionary:
 	return CombatVisualResolver.new().resolve_theme(run.character_id, catalog)
 ```
 
-- [ ] **Step 7: Run tests to verify GREEN for shop**
+- [x] **Step 7: Run tests to verify GREEN for shop**
 
 Run:
 
@@ -601,7 +601,7 @@ TESTS PASSED
 Godot checks passed.
 ```
 
-- [ ] **Step 8: Commit shop previews**
+- [x] **Step 8: Commit shop previews**
 
 Run:
 
