@@ -3,6 +3,7 @@ extends RefCounted
 const CombatVisualResolver := preload("res://scripts/presentation/combat_visual_resolver.gd")
 const CardVisualPresenter := preload("res://scripts/ui/card_visual_presenter.gd")
 const ItemVisualPresenter := preload("res://scripts/ui/item_visual_presenter.gd")
+const ItemDetailPanel := preload("res://scripts/ui/item_detail_panel.gd")
 const ContentCatalog := preload("res://scripts/content/content_catalog.gd")
 
 func test_resolver_resolves_distinct_character_themes() -> bool:
@@ -245,5 +246,77 @@ func test_item_visual_presenter_uses_distinct_suffixes_for_duplicate_relics() ->
 		and first.get_meta("relic_id") == "jade_talisman" \
 		and second.get_meta("relic_id") == "jade_talisman"
 	parent.free()
+	assert(passed)
+	return passed
+
+func test_item_detail_panel_shows_and_hides_card_details() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.load_default()
+	var theme := CombatVisualResolver.new().resolve_theme("sword", catalog)
+	var panel := ItemDetailPanel.new()
+	panel.show_card("sword.strike", catalog, theme)
+	var title := panel.get_node_or_null("ItemDetailTitle") as Label
+	var image := panel.get_node_or_null("ItemDetailImage") as TextureRect
+	var body := panel.get_node_or_null("ItemDetailBody") as Label
+	var visible_after_show := panel.visible
+	panel.hide_detail()
+	var passed: bool = visible_after_show \
+		and not panel.visible \
+		and panel.get_meta("item_kind") == "card" \
+		and panel.get_meta("item_id") == "sword.strike" \
+		and title != null \
+		and title.text.contains("sword.strike") \
+		and image != null \
+		and image.texture != null \
+		and body != null \
+		and body.text.contains("Cost: 1") \
+		and body.text.contains("Effects:")
+	panel.free()
+	assert(passed)
+	return passed
+
+func test_item_detail_panel_shows_and_hides_relic_details() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.load_default()
+	var panel := ItemDetailPanel.new()
+	panel.show_relic("jade_talisman", catalog)
+	var title := panel.get_node_or_null("ItemDetailTitle") as Label
+	var image := panel.get_node_or_null("ItemDetailImage") as TextureRect
+	var body := panel.get_node_or_null("ItemDetailBody") as Label
+	var visible_after_show := panel.visible
+	panel.hide_detail()
+	var passed: bool = visible_after_show \
+		and not panel.visible \
+		and panel.get_meta("item_kind") == "relic" \
+		and panel.get_meta("item_id") == "jade_talisman" \
+		and title != null \
+		and title.text.contains("jade_talisman") \
+		and image != null \
+		and image.texture != null \
+		and body != null \
+		and body.text.contains("Tier: common") \
+		and body.text.contains("Trigger: combat_started")
+	panel.free()
+	assert(passed)
+	return passed
+
+func test_item_detail_panel_falls_back_for_missing_items() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.load_default()
+	var panel := ItemDetailPanel.new()
+	panel.show_relic("missing_relic", catalog)
+	var title := panel.get_node_or_null("ItemDetailTitle") as Label
+	var image := panel.get_node_or_null("ItemDetailImage") as TextureRect
+	var body := panel.get_node_or_null("ItemDetailBody") as Label
+	var passed: bool = panel.visible \
+		and panel.get_meta("item_kind") == "relic" \
+		and panel.get_meta("item_id") == "missing_relic" \
+		and title != null \
+		and title.text == "missing_relic (?)" \
+		and image != null \
+		and image.texture != null \
+		and body != null \
+		and body.text.contains("Unknown relic")
+	panel.free()
 	assert(passed)
 	return passed

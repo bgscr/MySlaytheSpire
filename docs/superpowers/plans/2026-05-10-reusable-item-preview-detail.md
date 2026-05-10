@@ -986,7 +986,7 @@ rtk git commit -m "feat: add shared item visual presenter"
 - Modify: `tests/unit/test_combat_visuals.gd`
 - Modify: `docs/superpowers/plans/2026-05-10-reusable-item-preview-detail.md`
 
-- [ ] **Step 1: Write failing detail panel tests**
+- [x] **Step 1: Write failing detail panel tests**
 
 In `tests/unit/test_combat_visuals.gd`, add this preload:
 
@@ -1070,7 +1070,7 @@ func test_item_detail_panel_falls_back_for_missing_items() -> bool:
 	return passed
 ```
 
-- [ ] **Step 2: Run detail panel tests to verify RED**
+- [x] **Step 2: Run detail panel tests to verify RED**
 
 Run:
 
@@ -1080,7 +1080,7 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\ci\run_god
 
 Expected: non-zero exit or `TESTS FAILED` because `scripts/ui/item_detail_panel.gd` does not exist.
 
-- [ ] **Step 3: Add `ItemDetailPanel`**
+- [x] **Step 3: Add `ItemDetailPanel`**
 
 Create `scripts/ui/item_detail_panel.gd`:
 
@@ -1197,7 +1197,7 @@ func _effect_lines(effects: Array) -> String:
 	return "\n".join(lines)
 ```
 
-- [ ] **Step 4: Run detail panel tests to verify GREEN**
+- [x] **Step 4: Run detail panel tests to verify GREEN**
 
 Run:
 
@@ -1212,7 +1212,7 @@ Godot checks passed.
 TESTS PASSED
 ```
 
-- [ ] **Step 5: Commit detail panel**
+- [x] **Step 5: Commit detail panel**
 
 Run:
 
