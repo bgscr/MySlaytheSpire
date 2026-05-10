@@ -1435,6 +1435,13 @@ func test_reward_screen_claims_card_skips_gold_and_saves_on_continue(tree: Scene
 	var preview := _find_node_by_name(reward_screen, "RewardCardVisual_0_0") as VBoxContainer
 	var thumbnail := _find_node_by_name(reward_screen, "RewardCardThumbnail_0_0") as TextureRect
 	var preview_text := _find_node_by_name(reward_screen, "RewardCardText_0_0") as Label
+	if card_button != null:
+		card_button.mouse_entered.emit()
+	var card_detail := _find_node_by_name(reward_screen, "ItemDetailPanel") as ItemDetailPanel
+	var card_detail_visible: bool = card_detail != null and card_detail.visible and card_detail.get_meta("item_kind") == "card"
+	if card_button != null:
+		card_button.mouse_exited.emit()
+	var card_detail_hidden: bool = card_detail != null and not card_detail.visible
 	var disabled_before: bool = continue_button != null and continue_button.disabled
 	if card_button != null:
 		card_button.pressed.emit()
@@ -1465,6 +1472,8 @@ func test_reward_screen_claims_card_skips_gold_and_saves_on_continue(tree: Scene
 		and thumbnail.mouse_filter == Control.MOUSE_FILTER_IGNORE \
 		and preview_text != null \
 		and preview_text.text.contains("sword.") \
+		and card_detail_visible \
+		and card_detail_hidden \
 		and still_disabled_after_card \
 		and enabled_after_all_resolved \
 		and disabled_after_continue \
@@ -1496,10 +1505,22 @@ func test_reward_screen_can_claim_boss_relic_and_skip_remaining_rewards(tree: Sc
 	if skip_gold != null:
 		skip_gold.pressed.emit()
 	claim_relic = _find_node_by_name(reward_screen, "ClaimRelic_2") as Button
+	var relic_preview := _find_node_by_name(reward_screen, "RewardRelicVisual_2") as VBoxContainer
+	var relic_icon := _find_node_by_name(reward_screen, "RewardRelicIcon_2") as TextureRect
+	if claim_relic != null:
+		claim_relic.mouse_entered.emit()
+	var relic_detail := _find_node_by_name(reward_screen, "ItemDetailPanel") as ItemDetailPanel
+	var relic_detail_visible: bool = relic_detail != null and relic_detail.visible and relic_detail.get_meta("item_kind") == "relic"
+	if claim_relic != null:
+		claim_relic.mouse_exited.emit()
 	if claim_relic != null:
 		claim_relic.pressed.emit()
 	var continue_button := _find_node_by_name(reward_screen, "ContinueButton") as Button
 	var passed: bool = claim_relic != null \
+		and relic_preview != null \
+		and relic_icon != null \
+		and relic_icon.texture != null \
+		and relic_detail_visible \
 		and run.relic_ids.size() == 1 \
 		and not run.relic_ids[0].is_empty() \
 		and continue_button != null \

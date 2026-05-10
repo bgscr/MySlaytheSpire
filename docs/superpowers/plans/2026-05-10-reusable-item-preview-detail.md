@@ -1387,7 +1387,7 @@ rtk git commit -m "feat: show combat card details"
 - Modify: `tests/smoke/test_scene_flow.gd`
 - Modify: `docs/superpowers/plans/2026-05-10-reusable-item-preview-detail.md`
 
-- [ ] **Step 1: Extend reward smoke tests**
+- [x] **Step 1: Extend reward smoke tests**
 
 In `test_reward_screen_claims_card_skips_gold_and_saves_on_continue()`, after locating `card_button`, emit hover and assert detail visibility:
 
@@ -1430,7 +1430,7 @@ Add these conditions to that test's `passed` expression:
 		and relic_detail_visible \
 ```
 
-- [ ] **Step 2: Run reward smoke tests to verify RED**
+- [x] **Step 2: Run reward smoke tests to verify RED**
 
 Run:
 
@@ -1440,7 +1440,7 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\ci\run_god
 
 Expected: non-zero exit or `TESTS FAILED` because reward relic previews and detail panel wiring do not exist.
 
-- [ ] **Step 3: Wire reward screen to item presenter and detail panel**
+- [x] **Step 3: Wire reward screen to item presenter and detail panel**
 
 In `scripts/ui/reward_screen.gd`, replace the `CardVisualPresenter` preload with:
 
@@ -1511,7 +1511,7 @@ func _hide_item_detail() -> void:
 
 In `_render_rewards()`, call `_hide_item_detail()` before `_clear_children(reward_container)`.
 
-- [ ] **Step 4: Run reward smoke tests to verify GREEN**
+- [x] **Step 4: Run reward smoke tests to verify GREEN**
 
 Run:
 
@@ -1526,7 +1526,7 @@ Godot checks passed.
 TESTS PASSED
 ```
 
-- [ ] **Step 5: Commit reward wiring**
+- [x] **Step 5: Commit reward wiring**
 
 Run:
 
