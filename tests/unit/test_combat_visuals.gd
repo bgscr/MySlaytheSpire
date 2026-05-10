@@ -255,20 +255,27 @@ func test_item_detail_panel_shows_and_hides_card_details() -> bool:
 	var theme := CombatVisualResolver.new().resolve_theme("sword", catalog)
 	var panel := ItemDetailPanel.new()
 	panel.show_card("sword.strike", catalog, theme)
-	var title := panel.get_node_or_null("ItemDetailTitle") as Label
-	var image := panel.get_node_or_null("ItemDetailImage") as TextureRect
-	var body := panel.get_node_or_null("ItemDetailBody") as Label
+	var root := panel.get_node_or_null("ItemDetailRoot") as VBoxContainer
+	var title := panel.get_node_or_null("ItemDetailRoot/ItemDetailTitle") as Label
+	var image := panel.get_node_or_null("ItemDetailRoot/ItemDetailImage") as TextureRect
+	var body := panel.get_node_or_null("ItemDetailRoot/ItemDetailBody") as Label
 	var visible_after_show := panel.visible
 	panel.hide_detail()
 	var passed: bool = visible_after_show \
 		and not panel.visible \
 		and panel.get_meta("item_kind") == "card" \
 		and panel.get_meta("item_id") == "sword.strike" \
+		and root != null \
+		and root.mouse_filter == Control.MOUSE_FILTER_IGNORE \
+		and root.get_child_count() == 3 \
 		and title != null \
+		and title.get_parent() == root \
 		and title.text.contains("sword.strike") \
 		and image != null \
+		and image.get_parent() == root \
 		and image.texture != null \
 		and body != null \
+		and body.get_parent() == root \
 		and body.text.contains("Cost: 1") \
 		and body.text.contains("Effects:")
 	panel.free()
@@ -280,9 +287,9 @@ func test_item_detail_panel_shows_and_hides_relic_details() -> bool:
 	catalog.load_default()
 	var panel := ItemDetailPanel.new()
 	panel.show_relic("jade_talisman", catalog)
-	var title := panel.get_node_or_null("ItemDetailTitle") as Label
-	var image := panel.get_node_or_null("ItemDetailImage") as TextureRect
-	var body := panel.get_node_or_null("ItemDetailBody") as Label
+	var title := panel.get_node_or_null("ItemDetailRoot/ItemDetailTitle") as Label
+	var image := panel.get_node_or_null("ItemDetailRoot/ItemDetailImage") as TextureRect
+	var body := panel.get_node_or_null("ItemDetailRoot/ItemDetailBody") as Label
 	var visible_after_show := panel.visible
 	panel.hide_detail()
 	var passed: bool = visible_after_show \
@@ -305,9 +312,9 @@ func test_item_detail_panel_falls_back_for_missing_items() -> bool:
 	catalog.load_default()
 	var panel := ItemDetailPanel.new()
 	panel.show_relic("missing_relic", catalog)
-	var title := panel.get_node_or_null("ItemDetailTitle") as Label
-	var image := panel.get_node_or_null("ItemDetailImage") as TextureRect
-	var body := panel.get_node_or_null("ItemDetailBody") as Label
+	var title := panel.get_node_or_null("ItemDetailRoot/ItemDetailTitle") as Label
+	var image := panel.get_node_or_null("ItemDetailRoot/ItemDetailImage") as TextureRect
+	var body := panel.get_node_or_null("ItemDetailRoot/ItemDetailBody") as Label
 	var passed: bool = panel.visible \
 		and panel.get_meta("item_kind") == "relic" \
 		and panel.get_meta("item_id") == "missing_relic" \

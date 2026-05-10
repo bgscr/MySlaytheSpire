@@ -29,10 +29,15 @@ func hide_detail() -> void:
 	visible = false
 
 func _build_layout() -> void:
+	var root := VBoxContainer.new()
+	root.name = "ItemDetailRoot"
+	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(root)
+
 	title_label = Label.new()
 	title_label.name = "ItemDetailTitle"
 	title_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(title_label)
+	root.add_child(title_label)
 
 	image_rect = TextureRect.new()
 	image_rect.name = "ItemDetailImage"
@@ -40,13 +45,13 @@ func _build_layout() -> void:
 	image_rect.custom_minimum_size = Vector2(160, 96)
 	image_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	image_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	add_child(image_rect)
+	root.add_child(image_rect)
 
 	body_label = Label.new()
 	body_label.name = "ItemDetailBody"
 	body_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	body_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	add_child(body_label)
+	root.add_child(body_label)
 
 func _show_common(kind: String, item_id: String, title: String, image_path: String, body: String) -> void:
 	set_meta("item_kind", kind)
