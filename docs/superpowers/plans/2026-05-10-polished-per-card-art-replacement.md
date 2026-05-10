@@ -556,7 +556,7 @@ If no `.png.import` files were generated for the new assets, omit those `git add
 - Modify: `README.md`
 - Modify: `docs/superpowers/plans/2026-05-10-polished-per-card-art-replacement.md`
 
-- [ ] **Step 1: Verify no disallowed gameplay or UI code changed across the feature commits**
+- [x] **Step 1: Verify no disallowed gameplay or UI code changed across the feature commits**
 
 Run:
 
@@ -566,7 +566,7 @@ rtk git diff --name-only HEAD~2..HEAD -- scripts resources/cards resources/enemi
 
 Expected: no output. If output includes files from the disallowed areas, stop and inspect before continuing.
 
-- [ ] **Step 2: Verify card visual resource changes are limited to thumbnail fields across the feature commits**
+- [x] **Step 2: Verify card visual resource changes are limited to thumbnail fields across the feature commits**
 
 Run:
 
@@ -576,7 +576,7 @@ rtk git diff HEAD~2..HEAD -- resources/visuals/card_visuals
 
 Expected: diffs only change `thumbnail_path` and `thumbnail_alt_label`.
 
-- [ ] **Step 3: Verify old shared thumbnails remain available but unused by default card visuals**
+- [x] **Step 3: Verify old shared thumbnails remain available but unused by default card visuals**
 
 Run:
 
@@ -586,7 +586,7 @@ rtk rg -n "sword_attack.png|sword_skill.png|sword_power.png|alchemy_attack_statu
 
 Expected: no matches in `resources/visuals/card_visuals`. Test files may mention these filenames only in the guardrail list.
 
-- [ ] **Step 4: Run direct import check**
+- [x] **Step 4: Run direct import check**
 
 Run:
 
@@ -596,7 +596,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: process exits 0.
 
-- [ ] **Step 5: Update README progress**
+- [x] **Step 5: Update README progress**
 
 In `README.md`, add this bullet under `## Phase 2 Progress` after the audio mixing foundation bullet:
 
@@ -613,7 +613,7 @@ Update `## Next Plans` to:
 2. Release expansion: artifact packaging, checksums, version bump automation, signed builds, and eventual Steam adapter implementation.
 ```
 
-- [ ] **Step 6: Run shared Godot checks**
+- [x] **Step 6: Run shared Godot checks**
 
 Run:
 
@@ -628,7 +628,7 @@ Godot checks passed.
 TESTS PASSED
 ```
 
-- [ ] **Step 7: Commit README acceptance**
+- [x] **Step 7: Commit README acceptance**
 
 Run:
 

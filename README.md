@@ -70,8 +70,9 @@ $env:GODOT4="C:\Tools\Godot\Godot_v4.6.2-stable_win64_console.exe"
 - Enemy art foundation: complete; combat now renders data-backed enemy portrait slots for all 16 default enemies through catalog visual resources.
 - Broader card art rendering: complete; reward choices, shop card offers, shop removal choices, and direct card-grant/removal event options now render catalog-backed card previews outside combat.
 - Audio mixing foundation: complete; debug builds now ensure Master, Music, SFX, and UI buses, route combat audio cues through SFX, and expose in-memory debug volume sliders for all four buses.
+- Polished per-card art replacement: complete; all 40 default cards now point to unique project-owned thumbnail art while combat, reward, shop, and event previews continue using the existing visual pipeline.
 
 ## Next Plans
 
-1. Presentation expansion: polished per-card art replacement.
+1. Presentation expansion: full-size card artwork, card detail panels, relic visuals, and other optional polish.
 2. Release expansion: artifact packaging, checksums, version bump automation, signed builds, and eventual Steam adapter implementation.
