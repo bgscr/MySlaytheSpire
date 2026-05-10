@@ -68,8 +68,9 @@ $env:GODOT4="C:\Tools\Godot\Godot_v4.6.2-stable_win64_console.exe"
 - Enemy intent display catalog foundation: complete; combat now renders data-backed intent rows for attack, block, and status previews while existing string intent execution remains unchanged.
 - Visual theme system: complete; combat now renders data-backed background presentation and card thumbnail slots through catalog visual resources and character themes.
 - Enemy art foundation: complete; combat now renders data-backed enemy portrait slots for all 16 default enemies through catalog visual resources.
+- Broader card art rendering: complete; reward choices, shop card offers, shop removal choices, and direct card-grant/removal event options now render catalog-backed card previews outside combat.
 
 ## Next Plans
 
-1. Presentation expansion: formal audio mixing, polished per-card art replacement, and broader card-art rendering in rewards, shop, events, and deck views.
+1. Presentation expansion: formal audio mixing and polished per-card art replacement.
 2. Release expansion: artifact packaging, checksums, version bump automation, signed builds, and eventual Steam adapter implementation.

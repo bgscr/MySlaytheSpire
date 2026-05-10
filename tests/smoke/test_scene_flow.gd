@@ -1332,6 +1332,9 @@ func test_reward_screen_claims_card_skips_gold_and_saves_on_continue(tree: Scene
 	var reward_screen = app.game.router.go_to(SceneRouterScript.REWARD)
 	var continue_button := _find_node_by_name(reward_screen, "ContinueButton") as Button
 	var card_button := _find_node_by_name(reward_screen, "ClaimCard_0_0") as Button
+	var preview := _find_node_by_name(reward_screen, "RewardCardVisual_0_0") as VBoxContainer
+	var thumbnail := _find_node_by_name(reward_screen, "RewardCardThumbnail_0_0") as TextureRect
+	var preview_text := _find_node_by_name(reward_screen, "RewardCardText_0_0") as Label
 	var disabled_before: bool = continue_button != null and continue_button.disabled
 	if card_button != null:
 		card_button.pressed.emit()
@@ -1350,6 +1353,18 @@ func test_reward_screen_claims_card_skips_gold_and_saves_on_continue(tree: Scene
 	var loaded_run = app.game.save_service.load_run()
 	var passed: bool = disabled_before \
 		and deck_claimed \
+		and card_button != null \
+		and card_button.custom_minimum_size.x >= 132.0 \
+		and card_button.custom_minimum_size.y >= 86.0 \
+		and preview != null \
+		and preview.custom_minimum_size.x >= 132.0 \
+		and preview.custom_minimum_size.y >= 86.0 \
+		and preview.mouse_filter == Control.MOUSE_FILTER_IGNORE \
+		and thumbnail != null \
+		and thumbnail.texture != null \
+		and thumbnail.mouse_filter == Control.MOUSE_FILTER_IGNORE \
+		and preview_text != null \
+		and preview_text.text.contains("sword.") \
 		and still_disabled_after_card \
 		and enabled_after_all_resolved \
 		and disabled_after_continue \
@@ -1448,6 +1463,32 @@ func test_event_screen_disables_unavailable_option(tree: SceneTree) -> bool:
 	_delete_test_save(save_path)
 	return passed
 
+func test_event_screen_renders_direct_card_option_previews(tree: SceneTree) -> bool:
+	var save_path := "user://test_event_card_preview_save.json"
+	var app = _create_app_with_save_service(tree, save_path)
+	var run := _reward_run("event", true)
+	run.seed_value = _seed_for_event_with_card_preview_option()
+	run.current_hp = 40
+	run.max_hp = 40
+	run.gold = 50
+	app.game.current_run = run
+	var event_screen = app.game.router.go_to(SceneRouterScript.EVENT)
+	var preview := _find_node_by_prefix(event_screen, "EventOptionCardVisual_") as VBoxContainer
+	var thumbnail := _find_node_by_prefix(event_screen, "EventOptionCardThumbnail_") as TextureRect
+	var option_button := _find_node_by_prefix(event_screen, "EventOption_") as Button
+	var loaded_before = app.game.save_service.load_run()
+	if option_button != null and not option_button.disabled:
+		option_button.pressed.emit()
+	var passed: bool = preview != null \
+		and preview.mouse_filter == Control.MOUSE_FILTER_IGNORE \
+		and thumbnail != null \
+		and thumbnail.texture != null \
+		and loaded_before == null \
+		and app.game.router.current_scene != null
+	app.free()
+	_delete_test_save(save_path)
+	return passed
+
 func test_reward_screen_claims_pending_event_reward_then_advances_event(tree: SceneTree) -> bool:
 	var save_path := "user://test_event_reward_screen_save.json"
 	var app = _create_app_with_save_service(tree, save_path)
@@ -1469,6 +1510,8 @@ func test_reward_screen_claims_pending_event_reward_then_advances_event(tree: Sc
 
 	var reward_screen = app.game.router.go_to(SceneRouterScript.REWARD)
 	var claim_card := _find_node_by_name(reward_screen, "ClaimCard_0_0") as Button
+	var preview := _find_node_by_name(reward_screen, "RewardCardVisual_0_0") as VBoxContainer
+	var thumbnail := _find_node_by_name(reward_screen, "RewardCardThumbnail_0_0") as TextureRect
 	if claim_card != null:
 		claim_card.pressed.emit()
 	var continue_button := _find_node_by_name(reward_screen, "ContinueButton") as Button
@@ -1476,6 +1519,13 @@ func test_reward_screen_claims_pending_event_reward_then_advances_event(tree: Sc
 		continue_button.pressed.emit()
 	var loaded_run = app.game.save_service.load_run()
 	var passed: bool = claim_card != null \
+		and claim_card.custom_minimum_size.x >= 132.0 \
+		and claim_card.custom_minimum_size.y >= 86.0 \
+		and preview != null \
+		and preview.custom_minimum_size.x >= 132.0 \
+		and preview.custom_minimum_size.y >= 86.0 \
+		and thumbnail != null \
+		and thumbnail.texture != null \
 		and continue_button != null \
 		and loaded_run != null \
 		and loaded_run.current_reward_state.is_empty() \
@@ -1514,11 +1564,17 @@ func test_shop_screen_buy_card_saves_immediately(tree: SceneTree) -> bool:
 	app.game.current_run = run
 	var shop_screen = app.game.router.go_to(SceneRouterScript.SHOP)
 	var card_button := _first_button_with_prefix(shop_screen, "BuyOffer_card_")
+	var offer_preview := _find_node_by_name(shop_screen, "ShopOfferCardVisual_card_0") as VBoxContainer
+	var offer_thumbnail := _find_node_by_name(shop_screen, "ShopOfferCardThumbnail_card_0") as TextureRect
 	var deck_size_before := run.deck_ids.size()
 	if card_button != null:
 		card_button.pressed.emit()
 	var loaded_run = app.game.save_service.load_run()
 	var passed: bool = card_button != null \
+		and offer_preview != null \
+		and offer_preview.mouse_filter == Control.MOUSE_FILTER_IGNORE \
+		and offer_thumbnail != null \
+		and offer_thumbnail.texture != null \
 		and loaded_run != null \
 		and loaded_run.deck_ids.size() == deck_size_before + 1 \
 		and not loaded_run.current_shop_state.is_empty() \
@@ -1582,10 +1638,20 @@ func test_shop_screen_remove_card_and_heal_services_sell_out(tree: SceneTree) ->
 	if remove_button != null:
 		remove_button.pressed.emit()
 	var remove_card := _find_node_by_name(app.game.router.current_scene, "RemoveCard_0") as Button
+	var remove_preview := _find_node_by_name(app.game.router.current_scene, "ShopRemoveCardVisual_0") as VBoxContainer
+	var remove_thumbnail := _find_node_by_name(app.game.router.current_scene, "ShopRemoveCardThumbnail_0") as TextureRect
 	if remove_card != null:
 		remove_card.pressed.emit()
 	var loaded_run = app.game.save_service.load_run()
 	var passed: bool = loaded_run != null \
+		and remove_card != null \
+		and remove_card.custom_minimum_size.x >= 132.0 \
+		and remove_card.custom_minimum_size.y >= 86.0 \
+		and remove_preview != null \
+		and remove_preview.custom_minimum_size.x >= 132.0 \
+		and remove_preview.custom_minimum_size.y >= 86.0 \
+		and remove_thumbnail != null \
+		and remove_thumbnail.texture != null \
 		and loaded_run.current_hp > 40 \
 		and loaded_run.deck_ids.size() == 2 \
 		and _offer_sold(loaded_run.current_shop_state, "heal_0") \
@@ -1792,6 +1858,17 @@ func _find_node_by_text(root: Node, text: String) -> Node:
 			return found
 	return null
 
+func _find_node_by_prefix(root: Node, prefix: String) -> Node:
+	if root == null:
+		return null
+	if root.name.begins_with(prefix):
+		return root
+	for child in root.get_children():
+		var found := _find_node_by_prefix(child, prefix)
+		if found != null:
+			return found
+	return null
+
 func _first_disabled_event_option(root: Node) -> Button:
 	if root == null:
 		return null
@@ -1817,6 +1894,20 @@ func _seed_for_event_with_unavailable_option() -> int:
 		for option in event.options:
 			if option.min_hp > run.current_hp or option.min_gold > run.gold:
 				return seed
+	return 1
+
+func _seed_for_event_with_card_preview_option() -> int:
+	var catalog := ContentCatalogScript.new()
+	catalog.load_default()
+	for seed_value in range(1, 200):
+		var run := _reward_run("event", true)
+		run.seed_value = seed_value
+		var event = EventResolverScript.new().resolve(catalog, run)
+		if event == null:
+			continue
+		for option in event.options:
+			if not option.grant_card_ids.is_empty() or not option.remove_card_id.is_empty():
+				return seed_value
 	return 1
 
 func _first_button_with_prefix(root: Node, prefix: String) -> Button:

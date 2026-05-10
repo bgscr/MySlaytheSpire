@@ -1,6 +1,8 @@
 extends Control
 
 const ContentCatalog := preload("res://scripts/content/content_catalog.gd")
+const CardVisualPresenter := preload("res://scripts/ui/card_visual_presenter.gd")
+const CombatVisualResolver := preload("res://scripts/presentation/combat_visual_resolver.gd")
 const RunProgression := preload("res://scripts/run/run_progression.gd")
 const SceneRouterScript := preload("res://scripts/app/scene_router.gd")
 const ShopResolver := preload("res://scripts/shop/shop_resolver.gd")
@@ -102,6 +104,16 @@ func _add_offer_row(offer: Dictionary) -> void:
 	label.text = _offer_label(offer)
 	item.add_child(label)
 
+	if String(offer.get("type", "")) == "card":
+		CardVisualPresenter.add_card_preview(
+			item,
+			"ShopOfferCard",
+			offer_id,
+			String(offer.get("item_id", "")),
+			catalog,
+			_visual_theme()
+		)
+
 	if bool(offer.get("sold", false)):
 		var sold_label := Label.new()
 		sold_label.text = "Sold out"
@@ -173,7 +185,16 @@ func _render_removal_choices() -> void:
 		var card_id := String(run.deck_ids[i])
 		var button := Button.new()
 		button.name = "RemoveCard_%s" % i
-		button.text = card_id
+		button.text = ""
+		button.custom_minimum_size = Vector2(148, 104)
+		CardVisualPresenter.add_card_preview(
+			button,
+			"ShopRemoveCard",
+			str(i),
+			card_id,
+			catalog,
+			_visual_theme()
+		)
 		button.pressed.connect(func(): _on_remove_card_pressed(card_id))
 		removal_container.add_child(button)
 
@@ -237,6 +258,13 @@ func _first_removable_card(run) -> String:
 	if run == null or run.deck_ids.is_empty():
 		return ""
 	return String(run.deck_ids[0])
+
+func _visual_theme() -> Dictionary:
+	var app = _app()
+	var run = app.game.current_run if app != null else null
+	if run == null or catalog == null:
+		return {}
+	return CombatVisualResolver.new().resolve_theme(run.character_id, catalog)
 
 func _clear_children(node: Node) -> void:
 	for child in node.get_children():
