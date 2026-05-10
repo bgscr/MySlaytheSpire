@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="RelicVisualDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/relic_visual_def.gd" id="1_visual"]
+
+[resource]
+script = ExtResource("1_visual")
+id = "starforged_meridian"
+relic_id = "starforged_meridian"
+icon_path = "res://assets/presentation/relic_icons/starforged_meridian.png"
+frame_style = "rare"
+accent_color = Color(0.86, 0.62, 1.0, 1)
+tier_style = "rare"
+icon_alt_label = "Starforged meridian relic icon"

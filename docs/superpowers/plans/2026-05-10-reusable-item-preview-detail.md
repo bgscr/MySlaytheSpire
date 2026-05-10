@@ -178,7 +178,7 @@ rtk git commit -m "feat: add relic visual schema"
 - Modify: `tests/unit/test_content_catalog.gd`
 - Modify: `docs/superpowers/plans/2026-05-10-reusable-item-preview-detail.md`
 
-- [ ] **Step 1: Write failing catalog API and validation tests**
+- [x] **Step 1: Write failing catalog API and validation tests**
 
 In `tests/unit/test_content_catalog.gd`, add this preload:
 
@@ -251,7 +251,7 @@ func test_validation_reports_missing_relic_fallback_icon() -> bool:
 	return passed
 ```
 
-- [ ] **Step 2: Run catalog tests to verify RED**
+- [x] **Step 2: Run catalog tests to verify RED**
 
 Run:
 
@@ -261,7 +261,7 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\ci\run_god
 
 Expected: non-zero exit or `TESTS FAILED` because `ContentCatalog` does not expose `get_relic_visual`, `relic_visuals_by_relic_id`, or the extra `load_from_paths` argument.
 
-- [ ] **Step 3: Add catalog fields, loader, accessor, and validation hooks**
+- [x] **Step 3: Add catalog fields, loader, accessor, and validation hooks**
 
 In `scripts/content/content_catalog.gd`, add this preload near `RelicDef`:
 
@@ -376,7 +376,7 @@ func _validate_relic_visual(visual: RelicVisualDef, errors: Array[String]) -> vo
 		errors.append("Relic visual %s has empty frame_style" % visual.id)
 ```
 
-- [ ] **Step 4: Run catalog tests to verify expected partial GREEN**
+- [x] **Step 4: Run catalog tests to verify expected partial GREEN**
 
 Run:
 
@@ -386,7 +386,7 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\ci\run_god
 
 Expected: tests that use missing default/fallback assets may still fail. The error messages for `get_relic_visual`, `relic_visuals_by_relic_id`, and method arity should be gone.
 
-- [ ] **Step 5: Keep Task 2 changes uncommitted until Task 3 assets exist**
+- [x] **Step 5: Keep Task 2 changes uncommitted until Task 3 assets exist**
 
 Run:
 
@@ -406,7 +406,7 @@ Expected output includes modified `scripts/content/content_catalog.gd`, `tests/u
 - Modify: `tests/unit/test_content_catalog.gd`
 - Modify: `docs/superpowers/plans/2026-05-10-reusable-item-preview-detail.md`
 
-- [ ] **Step 1: Create temporary source directory**
+- [x] **Step 1: Create temporary source directory**
 
 Run:
 
@@ -414,7 +414,7 @@ Run:
 rtk powershell -NoProfile -Command "New-Item -ItemType Directory -Force -Path 'tmp\relic_icon_sources' | Out-Null"
 ```
 
-- [ ] **Step 2: Generate source art**
+- [x] **Step 2: Generate source art**
 
 Use the built-in image generation path to create project-bound relic icon source art. Save selected generated files under:
 
@@ -460,7 +460,7 @@ void_tiger_eye.png: Subject: dark tiger eye gem with void-purple slit light.
 white_tiger_tally.png: Subject: white tiger command tally with ivory-gold mark.
 ```
 
-- [ ] **Step 3: Normalize generated sources to 96x96 project icons**
+- [x] **Step 3: Normalize generated sources to 96x96 project icons**
 
 Run:
 
@@ -499,7 +499,7 @@ Get-ChildItem $srcDir -Filter *.png | ForEach-Object {
 '@
 ```
 
-- [ ] **Step 4: Verify all expected PNGs exist and have 96x96 dimensions**
+- [x] **Step 4: Verify all expected PNGs exist and have 96x96 dimensions**
 
 Run:
 
@@ -538,7 +538,7 @@ Expected output includes:
 Verified 21 relic icons at 96x96.
 ```
 
-- [ ] **Step 5: Create relic visual resources**
+- [x] **Step 5: Create relic visual resources**
 
 Create `resources/visuals/relic_visuals/` and one `.tres` file per default relic. Use this shape for `resources/visuals/relic_visuals/jade_talisman.tres`:
 
@@ -568,7 +568,7 @@ rare: Color(0.86, 0.62, 1.0, 1)
 
 Set `icon_alt_label` to the title-cased relic id words plus `relic icon`, such as `Cracked spirit coin relic icon`.
 
-- [ ] **Step 6: Register default relic visual paths**
+- [x] **Step 6: Register default relic visual paths**
 
 Replace the empty `DEFAULT_RELIC_VISUAL_PATHS` constant in `scripts/content/content_catalog.gd` with:
 
@@ -597,7 +597,7 @@ const DEFAULT_RELIC_VISUAL_PATHS: Array[String] = [
 ]
 ```
 
-- [ ] **Step 7: Add default relic visual coverage tests**
+- [x] **Step 7: Add default relic visual coverage tests**
 
 In `tests/unit/test_content_catalog.gd`, add this test after `test_catalog_loads_relic_visuals_from_explicit_paths()`:
 
@@ -640,7 +640,7 @@ func test_default_catalog_relic_visual_texture_paths_load() -> bool:
 	return true
 ```
 
-- [ ] **Step 8: Run shared checks to verify GREEN and generate import files**
+- [x] **Step 8: Run shared checks to verify GREEN and generate import files**
 
 Run:
 
@@ -655,7 +655,7 @@ Godot checks passed.
 TESTS PASSED
 ```
 
-- [ ] **Step 9: Commit catalog and relic visual resources**
+- [x] **Step 9: Commit catalog and relic visual resources**
 
 Run:
 
