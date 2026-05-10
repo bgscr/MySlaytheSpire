@@ -1689,6 +1689,12 @@ func test_shop_screen_buy_card_saves_immediately(tree: SceneTree) -> bool:
 	var offer_thumbnail := _find_node_by_name(shop_screen, "ShopOfferCardThumbnail_card_0") as TextureRect
 	var deck_size_before := run.deck_ids.size()
 	if card_button != null:
+		card_button.mouse_entered.emit()
+	var card_detail := _find_node_by_name(shop_screen, "ItemDetailPanel") as ItemDetailPanel
+	var card_detail_visible: bool = card_detail != null and card_detail.visible and card_detail.get_meta("item_kind") == "card"
+	if card_button != null:
+		card_button.mouse_exited.emit()
+	if card_button != null:
 		card_button.pressed.emit()
 	var loaded_run = app.game.save_service.load_run()
 	var passed: bool = card_button != null \
@@ -1696,6 +1702,7 @@ func test_shop_screen_buy_card_saves_immediately(tree: SceneTree) -> bool:
 		and offer_preview.mouse_filter == Control.MOUSE_FILTER_IGNORE \
 		and offer_thumbnail != null \
 		and offer_thumbnail.texture != null \
+		and card_detail_visible \
 		and loaded_run != null \
 		and loaded_run.deck_ids.size() == deck_size_before + 1 \
 		and not loaded_run.current_shop_state.is_empty() \
@@ -1712,10 +1719,22 @@ func test_shop_screen_buy_relic_saves_immediately(tree: SceneTree) -> bool:
 	app.game.current_run = run
 	var shop_screen = app.game.router.go_to(SceneRouterScript.SHOP)
 	var relic_button := _first_button_with_prefix(shop_screen, "BuyOffer_relic_")
+	var relic_preview := _find_node_by_prefix(shop_screen, "ShopOfferRelicVisual_") as VBoxContainer
+	var relic_icon := _find_node_by_prefix(shop_screen, "ShopOfferRelicIcon_") as TextureRect
+	if relic_button != null:
+		relic_button.mouse_entered.emit()
+	var relic_detail := _find_node_by_name(shop_screen, "ItemDetailPanel") as ItemDetailPanel
+	var relic_detail_visible: bool = relic_detail != null and relic_detail.visible and relic_detail.get_meta("item_kind") == "relic"
+	if relic_button != null:
+		relic_button.mouse_exited.emit()
 	if relic_button != null:
 		relic_button.pressed.emit()
 	var loaded_run = app.game.save_service.load_run()
 	var passed: bool = relic_button != null \
+		and relic_preview != null \
+		and relic_icon != null \
+		and relic_icon.texture != null \
+		and relic_detail_visible \
 		and loaded_run != null \
 		and loaded_run.relic_ids.size() == 1 \
 		and not loaded_run.relic_ids[0].is_empty() \
@@ -1762,6 +1781,12 @@ func test_shop_screen_remove_card_and_heal_services_sell_out(tree: SceneTree) ->
 	var remove_preview := _find_node_by_name(app.game.router.current_scene, "ShopRemoveCardVisual_0") as VBoxContainer
 	var remove_thumbnail := _find_node_by_name(app.game.router.current_scene, "ShopRemoveCardThumbnail_0") as TextureRect
 	if remove_card != null:
+		remove_card.mouse_entered.emit()
+	var remove_detail := _find_node_by_name(app.game.router.current_scene, "ItemDetailPanel") as ItemDetailPanel
+	var remove_detail_visible: bool = remove_detail != null and remove_detail.visible and remove_detail.get_meta("item_kind") == "card"
+	if remove_card != null:
+		remove_card.mouse_exited.emit()
+	if remove_card != null:
 		remove_card.pressed.emit()
 	var loaded_run = app.game.save_service.load_run()
 	var passed: bool = loaded_run != null \
@@ -1773,6 +1798,7 @@ func test_shop_screen_remove_card_and_heal_services_sell_out(tree: SceneTree) ->
 		and remove_preview.custom_minimum_size.y >= 86.0 \
 		and remove_thumbnail != null \
 		and remove_thumbnail.texture != null \
+		and remove_detail_visible \
 		and loaded_run.current_hp > 40 \
 		and loaded_run.deck_ids.size() == 2 \
 		and _offer_sold(loaded_run.current_shop_state, "heal_0") \

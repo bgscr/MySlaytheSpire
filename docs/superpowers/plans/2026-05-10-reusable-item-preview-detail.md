@@ -1543,7 +1543,7 @@ rtk git commit -m "feat: show reward item previews"
 - Modify: `tests/smoke/test_scene_flow.gd`
 - Modify: `docs/superpowers/plans/2026-05-10-reusable-item-preview-detail.md`
 
-- [ ] **Step 1: Extend shop smoke tests**
+- [x] **Step 1: Extend shop smoke tests**
 
 In `test_shop_screen_buy_card_saves_immediately()`, emit hover on `card_button` before pressing it and assert card detail visibility:
 
@@ -1601,7 +1601,7 @@ Add this condition:
 		and remove_detail_visible \
 ```
 
-- [ ] **Step 2: Run shop smoke tests to verify RED**
+- [x] **Step 2: Run shop smoke tests to verify RED**
 
 Run:
 
@@ -1611,7 +1611,7 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\ci\run_god
 
 Expected: non-zero exit or `TESTS FAILED` because shop relic previews and item detail panel wiring do not exist.
 
-- [ ] **Step 3: Wire shop screen to item presenter and detail panel**
+- [x] **Step 3: Wire shop screen to item presenter and detail panel**
 
 In `scripts/ui/shop_screen.gd`, replace `CardVisualPresenter` with:
 
@@ -1703,7 +1703,7 @@ func _hide_item_detail() -> void:
 		item_detail_panel.hide_detail()
 ```
 
-- [ ] **Step 4: Run shop smoke tests to verify GREEN**
+- [x] **Step 4: Run shop smoke tests to verify GREEN**
 
 Run:
 
@@ -1718,7 +1718,7 @@ Godot checks passed.
 TESTS PASSED
 ```
 
-- [ ] **Step 5: Commit shop wiring**
+- [x] **Step 5: Commit shop wiring**
 
 Run:
 
