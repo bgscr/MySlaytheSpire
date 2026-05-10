@@ -794,7 +794,7 @@ rtk git commit -m "feat: render event card previews"
 - Modify: `README.md`
 - Modify: `docs/superpowers/plans/2026-05-09-broader-card-art-rendering.md`
 
-- [ ] **Step 1: Verify existing deck-list surfaces have no child-row deck container**
+- [x] **Step 1: Verify existing deck-list surfaces have no child-row deck container**
 
 Run:
 
@@ -804,7 +804,7 @@ rtk rg -n "DeckList|DeckContainer|DeckRow|deck row|deck_ids|deck:" scripts/ui sc
 
 Expected: output includes existing `deck_ids` and text-summary references, but no existing player-facing `DeckList`, `DeckContainer`, or `DeckRow` container dedicated to deck entries. Do not add a deck browser or convert label-only summaries in this phase.
 
-- [ ] **Step 2: Verify no disallowed logic imports**
+- [x] **Step 2: Verify no disallowed logic imports**
 
 Run:
 
@@ -814,7 +814,7 @@ rtk rg -n "CardVisualPresenter|card_visual_presenter" scripts/combat scripts/rew
 
 Expected: no output. `rg` may exit 1 when there are no matches; that is acceptable.
 
-- [ ] **Step 3: Verify no card resources or visual resources changed**
+- [x] **Step 3: Verify no card resources or visual resources changed**
 
 Run:
 
@@ -824,7 +824,7 @@ rtk git diff --name-only HEAD -- resources/cards resources/visuals/card_visuals 
 
 Expected: no output.
 
-- [ ] **Step 4: Update README progress**
+- [x] **Step 4: Update README progress**
 
 Add this bullet under `## Phase 2 Progress` after the enemy art foundation bullet:
 
@@ -841,7 +841,7 @@ Update `## Next Plans` to:
 2. Release expansion: artifact packaging, checksums, version bump automation, signed builds, and eventual Steam adapter implementation.
 ```
 
-- [ ] **Step 5: Run shared Godot checks**
+- [x] **Step 5: Run shared Godot checks**
 
 Run:
 
@@ -856,7 +856,7 @@ TESTS PASSED
 Godot checks passed.
 ```
 
-- [ ] **Step 6: Run direct import check**
+- [x] **Step 6: Run direct import check**
 
 Run:
 
@@ -866,7 +866,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: process exits 0.
 
-- [ ] **Step 7: Run final two-stage review**
+- [x] **Step 7: Run final two-stage review**
 
 Stage 1 Spec Compliance Review:
 
@@ -893,7 +893,7 @@ Stage 2 Code Quality Review:
 
 Classify all findings as Critical, Important, or Minor. Fix Critical and Important issues before acceptance.
 
-- [ ] **Step 8: Commit acceptance docs**
+- [x] **Step 8: Commit acceptance docs**
 
 Run:
 
