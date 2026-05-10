@@ -14,6 +14,7 @@ const EventDef := preload("res://scripts/data/event_def.gd")
 const EventOptionDef := preload("res://scripts/data/event_option_def.gd")
 const GameEvent := preload("res://scripts/core/game_event.gd")
 const RelicDef := preload("res://scripts/data/relic_def.gd")
+const RelicVisualDef := preload("res://scripts/data/relic_visual_def.gd")
 const VisualThemeDef := preload("res://scripts/data/visual_theme_def.gd")
 
 var _received_event = null
@@ -106,6 +107,25 @@ func test_relic_def_stores_trigger_and_effects() -> bool:
 		and relic.effects.size() == 1 \
 		and relic.effects[0].amount == 3 \
 		and relic.effects[0].target == "player"
+	assert(passed)
+	return passed
+
+func test_relic_visual_def_stores_icon_metadata() -> bool:
+	var visual := RelicVisualDef.new()
+	visual.id = "jade_talisman"
+	visual.relic_id = "jade_talisman"
+	visual.icon_path = "res://assets/presentation/relic_icons/jade_talisman.png"
+	visual.frame_style = "common"
+	visual.accent_color = Color(0.45, 0.85, 0.62, 1.0)
+	visual.tier_style = "common"
+	visual.icon_alt_label = "Jade talisman relic icon"
+	var passed: bool = visual.id == "jade_talisman" \
+		and visual.relic_id == "jade_talisman" \
+		and visual.icon_path == "res://assets/presentation/relic_icons/jade_talisman.png" \
+		and visual.frame_style == "common" \
+		and visual.accent_color == Color(0.45, 0.85, 0.62, 1.0) \
+		and visual.tier_style == "common" \
+		and visual.icon_alt_label == "Jade talisman relic icon"
 	assert(passed)
 	return passed
 
