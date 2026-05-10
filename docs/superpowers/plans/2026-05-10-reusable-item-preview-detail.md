@@ -675,7 +675,7 @@ Do not add `tmp/relic_icon_sources/`.
 - Modify: `tests/unit/test_combat_visuals.gd`
 - Modify: `docs/superpowers/plans/2026-05-10-reusable-item-preview-detail.md`
 
-- [ ] **Step 1: Write failing presenter tests**
+- [x] **Step 1: Write failing presenter tests**
 
 In `tests/unit/test_combat_visuals.gd`, add this preload:
 
@@ -761,7 +761,7 @@ func test_item_visual_presenter_uses_distinct_suffixes_for_duplicate_relics() ->
 	return passed
 ```
 
-- [ ] **Step 2: Run presenter tests to verify RED**
+- [x] **Step 2: Run presenter tests to verify RED**
 
 Run:
 
@@ -771,7 +771,7 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\ci\run_god
 
 Expected: non-zero exit or `TESTS FAILED` because `scripts/ui/item_visual_presenter.gd` does not exist.
 
-- [ ] **Step 3: Add `ItemVisualPresenter`**
+- [x] **Step 3: Add `ItemVisualPresenter`**
 
 Create `scripts/ui/item_visual_presenter.gd`:
 
@@ -931,7 +931,7 @@ static func _object_has_property(object: Object, property_name: String) -> bool:
 	return false
 ```
 
-- [ ] **Step 4: Convert `CardVisualPresenter` into a compatibility wrapper**
+- [x] **Step 4: Convert `CardVisualPresenter` into a compatibility wrapper**
 
 Replace `scripts/ui/card_visual_presenter.gd` with:
 
@@ -954,7 +954,7 @@ static func add_card_preview(
 
 This preserves old caller names such as `RewardCardVisual_0_0` because `RewardCard` becomes `Reward` before the shared presenter adds `CardVisual`.
 
-- [ ] **Step 5: Run presenter tests to verify GREEN**
+- [x] **Step 5: Run presenter tests to verify GREEN**
 
 Run:
 
@@ -969,7 +969,7 @@ Godot checks passed.
 TESTS PASSED
 ```
 
-- [ ] **Step 6: Commit shared presenter**
+- [x] **Step 6: Commit shared presenter**
 
 Run:
 
