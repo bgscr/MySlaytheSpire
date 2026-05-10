@@ -6,8 +6,8 @@
 script = ExtResource("1_visual")
 id = "sword.heaven_cutting_arc"
 card_id = "sword.heaven_cutting_arc"
-thumbnail_path = "res://assets/presentation/card_thumbnails/sword_attack.png"
+thumbnail_path = "res://assets/presentation/card_thumbnails/sword_heaven_cutting_arc.png"
 frame_style = "sword"
 accent_color = Color(0.55, 0.86, 1, 1)
 element_tag = "blade"
-thumbnail_alt_label = "Sword attack thumbnail"
+thumbnail_alt_label = "Sword heaven cutting arc thumbnail"

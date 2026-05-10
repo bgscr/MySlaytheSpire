@@ -6,8 +6,8 @@
 script = ExtResource("1_visual")
 id = "alchemy.cinnabar_seal"
 card_id = "alchemy.cinnabar_seal"
-thumbnail_path = "res://assets/presentation/card_thumbnails/alchemy_power.png"
+thumbnail_path = "res://assets/presentation/card_thumbnails/alchemy_cinnabar_seal.png"
 frame_style = "alchemy"
 accent_color = Color(0.72, 0.94, 0.58, 1)
 element_tag = "seal"
-thumbnail_alt_label = "Alchemy power thumbnail"
+thumbnail_alt_label = "Alchemy cinnabar seal thumbnail"

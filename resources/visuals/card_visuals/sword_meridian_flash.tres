@@ -6,8 +6,8 @@
 script = ExtResource("1_visual")
 id = "sword.meridian_flash"
 card_id = "sword.meridian_flash"
-thumbnail_path = "res://assets/presentation/card_thumbnails/sword_power.png"
+thumbnail_path = "res://assets/presentation/card_thumbnails/sword_meridian_flash.png"
 frame_style = "sword"
 accent_color = Color(0.55, 0.86, 1, 1)
 element_tag = "qi"
-thumbnail_alt_label = "Sword power thumbnail"
+thumbnail_alt_label = "Sword meridian flash thumbnail"

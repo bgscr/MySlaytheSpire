@@ -29,10 +29,10 @@ func test_resolver_resolves_card_visual_with_theme_fallback() -> bool:
 	var theme := resolver.resolve_theme("sword", catalog)
 	var visual := resolver.resolve_card_visual("sword.strike", catalog, theme)
 	var passed: bool = visual.get("card_id") == "sword.strike" \
-		and String(visual.get("thumbnail_path", "")).ends_with("sword_attack.png") \
+		and String(visual.get("thumbnail_path", "")).ends_with("sword_strike.png") \
 		and visual.get("frame_style") == "sword" \
 		and visual.get("element_tag") == "blade" \
-		and visual.get("thumbnail_alt_label") == "Sword attack thumbnail" \
+		and visual.get("thumbnail_alt_label") == "Sword strike thumbnail" \
 		and visual.get("is_known") == true
 	assert(passed)
 	return passed

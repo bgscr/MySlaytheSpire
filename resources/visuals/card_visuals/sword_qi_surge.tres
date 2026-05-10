@@ -6,8 +6,8 @@
 script = ExtResource("1_visual")
 id = "sword.qi_surge"
 card_id = "sword.qi_surge"
-thumbnail_path = "res://assets/presentation/card_thumbnails/sword_skill.png"
+thumbnail_path = "res://assets/presentation/card_thumbnails/sword_qi_surge.png"
 frame_style = "sword"
 accent_color = Color(0.55, 0.86, 1, 1)
 element_tag = "qi"
-thumbnail_alt_label = "Sword skill thumbnail"
+thumbnail_alt_label = "Sword qi surge thumbnail"

@@ -54,9 +54,11 @@ func test_default_catalog_loads_visual_theme_resources() -> bool:
 		and catalog.combat_backgrounds_by_id.size() == 3 \
 		and catalog.visual_themes_by_character_id.size() == 2 \
 		and sword_visual != null \
-		and sword_visual.thumbnail_path.ends_with("sword_attack.png") \
+		and sword_visual.thumbnail_path.ends_with("sword_strike.png") \
+		and sword_visual.thumbnail_alt_label == "Sword strike thumbnail" \
 		and alchemy_visual != null \
-		and alchemy_visual.thumbnail_path.ends_with("alchemy_attack_status.png") \
+		and alchemy_visual.thumbnail_path.ends_with("alchemy_toxic_pill.png") \
+		and alchemy_visual.thumbnail_alt_label == "Alchemy toxic pill thumbnail" \
 		and sword_theme != null \
 		and sword_theme.default_background_id == "sword_training_ground" \
 		and alchemy_theme != null \
@@ -150,6 +152,50 @@ func test_default_catalog_visual_texture_paths_load() -> bool:
 			return false
 	assert(true)
 	return true
+
+func test_default_catalog_card_visuals_use_unique_polished_thumbnail_paths() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.load_default()
+	if catalog.cards_by_id.size() != 40:
+		push_error("Expected 40 default cards before checking polished thumbnails, got %d" % catalog.cards_by_id.size())
+		assert(false)
+		return false
+	var old_shared_thumbnail_files: Array[String] = [
+		"sword_attack.png",
+		"sword_skill.png",
+		"sword_power.png",
+		"alchemy_attack_status.png",
+		"alchemy_skill.png",
+		"alchemy_power.png",
+	]
+	var seen_paths := {}
+	for card_id_key in catalog.cards_by_id.keys():
+		var card_id := String(card_id_key)
+		var visual: CardVisualDef = catalog.get_card_visual(card_id)
+		if visual == null:
+			push_error("Missing card visual for %s" % card_id)
+			assert(false)
+			return false
+		var expected_file := "%s.png" % card_id.replace(".", "_")
+		var actual_file := visual.thumbnail_path.get_file()
+		if actual_file != expected_file:
+			push_error("Card visual %s uses %s instead of %s" % [card_id, actual_file, expected_file])
+			assert(false)
+			return false
+		if seen_paths.has(visual.thumbnail_path):
+			push_error("Duplicate card thumbnail path: %s" % visual.thumbnail_path)
+			assert(false)
+			return false
+		if old_shared_thumbnail_files.has(actual_file):
+			push_error("Card visual %s still uses shared foundation thumbnail %s" % [card_id, actual_file])
+			assert(false)
+			return false
+		seen_paths[visual.thumbnail_path] = true
+	var passed: bool = seen_paths.size() == catalog.cards_by_id.size()
+	if not passed:
+		push_error("Expected %d unique polished thumbnail paths, got %d" % [catalog.cards_by_id.size(), seen_paths.size()])
+	assert(passed)
+	return passed
 
 func test_validation_reports_missing_visual_theme_for_character() -> bool:
 	var catalog := ContentCatalog.new()

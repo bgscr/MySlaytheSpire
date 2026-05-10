@@ -6,8 +6,8 @@
 script = ExtResource("1_visual")
 id = "sword.thread_the_needle"
 card_id = "sword.thread_the_needle"
-thumbnail_path = "res://assets/presentation/card_thumbnails/sword_attack.png"
+thumbnail_path = "res://assets/presentation/card_thumbnails/sword_thread_the_needle.png"
 frame_style = "sword"
 accent_color = Color(0.55, 0.86, 1, 1)
 element_tag = "blade"
-thumbnail_alt_label = "Sword attack thumbnail"
+thumbnail_alt_label = "Sword thread the needle thumbnail"

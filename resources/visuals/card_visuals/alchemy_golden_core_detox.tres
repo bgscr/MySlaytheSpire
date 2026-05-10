@@ -6,8 +6,8 @@
 script = ExtResource("1_visual")
 id = "alchemy.golden_core_detox"
 card_id = "alchemy.golden_core_detox"
-thumbnail_path = "res://assets/presentation/card_thumbnails/alchemy_power.png"
+thumbnail_path = "res://assets/presentation/card_thumbnails/alchemy_golden_core_detox.png"
 frame_style = "alchemy"
 accent_color = Color(0.72, 0.94, 0.58, 1)
 element_tag = "detox"
-thumbnail_alt_label = "Alchemy power thumbnail"
+thumbnail_alt_label = "Alchemy golden core detox thumbnail"

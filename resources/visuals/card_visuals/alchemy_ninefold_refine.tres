@@ -6,8 +6,8 @@
 script = ExtResource("1_visual")
 id = "alchemy.ninefold_refine"
 card_id = "alchemy.ninefold_refine"
-thumbnail_path = "res://assets/presentation/card_thumbnails/alchemy_power.png"
+thumbnail_path = "res://assets/presentation/card_thumbnails/alchemy_ninefold_refine.png"
 frame_style = "alchemy"
 accent_color = Color(0.72, 0.94, 0.58, 1)
 element_tag = "refine"
-thumbnail_alt_label = "Alchemy power thumbnail"
+thumbnail_alt_label = "Alchemy ninefold refine thumbnail"

@@ -6,8 +6,8 @@
 script = ExtResource("1_visual")
 id = "alchemy.purifying_brew"
 card_id = "alchemy.purifying_brew"
-thumbnail_path = "res://assets/presentation/card_thumbnails/alchemy_skill.png"
+thumbnail_path = "res://assets/presentation/card_thumbnails/alchemy_purifying_brew.png"
 frame_style = "alchemy"
 accent_color = Color(0.72, 0.94, 0.58, 1)
 element_tag = "healing"
-thumbnail_alt_label = "Alchemy skill thumbnail"
+thumbnail_alt_label = "Alchemy purifying brew thumbnail"

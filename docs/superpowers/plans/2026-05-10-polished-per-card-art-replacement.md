@@ -450,7 +450,7 @@ Do not add or commit `tmp/card_art_sources/`.
 - Modify: `resources/visuals/card_visuals/*.tres`
 - Modify: `docs/superpowers/plans/2026-05-10-polished-per-card-art-replacement.md`
 
-- [ ] **Step 1: Mechanically update visual resource thumbnail paths and labels**
+- [x] **Step 1: Mechanically update visual resource thumbnail paths and labels**
 
 Run this bulk mechanical rewrite:
 
@@ -469,7 +469,7 @@ Get-ChildItem "resources\visuals\card_visuals" -Filter *.tres | ForEach-Object {
 '@
 ```
 
-- [ ] **Step 2: Inspect representative resource diff**
+- [x] **Step 2: Inspect representative resource diff**
 
 Run:
 
@@ -495,7 +495,7 @@ and:
 +thumbnail_alt_label = "Alchemy toxic pill thumbnail"
 ```
 
-- [ ] **Step 3: Run tests to verify GREEN for catalog/resource changes**
+- [x] **Step 3: Run tests to verify GREEN for catalog/resource changes**
 
 Run:
 
@@ -512,7 +512,7 @@ TESTS PASSED
 
 This run should also create `.import` files for new PNGs if they were missing.
 
-- [ ] **Step 4: Verify boundary before committing resources**
+- [x] **Step 4: Verify boundary before committing resources**
 
 Run:
 
@@ -530,7 +530,7 @@ rtk git diff -- resources/visuals/card_visuals
 
 Expected: diffs only change `thumbnail_path` and `thumbnail_alt_label`.
 
-- [ ] **Step 5: Commit tests, repointed resources, and generated import files**
+- [x] **Step 5: Commit tests, repointed resources, and generated import files**
 
 Run:
 

@@ -6,8 +6,8 @@
 script = ExtResource("1_visual")
 id = "sword.focused_slash"
 card_id = "sword.focused_slash"
-thumbnail_path = "res://assets/presentation/card_thumbnails/sword_attack.png"
+thumbnail_path = "res://assets/presentation/card_thumbnails/sword_focused_slash.png"
 frame_style = "sword"
 accent_color = Color(0.55, 0.86, 1, 1)
 element_tag = "blade"
-thumbnail_alt_label = "Sword attack thumbnail"
+thumbnail_alt_label = "Sword focused slash thumbnail"

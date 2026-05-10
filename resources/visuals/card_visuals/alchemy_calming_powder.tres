@@ -6,8 +6,8 @@
 script = ExtResource("1_visual")
 id = "alchemy.calming_powder"
 card_id = "alchemy.calming_powder"
-thumbnail_path = "res://assets/presentation/card_thumbnails/alchemy_skill.png"
+thumbnail_path = "res://assets/presentation/card_thumbnails/alchemy_calming_powder.png"
 frame_style = "alchemy"
 accent_color = Color(0.72, 0.94, 0.58, 1)
 element_tag = "powder"
-thumbnail_alt_label = "Alchemy skill thumbnail"
+thumbnail_alt_label = "Alchemy calming powder thumbnail"
