@@ -78,7 +78,7 @@ The test suite currently prints an expected error backtrace for the malformed en
 - Modify: `docs/superpowers/plans/2026-05-10-audio-mixing-foundation.md`
 - Generated: `scripts/presentation/audio_mix_config.gd.uid`
 
-- [ ] **Step 1: Add failing audio mix preload**
+- [x] **Step 1: Add failing audio mix preload**
 
 In `tests/unit/test_combat_presentation.gd`, add this preload after `const CombatPresentationQueue`:
 
@@ -86,7 +86,7 @@ In `tests/unit/test_combat_presentation.gd`, add this preload after `const Comba
 const AudioMixConfig := preload("res://scripts/presentation/audio_mix_config.gd")
 ```
 
-- [ ] **Step 2: Add failing audio mix config tests**
+- [x] **Step 2: Add failing audio mix config tests**
 
 In `tests/unit/test_combat_presentation.gd`, add these tests after `test_queue_enqueue_copies_event_without_aliasing_original`:
 
@@ -139,7 +139,7 @@ func test_audio_mix_config_ignores_unknown_bus_without_mutating_required_volumes
 	return passed
 ```
 
-- [ ] **Step 3: Run tests to verify RED**
+- [x] **Step 3: Run tests to verify RED**
 
 Run:
 
@@ -149,7 +149,7 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\ci\run_god
 
 Expected: non-zero exit with a load/preload failure because `res://scripts/presentation/audio_mix_config.gd` does not exist.
 
-- [ ] **Step 4: Create audio mix config**
+- [x] **Step 4: Create audio mix config**
 
 Create `scripts/presentation/audio_mix_config.gd`:
 
@@ -215,7 +215,7 @@ func _apply_bus_volume(bus_name: String) -> void:
 	AudioServer.set_bus_volume_db(bus_index, volume_to_db(get_bus_volume(bus_name)))
 ```
 
-- [ ] **Step 5: Add Game ownership**
+- [x] **Step 5: Add Game ownership**
 
 In `scripts/app/game.gd`, add this preload after `const CombatPresentationConfig`:
 
@@ -248,7 +248,7 @@ var audio_mix_config := AudioMixConfig.new()
 var debug_combat_sandbox_config: Dictionary = {}
 ```
 
-- [ ] **Step 6: Initialize audio buses at app startup**
+- [x] **Step 6: Initialize audio buses at app startup**
 
 In `scripts/app/app.gd`, update `_ready()` so the mixer is initialized after adding `game` and before routing:
 
@@ -269,7 +269,7 @@ func _ready() -> void:
 		debug_layer.add_child(DebugOverlayScene.instantiate())
 ```
 
-- [ ] **Step 7: Run tests to verify GREEN for mixer config**
+- [x] **Step 7: Run tests to verify GREEN for mixer config**
 
 Run:
 
@@ -279,7 +279,7 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\ci\run_god
 
 Expected: `Godot checks passed.` and `TESTS PASSED`.
 
-- [ ] **Step 8: Commit mixer foundation**
+- [x] **Step 8: Commit mixer foundation**
 
 Run:
 
@@ -299,7 +299,7 @@ If `scripts/presentation/audio_mix_config.gd.uid` was not generated, skip the se
 - Modify: `tests/smoke/test_scene_flow.gd`
 - Modify: `docs/superpowers/plans/2026-05-10-audio-mixing-foundation.md`
 
-- [ ] **Step 1: Add failing SFX assertion to unit coverage**
+- [x] **Step 1: Add failing SFX assertion to unit coverage**
 
 In `tests/unit/test_combat_presentation.gd`, update `test_layer_plays_slow_motion_wash_and_audio_stream_without_global_timescale` so the `passed` expression includes `player.bus == AudioMixConfig.BUS_SFX`:
 
@@ -315,7 +315,7 @@ In `tests/unit/test_combat_presentation.gd`, update `test_layer_plays_slow_motio
 		and is_equal_approx(Engine.time_scale, original_time_scale)
 ```
 
-- [ ] **Step 2: Add failing SFX assertion to smoke coverage**
+- [x] **Step 2: Add failing SFX assertion to smoke coverage**
 
 In `tests/smoke/test_scene_flow.gd`, update `test_explicit_slow_motion_and_audio_cues_are_recorded` so the `passed` expression includes `audio_player.bus == "SFX"`:
 
@@ -342,7 +342,7 @@ Also update `test_reduced_motion_filters_explicit_slow_motion_but_keeps_audio_cu
 		and audio_player.bus == "SFX"
 ```
 
-- [ ] **Step 3: Run tests to verify RED**
+- [x] **Step 3: Run tests to verify RED**
 
 Run:
 
@@ -352,7 +352,7 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\ci\run_god
 
 Expected: `TESTS FAILED` because `PresentationAudioPlayer` still uses Godot's default `Master` bus.
 
-- [ ] **Step 4: Add SFX bus preload**
+- [x] **Step 4: Add SFX bus preload**
 
 In `scripts/presentation/combat_presentation_layer.gd`, add this preload after `const CombatPresentationQueue`:
 
@@ -360,7 +360,7 @@ In `scripts/presentation/combat_presentation_layer.gd`, add this preload after `
 const AudioMixConfig := preload("res://scripts/presentation/audio_mix_config.gd")
 ```
 
-- [ ] **Step 5: Route presentation audio player to SFX**
+- [x] **Step 5: Route presentation audio player to SFX**
 
 In `scripts/presentation/combat_presentation_layer.gd`, update `_presentation_audio_player()`:
 
@@ -375,7 +375,7 @@ func _presentation_audio_player() -> AudioStreamPlayer:
 	return _audio_player
 ```
 
-- [ ] **Step 6: Run tests to verify GREEN for SFX routing**
+- [x] **Step 6: Run tests to verify GREEN for SFX routing**
 
 Run:
 
@@ -385,7 +385,7 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\ci\run_god
 
 Expected: `Godot checks passed.` and `TESTS PASSED`.
 
-- [ ] **Step 7: Commit SFX routing**
+- [x] **Step 7: Commit SFX routing**
 
 Run:
 
@@ -401,7 +401,7 @@ rtk git commit -m "feat: route presentation audio to sfx bus"
 - Modify: `tests/smoke/test_scene_flow.gd`
 - Modify: `docs/superpowers/plans/2026-05-10-audio-mixing-foundation.md`
 
-- [ ] **Step 1: Add failing debug overlay slider test**
+- [x] **Step 1: Add failing debug overlay slider test**
 
 In `tests/smoke/test_scene_flow.gd`, add this test after `test_debug_overlay_updates_polish_presentation_config`:
 
@@ -445,7 +445,7 @@ func test_debug_overlay_updates_audio_mix_config(tree: SceneTree) -> bool:
 	return passed
 ```
 
-- [ ] **Step 2: Run tests to verify RED**
+- [x] **Step 2: Run tests to verify RED**
 
 Run:
 
@@ -455,7 +455,7 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\ci\run_god
 
 Expected: `TESTS FAILED` because the debug overlay does not yet create the four audio sliders.
 
-- [ ] **Step 3: Add audio mix preload to debug overlay**
+- [x] **Step 3: Add audio mix preload to debug overlay**
 
 In `scripts/ui/debug_overlay.gd`, add this preload after `const CombatPresentationConfig`:
 
@@ -463,7 +463,7 @@ In `scripts/ui/debug_overlay.gd`, add this preload after `const CombatPresentati
 const AudioMixConfig := preload("res://scripts/presentation/audio_mix_config.gd")
 ```
 
-- [ ] **Step 4: Create debug sliders in `_ready()`**
+- [x] **Step 4: Create debug sliders in `_ready()`**
 
 In `scripts/ui/debug_overlay.gd`, add these calls immediately after the existing audio cue toggle:
 
@@ -486,7 +486,7 @@ The tail of `_ready()` should include:
 	_add_audio_volume_slider(box, "DebugAudioUiVolume", "UI Volume", AudioMixConfig.BUS_UI)
 ```
 
-- [ ] **Step 5: Add debug slider helper**
+- [x] **Step 5: Add debug slider helper**
 
 In `scripts/ui/debug_overlay.gd`, add this helper after `_add_reduced_motion_toggle`:
 
@@ -512,7 +512,7 @@ func _add_audio_volume_slider(box: VBoxContainer, node_name: String, label: Stri
 	box.add_child(row)
 ```
 
-- [ ] **Step 6: Run tests to verify GREEN for debug sliders**
+- [x] **Step 6: Run tests to verify GREEN for debug sliders**
 
 Run:
 
@@ -522,7 +522,7 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\ci\run_god
 
 Expected: `Godot checks passed.` and `TESTS PASSED`.
 
-- [ ] **Step 7: Commit debug audio sliders**
+- [x] **Step 7: Commit debug audio sliders**
 
 Run:
 
@@ -537,7 +537,7 @@ rtk git commit -m "feat: add debug audio mix sliders"
 - Modify: `README.md`
 - Modify: `docs/superpowers/plans/2026-05-10-audio-mixing-foundation.md`
 
-- [ ] **Step 1: Run shared Godot checks**
+- [x] **Step 1: Run shared Godot checks**
 
 Run:
 
@@ -547,7 +547,7 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\ci\run_god
 
 Expected: `Godot checks passed.` and `TESTS PASSED`.
 
-- [ ] **Step 2: Verify scope boundaries**
+- [x] **Step 2: Verify scope boundaries**
 
 Run:
 
@@ -565,7 +565,7 @@ rtk rg -n "AudioMixConfig|audio_mix_config|AudioServer|PresentationAudioPlayer|D
 
 Expected: matches only in app ownership/startup, presentation mixer/audio playback, debug overlay, tests, README, and this plan.
 
-- [ ] **Step 3: Update README progress**
+- [x] **Step 3: Update README progress**
 
 In `README.md`, add this bullet under `## Phase 2 Progress` after the broader card art rendering bullet:
 
@@ -582,7 +582,7 @@ Update `## Next Plans` to:
 2. Release expansion: artifact packaging, checksums, version bump automation, signed builds, and eventual Steam adapter implementation.
 ```
 
-- [ ] **Step 4: Run Stage 1 Spec Compliance Review**
+- [x] **Step 4: Run Stage 1 Spec Compliance Review**
 
 Review against `docs/superpowers/specs/2026-05-10-audio-mixing-foundation-design.md`.
 
@@ -600,7 +600,7 @@ Required findings:
 
 If any item fails, fix it before Stage 2.
 
-- [ ] **Step 5: Run Stage 2 Code Quality Review**
+- [x] **Step 5: Run Stage 2 Code Quality Review**
 
 Review the implementation for:
 
@@ -615,7 +615,7 @@ Review the implementation for:
 
 Classify found issues as Critical, Important, or Minor. Fix Critical and Important issues before final acceptance. Minor issues can remain only if they do not violate the spec or project protocol.
 
-- [ ] **Step 6: Run final shared Godot checks**
+- [x] **Step 6: Run final shared Godot checks**
 
 Run:
 
@@ -625,11 +625,11 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\ci\run_god
 
 Expected: `Godot checks passed.` and `TESTS PASSED`.
 
-- [ ] **Step 7: Mark completed plan steps**
+- [x] **Step 7: Mark completed plan steps**
 
 Update completed checkboxes in this plan from `[ ]` to `[x]` after each step has been completed and verified.
 
-- [ ] **Step 8: Commit acceptance docs**
+- [x] **Step 8: Commit acceptance docs**
 
 Run:
 

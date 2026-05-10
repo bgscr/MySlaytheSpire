@@ -11,6 +11,7 @@ const CombatPresentationEvent := preload("res://scripts/presentation/combat_pres
 const CombatPresentationIntentCueResolver := preload("res://scripts/presentation/combat_presentation_intent_cue_resolver.gd")
 const CombatPresentationLayer := preload("res://scripts/presentation/combat_presentation_layer.gd")
 const CombatPresentationQueue := preload("res://scripts/presentation/combat_presentation_queue.gd")
+const AudioMixConfig := preload("res://scripts/presentation/audio_mix_config.gd")
 const CombatState := preload("res://scripts/combat/combat_state.gd")
 const CombatantState := preload("res://scripts/combat/combatant_state.gd")
 const EffectDef := preload("res://scripts/data/effect_def.gd")
@@ -73,6 +74,53 @@ func test_queue_enqueue_copies_event_without_aliasing_original() -> bool:
 		and queued_event.amount == 9 \
 		and queued_event.tags == ["impact"] \
 		and queued_points.size() == 1
+	assert(passed)
+	return passed
+
+func test_audio_mix_config_ensures_standard_buses_idempotently() -> bool:
+	var mix := AudioMixConfig.new()
+	mix.ensure_buses()
+	var first_bus_count := AudioServer.bus_count
+	var has_required_buses := true
+	for bus_name in mix.required_buses():
+		has_required_buses = has_required_buses and AudioServer.get_bus_index(bus_name) != -1
+	mix.ensure_buses()
+	var passed: bool = has_required_buses \
+		and AudioServer.bus_count == first_bus_count
+	assert(passed)
+	return passed
+
+func test_audio_mix_config_clamps_and_applies_bus_volumes() -> bool:
+	var mix := AudioMixConfig.new()
+	mix.ensure_buses()
+
+	mix.set_bus_volume(AudioMixConfig.BUS_SFX, 1.25)
+	var high_clamped := is_equal_approx(mix.get_bus_volume(AudioMixConfig.BUS_SFX), 1.0)
+	mix.set_bus_volume(AudioMixConfig.BUS_SFX, -0.25)
+	var low_clamped := is_equal_approx(mix.get_bus_volume(AudioMixConfig.BUS_SFX), 0.0)
+	mix.set_bus_volume(AudioMixConfig.BUS_SFX, 0.5)
+
+	var sfx_index := AudioServer.get_bus_index(AudioMixConfig.BUS_SFX)
+	var applied_db := AudioServer.get_bus_volume_db(sfx_index) if sfx_index != -1 else 999.0
+	var passed: bool = high_clamped \
+		and low_clamped \
+		and is_equal_approx(mix.volume_to_db(1.0), 0.0) \
+		and is_equal_approx(mix.volume_to_db(0.0), AudioMixConfig.QUIET_DB) \
+		and is_equal_approx(mix.volume_to_db(0.5), linear_to_db(0.5)) \
+		and is_equal_approx(applied_db, linear_to_db(0.5))
+
+	mix.set_bus_volume(AudioMixConfig.BUS_SFX, 1.0)
+	assert(passed)
+	return passed
+
+func test_audio_mix_config_ignores_unknown_bus_without_mutating_required_volumes() -> bool:
+	var mix := AudioMixConfig.new()
+	mix.ensure_buses()
+	mix.set_bus_volume(AudioMixConfig.BUS_MASTER, 0.8)
+	mix.set_bus_volume("UnknownBus", 0.1)
+	var passed: bool = is_equal_approx(mix.get_bus_volume(AudioMixConfig.BUS_MASTER), 0.8) \
+		and is_equal_approx(mix.get_bus_volume("UnknownBus"), 1.0)
+	mix.set_bus_volume(AudioMixConfig.BUS_MASTER, 1.0)
 	assert(passed)
 	return passed
 
@@ -641,6 +689,7 @@ func test_layer_plays_slow_motion_wash_and_audio_stream_without_global_timescale
 		and wash.texture != null \
 		and player != null \
 		and player.stream != null \
+		and player.bus == AudioMixConfig.BUS_SFX \
 		and layer.last_audio_cue_id == "sword.heaven_cutting_arc" \
 		and layer.audio_cue_count == 1 \
 		and is_equal_approx(Engine.time_scale, original_time_scale)
