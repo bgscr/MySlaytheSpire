@@ -1003,6 +1003,7 @@ func _reward_inspector_skip_button(reward_index: int) -> Button:
 	return button
 
 func _refresh_reward_inspector_after_resolution(reward_index: int) -> void:
+	_hide_reward_inspector_detail()
 	if reward_inspector_run_summary_label != null:
 		reward_inspector_run_summary_label.text = reward_inspector_run_summary_text()
 	if reward_inspector_reward_list == null \
@@ -1203,6 +1204,7 @@ func _join_variant_string_array(values: Array) -> String:
 	return _join_string_array(result)
 
 func _refresh_reward_inspector_panel() -> void:
+	_hide_reward_inspector_detail()
 	if reward_inspector_run == null:
 		reset_reward_inspector_run()
 	if reward_inspector_run_summary_label != null:

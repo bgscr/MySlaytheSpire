@@ -850,25 +850,66 @@ func test_dev_tools_reward_inspector_node_type_selection_refreshes_rewards(tree:
 	if node_select != null:
 		node_select.select(2)
 		node_select.item_selected.emit(2)
+	var seed_spin := _find_node_by_name(screen, "RewardInspectorSeedSpinBox") as SpinBox
+	if seed_spin != null:
+		seed_spin.value = 222
+		seed_spin.value_changed.emit(222.0)
 	var summary := _find_node_by_name(screen, "RewardInspectorRunSummaryLabel") as Label
-	var relic_button := _find_node_by_name(screen, "RewardInspectorClaimRelic_2") as Button
-	var relic_preview := _find_node_by_prefix(screen, "RewardInspectorRelicVisual_") as VBoxContainer
-	var relic_icon := _find_node_by_prefix(screen, "RewardInspectorRelicIcon_") as TextureRect
+	var summary_matches_selection: bool = summary != null \
+		and summary.text.contains("node_type: boss") \
+		and summary.text.contains("seed: 222") \
+		and summary.text.contains("resolved: 0/3")
+	var reward_list := _find_node_by_name(screen, "RewardInspectorRewardList") as VBoxContainer
+	var relic_button: Button = null
+	if reward_list != null:
+		relic_button = reward_list.get_node_or_null("RewardInspectorReward_2/RewardInspectorClaimRelic_2") as Button
+	var relic_preview: Control = null
+	var relic_icon: TextureRect = null
+	if relic_button != null:
+		relic_preview = relic_button.get_node_or_null("RewardInspectorRelicVisual_2") as Control
+		relic_icon = relic_button.get_node_or_null("RewardInspectorRelicVisual_2/RewardInspectorRelicIcon_2") as TextureRect
+	var relic_preview_present: bool = relic_preview != null \
+		and relic_preview.mouse_filter == Control.MOUSE_FILTER_IGNORE \
+		and relic_icon != null \
+		and relic_icon.texture != null
 	if relic_button != null:
 		relic_button.mouse_entered.emit()
 	var reward_inspector_detail := _find_node_by_name(screen, "RewardInspectorDetailPanel") as ItemDetailPanel
 	var reward_inspector_detail_visible: bool = reward_inspector_detail != null \
 		and reward_inspector_detail.visible \
 		and reward_inspector_detail.get_meta("item_kind") == "relic"
+	var reset := _find_node_by_name(screen, "RewardInspectorResetButton") as Button
+	if reset != null:
+		reset.pressed.emit()
+	reward_inspector_detail = _find_node_by_name(screen, "RewardInspectorDetailPanel") as ItemDetailPanel
+	var reward_inspector_detail_hidden_after_reset: bool = reward_inspector_detail != null \
+		and not reward_inspector_detail.visible
+	reward_list = _find_node_by_name(screen, "RewardInspectorRewardList") as VBoxContainer
+	relic_button = null
+	if reward_list != null:
+		relic_button = reward_list.get_node_or_null("RewardInspectorReward_2/RewardInspectorClaimRelic_2") as Button
+	if relic_button != null:
+		relic_button.mouse_entered.emit()
+	reward_inspector_detail = _find_node_by_name(screen, "RewardInspectorDetailPanel") as ItemDetailPanel
+	var reward_inspector_detail_visible_after_reset_hover: bool = reward_inspector_detail != null \
+		and reward_inspector_detail.visible \
+		and reward_inspector_detail.get_meta("item_kind") == "relic"
+	if relic_button != null:
+		relic_button.pressed.emit()
+	reward_inspector_detail = _find_node_by_name(screen, "RewardInspectorDetailPanel") as ItemDetailPanel
+	var reward_inspector_detail_hidden_after_claim: bool = reward_inspector_detail != null \
+		and not reward_inspector_detail.visible
 	var passed: bool = node_select != null \
-		and summary != null \
-		and summary.text.contains("node_type: boss") \
-		and summary.text.contains("resolved: 0/3") \
+		and seed_spin != null \
+		and reward_list != null \
+		and summary_matches_selection \
 		and relic_button != null \
-		and relic_preview != null \
-		and relic_icon != null \
-		and relic_icon.texture != null \
-		and reward_inspector_detail_visible
+		and relic_preview_present \
+		and reward_inspector_detail_visible \
+		and reset != null \
+		and reward_inspector_detail_hidden_after_reset \
+		and reward_inspector_detail_visible_after_reset_hover \
+		and reward_inspector_detail_hidden_after_claim
 	screen.free()
 	return passed
 
