@@ -643,7 +643,7 @@ rtk git commit -m "docs: record polished card art acceptance"
 
 - Modify: `docs/superpowers/plans/2026-05-10-polished-per-card-art-replacement.md`
 
-- [ ] **Step 1: Run Stage 1 Spec Compliance Review**
+- [x] **Step 1: Run Stage 1 Spec Compliance Review**
 
 Review against `docs/superpowers/specs/2026-05-10-polished-per-card-art-replacement-design.md`.
 
@@ -660,7 +660,7 @@ Required findings:
 
 If any item fails, fix it before Stage 2.
 
-- [ ] **Step 2: Run Stage 2 Code Quality Review**
+- [x] **Step 2: Run Stage 2 Code Quality Review**
 
 Review the implementation for:
 
@@ -673,7 +673,7 @@ Review the implementation for:
 
 Classify found issues as Critical, Important, or Minor. Fix Critical and Important issues before final acceptance. Minor issues can remain only if they do not violate the spec or project protocol.
 
-- [ ] **Step 3: Run final shared Godot checks**
+- [x] **Step 3: Run final shared Godot checks**
 
 Run:
 
@@ -688,7 +688,7 @@ Godot checks passed.
 TESTS PASSED
 ```
 
-- [ ] **Step 4: Run final direct import check**
+- [x] **Step 4: Run final direct import check**
 
 Run:
 
@@ -698,11 +698,11 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: process exits 0.
 
-- [ ] **Step 5: Mark completed plan steps**
+- [x] **Step 5: Mark completed plan steps**
 
 Update completed checkboxes in this plan from `[ ]` to `[x]` after each step has been completed and verified.
 
-- [ ] **Step 6: Commit final review bookkeeping if needed**
+- [x] **Step 6: Commit final review bookkeeping if needed**
 
 If Task 5 only changes this plan file, run:
 
