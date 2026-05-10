@@ -1134,7 +1134,8 @@ func test_explicit_slow_motion_and_audio_cues_are_recorded(tree: SceneTree) -> b
 		and wash != null \
 		and wash.texture != null \
 		and audio_player != null \
-		and audio_player.stream != null
+		and audio_player.stream != null \
+		and audio_player.bus == "SFX"
 	app.free()
 	_delete_test_save("user://test_explicit_slow_audio_save.json")
 	return passed
@@ -1211,7 +1212,8 @@ func test_reduced_motion_filters_explicit_slow_motion_but_keeps_audio_cue(tree: 
 		and combat.presentation_layer.last_audio_cue_id == "sword.heaven_cutting_arc" \
 		and combat.presentation_layer.audio_cue_count == 1 \
 		and audio_player != null \
-		and audio_player.stream != null
+		and audio_player.stream != null \
+		and audio_player.bus == "SFX"
 	app.free()
 	_delete_test_save("user://test_reduced_motion_slow_audio_save.json")
 	return passed

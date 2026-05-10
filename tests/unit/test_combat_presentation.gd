@@ -689,6 +689,7 @@ func test_layer_plays_slow_motion_wash_and_audio_stream_without_global_timescale
 		and wash.texture != null \
 		and player != null \
 		and player.stream != null \
+		and player.bus == AudioMixConfig.BUS_SFX \
 		and layer.last_audio_cue_id == "sword.heaven_cutting_arc" \
 		and layer.audio_cue_count == 1 \
 		and is_equal_approx(Engine.time_scale, original_time_scale)

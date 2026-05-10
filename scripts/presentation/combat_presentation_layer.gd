@@ -4,6 +4,7 @@ extends Control
 const CombatPresentationEvent := preload("res://scripts/presentation/combat_presentation_event.gd")
 const CombatPresentationAssetCatalog := preload("res://scripts/presentation/combat_presentation_asset_catalog.gd")
 const CombatPresentationQueue := preload("res://scripts/presentation/combat_presentation_queue.gd")
+const AudioMixConfig := preload("res://scripts/presentation/audio_mix_config.gd")
 
 const FLOAT_DURATION := 0.55
 const FLASH_COLOR := Color(1.0, 0.92, 0.72)
@@ -315,5 +316,6 @@ func _presentation_audio_player() -> AudioStreamPlayer:
 		return _audio_player
 	_audio_player = AudioStreamPlayer.new()
 	_audio_player.name = "PresentationAudioPlayer"
+	_audio_player.bus = AudioMixConfig.BUS_SFX
 	add_child(_audio_player)
 	return _audio_player

@@ -299,7 +299,7 @@ If `scripts/presentation/audio_mix_config.gd.uid` was not generated, skip the se
 - Modify: `tests/smoke/test_scene_flow.gd`
 - Modify: `docs/superpowers/plans/2026-05-10-audio-mixing-foundation.md`
 
-- [ ] **Step 1: Add failing SFX assertion to unit coverage**
+- [x] **Step 1: Add failing SFX assertion to unit coverage**
 
 In `tests/unit/test_combat_presentation.gd`, update `test_layer_plays_slow_motion_wash_and_audio_stream_without_global_timescale` so the `passed` expression includes `player.bus == AudioMixConfig.BUS_SFX`:
 
@@ -315,7 +315,7 @@ In `tests/unit/test_combat_presentation.gd`, update `test_layer_plays_slow_motio
 		and is_equal_approx(Engine.time_scale, original_time_scale)
 ```
 
-- [ ] **Step 2: Add failing SFX assertion to smoke coverage**
+- [x] **Step 2: Add failing SFX assertion to smoke coverage**
 
 In `tests/smoke/test_scene_flow.gd`, update `test_explicit_slow_motion_and_audio_cues_are_recorded` so the `passed` expression includes `audio_player.bus == "SFX"`:
 
@@ -342,7 +342,7 @@ Also update `test_reduced_motion_filters_explicit_slow_motion_but_keeps_audio_cu
 		and audio_player.bus == "SFX"
 ```
 
-- [ ] **Step 3: Run tests to verify RED**
+- [x] **Step 3: Run tests to verify RED**
 
 Run:
 
@@ -352,7 +352,7 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\ci\run_god
 
 Expected: `TESTS FAILED` because `PresentationAudioPlayer` still uses Godot's default `Master` bus.
 
-- [ ] **Step 4: Add SFX bus preload**
+- [x] **Step 4: Add SFX bus preload**
 
 In `scripts/presentation/combat_presentation_layer.gd`, add this preload after `const CombatPresentationQueue`:
 
@@ -360,7 +360,7 @@ In `scripts/presentation/combat_presentation_layer.gd`, add this preload after `
 const AudioMixConfig := preload("res://scripts/presentation/audio_mix_config.gd")
 ```
 
-- [ ] **Step 5: Route presentation audio player to SFX**
+- [x] **Step 5: Route presentation audio player to SFX**
 
 In `scripts/presentation/combat_presentation_layer.gd`, update `_presentation_audio_player()`:
 
@@ -375,7 +375,7 @@ func _presentation_audio_player() -> AudioStreamPlayer:
 	return _audio_player
 ```
 
-- [ ] **Step 6: Run tests to verify GREEN for SFX routing**
+- [x] **Step 6: Run tests to verify GREEN for SFX routing**
 
 Run:
 
@@ -385,7 +385,7 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\ci\run_god
 
 Expected: `Godot checks passed.` and `TESTS PASSED`.
 
-- [ ] **Step 7: Commit SFX routing**
+- [x] **Step 7: Commit SFX routing**
 
 Run:
 
