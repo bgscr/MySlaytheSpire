@@ -2010,7 +2010,7 @@ rtk git commit -m "feat: show event and dev tool item previews"
 - Modify: `README.md`
 - Modify: `docs/superpowers/plans/2026-05-10-reusable-item-preview-detail.md`
 
-- [ ] **Step 1: Verify no forbidden areas changed**
+- [x] **Step 1: Verify no forbidden areas changed**
 
 Run:
 
@@ -2020,7 +2020,7 @@ rtk git diff --name-only HEAD~8..HEAD -- resources/cards resources/relics resour
 
 Expected: no output except `scripts/ui/combat_screen.gd` if the path filter includes all `scripts/combat` only. If output includes gameplay/data/release/localization files outside the planned visual/schema/UI files, stop and inspect before continuing.
 
-- [ ] **Step 2: Verify reusable system remains bounded**
+- [x] **Step 2: Verify reusable system remains bounded**
 
 Run:
 
@@ -2030,7 +2030,7 @@ rtk rg -n "potion|inventory|pin|pinned|equipment|drag.*item|item_kind.*potion" s
 
 Expected: matches only in spec/plan excluded-scope text, not in implementation files.
 
-- [ ] **Step 3: Update README progress**
+- [x] **Step 3: Update README progress**
 
 In `README.md`, add this bullet under `## Phase 2 Progress` after the polished per-card art replacement bullet:
 
@@ -2047,7 +2047,7 @@ Update `## Next Plans` to:
 2. Release expansion: artifact packaging, checksums, version bump automation, signed builds, and eventual Steam adapter implementation.
 ```
 
-- [ ] **Step 4: Run shared Godot checks**
+- [x] **Step 4: Run shared Godot checks**
 
 Run:
 
@@ -2062,7 +2062,7 @@ Godot checks passed.
 TESTS PASSED
 ```
 
-- [ ] **Step 5: Run direct import check**
+- [x] **Step 5: Run direct import check**
 
 Run:
 
@@ -2072,7 +2072,7 @@ rtk proxy powershell -NoProfile -Command "& 'C:\Tools\Godot\Godot_v4.6.2-stable_
 
 Expected: process exits 0.
 
-- [ ] **Step 6: Run Stage 1 Spec Compliance Review**
+- [x] **Step 6: Run Stage 1 Spec Compliance Review**
 
 Review against `docs/superpowers/specs/2026-05-10-reusable-item-preview-detail-design.md`.
 
@@ -2091,7 +2091,7 @@ Required findings:
 
 If any item fails, fix it before Stage 2.
 
-- [ ] **Step 7: Run Stage 2 Code Quality Review**
+- [x] **Step 7: Run Stage 2 Code Quality Review**
 
 Review for:
 
@@ -2105,7 +2105,7 @@ Review for:
 
 Classify found issues as Critical, Important, or Minor. Fix Critical and Important issues before final acceptance.
 
-- [ ] **Step 8: Commit README and review bookkeeping**
+- [x] **Step 8: Commit README and review bookkeeping**
 
 Run:
 
