@@ -182,6 +182,7 @@ func _start_session() -> void:
 func _refresh() -> void:
 	if session == null:
 		return
+	_hide_item_detail()
 	status_label.text = _player_status_text()
 	pile_label.text = "Draw %s | Discard %s | Exhaust %s | Phase %s" % [
 		session.state.draw_pile.size(),
