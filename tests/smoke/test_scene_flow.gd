@@ -539,6 +539,44 @@ func test_debug_overlay_updates_polish_presentation_config(tree: SceneTree) -> b
 	_delete_test_save("user://test_debug_polish_config_save.json")
 	return passed
 
+func test_debug_overlay_updates_audio_mix_config(tree: SceneTree) -> bool:
+	var app = _create_app_with_save_service(tree, "user://test_debug_audio_mix_save.json")
+	var debug_overlay: Node = app.get_node_or_null("DebugLayer/DebugOverlay")
+	var master_slider := _find_node_by_name(debug_overlay, "DebugAudioMasterVolume") as HSlider
+	var music_slider := _find_node_by_name(debug_overlay, "DebugAudioMusicVolume") as HSlider
+	var sfx_slider := _find_node_by_name(debug_overlay, "DebugAudioSfxVolume") as HSlider
+	var ui_slider := _find_node_by_name(debug_overlay, "DebugAudioUiVolume") as HSlider
+
+	if master_slider != null:
+		master_slider.value = 0.75
+		master_slider.value_changed.emit(0.75)
+	if music_slider != null:
+		music_slider.value = 0.25
+		music_slider.value_changed.emit(0.25)
+	if sfx_slider != null:
+		sfx_slider.value = 0.5
+		sfx_slider.value_changed.emit(0.5)
+	if ui_slider != null:
+		ui_slider.value = 0.9
+		ui_slider.value_changed.emit(0.9)
+
+	var passed: bool = master_slider != null \
+		and music_slider != null \
+		and sfx_slider != null \
+		and ui_slider != null \
+		and is_equal_approx(app.game.audio_mix_config.get_bus_volume("Master"), 0.75) \
+		and is_equal_approx(app.game.audio_mix_config.get_bus_volume("Music"), 0.25) \
+		and is_equal_approx(app.game.audio_mix_config.get_bus_volume("SFX"), 0.5) \
+		and is_equal_approx(app.game.audio_mix_config.get_bus_volume("UI"), 0.9)
+
+	app.game.audio_mix_config.set_bus_volume("Master", 1.0)
+	app.game.audio_mix_config.set_bus_volume("Music", 1.0)
+	app.game.audio_mix_config.set_bus_volume("SFX", 1.0)
+	app.game.audio_mix_config.set_bus_volume("UI", 1.0)
+	app.free()
+	_delete_test_save("user://test_debug_audio_mix_save.json")
+	return passed
+
 func test_debug_overlay_updates_reduced_motion_profile(tree: SceneTree) -> bool:
 	var app = _create_app_with_save_service(tree, "user://test_debug_reduced_motion_save.json")
 	var debug_overlay: Node = app.get_node_or_null("DebugLayer/DebugOverlay")

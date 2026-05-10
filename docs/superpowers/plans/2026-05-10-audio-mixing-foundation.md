@@ -401,7 +401,7 @@ rtk git commit -m "feat: route presentation audio to sfx bus"
 - Modify: `tests/smoke/test_scene_flow.gd`
 - Modify: `docs/superpowers/plans/2026-05-10-audio-mixing-foundation.md`
 
-- [ ] **Step 1: Add failing debug overlay slider test**
+- [x] **Step 1: Add failing debug overlay slider test**
 
 In `tests/smoke/test_scene_flow.gd`, add this test after `test_debug_overlay_updates_polish_presentation_config`:
 
@@ -445,7 +445,7 @@ func test_debug_overlay_updates_audio_mix_config(tree: SceneTree) -> bool:
 	return passed
 ```
 
-- [ ] **Step 2: Run tests to verify RED**
+- [x] **Step 2: Run tests to verify RED**
 
 Run:
 
@@ -455,7 +455,7 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\ci\run_god
 
 Expected: `TESTS FAILED` because the debug overlay does not yet create the four audio sliders.
 
-- [ ] **Step 3: Add audio mix preload to debug overlay**
+- [x] **Step 3: Add audio mix preload to debug overlay**
 
 In `scripts/ui/debug_overlay.gd`, add this preload after `const CombatPresentationConfig`:
 
@@ -463,7 +463,7 @@ In `scripts/ui/debug_overlay.gd`, add this preload after `const CombatPresentati
 const AudioMixConfig := preload("res://scripts/presentation/audio_mix_config.gd")
 ```
 
-- [ ] **Step 4: Create debug sliders in `_ready()`**
+- [x] **Step 4: Create debug sliders in `_ready()`**
 
 In `scripts/ui/debug_overlay.gd`, add these calls immediately after the existing audio cue toggle:
 
@@ -486,7 +486,7 @@ The tail of `_ready()` should include:
 	_add_audio_volume_slider(box, "DebugAudioUiVolume", "UI Volume", AudioMixConfig.BUS_UI)
 ```
 
-- [ ] **Step 5: Add debug slider helper**
+- [x] **Step 5: Add debug slider helper**
 
 In `scripts/ui/debug_overlay.gd`, add this helper after `_add_reduced_motion_toggle`:
 
@@ -512,7 +512,7 @@ func _add_audio_volume_slider(box: VBoxContainer, node_name: String, label: Stri
 	box.add_child(row)
 ```
 
-- [ ] **Step 6: Run tests to verify GREEN for debug sliders**
+- [x] **Step 6: Run tests to verify GREEN for debug sliders**
 
 Run:
 
@@ -522,7 +522,7 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\ci\run_god
 
 Expected: `Godot checks passed.` and `TESTS PASSED`.
 
-- [ ] **Step 7: Commit debug audio sliders**
+- [x] **Step 7: Commit debug audio sliders**
 
 Run:
 

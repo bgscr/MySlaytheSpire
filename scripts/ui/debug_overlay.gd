@@ -2,6 +2,7 @@ extends PanelContainer
 
 const SceneRouterScript := preload("res://scripts/app/scene_router.gd")
 const CombatPresentationConfig := preload("res://scripts/presentation/combat_presentation_config.gd")
+const AudioMixConfig := preload("res://scripts/presentation/audio_mix_config.gd")
 
 func _ready() -> void:
 	visible = OS.is_debug_build()
@@ -41,6 +42,10 @@ func _ready() -> void:
 	_add_presentation_toggle(box, "DebugPresentationCameraImpulse", "Camera Impulse", "camera_impulse_enabled")
 	_add_presentation_toggle(box, "DebugPresentationSlowMotion", "Slow Motion", "slow_motion_enabled")
 	_add_presentation_toggle(box, "DebugPresentationAudioCue", "Audio Cue", "audio_cue_enabled")
+	_add_audio_volume_slider(box, "DebugAudioMasterVolume", "Master Volume", AudioMixConfig.BUS_MASTER)
+	_add_audio_volume_slider(box, "DebugAudioMusicVolume", "Music Volume", AudioMixConfig.BUS_MUSIC)
+	_add_audio_volume_slider(box, "DebugAudioSfxVolume", "SFX Volume", AudioMixConfig.BUS_SFX)
+	_add_audio_volume_slider(box, "DebugAudioUiVolume", "UI Volume", AudioMixConfig.BUS_UI)
 
 func _get_app() -> Node:
 	return get_tree().root.get_node_or_null("App")
@@ -69,6 +74,26 @@ func _add_reduced_motion_toggle(box: VBoxContainer) -> void:
 		app.game.presentation_config.set_motion_profile(profile)
 	)
 	box.add_child(toggle)
+
+func _add_audio_volume_slider(box: VBoxContainer, node_name: String, label: String, bus_name: String) -> void:
+	var app := _get_app()
+	if app == null or app.game == null or app.game.audio_mix_config == null:
+		return
+	var row := VBoxContainer.new()
+	row.name = "%sRow" % node_name
+	var label_node := Label.new()
+	label_node.name = "%sLabel" % node_name
+	label_node.text = "Debug: %s" % label
+	row.add_child(label_node)
+	var slider := HSlider.new()
+	slider.name = node_name
+	slider.min_value = 0.0
+	slider.max_value = 1.0
+	slider.step = 0.05
+	slider.value = app.game.audio_mix_config.get_bus_volume(bus_name)
+	slider.value_changed.connect(func(value: float): app.game.audio_mix_config.set_bus_volume(bus_name, value))
+	row.add_child(slider)
+	box.add_child(row)
 
 func _full_hp() -> void:
 	var app := _get_app()
