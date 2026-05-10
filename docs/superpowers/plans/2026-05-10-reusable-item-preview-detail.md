@@ -1229,7 +1229,7 @@ rtk git commit -m "feat: add item detail panel"
 - Modify: `tests/smoke/test_scene_flow.gd`
 - Modify: `docs/superpowers/plans/2026-05-10-reusable-item-preview-detail.md`
 
-- [ ] **Step 1: Write failing combat detail smoke coverage**
+- [x] **Step 1: Write failing combat detail smoke coverage**
 
 In `tests/smoke/test_scene_flow.gd`, add a smoke test near the existing combat presentation tests:
 
@@ -1271,7 +1271,7 @@ Add this preload near the smoke test script preloads:
 const ItemDetailPanel := preload("res://scripts/ui/item_detail_panel.gd")
 ```
 
-- [ ] **Step 2: Run smoke test to verify RED**
+- [x] **Step 2: Run smoke test to verify RED**
 
 Run:
 
@@ -1281,7 +1281,7 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\ci\run_god
 
 Expected: non-zero exit or `TESTS FAILED` because combat has no `ItemDetailPanel` node.
 
-- [ ] **Step 3: Wire combat hand cards to shared preview and detail panel**
+- [x] **Step 3: Wire combat hand cards to shared preview and detail panel**
 
 In `scripts/ui/combat_screen.gd`, add these preloads:
 
@@ -1355,7 +1355,7 @@ func _hide_item_detail() -> void:
 
 Keep `_card_visual_text()` for compatibility until no local code calls it, then remove it in this task if `rtk rg "_card_visual_text" scripts/ui/combat_screen.gd` only shows its definition.
 
-- [ ] **Step 4: Run smoke test to verify GREEN**
+- [x] **Step 4: Run smoke test to verify GREEN**
 
 Run:
 
@@ -1370,7 +1370,7 @@ Godot checks passed.
 TESTS PASSED
 ```
 
-- [ ] **Step 5: Commit combat detail wiring**
+- [x] **Step 5: Commit combat detail wiring**
 
 Run:
 

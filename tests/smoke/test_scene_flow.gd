@@ -6,6 +6,7 @@ const DevToolsScene := preload("res://scenes/dev/DevToolsScreen.tscn")
 const CardDefScript := preload("res://scripts/data/card_def.gd")
 const ContentCatalogScript := preload("res://scripts/content/content_catalog.gd")
 const EventResolverScript := preload("res://scripts/event/event_resolver.gd")
+const ItemDetailPanel := preload("res://scripts/ui/item_detail_panel.gd")
 const MapNodeStateScript := preload("res://scripts/run/map_node_state.gd")
 const RunStateScript := preload("res://scripts/run/run_state.gd")
 const SaveServiceScript := preload("res://scripts/save/save_service.gd")
@@ -254,6 +255,36 @@ func test_combat_screen_renders_card_thumbnail_children(tree: SceneTree) -> bool
 		and card.text.is_empty()
 	app.free()
 	_delete_test_save("user://test_card_thumbnail_children_save.json")
+	return passed
+
+func test_combat_card_hover_shows_and_hides_detail_panel(tree: SceneTree) -> bool:
+	var save_path := "user://test_combat_card_detail_save.json"
+	var app = _create_app_with_save_service(tree, save_path)
+	app.game.set_debug_combat_sandbox_config({
+		"character_id": "sword",
+		"deck_ids": ["sword.strike"],
+		"enemy_ids": ["training_puppet"],
+		"seed_value": 301,
+	})
+	var combat = app.game.router.go_to(SceneRouterScript.COMBAT)
+	combat.session.state.hand.clear()
+	combat.session.state.hand.append("sword.strike")
+	combat.session.state.draw_pile.clear()
+	combat._refresh()
+	var card_button := _find_node_by_name(combat, "CardButton_0") as Button
+	if card_button != null:
+		card_button.mouse_entered.emit()
+	var detail := _find_node_by_name(combat, "ItemDetailPanel") as ItemDetailPanel
+	var visible_after_hover: bool = detail != null and detail.visible and detail.get_meta("item_kind") == "card"
+	if card_button != null:
+		card_button.mouse_exited.emit()
+	var hidden_after_exit: bool = detail != null and not detail.visible
+	var passed: bool = card_button != null \
+		and _find_node_by_name(combat, "CardVisualRoot_0") != null \
+		and visible_after_hover \
+		and hidden_after_exit
+	app.free()
+	_delete_test_save(save_path)
 	return passed
 
 func test_combat_screen_renders_normal_enemy_portrait(tree: SceneTree) -> bool:
