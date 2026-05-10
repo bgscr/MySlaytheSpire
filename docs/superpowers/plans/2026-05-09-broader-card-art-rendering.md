@@ -617,7 +617,7 @@ rtk git commit -m "feat: render shop card previews"
 - Modify: `tests/smoke/test_scene_flow.gd`
 - Modify: `scripts/ui/event_screen.gd`
 
-- [ ] **Step 1: Add a helper that finds an event seed with direct card previews**
+- [x] **Step 1: Add a helper that finds an event seed with direct card previews**
 
 Add this helper near `_seed_for_event_with_unavailable_option()` in `tests/smoke/test_scene_flow.gd`:
 
@@ -637,7 +637,7 @@ func _seed_for_event_with_card_preview_option() -> int:
 	return 1
 ```
 
-- [ ] **Step 2: Add failing event preview test**
+- [x] **Step 2: Add failing event preview test**
 
 Add this smoke test after `test_event_screen_disables_unavailable_option()`:
 
@@ -669,7 +669,7 @@ func test_event_screen_renders_direct_card_option_previews(tree: SceneTree) -> b
 	return passed
 ```
 
-- [ ] **Step 3: Add prefix finder helper**
+- [x] **Step 3: Add prefix finder helper**
 
 Add this helper after `_find_node_by_text()` in `tests/smoke/test_scene_flow.gd`:
 
@@ -686,7 +686,7 @@ func _find_node_by_prefix(root: Node, prefix: String) -> Node:
 	return null
 ```
 
-- [ ] **Step 4: Run tests to verify RED**
+- [x] **Step 4: Run tests to verify RED**
 
 Run:
 
@@ -696,7 +696,7 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File tools/ci/run_godot
 
 Expected: `TESTS FAILED` because event option card previews are not rendered yet.
 
-- [ ] **Step 5: Add presenter preloads to event screen**
+- [x] **Step 5: Add presenter preloads to event screen**
 
 Add these preloads to `scripts/ui/event_screen.gd` near the other preloads:
 
@@ -705,7 +705,7 @@ const CardVisualPresenter := preload("res://scripts/ui/card_visual_presenter.gd"
 const CombatVisualResolver := preload("res://scripts/presentation/combat_visual_resolver.gd")
 ```
 
-- [ ] **Step 6: Render direct card previews under event options**
+- [x] **Step 6: Render direct card previews under event options**
 
 In `_add_option_button(index: int)` in `scripts/ui/event_screen.gd`, after:
 
@@ -763,7 +763,7 @@ func _visual_theme() -> Dictionary:
 	return CombatVisualResolver.new().resolve_theme(run.character_id, catalog)
 ```
 
-- [ ] **Step 7: Run tests to verify GREEN for events**
+- [x] **Step 7: Run tests to verify GREEN for events**
 
 Run:
 
@@ -778,7 +778,7 @@ TESTS PASSED
 Godot checks passed.
 ```
 
-- [ ] **Step 8: Commit event previews**
+- [x] **Step 8: Commit event previews**
 
 Run:
 

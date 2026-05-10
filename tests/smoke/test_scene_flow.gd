@@ -1463,6 +1463,32 @@ func test_event_screen_disables_unavailable_option(tree: SceneTree) -> bool:
 	_delete_test_save(save_path)
 	return passed
 
+func test_event_screen_renders_direct_card_option_previews(tree: SceneTree) -> bool:
+	var save_path := "user://test_event_card_preview_save.json"
+	var app = _create_app_with_save_service(tree, save_path)
+	var run := _reward_run("event", true)
+	run.seed_value = _seed_for_event_with_card_preview_option()
+	run.current_hp = 40
+	run.max_hp = 40
+	run.gold = 50
+	app.game.current_run = run
+	var event_screen = app.game.router.go_to(SceneRouterScript.EVENT)
+	var preview := _find_node_by_prefix(event_screen, "EventOptionCardVisual_") as VBoxContainer
+	var thumbnail := _find_node_by_prefix(event_screen, "EventOptionCardThumbnail_") as TextureRect
+	var option_button := _find_node_by_prefix(event_screen, "EventOption_") as Button
+	var loaded_before = app.game.save_service.load_run()
+	if option_button != null and not option_button.disabled:
+		option_button.pressed.emit()
+	var passed: bool = preview != null \
+		and preview.mouse_filter == Control.MOUSE_FILTER_IGNORE \
+		and thumbnail != null \
+		and thumbnail.texture != null \
+		and loaded_before == null \
+		and app.game.router.current_scene != null
+	app.free()
+	_delete_test_save(save_path)
+	return passed
+
 func test_reward_screen_claims_pending_event_reward_then_advances_event(tree: SceneTree) -> bool:
 	var save_path := "user://test_event_reward_screen_save.json"
 	var app = _create_app_with_save_service(tree, save_path)
@@ -1832,6 +1858,17 @@ func _find_node_by_text(root: Node, text: String) -> Node:
 			return found
 	return null
 
+func _find_node_by_prefix(root: Node, prefix: String) -> Node:
+	if root == null:
+		return null
+	if root.name.begins_with(prefix):
+		return root
+	for child in root.get_children():
+		var found := _find_node_by_prefix(child, prefix)
+		if found != null:
+			return found
+	return null
+
 func _first_disabled_event_option(root: Node) -> Button:
 	if root == null:
 		return null
@@ -1857,6 +1894,20 @@ func _seed_for_event_with_unavailable_option() -> int:
 		for option in event.options:
 			if option.min_hp > run.current_hp or option.min_gold > run.gold:
 				return seed
+	return 1
+
+func _seed_for_event_with_card_preview_option() -> int:
+	var catalog := ContentCatalogScript.new()
+	catalog.load_default()
+	for seed_value in range(1, 200):
+		var run := _reward_run("event", true)
+		run.seed_value = seed_value
+		var event = EventResolverScript.new().resolve(catalog, run)
+		if event == null:
+			continue
+		for option in event.options:
+			if not option.grant_card_ids.is_empty() or not option.remove_card_id.is_empty():
+				return seed_value
 	return 1
 
 func _first_button_with_prefix(root: Node, prefix: String) -> Button:

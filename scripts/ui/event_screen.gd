@@ -1,6 +1,8 @@
 extends Control
 
 const ContentCatalog := preload("res://scripts/content/content_catalog.gd")
+const CardVisualPresenter := preload("res://scripts/ui/card_visual_presenter.gd")
+const CombatVisualResolver := preload("res://scripts/presentation/combat_visual_resolver.gd")
 const EventDef := preload("res://scripts/data/event_def.gd")
 const EventResolver := preload("res://scripts/event/event_resolver.gd")
 const EventRunner := preload("res://scripts/event/event_runner.gd")
@@ -76,6 +78,47 @@ func _add_option_button(index: int) -> void:
 	button.disabled = not runner.is_option_available(run, option)
 	button.pressed.connect(func(): _on_option_pressed(index))
 	option_container.add_child(button)
+	_add_option_card_previews(index)
+
+func _add_option_card_previews(index: int) -> void:
+	if current_event == null or index < 0 or index >= current_event.options.size():
+		return
+	var option = current_event.options[index]
+	var row := HBoxContainer.new()
+	row.name = "EventOptionCardPreviewRow_%s" % index
+	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var preview_count := 0
+	for card_id in option.grant_card_ids:
+		CardVisualPresenter.add_card_preview(
+			row,
+			"EventOptionCard",
+			"%s_%s" % [index, preview_count],
+			card_id,
+			catalog,
+			_visual_theme()
+		)
+		preview_count += 1
+	if not option.remove_card_id.is_empty():
+		CardVisualPresenter.add_card_preview(
+			row,
+			"EventOptionCard",
+			"%s_%s" % [index, preview_count],
+			option.remove_card_id,
+			catalog,
+			_visual_theme()
+		)
+		preview_count += 1
+	if preview_count == 0:
+		row.free()
+		return
+	option_container.add_child(row)
+
+func _visual_theme() -> Dictionary:
+	var app = _app()
+	var run = app.game.current_run if app != null else null
+	if run == null or catalog == null:
+		return {}
+	return CombatVisualResolver.new().resolve_theme(run.character_id, catalog)
 
 func _on_option_pressed(index: int) -> void:
 	if advance_requested or current_event == null or index < 0 or index >= current_event.options.size():
