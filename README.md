@@ -69,8 +69,9 @@ $env:GODOT4="C:\Tools\Godot\Godot_v4.6.2-stable_win64_console.exe"
 - Visual theme system: complete; combat now renders data-backed background presentation and card thumbnail slots through catalog visual resources and character themes.
 - Enemy art foundation: complete; combat now renders data-backed enemy portrait slots for all 16 default enemies through catalog visual resources.
 - Broader card art rendering: complete; reward choices, shop card offers, shop removal choices, and direct card-grant/removal event options now render catalog-backed card previews outside combat.
+- Audio mixing foundation: complete; debug builds now ensure Master, Music, SFX, and UI buses, route combat audio cues through SFX, and expose in-memory debug volume sliders for all four buses.
 
 ## Next Plans
 
-1. Presentation expansion: formal audio mixing and polished per-card art replacement.
+1. Presentation expansion: polished per-card art replacement.
 2. Release expansion: artifact packaging, checksums, version bump automation, signed builds, and eventual Steam adapter implementation.

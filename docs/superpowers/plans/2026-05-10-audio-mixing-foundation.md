@@ -537,7 +537,7 @@ rtk git commit -m "feat: add debug audio mix sliders"
 - Modify: `README.md`
 - Modify: `docs/superpowers/plans/2026-05-10-audio-mixing-foundation.md`
 
-- [ ] **Step 1: Run shared Godot checks**
+- [x] **Step 1: Run shared Godot checks**
 
 Run:
 
@@ -547,7 +547,7 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\ci\run_god
 
 Expected: `Godot checks passed.` and `TESTS PASSED`.
 
-- [ ] **Step 2: Verify scope boundaries**
+- [x] **Step 2: Verify scope boundaries**
 
 Run:
 
@@ -565,7 +565,7 @@ rtk rg -n "AudioMixConfig|audio_mix_config|AudioServer|PresentationAudioPlayer|D
 
 Expected: matches only in app ownership/startup, presentation mixer/audio playback, debug overlay, tests, README, and this plan.
 
-- [ ] **Step 3: Update README progress**
+- [x] **Step 3: Update README progress**
 
 In `README.md`, add this bullet under `## Phase 2 Progress` after the broader card art rendering bullet:
 
@@ -582,7 +582,7 @@ Update `## Next Plans` to:
 2. Release expansion: artifact packaging, checksums, version bump automation, signed builds, and eventual Steam adapter implementation.
 ```
 
-- [ ] **Step 4: Run Stage 1 Spec Compliance Review**
+- [x] **Step 4: Run Stage 1 Spec Compliance Review**
 
 Review against `docs/superpowers/specs/2026-05-10-audio-mixing-foundation-design.md`.
 
@@ -600,7 +600,7 @@ Required findings:
 
 If any item fails, fix it before Stage 2.
 
-- [ ] **Step 5: Run Stage 2 Code Quality Review**
+- [x] **Step 5: Run Stage 2 Code Quality Review**
 
 Review the implementation for:
 
@@ -615,7 +615,7 @@ Review the implementation for:
 
 Classify found issues as Critical, Important, or Minor. Fix Critical and Important issues before final acceptance. Minor issues can remain only if they do not violate the spec or project protocol.
 
-- [ ] **Step 6: Run final shared Godot checks**
+- [x] **Step 6: Run final shared Godot checks**
 
 Run:
 
@@ -625,11 +625,11 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\ci\run_god
 
 Expected: `Godot checks passed.` and `TESTS PASSED`.
 
-- [ ] **Step 7: Mark completed plan steps**
+- [x] **Step 7: Mark completed plan steps**
 
 Update completed checkboxes in this plan from `[ ]` to `[x]` after each step has been completed and verified.
 
-- [ ] **Step 8: Commit acceptance docs**
+- [x] **Step 8: Commit acceptance docs**
 
 Run:
 
