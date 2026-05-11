@@ -762,3 +762,6 @@ msgstr "Work for the master"
 
 msgid "event.withered_master.option.work.desc"
 msgstr "Lose 5 HP and gain 22 gold."
+
+msgid "node_type.combat"
+msgstr "Combat"

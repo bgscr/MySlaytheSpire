@@ -764,7 +764,7 @@ rtk proxy git commit -m "feat: add localized ui text helper"
 - Add: `assets/ui/fonts/NotoSansSC-Regular.ttf`
 - Modify: `scripts/testing/test_runner.gd`
 
-- [ ] **Step 1: Add failing style tests**
+- [x] **Step 1: Add failing style tests**
 
 Add `res://tests/unit/test_ui_style.gd` to the test runner after `test_ui_text.gd`.
 
@@ -797,13 +797,13 @@ func test_badge_has_stable_size_and_text() -> bool:
 	return passed
 ```
 
-- [ ] **Step 2: Run tests and verify failure**
+- [x] **Step 2: Run tests and verify failure**
 
 Run full checks.
 
 Expected: failure because `scripts/ui/ui_style.gd` is missing.
 
-- [ ] **Step 3: Add font asset**
+- [x] **Step 3: Add font asset**
 
 Add a license-safe Chinese-capable font file at:
 
@@ -813,7 +813,7 @@ assets/ui/fonts/NotoSansSC-Regular.ttf
 
 Run the Godot import step through the full check command so `.import` metadata is generated.
 
-- [ ] **Step 4: Implement style helper**
+- [x] **Step 4: Implement style helper**
 
 Create `scripts/ui/ui_style.gd`:
 
@@ -878,7 +878,7 @@ static func _stylebox(color: Color, border_color: Color, border_width: int, radi
 	return box
 ```
 
-- [ ] **Step 5: Run tests and commit**
+- [x] **Step 5: Run tests and commit**
 
 Run full checks.
 

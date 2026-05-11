@@ -760,5 +760,8 @@ msgstr "移除一张毒丸。"
 msgid "event.withered_master.option.work"
 msgstr "为师父打杂"
 
+msgid "node_type.combat"
+msgstr "战斗"
+
 msgid "event.withered_master.option.work.desc"
 msgstr "失去 5 生命，获得 22 金。"
