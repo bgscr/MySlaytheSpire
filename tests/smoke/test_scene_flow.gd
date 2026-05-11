@@ -1588,6 +1588,30 @@ func test_enemy_intent_polish_respects_particle_toggle(tree: SceneTree) -> bool:
 	_delete_test_save("user://test_enemy_particle_toggle_save.json")
 	return passed
 
+func test_reward_screen_localizes_empty_state(tree: SceneTree) -> bool:
+	var save_path := "user://test_reward_locale_save.json"
+	var locale_path := "user://test_reward_locale.cfg"
+	var app = _create_app_with_save_and_locale_service(tree, save_path, locale_path, "en")
+	app.game.current_run = _test_run_with_nodes(["combat"])
+	var reward = app.game.router.go_to(SceneRouterScript.REWARD)
+	var title := _find_node_by_name(reward, "RewardTitle") as Label
+	var status := _find_node_by_name(reward, "RewardStatus") as Label
+	var english_ok := title != null and title.text == "Rewards" \
+		and status != null and status.text.contains("No rewards")
+	_cleanup_app_save_and_locale(app, save_path, locale_path)
+
+	app = _create_app_with_save_and_locale_service(tree, save_path, locale_path, "zh_CN")
+	app.game.current_run = _test_run_with_nodes(["combat"])
+	reward = app.game.router.go_to(SceneRouterScript.REWARD)
+	title = _find_node_by_name(reward, "RewardTitle") as Label
+	status = _find_node_by_name(reward, "RewardStatus") as Label
+	var chinese_ok := title != null and title.text == tr("ui.reward.title") \
+		and status != null and status.text.contains(tr("ui.reward.no_rewards"))
+	var passed := english_ok and chinese_ok
+	_cleanup_app_save_and_locale(app, save_path, locale_path)
+	assert(passed)
+	return passed
+
 func test_reward_screen_claims_card_skips_gold_and_saves_on_continue(tree: SceneTree) -> bool:
 	var save_path := "user://test_reward_screen_claim_skip_save.json"
 	var app = _create_app_with_save_service(tree, save_path)

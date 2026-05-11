@@ -376,6 +376,9 @@ msgstr "Unknown card"
 msgid "ui.common.unknown_relic"
 msgstr "Unknown relic"
 
+msgid "ui.common.unknown_reward"
+msgstr "Unknown reward"
+
 msgid "status.broken_stance.desc"
 msgstr "The next time this target takes damage, take extra damage equal to the stack count, then reduce it by 1."
 
@@ -774,6 +777,42 @@ msgstr "Lose 5 HP and gain 22 gold."
 
 msgid "node_type.combat"
 msgstr "Combat"
+
+msgid "ui.reward.title"
+msgstr "Rewards"
+
+msgid "ui.reward.no_rewards"
+msgstr "No rewards"
+
+msgid "ui.reward.no_rewards_available"
+msgstr "No rewards available"
+
+msgid "ui.reward.resolve_prompt"
+msgstr "Claim or skip each reward"
+
+msgid "ui.reward.resolved"
+msgstr "Rewards resolved"
+
+msgid "ui.reward.choose_one_card"
+msgstr "Choose one card"
+
+msgid "ui.reward.take_gold"
+msgstr "Take {amount} gold"
+
+msgid "ui.reward.gold_label"
+msgstr "Gold: {amount}"
+
+msgid "ui.reward.relic_label"
+msgstr "Relic: {name}"
+
+msgid "ui.reward.skip"
+msgstr "Skip"
+
+msgid "ui.reward.state_claimed"
+msgstr "Claimed"
+
+msgid "ui.reward.state_skipped"
+msgstr "Skipped"
 
 msgid "ui.map.title"
 msgstr "Route Map"

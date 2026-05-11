@@ -376,6 +376,9 @@ msgstr "未知卡牌"
 msgid "ui.common.unknown_relic"
 msgstr "未知遗物"
 
+msgid "ui.common.unknown_reward"
+msgstr "未知奖励"
+
 msgid "status.broken_stance.desc"
 msgstr "下一次受到伤害时额外受到等同层数的伤害，然后减少 1 层。"
 
@@ -774,6 +777,42 @@ msgstr "战斗"
 
 msgid "event.withered_master.option.work.desc"
 msgstr "失去 5 生命，获得 22 金。"
+
+msgid "ui.reward.title"
+msgstr "奖励"
+
+msgid "ui.reward.no_rewards"
+msgstr "暂无奖励"
+
+msgid "ui.reward.no_rewards_available"
+msgstr "暂无奖励可领取"
+
+msgid "ui.reward.resolve_prompt"
+msgstr "领取或跳过每项奖励"
+
+msgid "ui.reward.resolved"
+msgstr "奖励已处理"
+
+msgid "ui.reward.choose_one_card"
+msgstr "选择一张卡牌"
+
+msgid "ui.reward.take_gold"
+msgstr "领取 {amount} 金"
+
+msgid "ui.reward.gold_label"
+msgstr "金币：{amount}"
+
+msgid "ui.reward.relic_label"
+msgstr "遗物：{name}"
+
+msgid "ui.reward.skip"
+msgstr "跳过"
+
+msgid "ui.reward.state_claimed"
+msgstr "已领取"
+
+msgid "ui.reward.state_skipped"
+msgstr "已跳过"
 
 msgid "ui.map.title"
 msgstr "路线地图"
