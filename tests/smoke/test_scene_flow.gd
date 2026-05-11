@@ -52,9 +52,12 @@ func test_main_menu_defaults_to_chinese_and_toggles_english(tree: SceneTree) -> 
 	var save_path := "user://test_main_menu_locale_save.json"
 	var locale_path := "user://test_main_menu_locale.cfg"
 	var original_locale := TranslationServer.get_locale()
-	var app = _create_app_with_save_service(tree, save_path)
+	_delete_test_save(save_path)
 	_delete_test_save(locale_path)
+	var app := AppScene.instantiate()
 	app.game.localization_service = LocalizationServiceScript.new(locale_path)
+	tree.root.add_child(app)
+	app.game.save_service = SaveServiceScript.new(save_path)
 	app.game.localization_service.clear_saved_locale()
 	app.game.localization_service.load_or_default()
 	var main_menu = app.game.router.go_to(SceneRouterScript.MAIN_MENU)
