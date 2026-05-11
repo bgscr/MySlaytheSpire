@@ -2032,7 +2032,7 @@ rtk proxy git commit -m "feat: localize debug overlay"
 - Modify: `localization/zh_CN.po`
 - Modify: `localization/en.po`
 
-- [ ] **Step 1: Write failing Dev Tools localization tests**
+- [x] **Step 1: Write failing Dev Tools localization tests**
 
 Update `tests/unit/test_dev_tools_screen.gd`:
 
@@ -2059,7 +2059,7 @@ func test_dev_tools_summaries_localize_labels_and_preserve_ids() -> bool:
 	return passed
 ```
 
-- [ ] **Step 2: Add Dev Tools keys**
+- [x] **Step 2: Add Dev Tools keys**
 
 Add keys:
 
@@ -2152,7 +2152,7 @@ msgstr "Reason"
 
 Use Chinese translations in `zh_CN.po`.
 
-- [ ] **Step 3: Add tool label helper**
+- [x] **Step 3: Add tool label helper**
 
 Modify `scripts/ui/dev_tools_screen.gd`:
 
@@ -2174,7 +2174,7 @@ func tool_label(tool_id: String) -> String:
 
 Replace `TOOL_LABELS` display reads with `tool_label(tool_id)`.
 
-- [ ] **Step 4: Localize visible tool UI**
+- [x] **Step 4: Localize visible tool UI**
 
 Replace key text assignments:
 
@@ -2203,7 +2203,7 @@ Inside `_disabled_save_inspector_action`:
 button.text = tr(label)
 ```
 
-- [ ] **Step 5: Localize summary helpers while preserving ids**
+- [x] **Step 5: Localize summary helpers while preserving ids**
 
 Use `UiText.key_value` in:
 
@@ -2228,11 +2228,11 @@ var lines: Array[String] = [
 ]
 ```
 
-- [ ] **Step 6: Apply grouped panel styling**
+- [x] **Step 6: Apply grouped panel styling**
 
 Apply `UiStyle.apply_panel` to each tool panel container and `UiStyle.apply_secondary_button` to tool nav/action buttons. Keep all existing node names.
 
-- [ ] **Step 7: Run tests and commit**
+- [x] **Step 7: Run tests and commit**
 
 Run full checks.
 
