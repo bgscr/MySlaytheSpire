@@ -1198,7 +1198,7 @@ rtk proxy git commit -m "feat: localize map screen"
 - Modify: `localization/zh_CN.po`
 - Modify: `localization/en.po`
 
-- [ ] **Step 1: Write failing combat localization assertions**
+- [x] **Step 1: Write failing combat localization assertions**
 
 Update existing combat intent smoke expectations in `tests/smoke/test_scene_flow.gd` so English mode still expects `Attack`/`Player`, then add Chinese mode:
 
@@ -1225,13 +1225,13 @@ func test_combat_screen_localizes_player_summary_and_intent(tree: SceneTree) -> 
 	return passed
 ```
 
-- [ ] **Step 2: Run tests and verify failure**
+- [x] **Step 2: Run tests and verify failure**
 
 Run full checks.
 
 Expected: failure where old hardcoded strings do not use helper output consistently.
 
-- [ ] **Step 3: Add combat keys**
+- [x] **Step 3: Add combat keys**
 
 Add keys:
 
@@ -1278,7 +1278,7 @@ msgstr "Confirming Player Target"
 
 Use Chinese translations in `zh_CN.po`.
 
-- [ ] **Step 4: Localize combat controls and summaries**
+- [x] **Step 4: Localize combat controls and summaries**
 
 Modify imports:
 
@@ -1341,7 +1341,7 @@ Replace `_intent_target_text`:
 	return target.capitalize()
 ```
 
-- [ ] **Step 5: Localize card/relic previews and details**
+- [x] **Step 5: Localize card/relic previews and details**
 
 Modify `scripts/ui/item_visual_presenter.gd` to preload `UiText` and use:
 
@@ -1387,11 +1387,11 @@ func _relic_body(relic_id: String, relic) -> String:
 	return UiText.relic_detail(active_catalog, relic_id)
 ```
 
-- [ ] **Step 6: Apply restrained style**
+- [x] **Step 6: Apply restrained style**
 
 Apply `UiStyle.apply_body_label` to status and pile labels, `UiStyle.apply_secondary_button` to combat buttons, and keep existing node names.
 
-- [ ] **Step 7: Run tests and commit**
+- [x] **Step 7: Run tests and commit**
 
 Run full checks.
 
