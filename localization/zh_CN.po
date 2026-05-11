@@ -804,3 +804,72 @@ msgstr "商店"
 
 msgid "node_type.reward"
 msgstr "奖励"
+
+msgid "ui.combat.confirm_player_target"
+msgstr "确认玩家目标"
+
+msgid "ui.combat.cancel"
+msgstr "取消"
+
+msgid "ui.combat.end_turn"
+msgstr "结束回合"
+
+msgid "ui.combat.draw"
+msgstr "抽牌"
+
+msgid "ui.combat.discard"
+msgstr "弃牌"
+
+msgid "ui.combat.exhaust"
+msgstr "消耗"
+
+msgid "ui.combat.phase"
+msgstr "阶段"
+
+msgid "ui.combat.no_player"
+msgstr "无玩家"
+
+msgid "target.player"
+msgstr "玩家"
+
+msgid "target.self"
+msgstr "自身"
+
+msgid "phase.player_turn"
+msgstr "玩家回合"
+
+msgid "phase.selecting_enemy_target"
+msgstr "选择目标"
+
+msgid "phase.confirming_player_target"
+msgstr "确认玩家目标"
+
+msgid "card_type.attack"
+msgstr "攻击"
+
+msgid "card_type.skill"
+msgstr "技能"
+
+msgid "card_type.power"
+msgstr "能力"
+
+msgid "rarity.common"
+msgstr "普通"
+
+msgid "rarity.uncommon"
+msgstr "非凡"
+
+msgid "rarity.rare"
+msgstr "稀有"
+
+msgid "relic_tier.common"
+msgstr "普通"
+
+msgid "relic_tier.uncommon"
+msgstr "非凡"
+
+msgid "relic_tier.rare"
+msgstr "稀有"
+
+msgid "relic_tier.boss"
+msgstr "首领"

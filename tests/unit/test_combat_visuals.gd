@@ -111,6 +111,8 @@ func test_resolver_falls_back_for_missing_visual_data() -> bool:
 	return passed
 
 func test_card_visual_presenter_creates_known_card_preview() -> bool:
+	var original_locale := TranslationServer.get_locale()
+	TranslationServer.set_locale("en")
 	var catalog := ContentCatalog.new()
 	catalog.load_default()
 	var resolver := CombatVisualResolver.new()
@@ -135,9 +137,10 @@ func test_card_visual_presenter_creates_known_card_preview() -> bool:
 		and thumbnail.get_meta("is_known") == true \
 		and text != null \
 		and text.mouse_filter == Control.MOUSE_FILTER_IGNORE \
-		and text.text.contains("sword.strike") \
-		and text.text.contains("attack")
+		and text.text.contains("Practice Strike") \
+		and text.text.contains("Cost 1")
 	parent.free()
+	TranslationServer.set_locale(original_locale)
 	assert(passed)
 	return passed
 
@@ -176,24 +179,33 @@ func test_card_visual_presenter_uses_distinct_suffixes_for_duplicate_cards() -> 
 	return passed
 
 func test_item_visual_presenter_creates_known_card_preview() -> bool:
+	var original_locale := TranslationServer.get_locale()
+	TranslationServer.set_locale("en")
 	var catalog := ContentCatalog.new()
 	catalog.load_default()
 	var theme := CombatVisualResolver.new().resolve_theme("sword", catalog)
 	var parent := VBoxContainer.new()
 	var root := ItemVisualPresenter.add_card_preview(parent, "Reward", "0_0", "sword.strike", catalog, theme)
 	var thumbnail := parent.get_node_or_null("RewardCardVisual_0_0/RewardCardThumbnail_0_0") as TextureRect
+	var text := parent.get_node_or_null("RewardCardVisual_0_0/RewardCardText_0_0") as Label
 	var passed: bool = root != null \
 		and root.name == "RewardCardVisual_0_0" \
 		and root.get_meta("item_kind") == "card" \
 		and root.get_meta("item_id") == "sword.strike" \
 		and thumbnail != null \
 		and thumbnail.texture != null \
-		and thumbnail.mouse_filter == Control.MOUSE_FILTER_IGNORE
+		and thumbnail.mouse_filter == Control.MOUSE_FILTER_IGNORE \
+		and text != null \
+		and text.text.contains("Practice Strike") \
+		and text.text.contains("Cost 1")
 	parent.free()
+	TranslationServer.set_locale(original_locale)
 	assert(passed)
 	return passed
 
 func test_item_visual_presenter_creates_known_relic_preview() -> bool:
+	var original_locale := TranslationServer.get_locale()
+	TranslationServer.set_locale("en")
 	var catalog := ContentCatalog.new()
 	catalog.load_default()
 	var parent := VBoxContainer.new()
@@ -210,8 +222,10 @@ func test_item_visual_presenter_creates_known_relic_preview() -> bool:
 		and icon.mouse_filter == Control.MOUSE_FILTER_IGNORE \
 		and icon.get_meta("relic_id") == "jade_talisman" \
 		and text != null \
-		and text.text.contains("jade_talisman")
+		and text.text.contains("Jade Talisman") \
+		and text.text.contains("Common")
 	parent.free()
+	TranslationServer.set_locale(original_locale)
 	assert(passed)
 	return passed
 
@@ -250,6 +264,8 @@ func test_item_visual_presenter_uses_distinct_suffixes_for_duplicate_relics() ->
 	return passed
 
 func test_item_detail_panel_shows_and_hides_card_details() -> bool:
+	var original_locale := TranslationServer.get_locale()
+	TranslationServer.set_locale("en")
 	var catalog := ContentCatalog.new()
 	catalog.load_default()
 	var theme := CombatVisualResolver.new().resolve_theme("sword", catalog)
@@ -270,19 +286,24 @@ func test_item_detail_panel_shows_and_hides_card_details() -> bool:
 		and root.get_child_count() == 3 \
 		and title != null \
 		and title.get_parent() == root \
-		and title.text.contains("sword.strike") \
+		and title.text == "Practice Strike" \
 		and image != null \
 		and image.get_parent() == root \
 		and image.texture != null \
 		and body != null \
 		and body.get_parent() == root \
+		and body.text.contains("Type: Attack") \
+		and body.text.contains("Rarity: Common") \
 		and body.text.contains("Cost: 1") \
-		and body.text.contains("Effects:")
+		and body.text.contains("Deal 6 damage.")
 	panel.free()
+	TranslationServer.set_locale(original_locale)
 	assert(passed)
 	return passed
 
 func test_item_detail_panel_shows_and_hides_relic_details() -> bool:
+	var original_locale := TranslationServer.get_locale()
+	TranslationServer.set_locale("en")
 	var catalog := ContentCatalog.new()
 	catalog.load_default()
 	var panel := ItemDetailPanel.new()
@@ -297,17 +318,20 @@ func test_item_detail_panel_shows_and_hides_relic_details() -> bool:
 		and panel.get_meta("item_kind") == "relic" \
 		and panel.get_meta("item_id") == "jade_talisman" \
 		and title != null \
-		and title.text.contains("jade_talisman") \
+		and title.text == "Jade Talisman" \
 		and image != null \
 		and image.texture != null \
 		and body != null \
-		and body.text.contains("Tier: common") \
-		and body.text.contains("Trigger: combat_started")
+		and body.text.contains("Tier: Common") \
+		and body.text.contains("At the start of combat, gain 3 block.")
 	panel.free()
+	TranslationServer.set_locale(original_locale)
 	assert(passed)
 	return passed
 
 func test_item_detail_panel_falls_back_for_missing_items() -> bool:
+	var original_locale := TranslationServer.get_locale()
+	TranslationServer.set_locale("en")
 	var catalog := ContentCatalog.new()
 	catalog.load_default()
 	var panel := ItemDetailPanel.new()
@@ -323,7 +347,9 @@ func test_item_detail_panel_falls_back_for_missing_items() -> bool:
 		and image != null \
 		and image.texture != null \
 		and body != null \
-		and body.text.contains("Unknown relic")
+		and body.text.contains("Unknown relic") \
+		and body.text.contains("ID: missing_relic")
 	panel.free()
+	TranslationServer.set_locale(original_locale)
 	assert(passed)
 	return passed

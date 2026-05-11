@@ -3,10 +3,12 @@ extends PanelContainer
 
 const CombatVisualResolver := preload("res://scripts/presentation/combat_visual_resolver.gd")
 const ItemVisualPresenter := preload("res://scripts/ui/item_visual_presenter.gd")
+const UiText := preload("res://scripts/ui/ui_text.gd")
 
 var title_label: Label
 var image_rect: TextureRect
 var body_label: Label
+var active_catalog: Object
 
 func _init() -> void:
 	name = "ItemDetailPanel"
@@ -16,11 +18,13 @@ func _init() -> void:
 	_build_layout()
 
 func show_card(card_id: String, catalog: Object, theme: Dictionary = {}) -> void:
+	active_catalog = catalog
 	var card = catalog.get_card(card_id) if catalog != null and catalog.has_method("get_card") else null
 	var visual := CombatVisualResolver.new().resolve_card_visual(card_id, catalog, theme)
 	_show_common("card", card_id, _card_title(card_id, card), String(visual.get("thumbnail_path", "")), _card_body(card_id, card))
 
 func show_relic(relic_id: String, catalog: Object) -> void:
+	active_catalog = catalog
 	var relic = catalog.get_relic(relic_id) if catalog != null and catalog.has_method("get_relic") else null
 	var visual := ItemVisualPresenter._resolve_relic_visual(relic_id, catalog)
 	_show_common("relic", relic_id, _relic_title(relic_id, relic), String(visual.get("icon_path", "")), _relic_body(relic_id, relic))
@@ -62,49 +66,13 @@ func _show_common(kind: String, item_id: String, title: String, image_path: Stri
 	visible = true
 
 func _card_title(card_id: String, card) -> String:
-	if card == null:
-		return "%s (?)" % card_id
-	return card.id
+	return UiText.card_name(active_catalog, card_id) if card != null else "%s (?)" % card_id
 
 func _relic_title(relic_id: String, relic) -> String:
-	if relic == null:
-		return "%s (?)" % relic_id
-	return relic.id
+	return UiText.relic_name(active_catalog, relic_id) if relic != null else "%s (?)" % relic_id
 
-func _card_body(card_id: String, card) -> String:
-	if card == null:
-		return "Unknown card\nId: %s" % card_id
-	return "Type: %s\nRarity: %s\nCost: %s\nCharacter: %s\nEffects:\n%s" % [
-		card.card_type,
-		card.rarity,
-		card.cost,
-		card.character_id,
-		_effect_lines(card.effects),
-	]
+func _card_body(card_id: String, _card) -> String:
+	return UiText.card_detail(active_catalog, card_id)
 
-func _relic_body(relic_id: String, relic) -> String:
-	if relic == null:
-		return "Unknown relic\nId: %s" % relic_id
-	return "Tier: %s\nTrigger: %s\nEffects:\n%s" % [
-		relic.tier,
-		relic.trigger_event,
-		_effect_lines(relic.effects),
-	]
-
-func _effect_lines(effects: Array) -> String:
-	if effects.is_empty():
-		return "- none"
-	var lines: Array[String] = []
-	for effect in effects:
-		if effect == null:
-			lines.append("- empty")
-			continue
-		var parts: Array[String] = ["- %s" % effect.effect_type]
-		if int(effect.amount) != 0:
-			parts.append("amount=%s" % effect.amount)
-		if not String(effect.status_id).is_empty():
-			parts.append("status=%s" % effect.status_id)
-		if not String(effect.target).is_empty():
-			parts.append("target=%s" % effect.target)
-		lines.append(" ".join(parts))
-	return "\n".join(lines)
+func _relic_body(relic_id: String, _relic) -> String:
+	return UiText.relic_detail(active_catalog, relic_id)

@@ -804,3 +804,72 @@ msgstr "Shop"
 
 msgid "node_type.reward"
 msgstr "Reward"
+
+msgid "ui.combat.confirm_player_target"
+msgstr "Confirm Player Target"
+
+msgid "ui.combat.cancel"
+msgstr "Cancel"
+
+msgid "ui.combat.end_turn"
+msgstr "End Turn"
+
+msgid "ui.combat.draw"
+msgstr "Draw"
+
+msgid "ui.combat.discard"
+msgstr "Discard"
+
+msgid "ui.combat.exhaust"
+msgstr "Exhaust"
+
+msgid "ui.combat.phase"
+msgstr "Phase"
+
+msgid "ui.combat.no_player"
+msgstr "No player"
+
+msgid "target.player"
+msgstr "Player"
+
+msgid "target.self"
+msgstr "Self"
+
+msgid "phase.player_turn"
+msgstr "Player Turn"
+
+msgid "phase.selecting_enemy_target"
+msgstr "Selecting Target"
+
+msgid "phase.confirming_player_target"
+msgstr "Confirming Player Target"
+
+msgid "card_type.attack"
+msgstr "Attack"
+
+msgid "card_type.skill"
+msgstr "Skill"
+
+msgid "card_type.power"
+msgstr "Power"
+
+msgid "rarity.common"
+msgstr "Common"
+
+msgid "rarity.uncommon"
+msgstr "Uncommon"
+
+msgid "rarity.rare"
+msgstr "Rare"
+
+msgid "relic_tier.common"
+msgstr "Common"
+
+msgid "relic_tier.uncommon"
+msgstr "Uncommon"
+
+msgid "relic_tier.rare"
+msgstr "Rare"
+
+msgid "relic_tier.boss"
+msgstr "Boss"

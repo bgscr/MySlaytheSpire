@@ -83,7 +83,12 @@ func test_main_menu_rejects_completed_save(tree: SceneTree) -> bool:
 	return _main_menu_rejects_terminal_save(tree, false, true, "user://test_completed_terminal_continue_save.json")
 
 func test_combat_screen_creates_session_and_cancels_pending_card(tree: SceneTree) -> bool:
-	var app = _create_app_with_save_service(tree, "user://test_combat_screen_session_save.json")
+	var app = _create_app_with_save_and_locale_service(
+		tree,
+		"user://test_combat_screen_session_save.json",
+		"user://test_combat_screen_session_locale.cfg",
+		"en"
+	)
 	var run := RunStateScript.new()
 	run.seed_value = 12345
 	run.character_id = "sword"
@@ -102,14 +107,15 @@ func test_combat_screen_creates_session_and_cancels_pending_card(tree: SceneTree
 	var cancel_button := combat.get_node_or_null("CancelSelectionButton") as Button
 	var end_turn_button := combat.get_node_or_null("EndTurnButton") as Button
 	var first_card: Button = hand_container.get_child(0) as Button if hand_container != null and hand_container.get_child_count() > 0 else null
-	var first_card_has_type := false
+	var first_card_has_visible_text := false
 	if first_card != null and combat.session.state.hand.size() > 0:
 		var first_card_id: String = combat.session.state.hand[0]
 		var first_card_def: CardDefScript = combat.session.catalog.get_card(first_card_id)
 		var first_card_text := _find_node_by_name(first_card, "CardText_0") as Label
-		first_card_has_type = first_card_def != null \
+		first_card_has_visible_text = first_card_def != null \
 			and first_card_text != null \
-			and first_card_text.text.contains(first_card_def.card_type)
+			and first_card_text.text.contains(tr(first_card_def.name_key)) \
+			and first_card_text.text.contains("Cost")
 	if first_card != null:
 		first_card.pressed.emit()
 	var pending_phase: bool = combat.session.phase == "selecting_enemy_target" \
@@ -124,15 +130,23 @@ func test_combat_screen_creates_session_and_cancels_pending_card(tree: SceneTree
 		and hand_container.get_child_count() >= 1 \
 		and end_turn_button != null \
 		and cancel_button != null \
-		and first_card_has_type \
+		and first_card_has_visible_text \
 		and pending_phase \
 		and combat.session.phase == "player_turn"
-	app.free()
-	_delete_test_save("user://test_combat_screen_session_save.json")
+	_cleanup_app_save_and_locale(
+		app,
+		"user://test_combat_screen_session_save.json",
+		"user://test_combat_screen_session_locale.cfg"
+	)
 	return passed
 
 func test_combat_screen_shows_attack_intent_row(tree: SceneTree) -> bool:
-	var app = _create_app_with_save_service(tree, "user://test_attack_intent_row_save.json")
+	var app = _create_app_with_save_and_locale_service(
+		tree,
+		"user://test_attack_intent_row_save.json",
+		"user://test_attack_intent_row_locale.cfg",
+		"en"
+	)
 	app.game.set_debug_combat_sandbox_config({
 		"character_id": "sword",
 		"deck_ids": ["sword.strike"],
@@ -157,12 +171,16 @@ func test_combat_screen_shows_attack_intent_row(tree: SceneTree) -> bool:
 		and target.text == "Player" \
 		and enemy_button != null \
 		and not enemy_button.text.contains("attack_5")
-	app.free()
-	_delete_test_save("user://test_attack_intent_row_save.json")
+	_cleanup_app_save_and_locale(app, "user://test_attack_intent_row_save.json", "user://test_attack_intent_row_locale.cfg")
 	return passed
 
 func test_combat_screen_shows_block_intent_row(tree: SceneTree) -> bool:
-	var app = _create_app_with_save_service(tree, "user://test_block_intent_row_save.json")
+	var app = _create_app_with_save_and_locale_service(
+		tree,
+		"user://test_block_intent_row_save.json",
+		"user://test_block_intent_row_locale.cfg",
+		"en"
+	)
 	app.game.set_debug_combat_sandbox_config({
 		"character_id": "sword",
 		"deck_ids": ["sword.guard"],
@@ -182,12 +200,16 @@ func test_combat_screen_shows_block_intent_row(tree: SceneTree) -> bool:
 		and amount.text == "6" \
 		and target != null \
 		and target.text == "Self"
-	app.free()
-	_delete_test_save("user://test_block_intent_row_save.json")
+	_cleanup_app_save_and_locale(app, "user://test_block_intent_row_save.json", "user://test_block_intent_row_locale.cfg")
 	return passed
 
 func test_combat_screen_shows_status_intent_row(tree: SceneTree) -> bool:
-	var app = _create_app_with_save_service(tree, "user://test_status_intent_row_save.json")
+	var app = _create_app_with_save_and_locale_service(
+		tree,
+		"user://test_status_intent_row_save.json",
+		"user://test_status_intent_row_locale.cfg",
+		"en"
+	)
 	app.game.set_debug_combat_sandbox_config({
 		"character_id": "sword",
 		"deck_ids": ["sword.guard"],
@@ -207,8 +229,36 @@ func test_combat_screen_shows_status_intent_row(tree: SceneTree) -> bool:
 		and amount.text == "2" \
 		and target != null \
 		and target.text == "Player"
-	app.free()
-	_delete_test_save("user://test_status_intent_row_save.json")
+	_cleanup_app_save_and_locale(app, "user://test_status_intent_row_save.json", "user://test_status_intent_row_locale.cfg")
+	return passed
+
+func test_combat_screen_localizes_player_summary_and_intent(tree: SceneTree) -> bool:
+	var save_path := "user://test_combat_locale_save.json"
+	var locale_path := "user://test_combat_locale.cfg"
+	var app = _create_app_with_save_and_locale_service(tree, save_path, locale_path, "en")
+	app.game.set_debug_combat_sandbox_config({
+		"character_id": "sword",
+		"deck_ids": ["sword.strike"],
+		"enemy_ids": ["training_puppet"],
+		"seed_value": 201,
+	})
+	var combat = app.game.router.go_to(SceneRouterScript.COMBAT)
+	var status := _find_node_by_name(combat, "PlayerStatus") as Label
+	var pile := _find_node_by_name(combat, "PileStatus") as Label
+	var target := _find_node_by_name(combat, "IntentTarget_0") as Label
+	var english_ok := status != null and status.text.contains("HP") \
+		and pile != null and pile.text.contains("Draw") \
+		and target != null and target.text == "Player"
+	app.game.localization_service.set_locale("zh_CN")
+	status = _find_node_by_name(combat, "PlayerStatus") as Label
+	pile = _find_node_by_name(combat, "PileStatus") as Label
+	target = _find_node_by_name(combat, "IntentTarget_0") as Label
+	var chinese_ok := status != null and status.text.contains("生命") \
+		and pile != null and pile.text.contains("抽牌") \
+		and target != null and target.text == "玩家"
+	var passed := english_ok and chinese_ok
+	_cleanup_app_save_and_locale(app, save_path, locale_path)
+	assert(passed)
 	return passed
 
 func test_combat_screen_renders_sword_visual_theme_background(tree: SceneTree) -> bool:
@@ -280,7 +330,7 @@ func test_combat_screen_renders_card_thumbnail_children(tree: SceneTree) -> bool
 		and frame != null \
 		and frame.color.a > 0.0 \
 		and text != null \
-		and text.text.contains("sword.strike") \
+		and text.text.contains(tr("card.sword.strike.name")) \
 		and card.text.is_empty()
 	app.free()
 	_delete_test_save("user://test_card_thumbnail_children_save.json")
@@ -1553,7 +1603,7 @@ func test_reward_screen_claims_card_skips_gold_and_saves_on_continue(tree: Scene
 		and thumbnail.texture != null \
 		and thumbnail.mouse_filter == Control.MOUSE_FILTER_IGNORE \
 		and preview_text != null \
-		and preview_text.text.contains("sword.") \
+		and preview_text.text.contains(tr("ui.label.cost")) \
 		and card_detail_visible \
 		and card_detail_hidden \
 		and still_disabled_after_card \
@@ -2042,6 +2092,7 @@ func _combat_screen_renders_enemy_portrait(
 	var portrait := _find_node_by_name(combat, "EnemyPortrait_0") as TextureRect
 	var summary := _find_node_by_name(combat, "EnemySummaryLabel_0") as Label
 	var row := _find_node_by_name(combat, "EnemyIntentRow_0") as HBoxContainer
+	var enemy = combat.session.catalog.get_enemy(enemy_id)
 	var passed: bool = button != null \
 		and root != null \
 		and root.mouse_filter == Control.MOUSE_FILTER_IGNORE \
@@ -2054,7 +2105,8 @@ func _combat_screen_renders_enemy_portrait(
 		and portrait.get_meta("enemy_id") == enemy_id \
 		and portrait.get_meta("silhouette_tag") == expected_silhouette \
 		and summary != null \
-		and summary.text.contains(enemy_id) \
+		and enemy != null \
+		and summary.text.contains(tr(enemy.name_key)) \
 		and row != null
 	app.free()
 	_delete_test_save(save_path)
@@ -2105,6 +2157,26 @@ func _create_app_with_save_service(tree: SceneTree, save_path: String):
 	tree.root.add_child(app)
 	app.game.save_service = SaveServiceScript.new(save_path)
 	return app
+
+func _create_app_with_save_and_locale_service(tree: SceneTree, save_path: String, locale_path: String, locale: String):
+	_delete_test_save(save_path)
+	_delete_test_save(locale_path)
+	var original_locale := TranslationServer.get_locale()
+	var app := AppScene.instantiate()
+	app.set_meta("original_locale", original_locale)
+	app.game.localization_service = LocalizationServiceScript.new(locale_path)
+	app.game.localization_service.set_locale(locale)
+	tree.root.add_child(app)
+	app.game.save_service = SaveServiceScript.new(save_path)
+	return app
+
+func _cleanup_app_save_and_locale(app, save_path: String, locale_path: String) -> void:
+	var original_locale := String(app.get_meta("original_locale", TranslationServer.get_locale()))
+	app.game.localization_service.clear_saved_locale()
+	app.free()
+	_delete_test_save(save_path)
+	_delete_test_save(locale_path)
+	TranslationServer.set_locale(original_locale)
 
 func _reward_run(node_type: String, include_next_node: bool) -> RunStateScript:
 	var run := RunStateScript.new()
