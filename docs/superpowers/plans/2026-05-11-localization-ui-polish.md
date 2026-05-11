@@ -901,7 +901,7 @@ rtk proxy git commit -m "feat: add ink jade ui style helper"
 - Modify: `localization/zh_CN.po`
 - Modify: `localization/en.po`
 
-- [ ] **Step 1: Write failing smoke tests**
+- [x] **Step 1: Write failing smoke tests**
 
 Add to `tests/smoke/test_scene_flow.gd`:
 
@@ -926,13 +926,13 @@ func test_main_menu_defaults_to_chinese_and_toggles_english(tree: SceneTree) -> 
 	return passed
 ```
 
-- [ ] **Step 2: Run tests and verify failure**
+- [x] **Step 2: Run tests and verify failure**
 
 Run full checks.
 
 Expected: failure because `LanguageToggleButton` does not exist.
 
-- [ ] **Step 3: Add locale keys**
+- [x] **Step 3: Add locale keys**
 
 Add to both locale files:
 
@@ -949,7 +949,7 @@ msgstr "中 / EN"
 
 Use Chinese title/copy in `zh_CN.po`; keep the toggle literal as `中 / EN`.
 
-- [ ] **Step 4: Implement localized menu**
+- [x] **Step 4: Implement localized menu**
 
 Modify `scripts/ui/main_menu.gd`:
 
@@ -1010,7 +1010,7 @@ func _on_language_toggle_pressed() -> void:
 
 Keep existing `_on_new_run_pressed`, `_on_continue_pressed`, `_load_continuable_run`, `_refresh_continue_button`, `_should_resume_reward`, `_should_resume_shop`, and `_create_minimal_run` behavior.
 
-- [ ] **Step 5: Run tests and commit**
+- [x] **Step 5: Run tests and commit**
 
 Run full checks.
 
