@@ -564,7 +564,7 @@ rtk proxy git commit -m "feat: localize intent and status labels"
 - Create: `tests/unit/test_ui_text.gd`
 - Modify: `scripts/testing/test_runner.gd`
 
-- [ ] **Step 1: Write failing text helper tests**
+- [x] **Step 1: Write failing text helper tests**
 
 Add `res://tests/unit/test_ui_text.gd` to `scripts/testing/test_runner.gd` after `test_localization_service.gd`.
 
@@ -604,13 +604,13 @@ func test_debug_labels_preserve_ids_as_values() -> bool:
 	return passed
 ```
 
-- [ ] **Step 2: Run tests and verify failure**
+- [x] **Step 2: Run tests and verify failure**
 
 Run full checks.
 
 Expected: failure because `scripts/ui/ui_text.gd` is missing.
 
-- [ ] **Step 3: Implement the helper**
+- [x] **Step 3: Implement the helper**
 
 Create `scripts/ui/ui_text.gd`:
 
@@ -697,7 +697,7 @@ static func bool_text(value: bool) -> String:
 	return tr("bool.true") if value else tr("bool.false")
 ```
 
-- [ ] **Step 4: Add required common keys**
+- [x] **Step 4: Add required common keys**
 
 Add matching keys to both locale files:
 
@@ -741,7 +741,7 @@ msgstr "Unknown relic"
 
 Use Chinese translations in `zh_CN.po`.
 
-- [ ] **Step 5: Run tests and commit**
+- [x] **Step 5: Run tests and commit**
 
 Run full checks.
 

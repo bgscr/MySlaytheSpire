@@ -331,6 +331,42 @@ msgstr "下一次由玩家造成的伤害增加等同层数的数值，然后减
 msgid "status.broken_stance.name"
 msgstr "破势"
 
+msgid "ui.label.id"
+msgstr "ID"
+
+msgid "ui.label.hp"
+msgstr "生命"
+
+msgid "ui.label.block"
+msgstr "格挡"
+
+msgid "ui.label.energy"
+msgstr "能量"
+
+msgid "ui.label.turn"
+msgstr "回合"
+
+msgid "ui.label.type"
+msgstr "类型"
+
+msgid "ui.label.rarity"
+msgstr "稀有度"
+
+msgid "ui.label.cost"
+msgstr "费用"
+
+msgid "ui.label.tier"
+msgstr "品阶"
+
+msgid "ui.label.character"
+msgstr "角色"
+
+msgid "ui.common.unknown_card"
+msgstr "未知卡牌"
+
+msgid "ui.common.unknown_relic"
+msgstr "未知遗物"
+
 msgid "status.broken_stance.desc"
 msgstr "下一次受到伤害时额外受到等同层数的伤害，然后减少 1 层。"
 

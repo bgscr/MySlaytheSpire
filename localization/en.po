@@ -331,6 +331,42 @@ msgstr "The next time the player deals damage, increase it by the stack count, t
 msgid "status.broken_stance.name"
 msgstr "Broken Stance"
 
+msgid "ui.label.id"
+msgstr "ID"
+
+msgid "ui.label.hp"
+msgstr "HP"
+
+msgid "ui.label.block"
+msgstr "Block"
+
+msgid "ui.label.energy"
+msgstr "Energy"
+
+msgid "ui.label.turn"
+msgstr "Turn"
+
+msgid "ui.label.type"
+msgstr "Type"
+
+msgid "ui.label.rarity"
+msgstr "Rarity"
+
+msgid "ui.label.cost"
+msgstr "Cost"
+
+msgid "ui.label.tier"
+msgstr "Tier"
+
+msgid "ui.label.character"
+msgstr "Character"
+
+msgid "ui.common.unknown_card"
+msgstr "Unknown card"
+
+msgid "ui.common.unknown_relic"
+msgstr "Unknown relic"
+
 msgid "status.broken_stance.desc"
 msgstr "The next time this target takes damage, take extra damage equal to the stack count, then reduce it by 1."
 
