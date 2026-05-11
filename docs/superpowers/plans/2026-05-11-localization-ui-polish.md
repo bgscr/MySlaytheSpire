@@ -1414,7 +1414,7 @@ rtk proxy git commit -m "feat: localize combat screen"
 - Modify: `localization/zh_CN.po`
 - Modify: `localization/en.po`
 
-- [ ] **Step 1: Write failing reward smoke test**
+- [x] **Step 1: Write failing reward smoke test**
 
 Add:
 
@@ -1434,7 +1434,7 @@ func test_reward_screen_localizes_empty_state(tree: SceneTree) -> bool:
 	return passed
 ```
 
-- [ ] **Step 2: Add reward keys**
+- [x] **Step 2: Add reward keys**
 
 Add:
 
@@ -1478,7 +1478,7 @@ msgstr "Skipped"
 
 Use Chinese translations in `zh_CN.po`.
 
-- [ ] **Step 3: Implement localized rewards**
+- [x] **Step 3: Implement localized rewards**
 
 Preload helpers:
 
@@ -1513,7 +1513,7 @@ func _reward_label_text(reward: Dictionary) -> String:
 
 Style title, status, reward buttons, and continue button with `UiStyle`.
 
-- [ ] **Step 4: Run tests and commit**
+- [x] **Step 4: Run tests and commit**
 
 Run full checks.
 
