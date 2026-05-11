@@ -793,6 +793,18 @@ msgstr "Lose 5 HP and gain 22 gold."
 msgid "node_type.combat"
 msgstr "Combat"
 
+msgid "ui.summary.victory"
+msgstr "Victory Summary"
+
+msgid "ui.summary.defeat"
+msgstr "Defeat Summary"
+
+msgid "ui.summary.return_menu"
+msgstr "Return to Main Menu"
+
+msgid "ui.summary.stats"
+msgstr "Run complete"
+
 msgid "ui.reward.title"
 msgstr "Rewards"
 

@@ -38,6 +38,36 @@ func test_failed_run_summary_clears_save(tree: SceneTree) -> bool:
 func test_completed_run_summary_clears_save(tree: SceneTree) -> bool:
 	return _run_summary_clears_save(tree, false, true, "user://test_completed_summary_save.json")
 
+func test_completed_run_summary_localizes_result(tree: SceneTree) -> bool:
+	var save_path := "user://test_summary_locale_save.json"
+	var locale_path := "user://test_summary_locale.cfg"
+	var app = _create_app_with_save_and_locale_service(tree, save_path, locale_path, "en")
+	var run := RunStateScript.new()
+	run.completed = true
+	app.game.current_run = run
+	var summary = app.game.router.go_to(SceneRouterScript.SUMMARY)
+	var title := _find_node_by_name(summary, "RunSummaryTitle") as Label
+	var stats := _find_node_by_name(summary, "RunSummaryStats") as Label
+	var menu := _find_node_by_name(summary, "RunSummaryMenuButton") as Button
+	var english_ok := title != null and title.text == "Victory Summary" \
+		and stats != null and stats.text == "Run complete" \
+		and menu != null and menu.text == "Return to Main Menu"
+	app.game.localization_service.set_locale("zh_CN")
+	run = RunStateScript.new()
+	run.completed = true
+	app.game.current_run = run
+	summary = app.game.router.go_to(SceneRouterScript.SUMMARY)
+	title = _find_node_by_name(summary, "RunSummaryTitle") as Label
+	stats = _find_node_by_name(summary, "RunSummaryStats") as Label
+	menu = _find_node_by_name(summary, "RunSummaryMenuButton") as Button
+	var chinese_ok := title != null and title.text == "胜利总结" \
+		and stats != null and stats.text == "本次冒险已结束" \
+		and menu != null and menu.text == "返回主菜单"
+	var passed := english_ok and chinese_ok
+	_cleanup_app_save_and_locale(app, save_path, locale_path)
+	assert(passed, "Run summary should localize title, stats, and menu button in en and zh_CN.")
+	return passed
+
 func test_main_menu_disables_continue_without_save(tree: SceneTree) -> bool:
 	var save_path := "user://test_no_continue_save.json"
 	var app = _create_app_with_save_service(tree, save_path)

@@ -793,6 +793,18 @@ msgstr "战斗"
 msgid "event.withered_master.option.work.desc"
 msgstr "失去 5 生命，获得 22 金。"
 
+msgid "ui.summary.victory"
+msgstr "胜利总结"
+
+msgid "ui.summary.defeat"
+msgstr "失败总结"
+
+msgid "ui.summary.return_menu"
+msgstr "返回主菜单"
+
+msgid "ui.summary.stats"
+msgstr "本次冒险已结束"
+
 msgid "ui.reward.title"
 msgstr "奖励"
 
