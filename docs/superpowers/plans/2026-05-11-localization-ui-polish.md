@@ -1880,7 +1880,7 @@ rtk proxy git commit -m "feat: localize run summary"
 - Modify: `localization/zh_CN.po`
 - Modify: `localization/en.po`
 
-- [ ] **Step 1: Write failing debug overlay test**
+- [x] **Step 1: Write failing debug overlay test**
 
 Add:
 
@@ -1898,7 +1898,7 @@ func test_debug_overlay_localizes_controls() -> bool:
 	return passed
 ```
 
-- [ ] **Step 2: Add debug keys**
+- [x] **Step 2: Add debug keys**
 
 Add keys for every visible debug label:
 
@@ -1969,7 +1969,7 @@ msgstr "UI Volume"
 
 Use Chinese translations in `zh_CN.po`.
 
-- [ ] **Step 3: Implement localized debug labels**
+- [x] **Step 3: Implement localized debug labels**
 
 Add helper in `debug_overlay.gd`:
 
@@ -2008,7 +2008,7 @@ label_node.text = _debug_text(label)
 
 Apply `UiStyle.apply_panel(self)` and `UiStyle.apply_secondary_button` to buttons.
 
-- [ ] **Step 4: Run tests and commit**
+- [x] **Step 4: Run tests and commit**
 
 Run full checks.
 
