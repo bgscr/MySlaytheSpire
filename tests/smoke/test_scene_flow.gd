@@ -1799,7 +1799,14 @@ func test_event_screen_disables_unavailable_option(tree: SceneTree) -> bool:
 	app.game.current_run = run
 	var event_screen = app.game.router.go_to(SceneRouterScript.EVENT)
 	var disabled_button := _first_disabled_event_option(event_screen)
-	var passed: bool = disabled_button != null and disabled_button.disabled
+	var has_localized_reason := disabled_button != null \
+		and (
+			disabled_button.text.contains(tr("ui.event.need_hp")) \
+			or disabled_button.text.contains(tr("ui.event.need_gold"))
+		)
+	var passed: bool = disabled_button != null \
+		and disabled_button.disabled \
+		and has_localized_reason
 	app.free()
 	_delete_test_save(save_path)
 	return passed

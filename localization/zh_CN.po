@@ -22,6 +22,18 @@ msgstr "中 / EN"
 msgid "ui.end_turn"
 msgstr "结束回合"
 
+msgid "ui.event.fallback_title"
+msgstr "事件"
+
+msgid "ui.event.no_event"
+msgstr "暂无可用事件"
+
+msgid "ui.event.need_hp"
+msgstr "生命不足"
+
+msgid "ui.event.need_gold"
+msgstr "金币不足"
+
 msgid "character.sword.name"
 msgstr "剑修"
 

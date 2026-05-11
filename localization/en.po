@@ -22,6 +22,18 @@ msgstr "中 / EN"
 msgid "ui.end_turn"
 msgstr "End Turn"
 
+msgid "ui.event.fallback_title"
+msgstr "Event"
+
+msgid "ui.event.no_event"
+msgstr "No event available"
+
+msgid "ui.event.need_hp"
+msgstr "Need more HP"
+
+msgid "ui.event.need_gold"
+msgstr "Need more gold"
+
 msgid "character.sword.name"
 msgstr "Sword Cultivator"
 

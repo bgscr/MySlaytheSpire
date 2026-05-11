@@ -9,6 +9,7 @@ const ItemDetailPanel := preload("res://scripts/ui/item_detail_panel.gd")
 const ItemVisualPresenter := preload("res://scripts/ui/item_visual_presenter.gd")
 const RunProgression := preload("res://scripts/run/run_progression.gd")
 const SceneRouterScript := preload("res://scripts/app/scene_router.gd")
+const UiStyle := preload("res://scripts/ui/ui_style.gd")
 
 var catalog: ContentCatalog
 var current_event: EventDef
@@ -27,11 +28,13 @@ func _ready() -> void:
 func _build_layout() -> void:
 	title_label = Label.new()
 	title_label.name = "EventTitle"
+	UiStyle.apply_title(title_label)
 	add_child(title_label)
 
 	body_label = Label.new()
 	body_label.name = "EventBody"
 	body_label.position.y = 32
+	UiStyle.apply_body_label(body_label)
 	add_child(body_label)
 
 	option_container = VBoxContainer.new()
@@ -57,11 +60,12 @@ func _render() -> void:
 	_hide_item_detail()
 	_clear_children(option_container)
 	if current_event == null:
-		title_label.text = "Event"
-		body_label.text = "No event available"
+		title_label.text = tr("ui.event.fallback_title")
+		body_label.text = tr("ui.event.no_event")
 		var button := Button.new()
 		button.name = "ContinueButton"
-		button.text = "Continue"
+		button.text = tr("ui.continue")
+		UiStyle.apply_primary_button(button)
 		button.pressed.connect(_on_fallback_continue_pressed)
 		option_container.add_child(button)
 		return
@@ -81,8 +85,9 @@ func _add_option_button(index: int) -> void:
 		button.text = "%s - %s" % [button.text, tr(option.description_key)]
 	var reason := runner.unavailable_reason(run, option)
 	if not reason.is_empty():
-		button.text = "%s (%s)" % [button.text, reason]
+		button.text = "%s (%s)" % [button.text, tr(reason)]
 	button.disabled = not runner.is_option_available(run, option)
+	UiStyle.apply_secondary_button(button)
 	button.pressed.connect(func(): _on_option_pressed(index))
 	option_container.add_child(button)
 	_connect_option_detail(button, option)
@@ -95,6 +100,7 @@ func _add_option_item_previews(index: int) -> void:
 	var row := HBoxContainer.new()
 	row.name = "EventOptionItemPreviewRow_%s" % index
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	UiStyle.apply_panel(row)
 	var preview_count := 0
 	for card_id in option.grant_card_ids:
 		ItemVisualPresenter.add_card_preview(row, "EventOption", "%s_%s" % [index, preview_count], card_id, catalog, _visual_theme())
