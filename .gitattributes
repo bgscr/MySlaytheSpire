@@ -1,0 +1,2 @@
+# Godot writes import metadata with LF line endings on Windows.
+*.import text eol=lf
