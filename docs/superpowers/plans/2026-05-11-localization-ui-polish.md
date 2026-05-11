@@ -1033,7 +1033,7 @@ rtk proxy git commit -m "feat: localize main menu"
 - Modify: `localization/zh_CN.po`
 - Modify: `localization/en.po`
 
-- [ ] **Step 1: Write failing map smoke test**
+- [x] **Step 1: Write failing map smoke test**
 
 Add to `tests/smoke/test_scene_flow.gd`:
 
@@ -1070,13 +1070,13 @@ func _test_run_with_nodes(types: Array[String]):
 	return run
 ```
 
-- [ ] **Step 2: Run tests and verify failure**
+- [x] **Step 2: Run tests and verify failure**
 
 Run full checks.
 
 Expected: failure because `MapTitle` and localized node labels are missing.
 
-- [ ] **Step 3: Add map keys**
+- [x] **Step 3: Add map keys**
 
 Add keys:
 
@@ -1117,7 +1117,7 @@ msgstr "Reward"
 
 Use Chinese translations in `zh_CN.po`.
 
-- [ ] **Step 4: Implement localized map rendering**
+- [x] **Step 4: Implement localized map rendering**
 
 Modify `scripts/ui/map_screen.gd`:
 
@@ -1172,7 +1172,7 @@ func _clear_children(node: Node) -> void:
 
 Keep existing `_enter_node`.
 
-- [ ] **Step 5: Run tests and commit**
+- [x] **Step 5: Run tests and commit**
 
 Run full checks.
 
