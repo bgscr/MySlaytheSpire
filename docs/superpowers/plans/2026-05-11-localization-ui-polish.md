@@ -1785,7 +1785,7 @@ rtk proxy git commit -m "feat: localize shop screen"
 - Modify: `localization/zh_CN.po`
 - Modify: `localization/en.po`
 
-- [ ] **Step 1: Write failing summary smoke test**
+- [x] **Step 1: Write failing summary smoke test**
 
 Update existing summary tests to check label text in English:
 
@@ -1805,7 +1805,7 @@ func test_completed_run_summary_localizes_result(tree: SceneTree) -> bool:
 	return passed
 ```
 
-- [ ] **Step 2: Add summary keys**
+- [x] **Step 2: Add summary keys**
 
 Add:
 
@@ -1825,7 +1825,7 @@ msgstr "Run complete"
 
 Use Chinese translations in `zh_CN.po`.
 
-- [ ] **Step 3: Implement summary layout**
+- [x] **Step 3: Implement summary layout**
 
 Modify `scripts/ui/run_summary_screen.gd`:
 
@@ -1857,7 +1857,7 @@ func _ready() -> void:
 	add_child(menu)
 ```
 
-- [ ] **Step 4: Run tests and commit**
+- [x] **Step 4: Run tests and commit**
 
 Run full checks.
 
