@@ -236,7 +236,7 @@ rtk proxy git commit -m "feat: add locale service"
 - Modify: `scripts/content/content_catalog.gd`
 - Modify: `tests/unit/test_content_catalog.gd`
 
-- [ ] **Step 1: Write failing catalog tests for dual locales**
+- [x] **Step 1: Write failing catalog tests for dual locales**
 
 Add tests to `tests/unit/test_content_catalog.gd` near the current locale validation tests:
 
@@ -278,13 +278,13 @@ func test_validation_reports_missing_key_per_locale() -> bool:
 	return passed
 ```
 
-- [ ] **Step 2: Run tests and verify failure**
+- [x] **Step 2: Run tests and verify failure**
 
 Run full checks.
 
 Expected: failure because `ContentCatalog.locale_paths` and `localization/en.po` do not exist.
 
-- [ ] **Step 3: Update project translation registration**
+- [x] **Step 3: Update project translation registration**
 
 Modify `project.godot`:
 
@@ -293,7 +293,7 @@ Modify `project.godot`:
 locale/translations=PackedStringArray("res://localization/zh_CN.po", "res://localization/en.po")
 ```
 
-- [ ] **Step 4: Add English translation file**
+- [x] **Step 4: Add English translation file**
 
 Create `localization/en.po` with the same `msgid` set as `localization/zh_CN.po`.
 
@@ -314,7 +314,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 ```
 
-- [ ] **Step 5: Teach catalog validation to load multiple locales**
+- [x] **Step 5: Teach catalog validation to load multiple locales**
 
 Modify `scripts/content/content_catalog.gd`:
 
@@ -388,7 +388,7 @@ func _load_locale_keys(path: String, errors: Array[String]) -> Dictionary:
 
 Remove the old no-argument `_load_locale_keys`.
 
-- [ ] **Step 6: Run tests and commit**
+- [x] **Step 6: Run tests and commit**
 
 Run full checks.
 

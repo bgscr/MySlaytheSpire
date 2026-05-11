@@ -1,0 +1,710 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: MySlaytheSpire\n"
+"Language: en\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "ui.new_run"
+msgstr "New Run"
+
+msgid "ui.continue"
+msgstr "Continue"
+
+msgid "ui.end_turn"
+msgstr "End Turn"
+
+msgid "character.sword.name"
+msgstr "Sword Cultivator"
+
+msgid "character.alchemy.name"
+msgstr "Alchemy Cultivator"
+
+msgid "card.sword.strike.name"
+msgstr "Practice Strike"
+
+msgid "card.sword.strike.desc"
+msgstr "Deal 6 damage."
+
+msgid "card.alchemy.toxic_pill.name"
+msgstr "Toxic Pill"
+
+msgid "card.alchemy.toxic_pill.desc"
+msgstr "Deal 4 damage."
+
+msgid "enemy.training_puppet.name"
+msgstr "Training Puppet"
+
+msgid "enemy.forest_bandit.name"
+msgstr "Mountain Bandit"
+
+msgid "enemy.boss_heart_demon.name"
+msgstr "Heart Demon"
+
+msgid "relic.jade_talisman.name"
+msgstr "Jade Talisman"
+
+msgid "relic.jade_talisman.desc"
+msgstr "At the start of combat, gain 3 block."
+
+msgid "card.sword.guard.name"
+msgstr "Guard"
+
+msgid "card.sword.guard.desc"
+msgstr "Gain 7 block."
+
+msgid "card.sword.flash_cut.name"
+msgstr "Flash Cut"
+
+msgid "card.sword.flash_cut.desc"
+msgstr "Deal 4 damage. Draw 1 card."
+
+msgid "card.sword.qi_surge.name"
+msgstr "Qi Surge"
+
+msgid "card.sword.qi_surge.desc"
+msgstr "Gain 1 energy."
+
+msgid "card.sword.break_stance.name"
+msgstr "Break Stance"
+
+msgid "card.sword.break_stance.desc"
+msgstr "Deal 10 damage. Apply 1 Broken Stance."
+
+msgid "card.sword.cloud_step.name"
+msgstr "Cloud Step"
+
+msgid "card.sword.cloud_step.desc"
+msgstr "Gain 4 block. Draw 1 card."
+
+msgid "card.sword.focused_slash.name"
+msgstr "Focused Slash"
+
+msgid "card.sword.focused_slash.desc"
+msgstr "Deal 8 damage."
+
+msgid "card.sword.sword_resonance.name"
+msgstr "Sword Resonance"
+
+msgid "card.sword.sword_resonance.desc"
+msgstr "Gain 3 block. Gain 2 Sword Focus."
+
+msgid "card.sword.horizon_arc.name"
+msgstr "Horizon Arc"
+
+msgid "card.sword.horizon_arc.desc"
+msgstr "Deal 6 damage. Gain 4 block."
+
+msgid "card.alchemy.healing_draught.name"
+msgstr "Healing Draught"
+
+msgid "card.alchemy.healing_draught.desc"
+msgstr "Heal 5 HP."
+
+msgid "card.alchemy.poison_mist.name"
+msgstr "Poison Mist"
+
+msgid "card.alchemy.poison_mist.desc"
+msgstr "Apply 3 Poison."
+
+msgid "card.alchemy.inner_fire_pill.name"
+msgstr "Inner Fire Pill"
+
+msgid "card.alchemy.inner_fire_pill.desc"
+msgstr "Gain 1 energy. Draw 1 card."
+
+msgid "card.alchemy.cauldron_burst.name"
+msgstr "Cauldron Burst"
+
+msgid "card.alchemy.cauldron_burst.desc"
+msgstr "Deal 7 damage. Gain 4 block."
+
+msgid "card.alchemy.calming_powder.name"
+msgstr "Calming Powder"
+
+msgid "card.alchemy.calming_powder.desc"
+msgstr "Gain 6 block. Heal 2 HP."
+
+msgid "card.alchemy.toxin_needle.name"
+msgstr "Toxin Needle"
+
+msgid "card.alchemy.toxin_needle.desc"
+msgstr "Deal 3 damage. Apply 2 Poison."
+
+msgid "card.alchemy.spirit_distill.name"
+msgstr "Spirit Distill"
+
+msgid "card.alchemy.spirit_distill.desc"
+msgstr "Draw 2 cards."
+
+msgid "card.alchemy.cinnabar_seal.name"
+msgstr "Cinnabar Seal"
+
+msgid "card.alchemy.cinnabar_seal.desc"
+msgstr "Gain 8 block. Gain 1 Cinnabar Guard."
+
+msgid "card.sword.iron_wind_cut.name"
+msgstr "Iron Wind Cut"
+
+msgid "card.sword.iron_wind_cut.desc"
+msgstr "Deal 7 damage. Gain 2 block."
+
+msgid "card.sword.rising_arc.name"
+msgstr "Rising Arc"
+
+msgid "card.sword.rising_arc.desc"
+msgstr "Deal 5 damage. Draw 1 card."
+
+msgid "card.sword.guardian_stance.name"
+msgstr "Guardian Stance"
+
+msgid "card.sword.guardian_stance.desc"
+msgstr "Gain 9 block."
+
+msgid "card.sword.meridian_flash.name"
+msgstr "Meridian Flash"
+
+msgid "card.sword.meridian_flash.desc"
+msgstr "Gain 1 energy. Draw 1 card."
+
+msgid "card.sword.heart_piercer.name"
+msgstr "Heart Piercer"
+
+msgid "card.sword.heart_piercer.desc"
+msgstr "Deal 13 damage. Apply 1 Broken Stance."
+
+msgid "card.sword.unbroken_focus.name"
+msgstr "Unbroken Focus"
+
+msgid "card.sword.unbroken_focus.desc"
+msgstr "Gain 3 Sword Focus. Gain 5 block."
+
+msgid "card.alchemy.bitter_extract.name"
+msgstr "Bitter Extract"
+
+msgid "card.alchemy.bitter_extract.desc"
+msgstr "Deal 5 damage. Apply 1 Poison."
+
+msgid "card.alchemy.smoke_screen.name"
+msgstr "Smoke Screen"
+
+msgid "card.alchemy.smoke_screen.desc"
+msgstr "Gain 5 block. Apply 1 Poison."
+
+msgid "card.alchemy.quick_simmer.name"
+msgstr "Quick Simmer"
+
+msgid "card.alchemy.quick_simmer.desc"
+msgstr "Draw 1 card."
+
+msgid "card.alchemy.white_jade_paste.name"
+msgstr "White Jade Paste"
+
+msgid "card.alchemy.white_jade_paste.desc"
+msgstr "Heal 3 HP. Gain 4 block."
+
+msgid "card.alchemy.mercury_bloom.name"
+msgstr "Mercury Bloom"
+
+msgid "card.alchemy.mercury_bloom.desc"
+msgstr "Deal 8 damage. Apply 3 Poison."
+
+msgid "card.alchemy.ninefold_refine.name"
+msgstr "Ninefold Refine"
+
+msgid "card.alchemy.ninefold_refine.desc"
+msgstr "Gain 1 energy. Draw 2 cards."
+
+msgid "enemy.wild_fox_spirit.name"
+msgstr "Wild Fox Spirit"
+
+msgid "enemy.ash_lantern_cultist.name"
+msgstr "Ash Lantern Cultist"
+
+msgid "enemy.stone_grove_guardian.name"
+msgstr "Stone Grove Guardian"
+
+msgid "enemy.mirror_blade_adept.name"
+msgstr "Mirror Blade Adept"
+
+msgid "enemy.venom_cauldron_hermit.name"
+msgstr "Venom Cauldron Hermit"
+
+msgid "enemy.boss_storm_dragon.name"
+msgstr "Storm Dragon"
+
+msgid "relic.bronze_incense_burner.name"
+msgstr "Bronze Incense Burner"
+
+msgid "relic.bronze_incense_burner.desc"
+msgstr "At the start of combat, gain 4 block."
+
+msgid "relic.cracked_spirit_coin.name"
+msgstr "Cracked Spirit Coin"
+
+msgid "relic.cracked_spirit_coin.desc"
+msgstr "When combat is won, gain 8 gold."
+
+msgid "relic.moonwell_seed.name"
+msgstr "Moonwell Seed"
+
+msgid "relic.moonwell_seed.desc"
+msgstr "At the start of combat, heal 2 HP."
+
+msgid "relic.thunderseal_charm.name"
+msgstr "Thunderseal Charm"
+
+msgid "relic.thunderseal_charm.desc"
+msgstr "At the start of each turn, gain 1 energy."
+
+msgid "relic.dragon_bone_flute.name"
+msgstr "Dragon Bone Flute"
+
+msgid "relic.dragon_bone_flute.desc"
+msgstr "At the start of combat, gain 2 Sword Focus."
+
+msgid "event.wandering_physician.title"
+msgstr "Wandering Physician"
+
+msgid "event.wandering_physician.body"
+msgstr "A physician with an herb chest rests by the road and offers to mend your meridians."
+
+msgid "event.wandering_physician.option.pay"
+msgstr "Pay 25 gold to heal 12 HP"
+
+msgid "event.wandering_physician.option.pay.desc"
+msgstr "Spend gold in exchange for treatment."
+
+msgid "event.wandering_physician.option.decline"
+msgstr "Decline"
+
+msgid "event.wandering_physician.option.decline.desc"
+msgstr "Keep your current state unchanged."
+
+msgid "event.spirit_toll.title"
+msgstr "Spirit Toll"
+
+msgid "event.spirit_toll.body"
+msgstr "A pale spirit bridge crosses the gorge, and its shade demands a tribute of blood."
+
+msgid "event.spirit_toll.option.offer"
+msgstr "Lose 6 HP, gain 35 gold"
+
+msgid "event.spirit_toll.option.offer.desc"
+msgstr "Trade vitality for the bridge spirit's gift."
+
+msgid "event.spirit_toll.option.walk"
+msgstr "Take another path"
+
+msgid "event.spirit_toll.option.walk.desc"
+msgstr "Keep your current state unchanged."
+
+msgid "event.quiet_shrine.title"
+msgstr "Quiet Shrine"
+
+msgid "event.quiet_shrine.body"
+msgstr "Under a canopy of vines, an old shrine still carries a faint incense glow."
+
+msgid "event.quiet_shrine.option.meditate"
+msgstr "Meditate and heal 6 HP"
+
+msgid "event.quiet_shrine.option.meditate.desc"
+msgstr "Borrow the shrine's calm breath to recover."
+
+msgid "event.quiet_shrine.option.coin"
+msgstr "Take the incense coin and gain 12 gold"
+
+msgid "event.quiet_shrine.option.coin.desc"
+msgstr "Gain a small amount of gold."
+
+msgid "status.poison.name"
+msgstr "Poison"
+
+msgid "status.poison.desc"
+msgstr "At the start of the turn, lose HP equal to the stack count, then reduce it by 1."
+
+msgid "status.sword_focus.name"
+msgstr "Sword Focus"
+
+msgid "status.sword_focus.desc"
+msgstr "The next time the player deals damage, increase it by the stack count, then reduce it by 1."
+
+msgid "status.broken_stance.name"
+msgstr "Broken Stance"
+
+msgid "status.broken_stance.desc"
+msgstr "The next time this target takes damage, take extra damage equal to the stack count, then reduce it by 1."
+
+msgid "card.sword.wind_splitting_step.name"
+msgstr "Wind-Splitting Step"
+
+msgid "card.sword.wind_splitting_step.desc"
+msgstr "Deal 6 damage. Apply 1 Broken Stance."
+
+msgid "card.sword.clear_mind_guard.name"
+msgstr "Clear Mind Guard"
+
+msgid "card.sword.clear_mind_guard.desc"
+msgstr "Gain 7 block. Gain 1 Sword Focus."
+
+msgid "card.sword.thread_the_needle.name"
+msgstr "Thread the Needle"
+
+msgid "card.sword.thread_the_needle.desc"
+msgstr "Deal 8 damage. Draw 1 card."
+
+msgid "card.sword.echoing_sword_heart.name"
+msgstr "Echoing Sword Heart"
+
+msgid "card.sword.echoing_sword_heart.desc"
+msgstr "Gain 2 Sword Focus. Draw 1 card."
+
+msgid "card.sword.heaven_cutting_arc.name"
+msgstr "Heaven-Cutting Arc"
+
+msgid "card.sword.heaven_cutting_arc.desc"
+msgstr "Deal 18 damage. Apply 2 Broken Stance."
+
+msgid "card.alchemy.coiling_miasma.name"
+msgstr "Coiling Miasma"
+
+msgid "card.alchemy.coiling_miasma.desc"
+msgstr "Apply 3 Poison."
+
+msgid "card.alchemy.needle_rain.name"
+msgstr "Needle Rain"
+
+msgid "card.alchemy.needle_rain.desc"
+msgstr "Deal 4 damage. Apply 2 Poison."
+
+msgid "card.alchemy.purifying_brew.name"
+msgstr "Purifying Brew"
+
+msgid "card.alchemy.purifying_brew.desc"
+msgstr "Heal 4 HP. Draw 1 card."
+
+msgid "card.alchemy.cauldron_overflow.name"
+msgstr "Cauldron Overflow"
+
+msgid "card.alchemy.cauldron_overflow.desc"
+msgstr "Apply 5 Poison. Gain 5 block."
+
+msgid "card.alchemy.golden_core_detox.name"
+msgstr "Golden Core Detox"
+
+msgid "card.alchemy.golden_core_detox.desc"
+msgstr "Gain 1 energy. Draw 2 cards. Heal 3 HP."
+
+msgid "enemy.scarlet_mantis_acolyte.name"
+msgstr "Scarlet Mantis Acolyte"
+
+msgid "enemy.jade_armor_sentinel.name"
+msgstr "Jade Armor Sentinel"
+
+msgid "enemy.boss_void_tiger.name"
+msgstr "Void Tiger"
+
+msgid "relic.mist_vein_bracelet.name"
+msgstr "Mist Vein Bracelet"
+
+msgid "relic.mist_vein_bracelet.desc"
+msgstr "At the start of combat, gain 1 Sword Focus."
+
+msgid "relic.verdant_antidote_gourd.name"
+msgstr "Verdant Antidote Gourd"
+
+msgid "relic.verdant_antidote_gourd.desc"
+msgstr "At the start of combat, heal 3 HP."
+
+msgid "relic.copper_mantis_hook.name"
+msgstr "Copper Mantis Hook"
+
+msgid "relic.copper_mantis_hook.desc"
+msgstr "When combat is won, gain 6 gold."
+
+msgid "relic.white_tiger_tally.name"
+msgstr "White Tiger Tally"
+
+msgid "relic.white_tiger_tally.desc"
+msgstr "At the start of each turn, gain 2 block."
+
+msgid "relic.nine_smoke_censer.name"
+msgstr "Nine-Smoke Censer"
+
+msgid "relic.nine_smoke_censer.desc"
+msgstr "At the start of combat, gain 5 block."
+
+msgid "relic.starforged_meridian.name"
+msgstr "Starforged Meridian"
+
+msgid "relic.starforged_meridian.desc"
+msgstr "At the start of combat, gain 1 energy and 2 Sword Focus."
+
+msgid "event.sealed_sword_tomb.title"
+msgstr "Sealed Sword Tomb"
+
+msgid "event.sealed_sword_tomb.body"
+msgstr "A stone door hangs half open, and old sword intent still echoes in the tomb."
+
+msgid "event.sealed_sword_tomb.option.draw_blade"
+msgstr "Draw the broken blade, lose 8 HP, gain 45 gold"
+
+msgid "event.sealed_sword_tomb.option.draw_blade.desc"
+msgstr "Trade blood for the tomb's gift."
+
+msgid "event.sealed_sword_tomb.option.meditate"
+msgstr "Meditate and lose 3 HP"
+
+msgid "event.sealed_sword_tomb.option.meditate.desc"
+msgstr "Endure the lingering edge and temper your spirit."
+
+msgid "event.sealed_sword_tomb.option.leave"
+msgstr "Leave"
+
+msgid "event.sealed_sword_tomb.option.leave.desc"
+msgstr "Keep your current state unchanged."
+
+msgid "event.alchemist_market.title"
+msgstr "Alchemist Market"
+
+msgid "event.alchemist_market.body"
+msgstr "Traveling alchemists hawk their wares in the mist, where bitter herbs and pill smoke mingle."
+
+msgid "event.alchemist_market.option.buy_brew"
+msgstr "Pay 20 gold to heal 10 HP"
+
+msgid "event.alchemist_market.option.buy_brew.desc"
+msgstr "Buy a bowl of warm medicinal broth."
+
+msgid "event.alchemist_market.option.sample"
+msgstr "Sample a free draught and heal 4 HP"
+
+msgid "event.alchemist_market.option.sample.desc"
+msgstr "The medicine is mild, but it costs nothing."
+
+msgid "event.alchemist_market.option.leave"
+msgstr "Leave"
+
+msgid "event.alchemist_market.option.leave.desc"
+msgstr "Keep your current state unchanged."
+
+msgid "event.spirit_beast_tracks.title"
+msgstr "Spirit Beast Tracks"
+
+msgid "event.spirit_beast_tracks.body"
+msgstr "Glowing claw prints mark the wet mud, and distant leaves move without wind."
+
+msgid "event.spirit_beast_tracks.option.chase"
+msgstr "Chase the spirit beast, lose 5 HP, gain 28 gold"
+
+msgid "event.spirit_beast_tracks.option.chase.desc"
+msgstr "Rush into the trees and recover scattered spirit stones."
+
+msgid "event.spirit_beast_tracks.option.hide"
+msgstr "Hide and recover 3 HP"
+
+msgid "event.spirit_beast_tracks.option.hide.desc"
+msgstr "Borrow the forest's spirit breath for a moment of rest."
+
+msgid "event.spirit_beast_tracks.option.leave"
+msgstr "Leave"
+
+msgid "event.spirit_beast_tracks.option.leave.desc"
+msgstr "Keep your current state unchanged."
+
+msgid "enemy.plague_jade_imp.name"
+msgstr "Plague Jade Imp"
+
+msgid "enemy.iron_oath_duelist.name"
+msgstr "Iron Oath Duelist"
+
+msgid "enemy.miasma_cauldron_elder.name"
+msgstr "Miasma Cauldron Elder"
+
+msgid "enemy.boss_sword_ghost.name"
+msgstr "Sword Tomb Ghost"
+
+msgid "relic.paper_lantern_charm.name"
+msgstr "Paper Lantern Charm"
+
+msgid "relic.paper_lantern_charm.desc"
+msgstr "At the start of combat, gain 3 block."
+
+msgid "relic.mothwing_sachet.name"
+msgstr "Mothwing Sachet"
+
+msgid "relic.mothwing_sachet.desc"
+msgstr "At the start of each turn, heal 1 HP."
+
+msgid "relic.rusted_meridian_ring.name"
+msgstr "Rusted Meridian Ring"
+
+msgid "relic.rusted_meridian_ring.desc"
+msgstr "When combat is won, gain 4 gold."
+
+msgid "relic.silk_thread_prayer.name"
+msgstr "Silk Thread Prayer"
+
+msgid "relic.silk_thread_prayer.desc"
+msgstr "At the start of combat, gain 1 Sword Focus."
+
+msgid "relic.black_pill_vial.name"
+msgstr "Black Pill Vial"
+
+msgid "relic.black_pill_vial.desc"
+msgstr "At the start of combat, gain 1 Poison and 1 energy."
+
+msgid "relic.cloudstep_sandals.name"
+msgstr "Cloudstep Sandals"
+
+msgid "relic.cloudstep_sandals.desc"
+msgstr "At the start of each turn, gain 3 block."
+
+msgid "relic.immortal_peach_core.name"
+msgstr "Immortal Peach Core"
+
+msgid "relic.immortal_peach_core.desc"
+msgstr "At the start of combat, heal 6 HP."
+
+msgid "relic.void_tiger_eye.name"
+msgstr "Void Tiger Eye"
+
+msgid "relic.void_tiger_eye.desc"
+msgstr "When combat is won, gain 12 gold."
+
+msgid "event.forgotten_armory.title"
+msgstr "Forgotten Armory"
+
+msgid "event.forgotten_armory.body"
+msgstr "Dust coats the weapon racks, but cold light still clings to the blades and faded talismans."
+
+msgid "event.forgotten_armory.option.take_blade"
+msgstr "Take the broken blade"
+
+msgid "event.forgotten_armory.option.take_blade.desc"
+msgstr "Gain a Flash Cut."
+
+msgid "event.forgotten_armory.option.take_pill"
+msgstr "Take the toxin needle"
+
+msgid "event.forgotten_armory.option.take_pill.desc"
+msgstr "Gain a Toxin Needle."
+
+msgid "event.forgotten_armory.option.train"
+msgstr "Train with blood"
+
+msgid "event.forgotten_armory.option.train.desc"
+msgstr "Lose 7 HP and choose a reward card."
+
+msgid "event.forgotten_armory.option.leave"
+msgstr "Leave"
+
+msgid "event.forgotten_armory.option.leave.desc"
+msgstr "Keep your current state unchanged."
+
+msgid "event.jade_debt_collector.title"
+msgstr "Jade Debt Collector"
+
+msgid "event.jade_debt_collector.body"
+msgstr "A green-robed accountant blocks the road, their jade abacus clicking sharply."
+
+msgid "event.jade_debt_collector.option.pay"
+msgstr "Pay 25 gold"
+
+msgid "event.jade_debt_collector.option.pay.desc"
+msgstr "Buy a little peace with gold."
+
+msgid "event.jade_debt_collector.option.bargain"
+msgstr "Settle with a blade"
+
+msgid "event.jade_debt_collector.option.bargain.desc"
+msgstr "Remove one Strike and gain 10 gold."
+
+msgid "event.jade_debt_collector.option.refuse"
+msgstr "Refuse to settle"
+
+msgid "event.jade_debt_collector.option.refuse.desc"
+msgstr "Lose 6 HP."
+
+msgid "event.moonlit_ferry.title"
+msgstr "Moonlit Ferry"
+
+msgid "event.moonlit_ferry.body"
+msgstr "A small boat without oars waits in moonlight, its water reflecting another mountain gate."
+
+msgid "event.moonlit_ferry.option.cross"
+msgstr "Cross the moon river"
+
+msgid "event.moonlit_ferry.option.cross.desc"
+msgstr "Lose 8 HP and gain a common relic reward."
+
+msgid "event.moonlit_ferry.option.wait"
+msgstr "Rest on the bank"
+
+msgid "event.moonlit_ferry.option.wait.desc"
+msgstr "Heal 2 HP."
+
+msgid "event.spirit_compact.title"
+msgstr "Spirit Compact"
+
+msgid "event.spirit_compact.body"
+msgstr "A paper lantern hangs in the air, waiting for you to seal a pact in blood."
+
+msgid "event.spirit_compact.option.accept"
+msgstr "Sign the spirit compact"
+
+msgid "event.spirit_compact.option.accept.desc"
+msgstr "Lose 10 HP and gain the Paper Lantern Charm."
+
+msgid "event.spirit_compact.option.refuse"
+msgstr "Refuse"
+
+msgid "event.spirit_compact.option.refuse.desc"
+msgstr "Keep your current state unchanged."
+
+msgid "event.tea_house_rumor.title"
+msgstr "Tea House Rumor"
+
+msgid "event.tea_house_rumor.body"
+msgstr "A mistbound tea house glows warmly while the owner whispers of hidden realms."
+
+msgid "event.tea_house_rumor.option.rest"
+msgstr "Drink tea and rest"
+
+msgid "event.tea_house_rumor.option.rest.desc"
+msgstr "Heal 6 HP."
+
+msgid "event.tea_house_rumor.option.buy_rumor"
+msgstr "Buy a rumor"
+
+msgid "event.tea_house_rumor.option.buy_rumor.desc"
+msgstr "Pay 18 gold and choose a reward card."
+
+msgid "event.tea_house_rumor.option.leave"
+msgstr "Leave"
+
+msgid "event.tea_house_rumor.option.leave.desc"
+msgstr "Keep your current state unchanged."
+
+msgid "event.withered_master.title"
+msgstr "Withered Master"
+
+msgid "event.withered_master.body"
+msgstr "A white-haired elder sits beneath a dead tree and sees through your old habits with one pointed finger."
+
+msgid "event.withered_master.option.prune_sword"
+msgstr "Prune the old sword form"
+
+msgid "event.withered_master.option.prune_sword.desc"
+msgstr "Remove one Sword Cultivator Strike."
+
+msgid "event.withered_master.option.prune_alchemy"
+msgstr "Discard the old alchemy formula"
+
+msgid "event.withered_master.option.prune_alchemy.desc"
+msgstr "Remove one Toxic Pill."
+
+msgid "event.withered_master.option.work"
+msgstr "Work for the master"
+
+msgid "event.withered_master.option.work.desc"
+msgstr "Lose 5 HP and gain 22 gold."

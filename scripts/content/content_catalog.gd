@@ -236,6 +236,10 @@ var visual_themes_by_character_id: Dictionary = {}
 var enemy_visuals_by_enemy_id: Dictionary = {}
 var relic_visuals_by_relic_id: Dictionary = {}
 var load_errors: Array[String] = []
+var locale_paths: Array[String] = [
+	"res://localization/zh_CN.po",
+	"res://localization/en.po",
+]
 var locale_path := "res://localization/zh_CN.po"
 var enemy_fallback_portrait_path := "res://assets/presentation/enemy_portraits/fallback_enemy.png"
 var relic_fallback_icon_path := "res://assets/presentation/relic_icons/fallback_relic.png"
@@ -372,8 +376,8 @@ func get_relics_by_tier(tier: String) -> Array[RelicDef]:
 func validate() -> Array[String]:
 	var errors: Array[String] = load_errors.duplicate()
 	var locale_error_count := errors.size()
-	var locale_keys := _load_locale_keys(errors)
-	var locale_loaded := errors.size() == locale_error_count
+	var locale_keys_by_path := _load_all_locale_keys(errors)
+	var locales_loaded := errors.size() == locale_error_count
 	_validate_ids("card", cards_by_id, errors)
 	_validate_ids("character", characters_by_id, errors)
 	_validate_ids("enemy", enemies_by_id, errors)
@@ -385,8 +389,9 @@ func validate() -> Array[String]:
 	_validate_visual_catalog(errors)
 	_validate_character_card_refs(errors)
 	_validate_event_options(errors)
-	if locale_loaded:
-		_validate_locale_keys(locale_keys, errors)
+	if locales_loaded:
+		for path in locale_keys_by_path.keys():
+			_validate_locale_keys(locale_keys_by_path[path], path, errors)
 	return errors
 
 func _load_cards(paths: Array[String]) -> void:
@@ -539,27 +544,28 @@ func _validate_character_card_refs(errors: Array[String]) -> void:
 			if not cards_by_id.has(card_id):
 				errors.append("Character %s card pool references missing card %s" % [character.id, card_id])
 
-func _validate_locale_keys(locale_keys: Dictionary, errors: Array[String]) -> void:
+func _validate_locale_keys(locale_keys: Dictionary, locale_label: String, errors: Array[String]) -> void:
 	for card: CardDef in cards_by_id.values():
-		_require_locale_key(card.name_key, "card %s name_key" % card.id, locale_keys, errors)
-		_require_locale_key(card.description_key, "card %s description_key" % card.id, locale_keys, errors)
+		_require_locale_key(card.name_key, "card %s name_key" % card.id, locale_keys, locale_label, errors)
+		_require_locale_key(card.description_key, "card %s description_key" % card.id, locale_keys, locale_label, errors)
 	for character: CharacterDef in characters_by_id.values():
-		_require_locale_key(character.name_key, "character %s name_key" % character.id, locale_keys, errors)
+		_require_locale_key(character.name_key, "character %s name_key" % character.id, locale_keys, locale_label, errors)
 	for enemy: EnemyDef in enemies_by_id.values():
-		_require_locale_key(enemy.name_key, "enemy %s name_key" % enemy.id, locale_keys, errors)
+		_require_locale_key(enemy.name_key, "enemy %s name_key" % enemy.id, locale_keys, locale_label, errors)
 	for relic: RelicDef in relics_by_id.values():
-		_require_locale_key(relic.name_key, "relic %s name_key" % relic.id, locale_keys, errors)
-		_require_locale_key(relic.description_key, "relic %s description_key" % relic.id, locale_keys, errors)
+		_require_locale_key(relic.name_key, "relic %s name_key" % relic.id, locale_keys, locale_label, errors)
+		_require_locale_key(relic.description_key, "relic %s description_key" % relic.id, locale_keys, locale_label, errors)
 	for event: EventDef in events_by_id.values():
-		_require_locale_key(event.title_key, "event %s title_key" % event.id, locale_keys, errors)
-		_require_locale_key(event.body_key, "event %s body_key" % event.id, locale_keys, errors)
+		_require_locale_key(event.title_key, "event %s title_key" % event.id, locale_keys, locale_label, errors)
+		_require_locale_key(event.body_key, "event %s body_key" % event.id, locale_keys, locale_label, errors)
 		for option in event.options:
-			_require_locale_key(option.label_key, "event %s option %s label_key" % [event.id, option.id], locale_keys, errors)
+			_require_locale_key(option.label_key, "event %s option %s label_key" % [event.id, option.id], locale_keys, locale_label, errors)
 			if not option.description_key.is_empty():
 				_require_locale_key(
 					option.description_key,
 					"event %s option %s description_key" % [event.id, option.id],
 					locale_keys,
+					locale_label,
 					errors
 				)
 
@@ -701,17 +707,26 @@ func _validate_relic_visual(visual: RelicVisualDef, errors: Array[String]) -> vo
 	if visual.frame_style.is_empty():
 		errors.append("Relic visual %s has empty frame_style" % visual.id)
 
-func _require_locale_key(key: String, label: String, locale_keys: Dictionary, errors: Array[String]) -> void:
+func _require_locale_key(key: String, label: String, locale_keys: Dictionary, locale_label: String, errors: Array[String]) -> void:
 	if key.is_empty():
-		errors.append("%s is empty" % label)
+		errors.append("%s is empty for %s" % [label, locale_label])
 	elif not locale_keys.has(key):
-		errors.append("%s missing localization key %s" % [label, key])
+		errors.append("%s missing localization key %s in %s" % [label, key, locale_label])
 
-func _load_locale_keys(errors: Array[String]) -> Dictionary:
+func _load_all_locale_keys(errors: Array[String]) -> Dictionary:
+	var paths := locale_paths.duplicate()
+	if paths.is_empty() and not locale_path.is_empty():
+		paths.append(locale_path)
+	var result := {}
+	for path in paths:
+		result[path] = _load_locale_keys(path, errors)
+	return result
+
+func _load_locale_keys(path: String, errors: Array[String]) -> Dictionary:
 	var keys := {}
-	var file := FileAccess.open(locale_path, FileAccess.READ)
+	var file := FileAccess.open(path, FileAccess.READ)
 	if file == null:
-		errors.append("ContentCatalog could not open localization file: %s" % locale_path)
+		errors.append("ContentCatalog could not open localization file: %s" % path)
 		return keys
 	while not file.eof_reached():
 		var line := file.get_line().strip_edges()

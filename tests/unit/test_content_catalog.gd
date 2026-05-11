@@ -464,11 +464,36 @@ func test_default_catalog_validation_passes() -> bool:
 func test_validation_reports_unreadable_locale_file_once() -> bool:
 	var catalog := ContentCatalog.new()
 	catalog.load_default()
-	catalog.locale_path = "res://localization/missing_zh_CN.po"
+	catalog.locale_paths = ["res://localization/missing_zh_CN.po"]
 	var errors: Array[String] = catalog.validate()
 	var passed: bool = errors.size() == 1 \
 		and errors[0].contains("could not open localization file") \
 		and errors[0].contains("missing_zh_CN.po")
+	assert(passed)
+	return passed
+
+func test_default_catalog_validates_chinese_and_english_locale_files() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.load_default()
+	var errors: Array[String] = catalog.validate()
+	var joined := "\n".join(errors)
+	var passed: bool = errors.is_empty() and catalog.locale_paths == [
+		"res://localization/zh_CN.po",
+		"res://localization/en.po",
+	]
+	if not passed:
+		push_error(joined)
+	assert(passed)
+	return passed
+
+func test_validation_reports_missing_key_per_locale() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.load_default()
+	catalog.locale_paths = ["res://localization/zh_CN.po", "res://localization/missing_en.po"]
+	var errors: Array[String] = catalog.validate()
+	var passed: bool = errors.size() == 1 \
+		and errors[0].contains("could not open localization file") \
+		and errors[0].contains("missing_en.po")
 	assert(passed)
 	return passed
 
