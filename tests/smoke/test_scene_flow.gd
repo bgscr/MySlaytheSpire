@@ -7,6 +7,7 @@ const CardDefScript := preload("res://scripts/data/card_def.gd")
 const ContentCatalogScript := preload("res://scripts/content/content_catalog.gd")
 const EventResolverScript := preload("res://scripts/event/event_resolver.gd")
 const ItemDetailPanel := preload("res://scripts/ui/item_detail_panel.gd")
+const LocalizationServiceScript := preload("res://scripts/app/localization_service.gd")
 const MapNodeStateScript := preload("res://scripts/run/map_node_state.gd")
 const RunStateScript := preload("res://scripts/run/run_state.gd")
 const SaveServiceScript := preload("res://scripts/save/save_service.gd")
@@ -49,7 +50,11 @@ func test_main_menu_disables_continue_without_save(tree: SceneTree) -> bool:
 
 func test_main_menu_defaults_to_chinese_and_toggles_english(tree: SceneTree) -> bool:
 	var save_path := "user://test_main_menu_locale_save.json"
+	var locale_path := "user://test_main_menu_locale.cfg"
+	var original_locale := TranslationServer.get_locale()
 	var app = _create_app_with_save_service(tree, save_path)
+	_delete_test_save(locale_path)
+	app.game.localization_service = LocalizationServiceScript.new(locale_path)
 	app.game.localization_service.clear_saved_locale()
 	app.game.localization_service.load_or_default()
 	var main_menu = app.game.router.go_to(SceneRouterScript.MAIN_MENU)
@@ -63,6 +68,8 @@ func test_main_menu_defaults_to_chinese_and_toggles_english(tree: SceneTree) -> 
 	app.game.localization_service.clear_saved_locale()
 	app.free()
 	_delete_test_save(save_path)
+	_delete_test_save(locale_path)
+	TranslationServer.set_locale(original_locale)
 	assert(passed)
 	return passed
 
