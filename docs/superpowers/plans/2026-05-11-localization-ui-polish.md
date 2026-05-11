@@ -1628,7 +1628,7 @@ rtk proxy git commit -m "feat: localize event screen"
 - Modify: `localization/zh_CN.po`
 - Modify: `localization/en.po`
 
-- [ ] **Step 1: Write failing shop smoke test**
+- [x] **Step 1: Write failing shop smoke test**
 
 Add:
 
@@ -1651,7 +1651,7 @@ func test_shop_screen_localizes_actions(tree: SceneTree) -> bool:
 	return passed
 ```
 
-- [ ] **Step 2: Add shop keys**
+- [x] **Step 2: Add shop keys**
 
 Add:
 
@@ -1701,7 +1701,7 @@ msgstr "Leave"
 
 Use Chinese translations in `zh_CN.po`.
 
-- [ ] **Step 3: Implement localized shop labels**
+- [x] **Step 3: Implement localized shop labels**
 
 Preload:
 
@@ -1762,7 +1762,7 @@ return tr("ui.shop.choose_card") if String(offer.get("type", "")) == "remove" el
 
 Apply `UiStyle` to panels, offer buttons, refresh, and leave.
 
-- [ ] **Step 4: Run tests and commit**
+- [x] **Step 4: Run tests and commit**
 
 Run full checks.
 
