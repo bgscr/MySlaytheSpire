@@ -774,3 +774,33 @@ msgstr "Lose 5 HP and gain 22 gold."
 
 msgid "node_type.combat"
 msgstr "Combat"
+
+msgid "ui.map.title"
+msgstr "Route Map"
+
+msgid "ui.map.node_label"
+msgstr "{id}: {type} ({state})"
+
+msgid "ui.map.state_unlocked"
+msgstr "Available"
+
+msgid "ui.map.state_locked"
+msgstr "Locked"
+
+msgid "ui.map.state_visited"
+msgstr "Visited"
+
+msgid "node_type.elite"
+msgstr "Elite"
+
+msgid "node_type.boss"
+msgstr "Boss"
+
+msgid "node_type.event"
+msgstr "Event"
+
+msgid "node_type.shop"
+msgstr "Shop"
+
+msgid "node_type.reward"
+msgstr "Reward"

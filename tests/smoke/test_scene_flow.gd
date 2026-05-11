@@ -1617,7 +1617,7 @@ func test_map_event_node_routes_to_event_screen(tree: SceneTree) -> bool:
 	var run := _reward_run("event", true)
 	app.game.current_run = run
 	var map_screen = app.game.router.go_to(SceneRouterScript.MAP)
-	var event_button := _find_node_by_text(map_screen, "node_0: event") as Button
+	var event_button := _find_node_by_name(map_screen, "MapNodeButton_node_0") as Button
 	if event_button != null:
 		event_button.pressed.emit()
 	var passed: bool = event_button != null \
@@ -1625,6 +1625,31 @@ func test_map_event_node_routes_to_event_screen(tree: SceneTree) -> bool:
 		and app.game.router.current_scene.name == "EventScreen"
 	app.free()
 	_delete_test_save(save_path)
+	return passed
+
+func test_map_screen_localizes_node_types(tree: SceneTree) -> bool:
+	var save_path := "user://test_map_locale_save.json"
+	var locale_path := "user://test_map_locale.cfg"
+	var original_locale := TranslationServer.get_locale()
+	_delete_test_save(save_path)
+	_delete_test_save(locale_path)
+	var app := AppScene.instantiate()
+	app.game.localization_service = LocalizationServiceScript.new(locale_path)
+	tree.root.add_child(app)
+	app.game.save_service = SaveServiceScript.new(save_path)
+	app.game.localization_service.set_locale("en")
+	app.game.current_run = _test_run_with_nodes(["combat", "event", "shop"])
+	var map = app.game.router.go_to(SceneRouterScript.MAP)
+	var title := _find_node_by_name(map, "MapTitle") as Label
+	var first_node := _find_node_by_name(map, "MapNodeButton_node_0") as Button
+	var passed := title != null and title.text == "Route Map" \
+		and first_node != null and first_node.text.contains("Combat")
+	app.game.localization_service.clear_saved_locale()
+	app.free()
+	_delete_test_save(save_path)
+	_delete_test_save(locale_path)
+	TranslationServer.set_locale(original_locale)
+	assert(passed)
 	return passed
 
 func test_event_screen_option_applies_saves_and_advances(tree: SceneTree) -> bool:
@@ -1778,7 +1803,7 @@ func test_map_shop_node_routes_to_shop_screen(tree: SceneTree) -> bool:
 	var run := _reward_run("shop", true)
 	app.game.current_run = run
 	var map_screen = app.game.router.go_to(SceneRouterScript.MAP)
-	var shop_button := _find_node_by_text(map_screen, "node_0: shop") as Button
+	var shop_button := _find_node_by_name(map_screen, "MapNodeButton_node_0") as Button
 	if shop_button != null:
 		shop_button.pressed.emit()
 	var loaded_run = app.game.save_service.load_run()
@@ -2092,6 +2117,19 @@ func _reward_run(node_type: String, include_next_node: bool) -> RunStateScript:
 	if include_next_node:
 		nodes.append(MapNodeStateScript.new("node_1", 1, "combat"))
 	run.map_nodes = nodes
+	return run
+
+func _test_run_with_nodes(types: Array[String]):
+	var run := RunStateScript.new()
+	run.seed_value = 9
+	run.character_id = "sword"
+	run.max_hp = 72
+	run.current_hp = 72
+	run.deck_ids = ["sword.strike", "sword.strike", "sword.strike"]
+	for i in range(types.size()):
+		var node := MapNodeStateScript.new("node_%s" % i, i, types[i])
+		node.unlocked = i == 0
+		run.map_nodes.append(node)
 	return run
 
 func _find_continue_button(menu: Node) -> Button:

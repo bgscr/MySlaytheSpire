@@ -774,3 +774,33 @@ msgstr "战斗"
 
 msgid "event.withered_master.option.work.desc"
 msgstr "失去 5 生命，获得 22 金。"
+
+msgid "ui.map.title"
+msgstr "路线地图"
+
+msgid "ui.map.node_label"
+msgstr "{id}: {type}（{state}）"
+
+msgid "ui.map.state_unlocked"
+msgstr "可进入"
+
+msgid "ui.map.state_locked"
+msgstr "未解锁"
+
+msgid "ui.map.state_visited"
+msgstr "已访问"
+
+msgid "node_type.elite"
+msgstr "精英"
+
+msgid "node_type.boss"
+msgstr "首领"
+
+msgid "node_type.event"
+msgstr "事件"
+
+msgid "node_type.shop"
+msgstr "商店"
+
+msgid "node_type.reward"
+msgstr "奖励"
