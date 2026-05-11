@@ -158,6 +158,12 @@ func _offer_label(offer: Dictionary) -> String:
 					"cost": card.cost,
 					"price": price,
 				})
+			return tr("ui.shop.card_offer").format({
+				"name": item_id,
+				"rarity": "?",
+				"cost": "?",
+				"price": price,
+			})
 		"relic":
 			var relic = catalog.get_relic(item_id)
 			if relic != null:
@@ -166,6 +172,11 @@ func _offer_label(offer: Dictionary) -> String:
 					"tier": tr("relic_tier.%s" % relic.tier),
 					"price": price,
 				})
+			return tr("ui.shop.relic_offer").format({
+				"name": item_id,
+				"tier": "?",
+				"price": price,
+			})
 		"heal":
 			return tr("ui.shop.heal_offer").format({"price": price})
 		"remove":

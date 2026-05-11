@@ -1942,7 +1942,7 @@ func test_shop_screen_localizes_actions(tree: SceneTree) -> bool:
 	var refresh := _find_node_by_name(shop, "RefreshButton") as Button
 	var english_ok := title != null and title.text == "Shop" \
 		and leave != null and leave.text == "Leave" \
-		and refresh != null and refresh.text.contains("Refresh")
+		and refresh != null and refresh.text == "Refresh (%s gold)" % ShopResolverScript.REFRESH_PRICE
 	_cleanup_app_save_and_locale(app, save_path, locale_path)
 
 	app = _create_app_with_save_and_locale_service(tree, save_path, locale_path, "zh_CN")
@@ -1956,6 +1956,50 @@ func test_shop_screen_localizes_actions(tree: SceneTree) -> bool:
 		and leave != null and leave.text == tr("ui.shop.leave") \
 		and refresh != null and refresh.text.contains(tr("ui.shop.refresh").format({"price": ShopResolverScript.REFRESH_PRICE}))
 	var passed := english_ok and chinese_ok
+	_cleanup_app_save_and_locale(app, save_path, locale_path)
+	assert(passed)
+	return passed
+
+func test_shop_screen_missing_catalog_offer_preserves_id_and_price(tree: SceneTree) -> bool:
+	var save_path := "user://test_shop_missing_offer_save.json"
+	var locale_path := "user://test_shop_missing_offer_locale.cfg"
+	var app = _create_app_with_save_and_locale_service(tree, save_path, locale_path, "en")
+	var run := _test_run_with_nodes(["shop"])
+	run.current_node_id = "node_0"
+	run.current_shop_state = {
+		"node_id": "node_0",
+		"refresh_used": false,
+		"offers": [
+			{
+				"id": "card_missing",
+				"type": "card",
+				"item_id": "missing.card",
+				"price": 41,
+				"sold": false,
+			},
+			{
+				"id": "relic_missing",
+				"type": "relic",
+				"item_id": "missing.relic",
+				"price": 123,
+				"sold": false,
+			},
+		],
+	}
+	app.game.current_run = run
+	var shop = app.game.router.go_to(SceneRouterScript.SHOP)
+	var card_offer := _find_node_by_name(shop, "ShopOffer_card_missing") as VBoxContainer
+	var relic_offer := _find_node_by_name(shop, "ShopOffer_relic_missing") as VBoxContainer
+	var card_label: Label = null
+	var relic_label: Label = null
+	if card_offer != null and card_offer.get_child_count() > 0:
+		card_label = card_offer.get_child(0) as Label
+	if relic_offer != null and relic_offer.get_child_count() > 0:
+		relic_label = relic_offer.get_child(0) as Label
+	var passed: bool = card_label != null \
+		and card_label.text == "Card: missing.card [?] (?) - 41 gold" \
+		and relic_label != null \
+		and relic_label.text == "Relic: missing.relic [?] - 123 gold"
 	_cleanup_app_save_and_locale(app, save_path, locale_path)
 	assert(passed)
 	return passed
