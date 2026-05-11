@@ -10,6 +10,15 @@ msgstr "新局"
 msgid "ui.continue"
 msgstr "继续"
 
+msgid "ui.main_menu.title"
+msgstr "杀戮尖塔 2"
+
+msgid "ui.main_menu.continue_disabled"
+msgstr "无可用存档"
+
+msgid "ui.language_toggle"
+msgstr "中 / EN"
+
 msgid "ui.end_turn"
 msgstr "结束回合"
 

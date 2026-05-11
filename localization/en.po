@@ -10,6 +10,15 @@ msgstr "New Run"
 msgid "ui.continue"
 msgstr "Continue"
 
+msgid "ui.main_menu.title"
+msgstr "Slay the Spire 2"
+
+msgid "ui.main_menu.continue_disabled"
+msgstr "No save available"
+
+msgid "ui.language_toggle"
+msgstr "中 / EN"
+
 msgid "ui.end_turn"
 msgstr "End Turn"
 
