@@ -993,3 +993,66 @@ msgstr "Rare"
 
 msgid "relic_tier.boss"
 msgstr "Boss"
+
+msgid "ui.debug.prefix"
+msgstr "Debug: {label}"
+
+msgid "ui.debug.full_hp"
+msgstr "Full HP"
+
+msgid "ui.debug.gold_100"
+msgstr "+100 Gold"
+
+msgid "ui.debug.map"
+msgstr "Map"
+
+msgid "ui.debug.dev_tools"
+msgstr "Dev Tools"
+
+msgid "ui.debug.presentation"
+msgstr "Presentation"
+
+msgid "ui.debug.reduced_motion"
+msgstr "Reduced Motion"
+
+msgid "ui.debug.drag_play"
+msgstr "Drag Play"
+
+msgid "ui.debug.float_text"
+msgstr "Float Text"
+
+msgid "ui.debug.hit_flash"
+msgstr "Hit Flash"
+
+msgid "ui.debug.target_highlight"
+msgstr "Target Highlight"
+
+msgid "ui.debug.status_pulse"
+msgstr "Status Pulse"
+
+msgid "ui.debug.future_cinematic"
+msgstr "Future Cinematic"
+
+msgid "ui.debug.particles"
+msgstr "Particles"
+
+msgid "ui.debug.camera_impulse"
+msgstr "Camera Impulse"
+
+msgid "ui.debug.slow_motion"
+msgstr "Slow Motion"
+
+msgid "ui.debug.audio_cue"
+msgstr "Audio Cue"
+
+msgid "ui.debug.master_volume"
+msgstr "Master Volume"
+
+msgid "ui.debug.music_volume"
+msgstr "Music Volume"
+
+msgid "ui.debug.sfx_volume"
+msgstr "SFX Volume"
+
+msgid "ui.debug.ui_volume"
+msgstr "UI Volume"

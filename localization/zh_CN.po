@@ -993,3 +993,66 @@ msgstr "稀有"
 
 msgid "relic_tier.boss"
 msgstr "首领"
+
+msgid "ui.debug.prefix"
+msgstr "调试：{label}"
+
+msgid "ui.debug.full_hp"
+msgstr "满生命"
+
+msgid "ui.debug.gold_100"
+msgstr "+100 金币"
+
+msgid "ui.debug.map"
+msgstr "地图"
+
+msgid "ui.debug.dev_tools"
+msgstr "开发工具"
+
+msgid "ui.debug.presentation"
+msgstr "演出效果"
+
+msgid "ui.debug.reduced_motion"
+msgstr "减少动态效果"
+
+msgid "ui.debug.drag_play"
+msgstr "拖拽出牌"
+
+msgid "ui.debug.float_text"
+msgstr "浮动文字"
+
+msgid "ui.debug.hit_flash"
+msgstr "受击闪烁"
+
+msgid "ui.debug.target_highlight"
+msgstr "目标高亮"
+
+msgid "ui.debug.status_pulse"
+msgstr "状态脉冲"
+
+msgid "ui.debug.future_cinematic"
+msgstr "未来过场"
+
+msgid "ui.debug.particles"
+msgstr "粒子"
+
+msgid "ui.debug.camera_impulse"
+msgstr "镜头冲击"
+
+msgid "ui.debug.slow_motion"
+msgstr "慢动作"
+
+msgid "ui.debug.audio_cue"
+msgstr "音效提示"
+
+msgid "ui.debug.master_volume"
+msgstr "主音量"
+
+msgid "ui.debug.music_volume"
+msgstr "音乐音量"
+
+msgid "ui.debug.sfx_volume"
+msgstr "音效音量"
+
+msgid "ui.debug.ui_volume"
+msgstr "界面音量"

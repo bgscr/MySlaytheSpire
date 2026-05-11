@@ -32,6 +32,20 @@ func test_debug_overlay_is_anchored_away_from_main_menu_actions() -> bool:
 	debug_overlay.free()
 	return passed
 
+func test_debug_overlay_localizes_controls(tree: SceneTree) -> bool:
+	var original_locale := TranslationServer.get_locale()
+	TranslationServer.set_locale("en")
+	var debug_overlay := DebugOverlayScene.instantiate() as Control
+	tree.root.add_child(debug_overlay)
+	var heal := _find_node_by_name(debug_overlay, "DebugFullHp") as Button
+	var dev_tools := _find_node_by_name(debug_overlay, "DebugDevTools") as Button
+	var passed := heal != null and heal.text == "Debug: Full HP" \
+		and dev_tools != null and dev_tools.text == "Debug: Dev Tools"
+	debug_overlay.free()
+	TranslationServer.set_locale(original_locale)
+	assert(passed)
+	return passed
+
 func test_failed_run_summary_clears_save(tree: SceneTree) -> bool:
 	return _run_summary_clears_save(tree, true, false, "user://test_failed_summary_save.json")
 
