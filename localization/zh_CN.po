@@ -17,7 +17,7 @@ msgid "ui.main_menu.continue_disabled"
 msgstr "无可用存档"
 
 msgid "ui.language_toggle"
-msgstr "中 / EN"
+msgstr "中文 / EN"
 
 msgid "ui.end_turn"
 msgstr "结束回合"
@@ -964,6 +964,21 @@ msgstr "复制 JSON"
 msgid "ui.dev_tools.repair"
 msgstr "修复"
 
+msgid "ui.dev_tools.planned_tool"
+msgstr "计划中的工具"
+
+msgid "ui.dev_tools.applied_option"
+msgstr "已应用选项：{id}"
+
+msgid "ui.dev_tools.option_failed"
+msgstr "选项失败：{id}"
+
+msgid "ui.dev_tools.claim_item"
+msgstr "领取 {item}"
+
+msgid "ui.dev_tools.claim_gold"
+msgstr "领取 {amount} 金币"
+
 msgid "ui.map.title"
 msgstr "路线地图"
 
@@ -1017,6 +1032,84 @@ msgstr "阶段"
 
 msgid "ui.combat.no_player"
 msgstr "无玩家"
+
+msgid "combat.error.start_no_run"
+msgstr "战斗会话无法启动：缺少流程。"
+
+msgid "combat.error.start_no_catalog"
+msgstr "战斗会话无法启动：缺少目录。"
+
+msgid "combat.error.sandbox_no_catalog"
+msgstr "战斗沙盒无法启动：缺少目录。"
+
+msgid "combat.error.sandbox_empty_deck"
+msgstr "战斗沙盒无法启动：牌组为空。"
+
+msgid "combat.error.sandbox_no_enemies"
+msgstr "战斗沙盒无法启动：缺少敌人。"
+
+msgid "combat.error.sandbox_enemy_count"
+msgstr "战斗沙盒需要一到三个敌人。"
+
+msgid "combat.error.sandbox_character_missing"
+msgstr "战斗沙盒角色缺失：{character_id}"
+
+msgid "combat.error.sandbox_enemy_missing"
+msgstr "战斗沙盒敌人缺失：{enemy_id}"
+
+msgid "combat.error.cards_player_turn"
+msgstr "只能在玩家回合选择卡牌。"
+
+msgid "combat.error.card_selection_index_invalid"
+msgstr "卡牌选择索引无效：{index}"
+
+msgid "combat.error.card_missing"
+msgstr "所选卡牌不在目录中：{card_id}"
+
+msgid "combat.error.not_enough_energy"
+msgstr "能量不足，无法打出卡牌：{card_id}"
+
+msgid "combat.error.cancel_no_pending_selection"
+msgstr "没有可取消的待确认卡牌选择。"
+
+msgid "combat.error.enemy_target_not_pending"
+msgstr "当前没有等待确认的敌人目标。"
+
+msgid "combat.error.enemy_target_index_invalid"
+msgstr "敌人目标索引无效：{index}"
+
+msgid "combat.error.enemy_target_defeated"
+msgstr "敌人目标已被击败：{index}"
+
+msgid "combat.error.player_target_not_pending"
+msgstr "当前没有等待确认的玩家目标。"
+
+msgid "combat.error.end_turn_not_player_turn"
+msgstr "只能在玩家回合结束回合。"
+
+msgid "combat.error.pending_card_missing"
+msgstr "待打出的卡牌缺失。"
+
+msgid "combat.error.pending_card_index_invalid"
+msgstr "待打出卡牌的手牌索引无效：{index}"
+
+msgid "combat.error.pending_card_mismatch"
+msgstr "待打出卡牌与手牌不再匹配：{card_id}"
+
+msgid "combat.error.current_node_missing"
+msgstr "战斗会话当前地图节点缺失：{node_id}"
+
+msgid "combat.error.empty_deck"
+msgstr "战斗会话无法启动：牌组为空。"
+
+msgid "combat.error.character_missing"
+msgstr "战斗会话角色缺失：{character_id}"
+
+msgid "combat.error.encounter_empty"
+msgstr "战斗会话节点没有遭遇：{node_id}"
+
+msgid "combat.error.enemy_missing"
+msgstr "战斗会话敌人缺失：{enemy_id}"
 
 msgid "target.player"
 msgstr "玩家"

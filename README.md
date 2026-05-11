@@ -72,6 +72,7 @@ $env:GODOT4="C:\Tools\Godot\Godot_v4.6.2-stable_win64_console.exe"
 - Audio mixing foundation: complete; debug builds now ensure Master, Music, SFX, and UI buses, route combat audio cues through SFX, and expose in-memory debug volume sliders for all four buses.
 - Polished per-card art replacement: complete; all 40 default cards now point to unique project-owned thumbnail art while combat, reward, shop, and event previews continue using the existing visual pipeline.
 - Reusable item preview and detail presentation: complete; card and relic previews now share a bounded presenter/detail system, all 20 default relics have project-owned icons, and existing combat, reward, shop, event, and scoped DevTools interactions remain unchanged.
+- Localization and near-demo UI polish foundation: complete; Chinese is the default interface, Main Menu exposes a `中文 / EN` toggle, Chinese/English translations cover main-flow and debug screens, and shared ink-and-jade UI styling now applies across screens.
 
 ## Next Plans
 

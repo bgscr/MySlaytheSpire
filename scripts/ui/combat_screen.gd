@@ -223,14 +223,14 @@ func _player_status_text() -> String:
 	})
 	var statuses := session.status_runtime.status_display_text(session.state.player)
 	if not statuses.is_empty():
-		text += " Status %s" % statuses
+		text += " %s %s" % [tr("ui.label.status"), statuses]
 	return text
 
 func _enemy_summary_text(enemy, _enemy_index: int) -> String:
 	var text := UiText.enemy_summary(session.catalog, enemy.id, enemy.current_hp, enemy.max_hp, enemy.block)
 	var statuses := session.status_runtime.status_display_text(enemy)
 	if not statuses.is_empty():
-		text += " Status %s" % statuses
+		text += " %s %s" % [tr("ui.label.status"), statuses]
 	return text
 
 func _add_enemy_visual(parent: Control, enemy_index: int, enemy) -> void:

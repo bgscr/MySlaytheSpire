@@ -17,7 +17,7 @@ msgid "ui.main_menu.continue_disabled"
 msgstr "No save available"
 
 msgid "ui.language_toggle"
-msgstr "中 / EN"
+msgstr "中文 / EN"
 
 msgid "ui.end_turn"
 msgstr "End Turn"
@@ -964,6 +964,21 @@ msgstr "Copy JSON"
 msgid "ui.dev_tools.repair"
 msgstr "Repair"
 
+msgid "ui.dev_tools.planned_tool"
+msgstr "Planned tool"
+
+msgid "ui.dev_tools.applied_option"
+msgstr "Applied option: {id}"
+
+msgid "ui.dev_tools.option_failed"
+msgstr "Option failed: {id}"
+
+msgid "ui.dev_tools.claim_item"
+msgstr "Claim {item}"
+
+msgid "ui.dev_tools.claim_gold"
+msgstr "Claim {amount} gold"
+
 msgid "ui.map.title"
 msgstr "Route Map"
 
@@ -1017,6 +1032,84 @@ msgstr "Phase"
 
 msgid "ui.combat.no_player"
 msgstr "No player"
+
+msgid "combat.error.start_no_run"
+msgstr "CombatSession cannot start without a run."
+
+msgid "combat.error.start_no_catalog"
+msgstr "CombatSession cannot start without a catalog."
+
+msgid "combat.error.sandbox_no_catalog"
+msgstr "CombatSession sandbox cannot start without a catalog."
+
+msgid "combat.error.sandbox_empty_deck"
+msgstr "CombatSession sandbox cannot start with an empty deck."
+
+msgid "combat.error.sandbox_no_enemies"
+msgstr "CombatSession sandbox cannot start without enemies."
+
+msgid "combat.error.sandbox_enemy_count"
+msgstr "CombatSession sandbox requires one to three enemies."
+
+msgid "combat.error.sandbox_character_missing"
+msgstr "CombatSession sandbox character is missing: {character_id}"
+
+msgid "combat.error.sandbox_enemy_missing"
+msgstr "CombatSession sandbox enemy is missing: {enemy_id}"
+
+msgid "combat.error.cards_player_turn"
+msgstr "Cards can only be selected during the player turn."
+
+msgid "combat.error.card_selection_index_invalid"
+msgstr "Card selection index is invalid: {index}"
+
+msgid "combat.error.card_missing"
+msgstr "Selected card is missing from catalog: {card_id}"
+
+msgid "combat.error.not_enough_energy"
+msgstr "Not enough energy to play card: {card_id}"
+
+msgid "combat.error.cancel_no_pending_selection"
+msgstr "There is no pending card selection to cancel."
+
+msgid "combat.error.enemy_target_not_pending"
+msgstr "Enemy target confirmation is not currently pending."
+
+msgid "combat.error.enemy_target_index_invalid"
+msgstr "Enemy target index is invalid: {index}"
+
+msgid "combat.error.enemy_target_defeated"
+msgstr "Enemy target is already defeated: {index}"
+
+msgid "combat.error.player_target_not_pending"
+msgstr "Player target confirmation is not currently pending."
+
+msgid "combat.error.end_turn_not_player_turn"
+msgstr "Cannot end turn outside the player turn."
+
+msgid "combat.error.pending_card_missing"
+msgstr "Pending card is missing."
+
+msgid "combat.error.pending_card_index_invalid"
+msgstr "Pending card hand index is invalid: {index}"
+
+msgid "combat.error.pending_card_mismatch"
+msgstr "Pending card no longer matches hand card: {card_id}"
+
+msgid "combat.error.current_node_missing"
+msgstr "CombatSession current map node is missing: {node_id}"
+
+msgid "combat.error.empty_deck"
+msgstr "CombatSession cannot start with an empty deck."
+
+msgid "combat.error.character_missing"
+msgstr "CombatSession character is missing: {character_id}"
+
+msgid "combat.error.encounter_empty"
+msgstr "CombatSession encounter is empty for node: {node_id}"
+
+msgid "combat.error.enemy_missing"
+msgstr "CombatSession enemy is missing: {enemy_id}"
 
 msgid "target.player"
 msgstr "Player"

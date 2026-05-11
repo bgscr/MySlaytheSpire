@@ -39,10 +39,21 @@ func test_debug_overlay_localizes_controls(tree: SceneTree) -> bool:
 	tree.root.add_child(debug_overlay)
 	var heal := _find_node_by_name(debug_overlay, "DebugFullHp") as Button
 	var dev_tools := _find_node_by_name(debug_overlay, "DebugDevTools") as Button
-	var passed := heal != null and heal.text == "Debug: Full HP" \
+	var english_ok := heal != null and heal.text == "Debug: Full HP" \
 		and dev_tools != null and dev_tools.text == "Debug: Dev Tools"
 	debug_overlay.free()
+	TranslationServer.set_locale("zh_CN")
+	debug_overlay = DebugOverlayScene.instantiate() as Control
+	tree.root.add_child(debug_overlay)
+	heal = _find_node_by_name(debug_overlay, "DebugFullHp") as Button
+	dev_tools = _find_node_by_name(debug_overlay, "DebugDevTools") as Button
+	var chinese_ok := heal != null \
+		and heal.text == tr("ui.debug.prefix").format({"label": tr("ui.debug.full_hp")}) \
+		and dev_tools != null \
+		and dev_tools.text == tr("ui.debug.prefix").format({"label": tr("ui.debug.dev_tools")})
+	debug_overlay.free()
 	TranslationServer.set_locale(original_locale)
+	var passed := english_ok and chinese_ok
 	assert(passed)
 	return passed
 
@@ -107,10 +118,12 @@ func test_main_menu_defaults_to_chinese_and_toggles_english(tree: SceneTree) -> 
 	var main_menu = app.game.router.go_to(SceneRouterScript.MAIN_MENU)
 	var new_run := _find_node_by_name(main_menu, "NewRunButton") as Button
 	var toggle := _find_node_by_name(main_menu, "LanguageToggleButton") as Button
-	var chinese_ok := new_run != null and new_run.text == tr("ui.new_run")
+	var chinese_ok := new_run != null and new_run.text == tr("ui.new_run") \
+		and toggle != null and toggle.text == "中文 / EN"
 	if toggle != null:
 		toggle.pressed.emit()
-	var english_ok := new_run != null and new_run.text == "New Run"
+	var english_ok := new_run != null and new_run.text == "New Run" \
+		and toggle != null and toggle.text == "中文 / EN"
 	var passed := chinese_ok and english_ok and toggle != null
 	app.game.localization_service.clear_saved_locale()
 	app.free()
@@ -287,19 +300,28 @@ func test_combat_screen_localizes_player_summary_and_intent(tree: SceneTree) -> 
 		"seed_value": 201,
 	})
 	var combat = app.game.router.go_to(SceneRouterScript.COMBAT)
+	combat.session.state.player.statuses["poison"] = 2
+	combat.session.state.enemies[0].statuses["broken_stance"] = 1
+	combat._refresh()
 	var status := _find_node_by_name(combat, "PlayerStatus") as Label
 	var pile := _find_node_by_name(combat, "PileStatus") as Label
 	var target := _find_node_by_name(combat, "IntentTarget_0") as Label
+	var enemy_summary := _find_node_by_name(combat, "EnemySummaryLabel_0") as Label
 	var english_ok := status != null and status.text.contains("HP") \
+		and status.text.contains("%s " % tr("ui.label.status")) \
 		and pile != null and pile.text.contains("Draw") \
-		and target != null and target.text == "Player"
+		and target != null and target.text == "Player" \
+		and enemy_summary != null and enemy_summary.text.contains("%s " % tr("ui.label.status"))
 	app.game.localization_service.set_locale("zh_CN")
 	status = _find_node_by_name(combat, "PlayerStatus") as Label
 	pile = _find_node_by_name(combat, "PileStatus") as Label
 	target = _find_node_by_name(combat, "IntentTarget_0") as Label
+	enemy_summary = _find_node_by_name(combat, "EnemySummaryLabel_0") as Label
 	var chinese_ok := status != null and status.text.contains("生命") \
+		and status.text.contains("%s " % tr("ui.label.status")) \
 		and pile != null and pile.text.contains("抽牌") \
-		and target != null and target.text == "玩家"
+		and target != null and target.text == "玩家" \
+		and enemy_summary != null and enemy_summary.text.contains("%s " % tr("ui.label.status"))
 	var passed := english_ok and chinese_ok
 	_cleanup_app_save_and_locale(app, save_path, locale_path)
 	assert(passed)
@@ -863,6 +885,27 @@ func test_dev_tools_enemy_sandbox_button_shows_panel(tree: SceneTree) -> bool:
 	screen.free()
 	return passed
 
+func test_dev_tools_enemy_sandbox_enemy_buttons_localize_hp_label(tree: SceneTree) -> bool:
+	var original_locale := TranslationServer.get_locale()
+	TranslationServer.set_locale("zh_CN")
+	var screen := DevToolsScene.instantiate()
+	tree.root.add_child(screen)
+	var button := _find_node_by_name(screen, "ToolButton_enemy_sandbox") as Button
+	if button != null:
+		button.pressed.emit()
+	var enemy_button := _find_node_by_name(screen, "EnemySandboxEnemy_training_puppet") as Button
+	var summary := _find_node_by_name(screen, "EnemySandboxSummaryLabel") as Label
+	var passed: bool = button != null \
+		and enemy_button != null \
+		and enemy_button.text.contains(tr("ui.label.hp")) \
+		and not enemy_button.text.contains("HP 20") \
+		and summary != null \
+		and summary.text.contains("%s: training_puppet" % tr("ui.label.enemy"))
+	screen.free()
+	TranslationServer.set_locale(original_locale)
+	assert(passed)
+	return passed
+
 func test_dev_tools_event_tester_button_shows_panel(tree: SceneTree) -> bool:
 	var screen := DevToolsScene.instantiate()
 	tree.root.add_child(screen)
@@ -919,7 +962,7 @@ func test_dev_tools_event_tester_apply_option_stays_in_dev_tools_without_current
 	var summary := _find_node_by_name(dev_tools, "EventTesterRunSummaryLabel") as Label
 	var passed: bool = option_button != null \
 		and result != null \
-		and result.text.contains("Applied option: buy_brew") \
+		and result.text.contains(tr("ui.dev_tools.applied_option").format({"id": "buy_brew"})) \
 		and summary != null \
 		and summary.text.contains("%s: 30" % tr("ui.label.gold")) \
 		and app.game.current_run == null \
@@ -1797,15 +1840,61 @@ func test_map_screen_localizes_node_types(tree: SceneTree) -> bool:
 	var first_node := _find_node_by_name(map, "MapNodeButton_node_0") as Button
 	var second_node := _find_node_by_name(map, "MapNodeButton_node_1") as Button
 	var third_node := _find_node_by_name(map, "MapNodeButton_node_2") as Button
-	var passed := title != null and title.text == "Route Map" \
+	var english_ok := title != null and title.text == "Route Map" \
 		and first_node != null and first_node.text.contains("Combat") \
 		and second_node != null and second_node.text.contains("Event") \
 		and third_node != null and third_node.text.contains("Shop")
+	app.game.localization_service.set_locale("zh_CN")
+	title = _find_node_by_name(map, "MapTitle") as Label
+	first_node = _find_node_by_name(map, "MapNodeButton_node_0") as Button
+	second_node = _find_node_by_name(map, "MapNodeButton_node_1") as Button
+	third_node = _find_node_by_name(map, "MapNodeButton_node_2") as Button
+	var chinese_ok := title != null and title.text == tr("ui.map.title") \
+		and first_node != null and first_node.text.contains(tr("node_type.combat")) \
+		and second_node != null and second_node.text.contains(tr("node_type.event")) \
+		and third_node != null and third_node.text.contains(tr("node_type.shop"))
+	var passed := english_ok and chinese_ok
 	app.game.localization_service.clear_saved_locale()
 	app.free()
 	_delete_test_save(save_path)
 	_delete_test_save(locale_path)
 	TranslationServer.set_locale(original_locale)
+	assert(passed)
+	return passed
+
+func test_event_screen_localizes_title_body_and_option(tree: SceneTree) -> bool:
+	var save_path := "user://test_event_screen_locale_save.json"
+	var locale_path := "user://test_event_screen_locale.cfg"
+	var app = _create_app_with_save_and_locale_service(tree, save_path, locale_path, "en")
+	var run := _reward_run("event", true)
+	run.seed_value = 1
+	run.current_hp = 20
+	run.max_hp = 40
+	run.gold = 50
+	app.game.current_run = run
+	var event_screen = app.game.router.go_to(SceneRouterScript.EVENT)
+	var title := _find_node_by_name(event_screen, "EventTitle") as Label
+	var body := _find_node_by_name(event_screen, "EventBody") as Label
+	var option := _find_node_by_name(event_screen, "EventOption_0") as Button
+	var event = event_screen.current_event
+	var first_option = event.options[0] if event != null and event.options.size() > 0 else null
+	var english_ok := event != null \
+		and first_option != null \
+		and title != null and title.text == tr(event.title_key) \
+		and body != null and body.text == tr(event.body_key) \
+		and option != null and option.text.contains(tr(first_option.label_key))
+	app.game.localization_service.set_locale("zh_CN")
+	event_screen._render()
+	title = _find_node_by_name(event_screen, "EventTitle") as Label
+	body = _find_node_by_name(event_screen, "EventBody") as Label
+	option = _find_node_by_name(event_screen, "EventOption_0") as Button
+	var chinese_ok := event != null \
+		and first_option != null \
+		and title != null and title.text == tr(event.title_key) \
+		and body != null and body.text == tr(event.body_key) \
+		and option != null and option.text.contains(tr(first_option.label_key))
+	var passed := english_ok and chinese_ok
+	_cleanup_app_save_and_locale(app, save_path, locale_path)
 	assert(passed)
 	return passed
 

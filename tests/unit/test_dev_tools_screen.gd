@@ -77,7 +77,7 @@ func test_dev_tools_exposes_deferred_tool_placeholders() -> bool:
 		"save_inspector",
 	] \
 		and screen.placeholder_text("enemy_sandbox").contains(tr("ui.dev_tools.enemy_sandbox")) \
-		and screen.placeholder_text("enemy_sandbox").contains("Planned tool")
+		and screen.placeholder_text("enemy_sandbox").contains(tr("ui.dev_tools.planned_tool"))
 	screen.free()
 	assert(passed)
 	return passed
@@ -86,11 +86,18 @@ func test_dev_tools_tool_labels_localize() -> bool:
 	var original_locale := TranslationServer.get_locale()
 	TranslationServer.set_locale("en")
 	var screen := DevToolsScreen.new()
-	var passed: bool = screen.has_method("tool_label") \
+	var english_ok: bool = screen.has_method("tool_label") \
 		and screen.call("tool_label", "card_browser") == "Card Browser" \
 		and screen.call("tool_label", "save_inspector") == "Save Inspector"
 	screen.free()
+	TranslationServer.set_locale("zh_CN")
+	screen = DevToolsScreen.new()
+	var chinese_ok: bool = screen.has_method("tool_label") \
+		and screen.call("tool_label", "card_browser") == tr("ui.dev_tools.card_browser") \
+		and screen.call("tool_label", "save_inspector") == tr("ui.dev_tools.save_inspector")
+	screen.free()
 	TranslationServer.set_locale(original_locale)
+	var passed := english_ok and chinese_ok
 	assert(passed)
 	return passed
 
@@ -101,10 +108,19 @@ func test_dev_tools_summaries_localize_labels_and_preserve_ids() -> bool:
 	screen.load_default_catalog()
 	screen.set_enemy_sandbox_character("alchemy")
 	var summary := screen.enemy_sandbox_summary_text()
-	var passed := summary.contains("Character: alchemy") \
+	var english_ok := summary.contains("Character: alchemy") \
 		and summary.contains("Deck:")
 	screen.free()
+	TranslationServer.set_locale("zh_CN")
+	screen = DevToolsScreen.new()
+	screen.load_default_catalog()
+	screen.set_enemy_sandbox_character("alchemy")
+	summary = screen.enemy_sandbox_summary_text()
+	var chinese_ok := summary.contains("%s: alchemy" % tr("ui.label.character")) \
+		and summary.contains("%s:" % tr("ui.label.deck"))
+	screen.free()
 	TranslationServer.set_locale(original_locale)
+	var passed := english_ok and chinese_ok
 	assert(passed)
 	return passed
 
@@ -223,7 +239,7 @@ func test_event_tester_apply_option_mutates_only_isolated_run() -> bool:
 	var summary: String = screen.event_tester_run_summary_text()
 	var passed: bool = applied \
 		and screen.event_tester_option_applied \
-		and screen.event_tester_result_text == "Applied option: buy_brew" \
+		and screen.event_tester_result_text == tr("ui.dev_tools.applied_option").format({"id": "buy_brew"}) \
 		and screen.event_tester_run.gold == 30 \
 		and screen.event_tester_run.current_hp == 72 \
 		and summary.contains("%s: 30" % tr("ui.label.gold")) \

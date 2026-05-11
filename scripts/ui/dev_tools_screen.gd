@@ -189,7 +189,7 @@ func card_detail_text(card: CardDef) -> String:
 	return "\n".join(lines)
 
 func placeholder_text(tool_id: String) -> String:
-	return "%s\nPlanned tool" % tool_label(tool_id)
+	return "%s\n%s" % [tool_label(tool_id), tr("ui.dev_tools.planned_tool")]
 
 func enemy_sandbox_enemy_ids() -> Array[String]:
 	var enemies: Array[EnemyDef] = []
@@ -352,9 +352,9 @@ func apply_event_tester_option(index: int) -> bool:
 	var applied := EventRunner.new().apply_event_option(catalog, event_tester_run, event, option)
 	if applied:
 		event_tester_option_applied = true
-		event_tester_result_text = "Applied option: %s" % option.id
+		event_tester_result_text = tr("ui.dev_tools.applied_option").format({"id": option.id})
 	else:
-		event_tester_result_text = "Option failed: %s" % option.id
+		event_tester_result_text = tr("ui.dev_tools.option_failed").format({"id": option.id})
 	_refresh_event_tester_after_apply()
 	return applied
 
@@ -759,10 +759,11 @@ func _refresh_enemy_sandbox_panel() -> void:
 			button.name = "EnemySandboxEnemy_%s" % enemy.id
 			var selected := selected_sandbox_enemy_ids.has(enemy.id)
 			var marker := "[x]" if selected else "[ ]"
-			button.text = "%s %s | %s | HP %s | %s" % [
+			button.text = "%s %s | %s | %s %s | %s" % [
 				marker,
 				enemy.id,
 				enemy.tier,
+				tr("ui.label.hp"),
 				enemy.max_hp,
 				_join_string_array(enemy.intent_sequence),
 			]
@@ -981,7 +982,7 @@ func _add_reward_inspector_reward_row(reward_index: int) -> void:
 			for card_index in range(card_ids.size()):
 				var button := Button.new()
 				button.name = "RewardInspectorClaimCard_%s_%s" % [reward_index, card_index]
-				button.text = "Claim %s" % String(card_ids[card_index])
+				button.text = tr("ui.dev_tools.claim_item").format({"item": String(card_ids[card_index])})
 				UiStyle.apply_secondary_button(button)
 				var selected_reward_index := reward_index
 				var selected_card_index := card_index
@@ -991,7 +992,7 @@ func _add_reward_inspector_reward_row(reward_index: int) -> void:
 		"gold":
 			var gold_button := Button.new()
 			gold_button.name = "RewardInspectorClaimGold_%s" % reward_index
-			gold_button.text = "Claim %s gold" % int(reward.get("amount", 0))
+			gold_button.text = tr("ui.dev_tools.claim_gold").format({"amount": int(reward.get("amount", 0))})
 			UiStyle.apply_secondary_button(gold_button)
 			var selected_gold_reward_index := reward_index
 			gold_button.pressed.connect(func(): claim_reward_inspector_gold(selected_gold_reward_index))
@@ -1019,7 +1020,7 @@ func _add_reward_inspector_reward_row(reward_index: int) -> void:
 func _reward_inspector_skip_button(reward_index: int) -> Button:
 	var button := Button.new()
 	button.name = "RewardInspectorSkip_%s" % reward_index
-	button.text = "Skip"
+	button.text = tr("ui.reward.skip")
 	UiStyle.apply_secondary_button(button)
 	var selected_reward_index := reward_index
 	button.pressed.connect(func(): skip_reward_inspector_reward(selected_reward_index))
