@@ -34,6 +34,9 @@ msgstr "生命不足"
 msgid "ui.event.need_gold"
 msgstr "金币不足"
 
+msgid "ui.event.need_card"
+msgstr "缺少所需卡牌"
+
 msgid "character.sword.name"
 msgstr "剑修"
 

@@ -24,7 +24,7 @@ func unavailable_reason(run: RunState, option: EventOptionDef) -> String:
 	if run.gold < option.min_gold:
 		return "ui.event.need_gold"
 	if not option.remove_card_id.is_empty() and not run.deck_ids.has(option.remove_card_id):
-		return "Requires card %s" % option.remove_card_id
+		return "ui.event.need_card"
 	return ""
 
 func apply_option(run: RunState, option: EventOptionDef) -> bool:

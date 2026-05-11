@@ -96,8 +96,10 @@ func test_runner_remove_card_option_unavailable_when_card_missing() -> bool:
 	var applied := runner.apply_event_option(_catalog(), run, _event("test_event", option), option)
 	var passed: bool = not available \
 		and not applied \
-		and reason.contains("Requires card") \
+		and reason == "ui.event.need_card" \
 		and run.deck_ids == ["sword.guard"]
+	if not passed:
+		push_error("Expected unavailable reason ui.event.need_card, got %s" % reason)
 	assert(passed)
 	return passed
 

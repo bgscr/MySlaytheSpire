@@ -34,6 +34,9 @@ msgstr "Need more HP"
 msgid "ui.event.need_gold"
 msgstr "Need more gold"
 
+msgid "ui.event.need_card"
+msgstr "Required card missing"
+
 msgid "character.sword.name"
 msgstr "Sword Cultivator"
 
