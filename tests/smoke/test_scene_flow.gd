@@ -6,6 +6,7 @@ const DevToolsScene := preload("res://scenes/dev/DevToolsScreen.tscn")
 const CardDefScript := preload("res://scripts/data/card_def.gd")
 const ContentCatalogScript := preload("res://scripts/content/content_catalog.gd")
 const EventResolverScript := preload("res://scripts/event/event_resolver.gd")
+const ItemDetailPanel := preload("res://scripts/ui/item_detail_panel.gd")
 const MapNodeStateScript := preload("res://scripts/run/map_node_state.gd")
 const RunStateScript := preload("res://scripts/run/run_state.gd")
 const SaveServiceScript := preload("res://scripts/save/save_service.gd")
@@ -254,6 +255,65 @@ func test_combat_screen_renders_card_thumbnail_children(tree: SceneTree) -> bool
 		and card.text.is_empty()
 	app.free()
 	_delete_test_save("user://test_card_thumbnail_children_save.json")
+	return passed
+
+func test_combat_card_hover_shows_and_hides_detail_panel(tree: SceneTree) -> bool:
+	var save_path := "user://test_combat_card_detail_save.json"
+	var app = _create_app_with_save_service(tree, save_path)
+	app.game.set_debug_combat_sandbox_config({
+		"character_id": "sword",
+		"deck_ids": ["sword.strike"],
+		"enemy_ids": ["training_puppet"],
+		"seed_value": 301,
+	})
+	var combat = app.game.router.go_to(SceneRouterScript.COMBAT)
+	combat.session.state.hand.clear()
+	combat.session.state.hand.append("sword.strike")
+	combat.session.state.draw_pile.clear()
+	combat._refresh()
+	var card_button := _find_node_by_name(combat, "CardButton_0") as Button
+	if card_button != null:
+		card_button.mouse_entered.emit()
+	var detail := _find_node_by_name(combat, "ItemDetailPanel") as ItemDetailPanel
+	var visible_after_hover: bool = detail != null and detail.visible and detail.get_meta("item_kind") == "card"
+	if card_button != null:
+		card_button.mouse_exited.emit()
+	var hidden_after_exit: bool = detail != null and not detail.visible
+	var passed: bool = card_button != null \
+		and _find_node_by_name(combat, "CardVisualRoot_0") != null \
+		and visible_after_hover \
+		and hidden_after_exit
+	app.free()
+	_delete_test_save(save_path)
+	return passed
+
+func test_combat_card_detail_hides_on_refresh(tree: SceneTree) -> bool:
+	var save_path := "user://test_combat_card_detail_refresh_save.json"
+	var app = _create_app_with_save_service(tree, save_path)
+	app.game.set_debug_combat_sandbox_config({
+		"character_id": "sword",
+		"deck_ids": ["sword.strike"],
+		"enemy_ids": ["training_puppet"],
+		"seed_value": 302,
+	})
+	var combat = app.game.router.go_to(SceneRouterScript.COMBAT)
+	combat.session.state.hand.clear()
+	combat.session.state.hand.append("sword.strike")
+	combat.session.state.draw_pile.clear()
+	combat._refresh()
+	var card_button := _find_node_by_name(combat, "CardButton_0") as Button
+	if card_button != null:
+		card_button.mouse_entered.emit()
+	var detail := _find_node_by_name(combat, "ItemDetailPanel") as ItemDetailPanel
+	var visible_after_hover: bool = detail != null and detail.visible and detail.get_meta("item_kind") == "card"
+	combat._refresh()
+	detail = _find_node_by_name(combat, "ItemDetailPanel") as ItemDetailPanel
+	var hidden_after_refresh: bool = detail != null and not detail.visible
+	var passed: bool = card_button != null \
+		and visible_after_hover \
+		and hidden_after_refresh
+	app.free()
+	_delete_test_save(save_path)
 	return passed
 
 func test_combat_screen_renders_normal_enemy_portrait(tree: SceneTree) -> bool:
@@ -790,13 +850,66 @@ func test_dev_tools_reward_inspector_node_type_selection_refreshes_rewards(tree:
 	if node_select != null:
 		node_select.select(2)
 		node_select.item_selected.emit(2)
+	var seed_spin := _find_node_by_name(screen, "RewardInspectorSeedSpinBox") as SpinBox
+	if seed_spin != null:
+		seed_spin.value = 222
+		seed_spin.value_changed.emit(222.0)
 	var summary := _find_node_by_name(screen, "RewardInspectorRunSummaryLabel") as Label
-	var relic_button := _find_node_by_name(screen, "RewardInspectorClaimRelic_2") as Button
-	var passed: bool = node_select != null \
-		and summary != null \
+	var summary_matches_selection: bool = summary != null \
 		and summary.text.contains("node_type: boss") \
-		and summary.text.contains("resolved: 0/3") \
-		and relic_button != null
+		and summary.text.contains("seed: 222") \
+		and summary.text.contains("resolved: 0/3")
+	var reward_list := _find_node_by_name(screen, "RewardInspectorRewardList") as VBoxContainer
+	var relic_button: Button = null
+	if reward_list != null:
+		relic_button = reward_list.get_node_or_null("RewardInspectorReward_2/RewardInspectorClaimRelic_2") as Button
+	var relic_preview: Control = null
+	var relic_icon: TextureRect = null
+	if relic_button != null:
+		relic_preview = relic_button.get_node_or_null("RewardInspectorRelicVisual_2") as Control
+		relic_icon = relic_button.get_node_or_null("RewardInspectorRelicVisual_2/RewardInspectorRelicIcon_2") as TextureRect
+	var relic_preview_present: bool = relic_preview != null \
+		and relic_preview.mouse_filter == Control.MOUSE_FILTER_IGNORE \
+		and relic_icon != null \
+		and relic_icon.texture != null
+	if relic_button != null:
+		relic_button.mouse_entered.emit()
+	var reward_inspector_detail := _find_node_by_name(screen, "RewardInspectorDetailPanel") as ItemDetailPanel
+	var reward_inspector_detail_visible: bool = reward_inspector_detail != null \
+		and reward_inspector_detail.visible \
+		and reward_inspector_detail.get_meta("item_kind") == "relic"
+	var reset := _find_node_by_name(screen, "RewardInspectorResetButton") as Button
+	if reset != null:
+		reset.pressed.emit()
+	reward_inspector_detail = _find_node_by_name(screen, "RewardInspectorDetailPanel") as ItemDetailPanel
+	var reward_inspector_detail_hidden_after_reset: bool = reward_inspector_detail != null \
+		and not reward_inspector_detail.visible
+	reward_list = _find_node_by_name(screen, "RewardInspectorRewardList") as VBoxContainer
+	relic_button = null
+	if reward_list != null:
+		relic_button = reward_list.get_node_or_null("RewardInspectorReward_2/RewardInspectorClaimRelic_2") as Button
+	if relic_button != null:
+		relic_button.mouse_entered.emit()
+	reward_inspector_detail = _find_node_by_name(screen, "RewardInspectorDetailPanel") as ItemDetailPanel
+	var reward_inspector_detail_visible_after_reset_hover: bool = reward_inspector_detail != null \
+		and reward_inspector_detail.visible \
+		and reward_inspector_detail.get_meta("item_kind") == "relic"
+	if relic_button != null:
+		relic_button.pressed.emit()
+	reward_inspector_detail = _find_node_by_name(screen, "RewardInspectorDetailPanel") as ItemDetailPanel
+	var reward_inspector_detail_hidden_after_claim: bool = reward_inspector_detail != null \
+		and not reward_inspector_detail.visible
+	var passed: bool = node_select != null \
+		and seed_spin != null \
+		and reward_list != null \
+		and summary_matches_selection \
+		and relic_button != null \
+		and relic_preview_present \
+		and reward_inspector_detail_visible \
+		and reset != null \
+		and reward_inspector_detail_hidden_after_reset \
+		and reward_inspector_detail_visible_after_reset_hover \
+		and reward_inspector_detail_hidden_after_claim
 	screen.free()
 	return passed
 
@@ -1375,6 +1488,13 @@ func test_reward_screen_claims_card_skips_gold_and_saves_on_continue(tree: Scene
 	var preview := _find_node_by_name(reward_screen, "RewardCardVisual_0_0") as VBoxContainer
 	var thumbnail := _find_node_by_name(reward_screen, "RewardCardThumbnail_0_0") as TextureRect
 	var preview_text := _find_node_by_name(reward_screen, "RewardCardText_0_0") as Label
+	if card_button != null:
+		card_button.mouse_entered.emit()
+	var card_detail := _find_node_by_name(reward_screen, "ItemDetailPanel") as ItemDetailPanel
+	var card_detail_visible: bool = card_detail != null and card_detail.visible and card_detail.get_meta("item_kind") == "card"
+	if card_button != null:
+		card_button.mouse_exited.emit()
+	var card_detail_hidden: bool = card_detail != null and not card_detail.visible
 	var disabled_before: bool = continue_button != null and continue_button.disabled
 	if card_button != null:
 		card_button.pressed.emit()
@@ -1405,6 +1525,8 @@ func test_reward_screen_claims_card_skips_gold_and_saves_on_continue(tree: Scene
 		and thumbnail.mouse_filter == Control.MOUSE_FILTER_IGNORE \
 		and preview_text != null \
 		and preview_text.text.contains("sword.") \
+		and card_detail_visible \
+		and card_detail_hidden \
 		and still_disabled_after_card \
 		and enabled_after_all_resolved \
 		and disabled_after_continue \
@@ -1436,10 +1558,22 @@ func test_reward_screen_can_claim_boss_relic_and_skip_remaining_rewards(tree: Sc
 	if skip_gold != null:
 		skip_gold.pressed.emit()
 	claim_relic = _find_node_by_name(reward_screen, "ClaimRelic_2") as Button
+	var relic_preview := _find_node_by_name(reward_screen, "RewardRelicVisual_2") as VBoxContainer
+	var relic_icon := _find_node_by_name(reward_screen, "RewardRelicIcon_2") as TextureRect
+	if claim_relic != null:
+		claim_relic.mouse_entered.emit()
+	var relic_detail := _find_node_by_name(reward_screen, "ItemDetailPanel") as ItemDetailPanel
+	var relic_detail_visible: bool = relic_detail != null and relic_detail.visible and relic_detail.get_meta("item_kind") == "relic"
+	if claim_relic != null:
+		claim_relic.mouse_exited.emit()
 	if claim_relic != null:
 		claim_relic.pressed.emit()
 	var continue_button := _find_node_by_name(reward_screen, "ContinueButton") as Button
 	var passed: bool = claim_relic != null \
+		and relic_preview != null \
+		and relic_icon != null \
+		and relic_icon.texture != null \
+		and relic_detail_visible \
 		and run.relic_ids.size() == 1 \
 		and not run.relic_ids[0].is_empty() \
 		and continue_button != null \
@@ -1518,13 +1652,45 @@ func test_event_screen_renders_direct_card_option_previews(tree: SceneTree) -> b
 	var option_button := _find_node_by_prefix(event_screen, "EventOption_") as Button
 	var loaded_before = app.game.save_service.load_run()
 	if option_button != null and not option_button.disabled:
+		option_button.mouse_entered.emit()
+	var detail := _find_node_by_name(event_screen, "ItemDetailPanel") as ItemDetailPanel
+	var detail_visible: bool = detail != null and detail.visible and detail.get_meta("item_kind") == "card"
+	if option_button != null and not option_button.disabled:
+		option_button.mouse_exited.emit()
 		option_button.pressed.emit()
 	var passed: bool = preview != null \
 		and preview.mouse_filter == Control.MOUSE_FILTER_IGNORE \
 		and thumbnail != null \
 		and thumbnail.texture != null \
+		and detail_visible \
 		and loaded_before == null \
 		and app.game.router.current_scene != null
+	app.free()
+	_delete_test_save(save_path)
+	return passed
+
+func test_event_screen_renders_direct_relic_option_previews(tree: SceneTree) -> bool:
+	var save_path := "user://test_event_relic_preview_save.json"
+	var app = _create_app_with_save_service(tree, save_path)
+	var run := _reward_run("event", true)
+	run.seed_value = _seed_for_event_with_relic_preview_option()
+	run.current_hp = 40
+	run.max_hp = 40
+	run.gold = 80
+	app.game.current_run = run
+	var event_screen = app.game.router.go_to(SceneRouterScript.EVENT)
+	var preview := _find_node_by_prefix(event_screen, "EventOptionRelicVisual_") as VBoxContainer
+	var icon := _find_node_by_prefix(event_screen, "EventOptionRelicIcon_") as TextureRect
+	var option_button := _find_node_by_prefix(event_screen, "EventOption_") as Button
+	if option_button != null:
+		option_button.mouse_entered.emit()
+	var detail := _find_node_by_name(event_screen, "ItemDetailPanel") as ItemDetailPanel
+	var detail_visible: bool = detail != null and detail.visible and detail.get_meta("item_kind") == "relic"
+	var passed: bool = preview != null \
+		and preview.mouse_filter == Control.MOUSE_FILTER_IGNORE \
+		and icon != null \
+		and icon.texture != null \
+		and detail_visible
 	app.free()
 	_delete_test_save(save_path)
 	return passed
@@ -1608,6 +1774,12 @@ func test_shop_screen_buy_card_saves_immediately(tree: SceneTree) -> bool:
 	var offer_thumbnail := _find_node_by_name(shop_screen, "ShopOfferCardThumbnail_card_0") as TextureRect
 	var deck_size_before := run.deck_ids.size()
 	if card_button != null:
+		card_button.mouse_entered.emit()
+	var card_detail := _find_node_by_name(shop_screen, "ItemDetailPanel") as ItemDetailPanel
+	var card_detail_visible: bool = card_detail != null and card_detail.visible and card_detail.get_meta("item_kind") == "card"
+	if card_button != null:
+		card_button.mouse_exited.emit()
+	if card_button != null:
 		card_button.pressed.emit()
 	var loaded_run = app.game.save_service.load_run()
 	var passed: bool = card_button != null \
@@ -1615,6 +1787,7 @@ func test_shop_screen_buy_card_saves_immediately(tree: SceneTree) -> bool:
 		and offer_preview.mouse_filter == Control.MOUSE_FILTER_IGNORE \
 		and offer_thumbnail != null \
 		and offer_thumbnail.texture != null \
+		and card_detail_visible \
 		and loaded_run != null \
 		and loaded_run.deck_ids.size() == deck_size_before + 1 \
 		and not loaded_run.current_shop_state.is_empty() \
@@ -1631,10 +1804,22 @@ func test_shop_screen_buy_relic_saves_immediately(tree: SceneTree) -> bool:
 	app.game.current_run = run
 	var shop_screen = app.game.router.go_to(SceneRouterScript.SHOP)
 	var relic_button := _first_button_with_prefix(shop_screen, "BuyOffer_relic_")
+	var relic_preview := _find_node_by_prefix(shop_screen, "ShopOfferRelicVisual_") as VBoxContainer
+	var relic_icon := _find_node_by_prefix(shop_screen, "ShopOfferRelicIcon_") as TextureRect
+	if relic_button != null:
+		relic_button.mouse_entered.emit()
+	var relic_detail := _find_node_by_name(shop_screen, "ItemDetailPanel") as ItemDetailPanel
+	var relic_detail_visible: bool = relic_detail != null and relic_detail.visible and relic_detail.get_meta("item_kind") == "relic"
+	if relic_button != null:
+		relic_button.mouse_exited.emit()
 	if relic_button != null:
 		relic_button.pressed.emit()
 	var loaded_run = app.game.save_service.load_run()
 	var passed: bool = relic_button != null \
+		and relic_preview != null \
+		and relic_icon != null \
+		and relic_icon.texture != null \
+		and relic_detail_visible \
 		and loaded_run != null \
 		and loaded_run.relic_ids.size() == 1 \
 		and not loaded_run.relic_ids[0].is_empty() \
@@ -1681,6 +1866,12 @@ func test_shop_screen_remove_card_and_heal_services_sell_out(tree: SceneTree) ->
 	var remove_preview := _find_node_by_name(app.game.router.current_scene, "ShopRemoveCardVisual_0") as VBoxContainer
 	var remove_thumbnail := _find_node_by_name(app.game.router.current_scene, "ShopRemoveCardThumbnail_0") as TextureRect
 	if remove_card != null:
+		remove_card.mouse_entered.emit()
+	var remove_detail := _find_node_by_name(app.game.router.current_scene, "ItemDetailPanel") as ItemDetailPanel
+	var remove_detail_visible: bool = remove_detail != null and remove_detail.visible and remove_detail.get_meta("item_kind") == "card"
+	if remove_card != null:
+		remove_card.mouse_exited.emit()
+	if remove_card != null:
 		remove_card.pressed.emit()
 	var loaded_run = app.game.save_service.load_run()
 	var passed: bool = loaded_run != null \
@@ -1692,6 +1883,7 @@ func test_shop_screen_remove_card_and_heal_services_sell_out(tree: SceneTree) ->
 		and remove_preview.custom_minimum_size.y >= 86.0 \
 		and remove_thumbnail != null \
 		and remove_thumbnail.texture != null \
+		and remove_detail_visible \
 		and loaded_run.current_hp > 40 \
 		and loaded_run.deck_ids.size() == 2 \
 		and _offer_sold(loaded_run.current_shop_state, "heal_0") \
@@ -1948,6 +2140,23 @@ func _seed_for_event_with_card_preview_option() -> int:
 		for option in event.options:
 			if not option.grant_card_ids.is_empty() or not option.remove_card_id.is_empty():
 				return seed_value
+	return 1
+
+func _seed_for_event_with_relic_preview_option() -> int:
+	for seed in range(1, 200):
+		var run := _reward_run("event", true)
+		run.seed_value = seed
+		run.current_hp = 40
+		run.max_hp = 40
+		run.gold = 80
+		var catalog := ContentCatalogScript.new()
+		catalog.load_default()
+		var event = EventResolverScript.new().resolve(catalog, run)
+		if event == null:
+			continue
+		for option in event.options:
+			if not option.grant_relic_ids.is_empty():
+				return seed
 	return 1
 
 func _first_button_with_prefix(root: Node, prefix: String) -> Button:

@@ -1,11 +1,12 @@
 extends Control
 
 const ContentCatalog := preload("res://scripts/content/content_catalog.gd")
-const CardVisualPresenter := preload("res://scripts/ui/card_visual_presenter.gd")
 const CombatVisualResolver := preload("res://scripts/presentation/combat_visual_resolver.gd")
 const EventDef := preload("res://scripts/data/event_def.gd")
 const EventResolver := preload("res://scripts/event/event_resolver.gd")
 const EventRunner := preload("res://scripts/event/event_runner.gd")
+const ItemDetailPanel := preload("res://scripts/ui/item_detail_panel.gd")
+const ItemVisualPresenter := preload("res://scripts/ui/item_visual_presenter.gd")
 const RunProgression := preload("res://scripts/run/run_progression.gd")
 const SceneRouterScript := preload("res://scripts/app/scene_router.gd")
 
@@ -15,6 +16,7 @@ var runner := EventRunner.new()
 var title_label: Label
 var body_label: Label
 var option_container: VBoxContainer
+var item_detail_panel: ItemDetailPanel
 var advance_requested := false
 
 func _ready() -> void:
@@ -38,6 +40,10 @@ func _build_layout() -> void:
 	option_container.size = Vector2(620, 360)
 	add_child(option_container)
 
+	item_detail_panel = ItemDetailPanel.new()
+	item_detail_panel.position = Vector2(660, 96)
+	add_child(item_detail_panel)
+
 func _load_event() -> void:
 	catalog = ContentCatalog.new()
 	catalog.load_default()
@@ -48,6 +54,7 @@ func _load_event() -> void:
 	current_event = EventResolver.new().resolve(catalog, app.game.current_run)
 
 func _render() -> void:
+	_hide_item_detail()
 	_clear_children(option_container)
 	if current_event == null:
 		title_label.text = "Event"
@@ -78,35 +85,25 @@ func _add_option_button(index: int) -> void:
 	button.disabled = not runner.is_option_available(run, option)
 	button.pressed.connect(func(): _on_option_pressed(index))
 	option_container.add_child(button)
-	_add_option_card_previews(index)
+	_connect_option_detail(button, option)
+	_add_option_item_previews(index)
 
-func _add_option_card_previews(index: int) -> void:
+func _add_option_item_previews(index: int) -> void:
 	if current_event == null or index < 0 or index >= current_event.options.size():
 		return
 	var option = current_event.options[index]
 	var row := HBoxContainer.new()
-	row.name = "EventOptionCardPreviewRow_%s" % index
+	row.name = "EventOptionItemPreviewRow_%s" % index
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var preview_count := 0
 	for card_id in option.grant_card_ids:
-		CardVisualPresenter.add_card_preview(
-			row,
-			"EventOptionCard",
-			"%s_%s" % [index, preview_count],
-			card_id,
-			catalog,
-			_visual_theme()
-		)
+		ItemVisualPresenter.add_card_preview(row, "EventOption", "%s_%s" % [index, preview_count], card_id, catalog, _visual_theme())
 		preview_count += 1
 	if not option.remove_card_id.is_empty():
-		CardVisualPresenter.add_card_preview(
-			row,
-			"EventOptionCard",
-			"%s_%s" % [index, preview_count],
-			option.remove_card_id,
-			catalog,
-			_visual_theme()
-		)
+		ItemVisualPresenter.add_card_preview(row, "EventOption", "%s_%s" % [index, preview_count], option.remove_card_id, catalog, _visual_theme())
+		preview_count += 1
+	for relic_id in option.grant_relic_ids:
+		ItemVisualPresenter.add_relic_preview(row, "EventOption", "%s_%s" % [index, preview_count], relic_id, catalog)
 		preview_count += 1
 	if preview_count == 0:
 		row.free()
@@ -119,6 +116,38 @@ func _visual_theme() -> Dictionary:
 	if run == null or catalog == null:
 		return {}
 	return CombatVisualResolver.new().resolve_theme(run.character_id, catalog)
+
+func _connect_option_detail(button: Button, option) -> void:
+	if not option.grant_card_ids.is_empty():
+		var card_id := String(option.grant_card_ids[0])
+		button.mouse_entered.connect(func(): _show_card_detail(card_id))
+		button.mouse_exited.connect(_hide_item_detail)
+		button.focus_entered.connect(func(): _show_card_detail(card_id))
+		button.focus_exited.connect(_hide_item_detail)
+	elif not option.remove_card_id.is_empty():
+		var remove_card_id := String(option.remove_card_id)
+		button.mouse_entered.connect(func(): _show_card_detail(remove_card_id))
+		button.mouse_exited.connect(_hide_item_detail)
+		button.focus_entered.connect(func(): _show_card_detail(remove_card_id))
+		button.focus_exited.connect(_hide_item_detail)
+	elif not option.grant_relic_ids.is_empty():
+		var relic_id := String(option.grant_relic_ids[0])
+		button.mouse_entered.connect(func(): _show_relic_detail(relic_id))
+		button.mouse_exited.connect(_hide_item_detail)
+		button.focus_entered.connect(func(): _show_relic_detail(relic_id))
+		button.focus_exited.connect(_hide_item_detail)
+
+func _show_card_detail(card_id: String) -> void:
+	if item_detail_panel != null:
+		item_detail_panel.show_card(card_id, catalog, _visual_theme())
+
+func _show_relic_detail(relic_id: String) -> void:
+	if item_detail_panel != null:
+		item_detail_panel.show_relic(relic_id, catalog)
+
+func _hide_item_detail() -> void:
+	if item_detail_panel != null:
+		item_detail_panel.hide_detail()
 
 func _on_option_pressed(index: int) -> void:
 	if advance_requested or current_event == null or index < 0 or index >= current_event.options.size():

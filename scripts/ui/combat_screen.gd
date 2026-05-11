@@ -11,6 +11,8 @@ const CombatPresentationQueue := preload("res://scripts/presentation/combat_pres
 const CombatVisualResolver := preload("res://scripts/presentation/combat_visual_resolver.gd")
 const ContentCatalog := preload("res://scripts/content/content_catalog.gd")
 const EnemyIntentDisplayResolver := preload("res://scripts/presentation/enemy_intent_display_resolver.gd")
+const ItemDetailPanel := preload("res://scripts/ui/item_detail_panel.gd")
+const ItemVisualPresenter := preload("res://scripts/ui/item_visual_presenter.gd")
 const SceneRouterScript := preload("res://scripts/app/scene_router.gd")
 
 var session: CombatSession
@@ -26,6 +28,7 @@ var presentation_layer: CombatPresentationLayer
 var combat_background_layer: Control
 var combat_background_texture: TextureRect
 var combat_background_dimmer: ColorRect
+var item_detail_panel: ItemDetailPanel
 var is_sandbox := false
 var enemy_buttons: Array[Button] = []
 var card_buttons: Array[Button] = []
@@ -112,6 +115,10 @@ func _build_layout() -> void:
 	presentation_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(presentation_layer)
 
+	item_detail_panel = ItemDetailPanel.new()
+	item_detail_panel.position = Vector2(720, 88)
+	add_child(item_detail_panel)
+
 func _build_background_layer() -> void:
 	combat_background_layer = Control.new()
 	combat_background_layer.name = "CombatBackgroundLayer"
@@ -175,6 +182,7 @@ func _start_session() -> void:
 func _refresh() -> void:
 	if session == null:
 		return
+	_hide_item_detail()
 	status_label.text = _player_status_text()
 	pile_label.text = "Draw %s | Discard %s | Exhaust %s | Phase %s" % [
 		session.state.draw_pile.size(),
@@ -361,6 +369,8 @@ func _refresh_hand() -> void:
 		button.pressed.connect(func(): _on_card_pressed(hand_index))
 		button.mouse_entered.connect(func(): _on_card_hovered(hand_index))
 		button.mouse_exited.connect(func(): _on_card_unhovered(hand_index))
+		button.focus_entered.connect(func(): _show_card_detail(hand_index))
+		button.focus_exited.connect(_hide_item_detail)
 		button.gui_input.connect(func(event): _on_card_gui_input(event, hand_index, button))
 		_add_card_visual(button, hand_index, card)
 		hand_container.add_child(button)
@@ -368,48 +378,25 @@ func _refresh_hand() -> void:
 		if presentation_layer != null:
 			presentation_layer.bind_target("card:%s" % hand_index, button)
 
-func _add_card_visual(button: Button, hand_index: int, card) -> void:
+func _add_card_visual(button: Button, hand_index: int, _card) -> void:
 	var card_id := session.state.hand[hand_index]
-	var visual := combat_visual_resolver.resolve_card_visual(card_id, session.catalog, visual_theme)
 	button.custom_minimum_size = Vector2(148, 116)
-
-	var root := VBoxContainer.new()
+	var root := ItemVisualPresenter.add_card_preview(button, "", str(hand_index), card_id, session.catalog, visual_theme)
 	root.name = "CardVisualRoot_%s" % hand_index
-	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.set_anchors_preset(Control.PRESET_FULL_RECT)
 	root.offset_left = 6
 	root.offset_top = 6
 	root.offset_right = -6
 	root.offset_bottom = -6
-	button.add_child(root)
 
-	var frame := ColorRect.new()
-	frame.name = "CardFrame_%s" % hand_index
-	frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	frame.custom_minimum_size = Vector2(132, 6)
-	frame.color = visual.get("accent_color", Color.WHITE)
-	root.add_child(frame)
+func _show_card_detail(hand_index: int) -> void:
+	if item_detail_panel == null or session == null or hand_index < 0 or hand_index >= session.state.hand.size():
+		return
+	item_detail_panel.show_card(session.state.hand[hand_index], session.catalog, visual_theme)
 
-	var thumbnail := TextureRect.new()
-	thumbnail.name = "CardThumbnail_%s" % hand_index
-	thumbnail.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	thumbnail.custom_minimum_size = Vector2(132, 58)
-	thumbnail.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	thumbnail.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	var texture_path := String(visual.get("thumbnail_path", ""))
-	thumbnail.texture = load(texture_path) as Texture2D if not texture_path.is_empty() else null
-	root.add_child(thumbnail)
-
-	var label := Label.new()
-	label.name = "CardText_%s" % hand_index
-	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	label.text = _card_visual_text(card_id, card)
-	root.add_child(label)
-
-func _card_visual_text(card_id: String, card) -> String:
-	if card == null:
-		return "%s (?)" % card_id
-	return "%s [%s] (%s)" % [card.id, card.card_type, card.cost]
+func _hide_item_detail() -> void:
+	if item_detail_panel != null:
+		item_detail_panel.hide_detail()
 
 func _clear_children(node: Node) -> void:
 	for child in node.get_children():
@@ -472,9 +459,11 @@ func _card_target_mode(hand_index: int) -> String:
 
 func _on_card_hovered(hand_index: int) -> void:
 	_enqueue_card_event("card_hovered", hand_index)
+	_show_card_detail(hand_index)
 
 func _on_card_unhovered(hand_index: int) -> void:
 	_enqueue_card_event("card_unhovered", hand_index)
+	_hide_item_detail()
 
 func _on_card_gui_input(event: InputEvent, hand_index: int, button: Button) -> void:
 	if presentation_config != null and not presentation_config.drag_enabled:

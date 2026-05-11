@@ -71,8 +71,9 @@ $env:GODOT4="C:\Tools\Godot\Godot_v4.6.2-stable_win64_console.exe"
 - Broader card art rendering: complete; reward choices, shop card offers, shop removal choices, and direct card-grant/removal event options now render catalog-backed card previews outside combat.
 - Audio mixing foundation: complete; debug builds now ensure Master, Music, SFX, and UI buses, route combat audio cues through SFX, and expose in-memory debug volume sliders for all four buses.
 - Polished per-card art replacement: complete; all 40 default cards now point to unique project-owned thumbnail art while combat, reward, shop, and event previews continue using the existing visual pipeline.
+- Reusable item preview and detail presentation: complete; card and relic previews now share a bounded presenter/detail system, all 20 default relics have project-owned icons, and existing combat, reward, shop, event, and scoped DevTools interactions remain unchanged.
 
 ## Next Plans
 
-1. Presentation expansion: full-size card artwork, card detail panels, relic visuals, and other optional polish.
+1. Presentation expansion: true full-size card artwork, richer relic collection views, and other optional polish.
 2. Release expansion: artifact packaging, checksums, version bump automation, signed builds, and eventual Steam adapter implementation.

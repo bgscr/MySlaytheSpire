@@ -2,6 +2,8 @@ extends RefCounted
 
 const CombatVisualResolver := preload("res://scripts/presentation/combat_visual_resolver.gd")
 const CardVisualPresenter := preload("res://scripts/ui/card_visual_presenter.gd")
+const ItemVisualPresenter := preload("res://scripts/ui/item_visual_presenter.gd")
+const ItemDetailPanel := preload("res://scripts/ui/item_detail_panel.gd")
 const ContentCatalog := preload("res://scripts/content/content_catalog.gd")
 
 func test_resolver_resolves_distinct_character_themes() -> bool:
@@ -170,5 +172,158 @@ func test_card_visual_presenter_uses_distinct_suffixes_for_duplicate_cards() -> 
 		and first.get_meta("card_id") == "sword.strike" \
 		and second.get_meta("card_id") == "sword.strike"
 	parent.free()
+	assert(passed)
+	return passed
+
+func test_item_visual_presenter_creates_known_card_preview() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.load_default()
+	var theme := CombatVisualResolver.new().resolve_theme("sword", catalog)
+	var parent := VBoxContainer.new()
+	var root := ItemVisualPresenter.add_card_preview(parent, "Reward", "0_0", "sword.strike", catalog, theme)
+	var thumbnail := parent.get_node_or_null("RewardCardVisual_0_0/RewardCardThumbnail_0_0") as TextureRect
+	var passed: bool = root != null \
+		and root.name == "RewardCardVisual_0_0" \
+		and root.get_meta("item_kind") == "card" \
+		and root.get_meta("item_id") == "sword.strike" \
+		and thumbnail != null \
+		and thumbnail.texture != null \
+		and thumbnail.mouse_filter == Control.MOUSE_FILTER_IGNORE
+	parent.free()
+	assert(passed)
+	return passed
+
+func test_item_visual_presenter_creates_known_relic_preview() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.load_default()
+	var parent := VBoxContainer.new()
+	var root := ItemVisualPresenter.add_relic_preview(parent, "Reward", "2", "jade_talisman", catalog)
+	var icon := parent.get_node_or_null("RewardRelicVisual_2/RewardRelicIcon_2") as TextureRect
+	var text := parent.get_node_or_null("RewardRelicVisual_2/RewardRelicText_2") as Label
+	var passed: bool = root != null \
+		and root.name == "RewardRelicVisual_2" \
+		and root.get_meta("item_kind") == "relic" \
+		and root.get_meta("item_id") == "jade_talisman" \
+		and root.get_meta("is_known") == true \
+		and icon != null \
+		and icon.texture != null \
+		and icon.mouse_filter == Control.MOUSE_FILTER_IGNORE \
+		and icon.get_meta("relic_id") == "jade_talisman" \
+		and text != null \
+		and text.text.contains("jade_talisman")
+	parent.free()
+	assert(passed)
+	return passed
+
+func test_item_visual_presenter_falls_back_for_missing_relic() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.load_default()
+	var parent := VBoxContainer.new()
+	ItemVisualPresenter.add_relic_preview(parent, "Reward", "missing", "missing_relic", catalog)
+	var icon := parent.get_node_or_null("RewardRelicVisual_missing/RewardRelicIcon_missing") as TextureRect
+	var text := parent.get_node_or_null("RewardRelicVisual_missing/RewardRelicText_missing") as Label
+	var passed: bool = icon != null \
+		and icon.texture != null \
+		and icon.get_meta("relic_id") == "missing_relic" \
+		and icon.get_meta("is_known") == false \
+		and text != null \
+		and text.text == "missing_relic (?)"
+	parent.free()
+	assert(passed)
+	return passed
+
+func test_item_visual_presenter_uses_distinct_suffixes_for_duplicate_relics() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.load_default()
+	var parent := VBoxContainer.new()
+	ItemVisualPresenter.add_relic_preview(parent, "ShopOffer", "0", "jade_talisman", catalog)
+	ItemVisualPresenter.add_relic_preview(parent, "ShopOffer", "1", "jade_talisman", catalog)
+	var first := parent.get_node_or_null("ShopOfferRelicVisual_0/ShopOfferRelicIcon_0") as TextureRect
+	var second := parent.get_node_or_null("ShopOfferRelicVisual_1/ShopOfferRelicIcon_1") as TextureRect
+	var passed: bool = first != null \
+		and second != null \
+		and first != second \
+		and first.get_meta("relic_id") == "jade_talisman" \
+		and second.get_meta("relic_id") == "jade_talisman"
+	parent.free()
+	assert(passed)
+	return passed
+
+func test_item_detail_panel_shows_and_hides_card_details() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.load_default()
+	var theme := CombatVisualResolver.new().resolve_theme("sword", catalog)
+	var panel := ItemDetailPanel.new()
+	panel.show_card("sword.strike", catalog, theme)
+	var root := panel.get_node_or_null("ItemDetailRoot") as VBoxContainer
+	var title := panel.get_node_or_null("ItemDetailRoot/ItemDetailTitle") as Label
+	var image := panel.get_node_or_null("ItemDetailRoot/ItemDetailImage") as TextureRect
+	var body := panel.get_node_or_null("ItemDetailRoot/ItemDetailBody") as Label
+	var visible_after_show := panel.visible
+	panel.hide_detail()
+	var passed: bool = visible_after_show \
+		and not panel.visible \
+		and panel.get_meta("item_kind") == "card" \
+		and panel.get_meta("item_id") == "sword.strike" \
+		and root != null \
+		and root.mouse_filter == Control.MOUSE_FILTER_IGNORE \
+		and root.get_child_count() == 3 \
+		and title != null \
+		and title.get_parent() == root \
+		and title.text.contains("sword.strike") \
+		and image != null \
+		and image.get_parent() == root \
+		and image.texture != null \
+		and body != null \
+		and body.get_parent() == root \
+		and body.text.contains("Cost: 1") \
+		and body.text.contains("Effects:")
+	panel.free()
+	assert(passed)
+	return passed
+
+func test_item_detail_panel_shows_and_hides_relic_details() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.load_default()
+	var panel := ItemDetailPanel.new()
+	panel.show_relic("jade_talisman", catalog)
+	var title := panel.get_node_or_null("ItemDetailRoot/ItemDetailTitle") as Label
+	var image := panel.get_node_or_null("ItemDetailRoot/ItemDetailImage") as TextureRect
+	var body := panel.get_node_or_null("ItemDetailRoot/ItemDetailBody") as Label
+	var visible_after_show := panel.visible
+	panel.hide_detail()
+	var passed: bool = visible_after_show \
+		and not panel.visible \
+		and panel.get_meta("item_kind") == "relic" \
+		and panel.get_meta("item_id") == "jade_talisman" \
+		and title != null \
+		and title.text.contains("jade_talisman") \
+		and image != null \
+		and image.texture != null \
+		and body != null \
+		and body.text.contains("Tier: common") \
+		and body.text.contains("Trigger: combat_started")
+	panel.free()
+	assert(passed)
+	return passed
+
+func test_item_detail_panel_falls_back_for_missing_items() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.load_default()
+	var panel := ItemDetailPanel.new()
+	panel.show_relic("missing_relic", catalog)
+	var title := panel.get_node_or_null("ItemDetailRoot/ItemDetailTitle") as Label
+	var image := panel.get_node_or_null("ItemDetailRoot/ItemDetailImage") as TextureRect
+	var body := panel.get_node_or_null("ItemDetailRoot/ItemDetailBody") as Label
+	var passed: bool = panel.visible \
+		and panel.get_meta("item_kind") == "relic" \
+		and panel.get_meta("item_id") == "missing_relic" \
+		and title != null \
+		and title.text == "missing_relic (?)" \
+		and image != null \
+		and image.texture != null \
+		and body != null \
+		and body.text.contains("Unknown relic")
+	panel.free()
 	assert(passed)
 	return passed

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="RelicVisualDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/relic_visual_def.gd" id="1_visual"]
+
+[resource]
+script = ExtResource("1_visual")
+id = "nine_smoke_censer"
+relic_id = "nine_smoke_censer"
+icon_path = "res://assets/presentation/relic_icons/nine_smoke_censer.png"
+frame_style = "uncommon"
+accent_color = Color(0.45, 0.72, 1.0, 1)
+tier_style = "uncommon"
+icon_alt_label = "Nine smoke censer relic icon"

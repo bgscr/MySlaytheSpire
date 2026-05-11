@@ -1,8 +1,9 @@
 extends Control
 
-const CardVisualPresenter := preload("res://scripts/ui/card_visual_presenter.gd")
 const CombatVisualResolver := preload("res://scripts/presentation/combat_visual_resolver.gd")
 const ContentCatalog := preload("res://scripts/content/content_catalog.gd")
+const ItemDetailPanel := preload("res://scripts/ui/item_detail_panel.gd")
+const ItemVisualPresenter := preload("res://scripts/ui/item_visual_presenter.gd")
 const RewardApplier := preload("res://scripts/reward/reward_applier.gd")
 const RewardResolver := preload("res://scripts/reward/reward_resolver.gd")
 const RunProgression := preload("res://scripts/run/run_progression.gd")
@@ -20,6 +21,7 @@ var title_label: Label
 var status_label: Label
 var reward_container: VBoxContainer
 var continue_button: Button
+var item_detail_panel: ItemDetailPanel
 var advance_requested := false
 var reward_applier := RewardApplier.new()
 
@@ -53,6 +55,10 @@ func _build_layout() -> void:
 	continue_button.pressed.connect(_on_continue_pressed)
 	add_child(continue_button)
 
+	item_detail_panel = ItemDetailPanel.new()
+	item_detail_panel.position = Vector2(620, 72)
+	add_child(item_detail_panel)
+
 func _load_rewards() -> void:
 	catalog = ContentCatalog.new()
 	catalog.load_default()
@@ -67,6 +73,7 @@ func _load_rewards() -> void:
 		reward_states.append(STATE_AVAILABLE)
 
 func _render_rewards() -> void:
+	_hide_item_detail()
 	_clear_children(reward_container)
 	if rewards.is_empty():
 		var no_rewards := Label.new()
@@ -107,14 +114,18 @@ func _add_reward_actions(item: VBoxContainer, reward_index: int, reward: Diction
 				button.custom_minimum_size = Vector2(148, 104)
 				button.pressed.connect(func(): _claim_card(reward_index, card_index))
 				var theme := _visual_theme()
-				CardVisualPresenter.add_card_preview(
+				ItemVisualPresenter.add_card_preview(
 					button,
-					"RewardCard",
+					"Reward",
 					"%s_%s" % [reward_index, card_index],
 					card_id,
 					catalog,
 					theme
 				)
+				button.mouse_entered.connect(func(): _show_card_detail(card_id))
+				button.mouse_exited.connect(_hide_item_detail)
+				button.focus_entered.connect(func(): _show_card_detail(card_id))
+				button.focus_exited.connect(_hide_item_detail)
 				item.add_child(button)
 			item.add_child(_skip_button(reward_index))
 		"gold":
@@ -127,7 +138,14 @@ func _add_reward_actions(item: VBoxContainer, reward_index: int, reward: Diction
 		"relic":
 			var relic_button := Button.new()
 			relic_button.name = "ClaimRelic_%s" % reward_index
-			relic_button.text = "Take %s" % _relic_text(String(reward.get("relic_id", "")))
+			relic_button.text = ""
+			relic_button.custom_minimum_size = Vector2(128, 104)
+			var relic_id := String(reward.get("relic_id", ""))
+			ItemVisualPresenter.add_relic_preview(relic_button, "Reward", str(reward_index), relic_id, catalog)
+			relic_button.mouse_entered.connect(func(): _show_relic_detail(relic_id))
+			relic_button.mouse_exited.connect(_hide_item_detail)
+			relic_button.focus_entered.connect(func(): _show_relic_detail(relic_id))
+			relic_button.focus_exited.connect(_hide_item_detail)
 			relic_button.pressed.connect(func(): _claim_relic(reward_index))
 			item.add_child(relic_button)
 			item.add_child(_skip_button(reward_index))
@@ -265,6 +283,18 @@ func _visual_theme() -> Dictionary:
 	if app == null or app.game.current_run == null or catalog == null:
 		return {}
 	return CombatVisualResolver.new().resolve_theme(app.game.current_run.character_id, catalog)
+
+func _show_card_detail(card_id: String) -> void:
+	if item_detail_panel != null:
+		item_detail_panel.show_card(card_id, catalog, _visual_theme())
+
+func _show_relic_detail(relic_id: String) -> void:
+	if item_detail_panel != null:
+		item_detail_panel.show_relic(relic_id, catalog)
+
+func _hide_item_detail() -> void:
+	if item_detail_panel != null:
+		item_detail_panel.hide_detail()
 
 func _clear_children(node: Node) -> void:
 	for child in node.get_children():

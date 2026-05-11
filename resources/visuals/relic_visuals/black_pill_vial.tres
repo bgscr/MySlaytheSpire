@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="RelicVisualDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/relic_visual_def.gd" id="1_visual"]
+
+[resource]
+script = ExtResource("1_visual")
+id = "black_pill_vial"
+relic_id = "black_pill_vial"
+icon_path = "res://assets/presentation/relic_icons/black_pill_vial.png"
+frame_style = "uncommon"
+accent_color = Color(0.45, 0.72, 1.0, 1)
+tier_style = "uncommon"
+icon_alt_label = "Black pill vial relic icon"

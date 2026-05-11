@@ -1,7 +1,8 @@
 extends Control
 
 const ContentCatalog := preload("res://scripts/content/content_catalog.gd")
-const CardVisualPresenter := preload("res://scripts/ui/card_visual_presenter.gd")
+const ItemDetailPanel := preload("res://scripts/ui/item_detail_panel.gd")
+const ItemVisualPresenter := preload("res://scripts/ui/item_visual_presenter.gd")
 const CombatVisualResolver := preload("res://scripts/presentation/combat_visual_resolver.gd")
 const RunProgression := preload("res://scripts/run/run_progression.gd")
 const SceneRouterScript := preload("res://scripts/app/scene_router.gd")
@@ -18,6 +19,7 @@ var offer_container: VBoxContainer
 var removal_container: VBoxContainer
 var refresh_button: Button
 var leave_button: Button
+var item_detail_panel: ItemDetailPanel
 var selected_remove_offer_id := ""
 var leave_requested := false
 
@@ -67,6 +69,10 @@ func _build_layout() -> void:
 	leave_button.pressed.connect(_on_leave_pressed)
 	add_child(leave_button)
 
+	item_detail_panel = ItemDetailPanel.new()
+	item_detail_panel.position = Vector2(1020, 88)
+	add_child(item_detail_panel)
+
 func _load_shop() -> void:
 	catalog = ContentCatalog.new()
 	catalog.load_default()
@@ -78,6 +84,7 @@ func _load_shop() -> void:
 		app.game.save_service.save_run(app.game.current_run)
 
 func _render() -> void:
+	_hide_item_detail()
 	_clear_children(offer_container)
 	_clear_children(removal_container)
 	var app = _app()
@@ -104,15 +111,11 @@ func _add_offer_row(offer: Dictionary) -> void:
 	label.text = _offer_label(offer)
 	item.add_child(label)
 
+	var item_id := String(offer.get("item_id", ""))
 	if String(offer.get("type", "")) == "card":
-		CardVisualPresenter.add_card_preview(
-			item,
-			"ShopOfferCard",
-			offer_id,
-			String(offer.get("item_id", "")),
-			catalog,
-			_visual_theme()
-		)
+		ItemVisualPresenter.add_card_preview(item, "ShopOffer", offer_id, item_id, catalog, _visual_theme())
+	elif String(offer.get("type", "")) == "relic":
+		ItemVisualPresenter.add_relic_preview(item, "ShopOffer", offer_id, item_id, catalog)
 
 	if bool(offer.get("sold", false)):
 		var sold_label := Label.new()
@@ -125,6 +128,7 @@ func _add_offer_row(offer: Dictionary) -> void:
 	button.text = _buy_button_text(offer)
 	button.disabled = not _can_buy_offer(offer)
 	button.pressed.connect(func(): _on_buy_pressed(offer_id))
+	_connect_offer_detail(button, offer)
 	item.add_child(button)
 
 func _offer_label(offer: Dictionary) -> String:
@@ -187,14 +191,18 @@ func _render_removal_choices() -> void:
 		button.name = "RemoveCard_%s" % i
 		button.text = ""
 		button.custom_minimum_size = Vector2(148, 104)
-		CardVisualPresenter.add_card_preview(
+		ItemVisualPresenter.add_card_preview(
 			button,
-			"ShopRemoveCard",
+			"ShopRemove",
 			str(i),
 			card_id,
 			catalog,
 			_visual_theme()
 		)
+		button.mouse_entered.connect(func(): _show_card_detail(card_id))
+		button.mouse_exited.connect(_hide_item_detail)
+		button.focus_entered.connect(func(): _show_card_detail(card_id))
+		button.focus_exited.connect(_hide_item_detail)
 		button.pressed.connect(func(): _on_remove_card_pressed(card_id))
 		removal_container.add_child(button)
 
@@ -265,6 +273,32 @@ func _visual_theme() -> Dictionary:
 	if run == null or catalog == null:
 		return {}
 	return CombatVisualResolver.new().resolve_theme(run.character_id, catalog)
+
+func _connect_offer_detail(button: Button, offer: Dictionary) -> void:
+	var offer_type := String(offer.get("type", ""))
+	var item_id := String(offer.get("item_id", ""))
+	if offer_type == "card":
+		button.mouse_entered.connect(func(): _show_card_detail(item_id))
+		button.mouse_exited.connect(_hide_item_detail)
+		button.focus_entered.connect(func(): _show_card_detail(item_id))
+		button.focus_exited.connect(_hide_item_detail)
+	elif offer_type == "relic":
+		button.mouse_entered.connect(func(): _show_relic_detail(item_id))
+		button.mouse_exited.connect(_hide_item_detail)
+		button.focus_entered.connect(func(): _show_relic_detail(item_id))
+		button.focus_exited.connect(_hide_item_detail)
+
+func _show_card_detail(card_id: String) -> void:
+	if item_detail_panel != null:
+		item_detail_panel.show_card(card_id, catalog, _visual_theme())
+
+func _show_relic_detail(relic_id: String) -> void:
+	if item_detail_panel != null:
+		item_detail_panel.show_relic(relic_id, catalog)
+
+func _hide_item_detail() -> void:
+	if item_detail_panel != null:
+		item_detail_panel.hide_detail()
 
 func _clear_children(node: Node) -> void:
 	for child in node.get_children():

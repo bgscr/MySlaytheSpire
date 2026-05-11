@@ -11,6 +11,7 @@ const EnemyIntentDisplayResolver := preload("res://scripts/presentation/enemy_in
 const EnemyVisualDef := preload("res://scripts/data/enemy_visual_def.gd")
 const EventDef := preload("res://scripts/data/event_def.gd")
 const RelicDef := preload("res://scripts/data/relic_def.gd")
+const RelicVisualDef := preload("res://scripts/data/relic_visual_def.gd")
 const VisualThemeDef := preload("res://scripts/data/visual_theme_def.gd")
 
 const DEFAULT_CARD_PATHS: Array[String] = [
@@ -200,6 +201,29 @@ const DEFAULT_ENEMY_VISUAL_PATHS: Array[String] = [
 	"res://resources/visuals/enemy_visuals/boss_sword_ghost.tres",
 ]
 
+const DEFAULT_RELIC_VISUAL_PATHS: Array[String] = [
+	"res://resources/visuals/relic_visuals/jade_talisman.tres",
+	"res://resources/visuals/relic_visuals/bronze_incense_burner.tres",
+	"res://resources/visuals/relic_visuals/cracked_spirit_coin.tres",
+	"res://resources/visuals/relic_visuals/moonwell_seed.tres",
+	"res://resources/visuals/relic_visuals/thunderseal_charm.tres",
+	"res://resources/visuals/relic_visuals/dragon_bone_flute.tres",
+	"res://resources/visuals/relic_visuals/mist_vein_bracelet.tres",
+	"res://resources/visuals/relic_visuals/verdant_antidote_gourd.tres",
+	"res://resources/visuals/relic_visuals/copper_mantis_hook.tres",
+	"res://resources/visuals/relic_visuals/white_tiger_tally.tres",
+	"res://resources/visuals/relic_visuals/nine_smoke_censer.tres",
+	"res://resources/visuals/relic_visuals/starforged_meridian.tres",
+	"res://resources/visuals/relic_visuals/paper_lantern_charm.tres",
+	"res://resources/visuals/relic_visuals/mothwing_sachet.tres",
+	"res://resources/visuals/relic_visuals/rusted_meridian_ring.tres",
+	"res://resources/visuals/relic_visuals/silk_thread_prayer.tres",
+	"res://resources/visuals/relic_visuals/black_pill_vial.tres",
+	"res://resources/visuals/relic_visuals/cloudstep_sandals.tres",
+	"res://resources/visuals/relic_visuals/immortal_peach_core.tres",
+	"res://resources/visuals/relic_visuals/void_tiger_eye.tres",
+]
+
 var cards_by_id: Dictionary = {}
 var characters_by_id: Dictionary = {}
 var enemies_by_id: Dictionary = {}
@@ -210,9 +234,11 @@ var card_visuals_by_card_id: Dictionary = {}
 var combat_backgrounds_by_id: Dictionary = {}
 var visual_themes_by_character_id: Dictionary = {}
 var enemy_visuals_by_enemy_id: Dictionary = {}
+var relic_visuals_by_relic_id: Dictionary = {}
 var load_errors: Array[String] = []
 var locale_path := "res://localization/zh_CN.po"
 var enemy_fallback_portrait_path := "res://assets/presentation/enemy_portraits/fallback_enemy.png"
+var relic_fallback_icon_path := "res://assets/presentation/relic_icons/fallback_relic.png"
 
 func load_default() -> void:
 	load_from_paths(
@@ -225,7 +251,8 @@ func load_default() -> void:
 		DEFAULT_CARD_VISUAL_PATHS,
 		DEFAULT_COMBAT_BACKGROUND_PATHS,
 		DEFAULT_VISUAL_THEME_PATHS,
-		DEFAULT_ENEMY_VISUAL_PATHS
+		DEFAULT_ENEMY_VISUAL_PATHS,
+		DEFAULT_RELIC_VISUAL_PATHS
 	)
 
 func load_from_paths(
@@ -238,7 +265,8 @@ func load_from_paths(
 	card_visual_paths: Array[String] = [],
 	combat_background_paths: Array[String] = [],
 	visual_theme_paths: Array[String] = [],
-	enemy_visual_paths: Array[String] = []
+	enemy_visual_paths: Array[String] = [],
+	relic_visual_paths: Array[String] = []
 ) -> void:
 	clear()
 	_load_cards(card_paths)
@@ -251,6 +279,7 @@ func load_from_paths(
 	_load_combat_backgrounds(combat_background_paths)
 	_load_visual_themes(visual_theme_paths)
 	_load_enemy_visuals(enemy_visual_paths)
+	_load_relic_visuals(relic_visual_paths)
 
 func clear() -> void:
 	cards_by_id.clear()
@@ -263,6 +292,7 @@ func clear() -> void:
 	combat_backgrounds_by_id.clear()
 	visual_themes_by_character_id.clear()
 	enemy_visuals_by_enemy_id.clear()
+	relic_visuals_by_relic_id.clear()
 	load_errors.clear()
 
 func get_card(card_id: String) -> CardDef:
@@ -276,6 +306,9 @@ func get_enemy(enemy_id: String) -> EnemyDef:
 
 func get_relic(relic_id: String) -> RelicDef:
 	return relics_by_id.get(relic_id) as RelicDef
+
+func get_relic_visual(relic_id: String) -> RelicVisualDef:
+	return relic_visuals_by_relic_id.get(relic_id) as RelicVisualDef
 
 func get_event(event_id: String) -> EventDef:
 	return events_by_id.get(event_id) as EventDef
@@ -475,6 +508,20 @@ func _load_enemy_visuals(paths: Array[String]) -> void:
 			continue
 		enemy_visuals_by_enemy_id[visual.enemy_id] = visual
 
+func _load_relic_visuals(paths: Array[String]) -> void:
+	for path in paths:
+		var visual := load(path) as RelicVisualDef
+		if visual == null:
+			_record_load_error("ContentCatalog expected RelicVisualDef resource: %s" % path)
+			continue
+		if visual.id.is_empty():
+			_record_load_error("ContentCatalog resource has empty id: %s" % path)
+			continue
+		if visual.relic_id.is_empty():
+			_record_load_error("ContentCatalog relic visual has empty relic_id: %s" % path)
+			continue
+		relic_visuals_by_relic_id[visual.relic_id] = visual
+
 func _record_load_error(message: String) -> void:
 	load_errors.append(message)
 
@@ -564,6 +611,11 @@ func _validate_visual_catalog(errors: Array[String]) -> void:
 		else null
 	if fallback_texture == null:
 		errors.append("Enemy visual fallback portrait failed to load %s" % enemy_fallback_portrait_path)
+	var relic_fallback_texture := load(relic_fallback_icon_path) as Texture2D \
+		if not relic_fallback_icon_path.is_empty() and ResourceLoader.exists(relic_fallback_icon_path) \
+		else null
+	if relic_fallback_texture == null:
+		errors.append("Relic visual fallback icon failed to load %s" % relic_fallback_icon_path)
 	for card: CardDef in cards_by_id.values():
 		if not card_visuals_by_card_id.has(card.id):
 			errors.append("Card %s has no card visual" % card.id)
@@ -573,6 +625,9 @@ func _validate_visual_catalog(errors: Array[String]) -> void:
 	for enemy: EnemyDef in enemies_by_id.values():
 		if not enemy_visuals_by_enemy_id.has(enemy.id):
 			errors.append("Enemy %s has no enemy visual" % enemy.id)
+	for relic: RelicDef in relics_by_id.values():
+		if not relic_visuals_by_relic_id.has(relic.id):
+			errors.append("Relic %s has no relic visual" % relic.id)
 	for visual: CardVisualDef in card_visuals_by_card_id.values():
 		_validate_card_visual(visual, errors)
 	for background: CombatBackgroundDef in combat_backgrounds_by_id.values():
@@ -581,6 +636,8 @@ func _validate_visual_catalog(errors: Array[String]) -> void:
 		_validate_visual_theme(theme, errors)
 	for enemy_visual: EnemyVisualDef in enemy_visuals_by_enemy_id.values():
 		_validate_enemy_visual(enemy_visual, errors)
+	for relic_visual: RelicVisualDef in relic_visuals_by_relic_id.values():
+		_validate_relic_visual(relic_visual, errors)
 
 func _validate_card_visual(visual: CardVisualDef, errors: Array[String]) -> void:
 	if visual.card_id.is_empty():
@@ -629,6 +686,20 @@ func _validate_enemy_visual(visual: EnemyVisualDef, errors: Array[String]) -> vo
 			errors.append("Enemy visual %s texture failed to load %s" % [visual.id, visual.portrait_path])
 	if visual.frame_style.is_empty():
 		errors.append("Enemy visual %s has empty frame_style" % visual.id)
+
+func _validate_relic_visual(visual: RelicVisualDef, errors: Array[String]) -> void:
+	if visual.relic_id.is_empty():
+		errors.append("Relic visual %s has empty relic_id" % visual.id)
+	elif not relics_by_id.has(visual.relic_id):
+		errors.append("Relic visual %s references missing relic %s" % [visual.id, visual.relic_id])
+	if visual.icon_path.is_empty():
+		errors.append("Relic visual %s has empty icon_path" % visual.id)
+	else:
+		var texture := load(visual.icon_path) as Texture2D
+		if texture == null:
+			errors.append("Relic visual %s texture failed to load %s" % [visual.id, visual.icon_path])
+	if visual.frame_style.is_empty():
+		errors.append("Relic visual %s has empty frame_style" % visual.id)
 
 func _require_locale_key(key: String, label: String, locale_keys: Dictionary, errors: Array[String]) -> void:
 	if key.is_empty():

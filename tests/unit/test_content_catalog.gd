@@ -9,6 +9,7 @@ const EnemyDef := preload("res://scripts/data/enemy_def.gd")
 const EnemyIntentDisplayDef := preload("res://scripts/data/enemy_intent_display_def.gd")
 const EnemyVisualDef := preload("res://scripts/data/enemy_visual_def.gd")
 const EventDef := preload("res://scripts/data/event_def.gd")
+const RelicVisualDef := preload("res://scripts/data/relic_visual_def.gd")
 const VisualThemeDef := preload("res://scripts/data/visual_theme_def.gd")
 
 func test_default_catalog_loads_existing_resources() -> bool:
@@ -85,6 +86,83 @@ func test_default_catalog_loads_enemy_visual_resources() -> bool:
 	assert(passed)
 	return passed
 
+func test_catalog_loads_relic_visuals_from_explicit_paths() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.load_from_paths(
+		[],
+		[],
+		[],
+		["res://resources/relics/jade_talisman.tres"],
+		[],
+		[],
+		[],
+		[],
+		[],
+		[],
+		["res://resources/visuals/relic_visuals/jade_talisman.tres"]
+	)
+	var visual: RelicVisualDef = catalog.get_relic_visual("jade_talisman")
+	var passed: bool = catalog.relic_visuals_by_relic_id.size() == 1 \
+		and visual != null \
+		and visual.icon_path.ends_with("jade_talisman.png") \
+		and visual.icon_alt_label == "Jade talisman relic icon"
+	assert(passed)
+	return passed
+
+func test_default_catalog_loads_relic_visual_resources() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.load_default()
+	var jade_visual: RelicVisualDef = catalog.get_relic_visual("jade_talisman")
+	var rare_visual: RelicVisualDef = catalog.get_relic_visual("void_tiger_eye")
+	var passed: bool = catalog.relic_visuals_by_relic_id.size() == 20 \
+		and jade_visual != null \
+		and jade_visual.icon_path.ends_with("jade_talisman.png") \
+		and jade_visual.frame_style == "common" \
+		and jade_visual.icon_alt_label == "Jade talisman relic icon" \
+		and rare_visual != null \
+		and rare_visual.icon_path.ends_with("void_tiger_eye.png") \
+		and rare_visual.frame_style == "rare"
+	assert(passed)
+	return passed
+
+func test_validation_reports_missing_relic_visual_for_default_relic() -> bool:
+	var catalog := ContentCatalog.new()
+	var relic := preload("res://scripts/data/relic_def.gd").new()
+	relic.id = "jade_talisman"
+	catalog.relics_by_id[relic.id] = relic
+	var errors := catalog.validate()
+	var passed: bool = _any_contains(errors, "Relic jade_talisman has no relic visual")
+	assert(passed)
+	return passed
+
+func test_validation_reports_invalid_relic_visual_resources() -> bool:
+	var catalog := ContentCatalog.new()
+	var relic := preload("res://scripts/data/relic_def.gd").new()
+	relic.id = "jade_talisman"
+	catalog.relics_by_id[relic.id] = relic
+
+	var visual := RelicVisualDef.new()
+	visual.id = "bad_visual"
+	visual.relic_id = "missing_relic"
+	visual.icon_path = ""
+	visual.frame_style = ""
+	catalog.relic_visuals_by_relic_id["jade_talisman"] = visual
+
+	var errors := catalog.validate()
+	var passed: bool = _any_contains(errors, "Relic visual bad_visual references missing relic missing_relic") \
+		and _any_contains(errors, "Relic visual bad_visual has empty icon_path") \
+		and _any_contains(errors, "Relic visual bad_visual has empty frame_style")
+	assert(passed)
+	return passed
+
+func test_validation_reports_missing_relic_fallback_icon() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.relic_fallback_icon_path = "res://assets/presentation/relic_icons/missing_fallback.png"
+	var errors := catalog.validate()
+	var passed: bool = _any_contains(errors, "Relic visual fallback icon failed to load")
+	assert(passed)
+	return passed
+
 func test_default_catalog_enemy_visual_texture_paths_load() -> bool:
 	var catalog := ContentCatalog.new()
 	catalog.load_default()
@@ -148,6 +226,23 @@ func test_default_catalog_visual_texture_paths_load() -> bool:
 		var texture := load(background.texture_path) as Texture2D
 		if texture == null:
 			push_error("Combat background texture failed to load: %s" % background.texture_path)
+			assert(false)
+			return false
+	assert(true)
+	return true
+
+func test_default_catalog_relic_visual_texture_paths_load() -> bool:
+	var catalog := ContentCatalog.new()
+	catalog.load_default()
+	var fallback_texture := load(catalog.relic_fallback_icon_path) as Texture2D
+	if fallback_texture == null:
+		push_error("Relic fallback icon failed to load: %s" % catalog.relic_fallback_icon_path)
+		assert(false)
+		return false
+	for visual: RelicVisualDef in catalog.relic_visuals_by_relic_id.values():
+		var texture := load(visual.icon_path) as Texture2D
+		if texture == null:
+			push_error("Relic visual texture failed to load: %s" % visual.icon_path)
 			assert(false)
 			return false
 	assert(true)
