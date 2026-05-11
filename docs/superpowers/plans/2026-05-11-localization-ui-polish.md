@@ -81,7 +81,7 @@ Godot checks passed.
 - Modify: `scripts/app/app.gd`
 - Modify: `scripts/testing/test_runner.gd`
 
-- [ ] **Step 1: Write failing locale service tests**
+- [x] **Step 1: Write failing locale service tests**
 
 Add `res://tests/unit/test_localization_service.gd` to `TEST_FILES` in `scripts/testing/test_runner.gd`, immediately before `test_resource_schemas.gd`.
 
@@ -127,7 +127,7 @@ func test_unsupported_locale_falls_back_to_chinese() -> bool:
 	return passed
 ```
 
-- [ ] **Step 2: Run tests and verify the new test fails**
+- [x] **Step 2: Run tests and verify the new test fails**
 
 Run:
 
@@ -137,7 +137,7 @@ rtk proxy powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\ci\run_god
 
 Expected: failure mentioning `res://scripts/app/localization_service.gd` cannot load or `LocalizationService` is missing.
 
-- [ ] **Step 3: Implement the locale service**
+- [x] **Step 3: Implement the locale service**
 
 Create `scripts/app/localization_service.gd`:
 
@@ -193,7 +193,7 @@ func _save_locale(locale: String) -> void:
 	config.save(settings_path)
 ```
 
-- [ ] **Step 4: Wire it into `Game` and `App`**
+- [x] **Step 4: Wire it into `Game` and `App`**
 
 Modify `scripts/app/game.gd`:
 
@@ -209,7 +209,7 @@ Modify `scripts/app/app.gd` before `game.router.setup(self)`:
 	game.localization_service.load_or_default()
 ```
 
-- [ ] **Step 5: Run tests and commit**
+- [x] **Step 5: Run tests and commit**
 
 Run:
 
