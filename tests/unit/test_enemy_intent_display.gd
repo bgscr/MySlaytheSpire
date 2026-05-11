@@ -4,6 +4,7 @@ const ContentCatalog := preload("res://scripts/content/content_catalog.gd")
 const EnemyIntentDisplayResolver := preload("res://scripts/presentation/enemy_intent_display_resolver.gd")
 
 func test_resolver_parses_attack_block_and_status_intents() -> bool:
+	var original_locale := TranslationServer.get_locale()
 	TranslationServer.set_locale("zh_CN")
 	var catalog := ContentCatalog.new()
 	catalog.load_default()
@@ -32,10 +33,13 @@ func test_resolver_parses_attack_block_and_status_intents() -> bool:
 		and poison.get("amount") == 2 \
 		and poison.get("target") == "player" \
 		and poison.get("label") == "Poison"
+	TranslationServer.set_locale(original_locale)
 	assert(passed)
 	return passed
 
 func test_resolver_handles_status_ids_with_underscores() -> bool:
+	var original_locale := TranslationServer.get_locale()
+	TranslationServer.set_locale("en")
 	var catalog := ContentCatalog.new()
 	catalog.load_default()
 	var resolver := EnemyIntentDisplayResolver.new()
@@ -53,10 +57,12 @@ func test_resolver_handles_status_ids_with_underscores() -> bool:
 		and focus.get("amount") == 1 \
 		and focus.get("target") == "self" \
 		and focus.get("label") == "Sword Focus"
+	TranslationServer.set_locale(original_locale)
 	assert(passed)
 	return passed
 
 func test_resolver_returns_unknown_for_malformed_intents() -> bool:
+	var original_locale := TranslationServer.get_locale()
 	var catalog := ContentCatalog.new()
 	catalog.load_default()
 	var resolver := EnemyIntentDisplayResolver.new()
@@ -76,6 +82,7 @@ func test_resolver_returns_unknown_for_malformed_intents() -> bool:
 		and unknown.get("label") == unknown_label \
 		and unknown.get("show_amount") == false \
 		and unknown.get("show_target") == false
+	TranslationServer.set_locale(original_locale)
 	assert(passed)
 	return passed
 

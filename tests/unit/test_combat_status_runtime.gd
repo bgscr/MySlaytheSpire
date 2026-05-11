@@ -76,6 +76,7 @@ func test_status_text_lists_positive_status_layers_in_key_order() -> bool:
 	return passed
 
 func test_status_display_text_uses_stable_known_order_and_layers() -> bool:
+	var original_locale := TranslationServer.get_locale()
 	TranslationServer.set_locale("zh_CN")
 	var combatant := CombatantState.new("sample", 10)
 	combatant.statuses["broken_stance"] = 1
@@ -94,10 +95,12 @@ func test_status_display_text_uses_stable_known_order_and_layers() -> bool:
 		and poison_index >= 0 \
 		and focus_index > poison_index \
 		and broken_index > focus_index
+	TranslationServer.set_locale(original_locale)
 	assert(passed)
 	return passed
 
 func test_status_display_text_lists_unknown_statuses_after_known_statuses() -> bool:
+	var original_locale := TranslationServer.get_locale()
 	TranslationServer.set_locale("zh_CN")
 	var combatant := CombatantState.new("sample", 10)
 	combatant.statuses["zzz_unknown"] = 4
@@ -107,6 +110,7 @@ func test_status_display_text_lists_unknown_statuses_after_known_statuses() -> b
 	TranslationServer.set_locale("en")
 	var passed: bool = display.find(poison) >= 0 \
 		and display.find("zzz_unknown 4") > display.find(poison)
+	TranslationServer.set_locale(original_locale)
 	assert(passed)
 	return passed
 
