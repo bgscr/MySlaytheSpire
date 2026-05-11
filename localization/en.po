@@ -334,6 +334,24 @@ msgstr "Broken Stance"
 msgid "status.broken_stance.desc"
 msgstr "The next time this target takes damage, take extra damage equal to the stack count, then reduce it by 1."
 
+msgid "intent.attack.label"
+msgstr "Attack"
+
+msgid "intent.block.label"
+msgstr "Block"
+
+msgid "intent.poison.label"
+msgstr "Poison"
+
+msgid "intent.broken_stance.label"
+msgstr "Broken Stance"
+
+msgid "intent.sword_focus.label"
+msgstr "Sword Focus"
+
+msgid "intent.unknown.label"
+msgstr "Unknown"
+
 msgid "card.sword.wind_splitting_step.name"
 msgstr "Wind-Splitting Step"
 

@@ -414,7 +414,7 @@ rtk proxy git commit -m "feat: validate dual locale files"
 - Modify: `tests/unit/test_enemy_intent_display.gd`
 - Modify: `tests/unit/test_combat_status_runtime.gd`
 
-- [ ] **Step 1: Write failing intent localization tests**
+- [x] **Step 1: Write failing intent localization tests**
 
 Update `tests/unit/test_enemy_intent_display.gd` expected labels:
 
@@ -435,13 +435,13 @@ var unknown := resolver.resolve("wait", catalog)
 var passed := unknown.get("label") == tr("intent.unknown.label")
 ```
 
-- [ ] **Step 2: Run tests and verify failure**
+- [x] **Step 2: Run tests and verify failure**
 
 Run full checks.
 
 Expected: failure because intent resources still expose raw `label`.
 
-- [ ] **Step 3: Replace intent display label field**
+- [x] **Step 3: Replace intent display label field**
 
 Modify `scripts/data/enemy_intent_display_def.gd`:
 
@@ -473,7 +473,7 @@ Use these mappings:
 - `status_sword_focus.tres`: `intent.sword_focus.label`
 - `unknown.tres`: `intent.unknown.label`
 
-- [ ] **Step 4: Translate resolver output**
+- [x] **Step 4: Translate resolver output**
 
 Modify `scripts/presentation/enemy_intent_display_resolver.gd` returned dictionary:
 
@@ -487,7 +487,7 @@ Modify fallback:
 		"label": tr("intent.unknown.label"),
 ```
 
-- [ ] **Step 5: Update catalog validation**
+- [x] **Step 5: Update catalog validation**
 
 Modify `_validate_enemy_intent_displays` in `scripts/content/content_catalog.gd`:
 
@@ -503,7 +503,7 @@ Add locale validation inside `_validate_locale_keys`:
 		_require_locale_key(display.label_key, "enemy intent display %s label_key" % display.id, locale_keys, locale_label, errors)
 ```
 
-- [ ] **Step 6: Add status and intent keys to both locales**
+- [x] **Step 6: Add status and intent keys to both locales**
 
 Add these keys to `zh_CN.po` and `en.po`:
 
@@ -542,7 +542,7 @@ msgstr "Broken Stance"
 
 Use Chinese translations in `zh_CN.po`.
 
-- [ ] **Step 7: Run tests and commit**
+- [x] **Step 7: Run tests and commit**
 
 Run full checks.
 

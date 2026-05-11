@@ -121,7 +121,7 @@ func test_combat_screen_shows_attack_intent_row(tree: SceneTree) -> bool:
 		and icon != null \
 		and icon.text == "ATK" \
 		and label != null \
-		and label.text == "Attack" \
+		and label.text == tr("intent.attack.label") \
 		and amount != null \
 		and amount.text == "5" \
 		and target != null \
@@ -148,7 +148,7 @@ func test_combat_screen_shows_block_intent_row(tree: SceneTree) -> bool:
 	var passed: bool = icon != null \
 		and icon.text == "BLK" \
 		and label != null \
-		and label.text == "Block" \
+		and label.text == tr("intent.block.label") \
 		and amount != null \
 		and amount.text == "6" \
 		and target != null \
@@ -173,7 +173,7 @@ func test_combat_screen_shows_status_intent_row(tree: SceneTree) -> bool:
 	var passed: bool = icon != null \
 		and icon.text == "PSN" \
 		and label != null \
-		and label.text == "Poison" \
+		and label.text == tr("intent.poison.label") \
 		and amount != null \
 		and amount.text == "2" \
 		and target != null \

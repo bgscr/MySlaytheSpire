@@ -334,6 +334,24 @@ msgstr "破势"
 msgid "status.broken_stance.desc"
 msgstr "下一次受到伤害时额外受到等同层数的伤害，然后减少 1 层。"
 
+msgid "intent.attack.label"
+msgstr "攻击"
+
+msgid "intent.block.label"
+msgstr "格挡"
+
+msgid "intent.poison.label"
+msgstr "施毒"
+
+msgid "intent.broken_stance.label"
+msgstr "破势"
+
+msgid "intent.sword_focus.label"
+msgstr "剑心"
+
+msgid "intent.unknown.label"
+msgstr "未知"
+
 msgid "card.sword.wind_splitting_step.name"
 msgstr "分风踏"
 

@@ -568,6 +568,8 @@ func _validate_locale_keys(locale_keys: Dictionary, locale_label: String, errors
 					locale_label,
 					errors
 				)
+	for display: EnemyIntentDisplayDef in enemy_intent_displays_by_id.values():
+		_require_locale_key(display.label_key, "enemy intent display %s label_key" % display.id, locale_keys, locale_label, errors)
 
 func _validate_event_options(errors: Array[String]) -> void:
 	for event: EventDef in events_by_id.values():
@@ -598,8 +600,8 @@ func _validate_enemy_intent_displays(errors: Array[String]) -> void:
 			errors.append("Enemy intent display %s has empty intent_kind" % display.id)
 		if display.icon_key.is_empty():
 			errors.append("Enemy intent display %s has empty icon_key" % display.id)
-		if display.label.is_empty():
-			errors.append("Enemy intent display %s has empty label" % display.id)
+		if display.label_key.is_empty():
+			errors.append("Enemy intent display %s has empty label_key" % display.id)
 
 func _validate_default_enemy_intent_displays(errors: Array[String]) -> void:
 	var resolver := EnemyIntentDisplayResolver.new()

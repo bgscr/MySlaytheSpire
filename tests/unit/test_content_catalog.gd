@@ -357,18 +357,18 @@ func test_validation_reports_invalid_enemy_intent_display_resources() -> bool:
 	unknown.id = "unknown"
 	unknown.intent_kind = "unknown"
 	unknown.icon_key = "unknown"
-	unknown.label = "Unknown"
+	unknown.label_key = "intent.unknown.label"
 	catalog.enemy_intent_displays_by_id[unknown.id] = unknown
 	var invalid := EnemyIntentDisplayDef.new()
 	invalid.id = "bad"
 	invalid.intent_kind = ""
 	invalid.icon_key = ""
-	invalid.label = ""
+	invalid.label_key = ""
 	catalog.enemy_intent_displays_by_id[invalid.id] = invalid
 	var errors := catalog.validate()
 	var passed: bool = _any_contains(errors, "Enemy intent display bad has empty intent_kind") \
 		and _any_contains(errors, "Enemy intent display bad has empty icon_key") \
-		and _any_contains(errors, "Enemy intent display bad has empty label")
+		and _any_contains(errors, "Enemy intent display bad has empty label_key")
 	assert(passed)
 	return passed
 
@@ -378,7 +378,7 @@ func test_validation_reports_missing_unknown_enemy_intent_display() -> bool:
 	attack.id = "attack"
 	attack.intent_kind = "attack"
 	attack.icon_key = "attack"
-	attack.label = "Attack"
+	attack.label_key = "intent.attack.label"
 	catalog.enemy_intent_displays_by_id[attack.id] = attack
 	var errors := catalog.validate()
 	var passed: bool = _any_contains(errors, "Enemy intent display catalog is missing unknown fallback")
