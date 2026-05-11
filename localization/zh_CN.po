@@ -835,6 +835,9 @@ msgstr "玩家"
 msgid "target.self"
 msgstr "自身"
 
+msgid "phase.invalid"
+msgstr "无效"
+
 msgid "phase.player_turn"
 msgstr "玩家回合"
 
@@ -843,6 +846,15 @@ msgstr "选择目标"
 
 msgid "phase.confirming_player_target"
 msgstr "确认玩家目标"
+
+msgid "phase.enemy_turn"
+msgstr "敌人回合"
+
+msgid "phase.won"
+msgstr "胜利"
+
+msgid "phase.lost"
+msgstr "失败"
 
 msgid "card_type.attack"
 msgstr "攻击"

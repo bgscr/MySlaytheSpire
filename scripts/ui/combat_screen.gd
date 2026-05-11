@@ -332,8 +332,16 @@ func _refresh_locale_text() -> void:
 	end_turn_button.text = tr("ui.combat.end_turn")
 
 func _on_locale_changed(_locale: String) -> void:
+	var restore_detail := item_detail_panel != null and item_detail_panel.visible and session != null
+	var detail_kind := ""
+	var detail_id := ""
+	if restore_detail:
+		detail_kind = String(item_detail_panel.get_meta("item_kind", ""))
+		detail_id = String(item_detail_panel.get_meta("item_id", ""))
 	_refresh_locale_text()
 	_refresh()
+	if restore_detail and detail_kind == "card" and session.state.hand.has(detail_id):
+		item_detail_panel.show_card(detail_id, session.catalog, visual_theme)
 
 func _refresh_enemies() -> void:
 	_clear_children(enemy_container)

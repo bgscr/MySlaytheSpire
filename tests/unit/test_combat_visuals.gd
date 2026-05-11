@@ -5,6 +5,8 @@ const CardVisualPresenter := preload("res://scripts/ui/card_visual_presenter.gd"
 const ItemVisualPresenter := preload("res://scripts/ui/item_visual_presenter.gd")
 const ItemDetailPanel := preload("res://scripts/ui/item_detail_panel.gd")
 const ContentCatalog := preload("res://scripts/content/content_catalog.gd")
+const CombatSession := preload("res://scripts/combat/combat_session.gd")
+const UiText := preload("res://scripts/ui/ui_text.gd")
 
 func test_resolver_resolves_distinct_character_themes() -> bool:
 	var catalog := ContentCatalog.new()
@@ -351,5 +353,32 @@ func test_item_detail_panel_falls_back_for_missing_items() -> bool:
 		and body.text.contains("ID: missing_relic")
 	panel.free()
 	TranslationServer.set_locale(original_locale)
+	assert(passed)
+	return passed
+
+func test_pile_summary_localizes_all_combat_phases() -> bool:
+	var original_locale := TranslationServer.get_locale()
+	var phases: Array[String] = [
+		CombatSession.PHASE_INVALID,
+		CombatSession.PHASE_PLAYER_TURN,
+		CombatSession.PHASE_SELECTING_ENEMY_TARGET,
+		CombatSession.PHASE_CONFIRMING_PLAYER_TARGET,
+		CombatSession.PHASE_ENEMY_TURN,
+		CombatSession.PHASE_WON,
+		CombatSession.PHASE_LOST,
+	]
+	var locales: Array[String] = ["en", "zh_CN"]
+	var missing: Array[String] = []
+	for locale in locales:
+		TranslationServer.set_locale(locale)
+		for phase in phases:
+			var key := "phase.%s" % phase
+			var summary := UiText.pile_summary(1, 2, 3, phase)
+			if TranslationServer.translate(key) == key or summary.contains(key):
+				missing.append("%s:%s" % [locale, key])
+	TranslationServer.set_locale(original_locale)
+	var passed := missing.is_empty()
+	if not passed:
+		push_error("Missing combat phase localization: %s" % ", ".join(missing))
 	assert(passed)
 	return passed

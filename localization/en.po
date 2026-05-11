@@ -835,6 +835,9 @@ msgstr "Player"
 msgid "target.self"
 msgstr "Self"
 
+msgid "phase.invalid"
+msgstr "Invalid"
+
 msgid "phase.player_turn"
 msgstr "Player Turn"
 
@@ -843,6 +846,15 @@ msgstr "Selecting Target"
 
 msgid "phase.confirming_player_target"
 msgstr "Confirming Player Target"
+
+msgid "phase.enemy_turn"
+msgstr "Enemy Turn"
+
+msgid "phase.won"
+msgstr "Won"
+
+msgid "phase.lost"
+msgstr "Lost"
 
 msgid "card_type.attack"
 msgstr "Attack"

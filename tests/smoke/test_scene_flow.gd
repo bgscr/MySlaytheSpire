@@ -395,6 +395,41 @@ func test_combat_card_detail_hides_on_refresh(tree: SceneTree) -> bool:
 	_delete_test_save(save_path)
 	return passed
 
+func test_combat_card_detail_stays_open_on_locale_change(tree: SceneTree) -> bool:
+	var save_path := "user://test_combat_card_detail_locale_save.json"
+	var locale_path := "user://test_combat_card_detail_locale.cfg"
+	var app = _create_app_with_save_and_locale_service(tree, save_path, locale_path, "en")
+	app.game.set_debug_combat_sandbox_config({
+		"character_id": "sword",
+		"deck_ids": ["sword.strike"],
+		"enemy_ids": ["training_puppet"],
+		"seed_value": 303,
+	})
+	var combat = app.game.router.go_to(SceneRouterScript.COMBAT)
+	combat.session.state.hand.clear()
+	combat.session.state.hand.append("sword.strike")
+	combat.session.state.draw_pile.clear()
+	combat._refresh()
+	var card_button := _find_node_by_name(combat, "CardButton_0") as Button
+	if card_button != null:
+		card_button.mouse_entered.emit()
+	var detail := _find_node_by_name(combat, "ItemDetailPanel") as ItemDetailPanel
+	var title := _find_node_by_name(combat, "ItemDetailTitle") as Label
+	var title_before := title.text if title != null else ""
+	var visible_after_hover: bool = detail != null and detail.visible
+	app.game.localization_service.set_locale("zh_CN")
+	detail = _find_node_by_name(combat, "ItemDetailPanel") as ItemDetailPanel
+	title = _find_node_by_name(combat, "ItemDetailTitle") as Label
+	var passed: bool = card_button != null \
+		and visible_after_hover \
+		and detail != null \
+		and detail.visible \
+		and title != null \
+		and title.text == tr("card.sword.strike.name") \
+		and title.text != title_before
+	_cleanup_app_save_and_locale(app, save_path, locale_path)
+	return passed
+
 func test_combat_screen_renders_normal_enemy_portrait(tree: SceneTree) -> bool:
 	return _combat_screen_renders_enemy_portrait(
 		tree,
