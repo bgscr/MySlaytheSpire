@@ -841,7 +841,7 @@ func test_dev_tools_screen_starts_on_card_browser_and_selects_strike(tree: Scene
 	var passed: bool = screen.active_tool_id == "card_browser" \
 		and panel != null \
 		and detail != null \
-		and detail.text.contains("id: sword.strike")
+		and detail.text.contains("%s: sword.strike" % tr("ui.label.id"))
 	screen.free()
 	return passed
 
@@ -858,7 +858,7 @@ func test_dev_tools_enemy_sandbox_button_shows_panel(tree: SceneTree) -> bool:
 		and screen.active_tool_id == "enemy_sandbox" \
 		and panel != null \
 		and summary != null \
-		and summary.text.contains("enemy: training_puppet") \
+		and summary.text.contains("%s: training_puppet" % tr("ui.label.enemy")) \
 		and launch != null
 	screen.free()
 	return passed
@@ -877,7 +877,7 @@ func test_dev_tools_event_tester_button_shows_panel(tree: SceneTree) -> bool:
 		and screen.active_tool_id == "event_tester" \
 		and panel != null \
 		and summary != null \
-		and summary.text.contains("event: alchemist_market") \
+		and summary.text.contains("%s: alchemist_market" % tr("ui.label.event")) \
 		and option != null \
 		and reset != null
 	screen.free()
@@ -921,7 +921,7 @@ func test_dev_tools_event_tester_apply_option_stays_in_dev_tools_without_current
 		and result != null \
 		and result.text.contains("Applied option: buy_brew") \
 		and summary != null \
-		and summary.text.contains("gold: 30") \
+		and summary.text.contains("%s: 30" % tr("ui.label.gold")) \
 		and app.game.current_run == null \
 		and app.game.router.current_scene == dev_tools
 	app.free()
@@ -1089,7 +1089,7 @@ func test_dev_tools_save_inspector_button_shows_read_only_panel(tree: SceneTree)
 		and screen.active_tool_id == "save_inspector" \
 		and panel != null \
 		and status != null \
-		and status.text.contains("status: missing_service") \
+		and status.text.contains("%s: missing_service" % tr("ui.label.status")) \
 		and target != null \
 		and target.text.contains("continue_target: none") \
 		and reload != null \
@@ -1119,11 +1119,11 @@ func test_dev_tools_save_inspector_displays_saved_run_and_stays_in_dev_tools(tre
 	var summary := _find_node_by_name(dev_tools, "SaveInspectorRunSummaryLabel") as Label
 	var map_section := _find_node_by_name(dev_tools, "SaveInspectorMapSectionLabel") as Label
 	var passed: bool = status != null \
-		and status.text.contains("status: active") \
+		and status.text.contains("%s: active" % tr("ui.label.status")) \
 		and target != null \
 		and target.text.contains("continue_target: map") \
 		and summary != null \
-		and summary.text.contains("character: sword") \
+		and summary.text.contains("%s: sword" % tr("ui.label.character")) \
 		and summary.text.contains("current_node_type: combat") \
 		and map_section != null \
 		and map_section.text.contains("map_nodes: 2") \
@@ -1148,10 +1148,10 @@ func test_dev_tools_save_inspector_reload_refreshes_without_routing_or_current_r
 		reload.pressed.emit()
 	var status_after := _find_node_by_name(dev_tools, "SaveInspectorStatusLabel") as Label
 	var target_after := _find_node_by_name(dev_tools, "SaveInspectorResumeTargetLabel") as Label
-	var passed: bool = before_text.contains("status: no_save") \
+	var passed: bool = before_text.contains("%s: no_save" % tr("ui.label.status")) \
 		and reload != null \
 		and status_after != null \
-		and status_after.text.contains("status: active") \
+		and status_after.text.contains("%s: active" % tr("ui.label.status")) \
 		and target_after != null \
 		and target_after.text.contains("continue_target: map") \
 		and app.game.current_run == null \
@@ -1176,7 +1176,7 @@ func test_dev_tools_save_inspector_does_not_delete_invalid_save(tree: SceneTree)
 	var status := _find_node_by_name(dev_tools, "SaveInspectorStatusLabel") as Label
 	var target := _find_node_by_name(dev_tools, "SaveInspectorResumeTargetLabel") as Label
 	var passed: bool = status != null \
-		and status.text.contains("status: invalid") \
+		and status.text.contains("%s: invalid" % tr("ui.label.status")) \
 		and target != null \
 		and target.text.contains("continue_target: invalid_delete_on_continue") \
 		and app.game.save_service.has_save() \
@@ -1208,7 +1208,7 @@ func test_dev_tools_save_inspector_can_reopen_after_switching_tools(tree: SceneT
 		and screen.active_tool_id == "save_inspector" \
 		and panel != null \
 		and status != null \
-		and status.text.contains("status: missing_service")
+		and status.text.contains("%s: missing_service" % tr("ui.label.status"))
 	screen.free()
 	return passed
 

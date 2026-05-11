@@ -385,6 +385,30 @@ msgstr "Tier"
 msgid "ui.label.character"
 msgstr "Character"
 
+msgid "ui.label.deck"
+msgstr "Deck"
+
+msgid "ui.label.enemy"
+msgstr "Enemy"
+
+msgid "ui.label.event"
+msgstr "Event"
+
+msgid "ui.label.gold"
+msgstr "Gold"
+
+msgid "ui.label.relics"
+msgstr "Relics"
+
+msgid "ui.label.pending_rewards"
+msgstr "Pending rewards"
+
+msgid "ui.label.status"
+msgstr "Status"
+
+msgid "ui.label.reason"
+msgstr "Reason"
+
 msgid "ui.common.unknown_card"
 msgstr "Unknown card"
 
@@ -882,6 +906,63 @@ msgstr "Refresh ({price} gold)"
 
 msgid "ui.shop.leave"
 msgstr "Leave"
+
+msgid "ui.dev_tools.title"
+msgstr "Dev Tools"
+
+msgid "ui.dev_tools.card_browser"
+msgstr "Card Browser"
+
+msgid "ui.dev_tools.enemy_sandbox"
+msgstr "Enemy Sandbox"
+
+msgid "ui.dev_tools.event_tester"
+msgstr "Event Tester"
+
+msgid "ui.dev_tools.reward_inspector"
+msgstr "Reward Inspector"
+
+msgid "ui.dev_tools.save_inspector"
+msgstr "Save Inspector"
+
+msgid "ui.dev_tools.no_cards"
+msgstr "No cards match filters"
+
+msgid "ui.dev_tools.no_card_selected"
+msgstr "No card selected"
+
+msgid "ui.dev_tools.launch_sandbox"
+msgstr "Launch Sandbox"
+
+msgid "ui.dev_tools.starter_deck"
+msgstr "Starter deck: {deck}"
+
+msgid "ui.dev_tools.reset_test_run"
+msgstr "Reset Test Run"
+
+msgid "ui.dev_tools.no_event"
+msgstr "No event available"
+
+msgid "ui.dev_tools.reset_reward_run"
+msgstr "Reset Reward Run"
+
+msgid "ui.dev_tools.no_rewards"
+msgstr "No rewards"
+
+msgid "ui.dev_tools.reload"
+msgstr "Reload"
+
+msgid "ui.dev_tools.delete"
+msgstr "Delete"
+
+msgid "ui.dev_tools.export"
+msgstr "Export"
+
+msgid "ui.dev_tools.copy_json"
+msgstr "Copy JSON"
+
+msgid "ui.dev_tools.repair"
+msgstr "Repair"
 
 msgid "ui.map.title"
 msgstr "Route Map"
