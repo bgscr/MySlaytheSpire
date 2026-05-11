@@ -1642,8 +1642,12 @@ func test_map_screen_localizes_node_types(tree: SceneTree) -> bool:
 	var map = app.game.router.go_to(SceneRouterScript.MAP)
 	var title := _find_node_by_name(map, "MapTitle") as Label
 	var first_node := _find_node_by_name(map, "MapNodeButton_node_0") as Button
+	var second_node := _find_node_by_name(map, "MapNodeButton_node_1") as Button
+	var third_node := _find_node_by_name(map, "MapNodeButton_node_2") as Button
 	var passed := title != null and title.text == "Route Map" \
-		and first_node != null and first_node.text.contains("Combat")
+		and first_node != null and first_node.text.contains("Combat") \
+		and second_node != null and second_node.text.contains("Event") \
+		and third_node != null and third_node.text.contains("Shop")
 	app.game.localization_service.clear_saved_locale()
 	app.free()
 	_delete_test_save(save_path)
@@ -2119,7 +2123,7 @@ func _reward_run(node_type: String, include_next_node: bool) -> RunStateScript:
 	run.map_nodes = nodes
 	return run
 
-func _test_run_with_nodes(types: Array[String]):
+func _test_run_with_nodes(types: Array[String]) -> RunStateScript:
 	var run := RunStateScript.new()
 	run.seed_value = 9
 	run.character_id = "sword"
