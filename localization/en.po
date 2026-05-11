@@ -829,6 +829,48 @@ msgstr "Claimed"
 msgid "ui.reward.state_skipped"
 msgstr "Skipped"
 
+msgid "ui.shop.title"
+msgstr "Shop"
+
+msgid "ui.shop.gold"
+msgstr "Gold: {amount}"
+
+msgid "ui.shop.no_shop"
+msgstr "No shop available"
+
+msgid "ui.shop.card_offer"
+msgstr "Card: {name} [{rarity}] ({cost}) - {price} gold"
+
+msgid "ui.shop.relic_offer"
+msgstr "Relic: {name} [{tier}] - {price} gold"
+
+msgid "ui.shop.heal_offer"
+msgstr "Heal - {price} gold"
+
+msgid "ui.shop.remove_offer"
+msgstr "Remove a card - {price} gold"
+
+msgid "ui.shop.unknown_offer"
+msgstr "Unknown offer"
+
+msgid "ui.shop.sold_out"
+msgstr "Sold out"
+
+msgid "ui.shop.buy"
+msgstr "Buy"
+
+msgid "ui.shop.choose_card"
+msgstr "Choose card"
+
+msgid "ui.shop.choose_remove_card"
+msgstr "Choose a card to remove"
+
+msgid "ui.shop.refresh"
+msgstr "Refresh ({price} gold)"
+
+msgid "ui.shop.leave"
+msgstr "Leave"
+
 msgid "ui.map.title"
 msgstr "Route Map"
 

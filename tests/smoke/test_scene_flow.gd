@@ -1930,6 +1930,36 @@ func test_map_shop_node_routes_to_shop_screen(tree: SceneTree) -> bool:
 	_delete_test_save(save_path)
 	return passed
 
+func test_shop_screen_localizes_actions(tree: SceneTree) -> bool:
+	var save_path := "user://test_shop_locale_save.json"
+	var locale_path := "user://test_shop_locale.cfg"
+	var app = _create_app_with_save_and_locale_service(tree, save_path, locale_path, "en")
+	app.game.current_run = _test_run_with_nodes(["shop"])
+	app.game.current_run.current_node_id = "node_0"
+	var shop = app.game.router.go_to(SceneRouterScript.SHOP)
+	var title := _find_node_by_name(shop, "ShopTitle") as Label
+	var leave := _find_node_by_name(shop, "LeaveShopButton") as Button
+	var refresh := _find_node_by_name(shop, "RefreshButton") as Button
+	var english_ok := title != null and title.text == "Shop" \
+		and leave != null and leave.text == "Leave" \
+		and refresh != null and refresh.text.contains("Refresh")
+	_cleanup_app_save_and_locale(app, save_path, locale_path)
+
+	app = _create_app_with_save_and_locale_service(tree, save_path, locale_path, "zh_CN")
+	app.game.current_run = _test_run_with_nodes(["shop"])
+	app.game.current_run.current_node_id = "node_0"
+	shop = app.game.router.go_to(SceneRouterScript.SHOP)
+	title = _find_node_by_name(shop, "ShopTitle") as Label
+	leave = _find_node_by_name(shop, "LeaveShopButton") as Button
+	refresh = _find_node_by_name(shop, "RefreshButton") as Button
+	var chinese_ok := title != null and title.text == tr("ui.shop.title") \
+		and leave != null and leave.text == tr("ui.shop.leave") \
+		and refresh != null and refresh.text.contains(tr("ui.shop.refresh").format({"price": ShopResolverScript.REFRESH_PRICE}))
+	var passed := english_ok and chinese_ok
+	_cleanup_app_save_and_locale(app, save_path, locale_path)
+	assert(passed)
+	return passed
+
 func test_shop_screen_buy_card_saves_immediately(tree: SceneTree) -> bool:
 	var save_path := "user://test_shop_buy_card_save.json"
 	var app = _create_app_with_save_service(tree, save_path)

@@ -829,6 +829,48 @@ msgstr "已领取"
 msgid "ui.reward.state_skipped"
 msgstr "已跳过"
 
+msgid "ui.shop.title"
+msgstr "商店"
+
+msgid "ui.shop.gold"
+msgstr "金币：{amount}"
+
+msgid "ui.shop.no_shop"
+msgstr "暂无商店"
+
+msgid "ui.shop.card_offer"
+msgstr "卡牌：{name} [{rarity}] ({cost}) - {price} 金币"
+
+msgid "ui.shop.relic_offer"
+msgstr "遗物：{name} [{tier}] - {price} 金币"
+
+msgid "ui.shop.heal_offer"
+msgstr "治疗 - {price} 金币"
+
+msgid "ui.shop.remove_offer"
+msgstr "移除一张卡牌 - {price} 金币"
+
+msgid "ui.shop.unknown_offer"
+msgstr "未知商品"
+
+msgid "ui.shop.sold_out"
+msgstr "已售罄"
+
+msgid "ui.shop.buy"
+msgstr "购买"
+
+msgid "ui.shop.choose_card"
+msgstr "选择卡牌"
+
+msgid "ui.shop.choose_remove_card"
+msgstr "选择要移除的卡牌"
+
+msgid "ui.shop.refresh"
+msgstr "刷新（{price} 金币）"
+
+msgid "ui.shop.leave"
+msgstr "离开"
+
 msgid "ui.map.title"
 msgstr "路线地图"
 
