@@ -1538,7 +1538,7 @@ rtk proxy git commit -m "feat: localize reward screen"
 - Modify: `localization/zh_CN.po`
 - Modify: `localization/en.po`
 
-- [ ] **Step 1: Write failing event localization test**
+- [x] **Step 1: Write failing event localization test**
 
 Add to `tests/unit/test_event_runner.gd`:
 
@@ -1554,7 +1554,7 @@ func test_unavailable_reason_uses_locale_key() -> bool:
 	return passed
 ```
 
-- [ ] **Step 2: Add event keys**
+- [x] **Step 2: Add event keys**
 
 Add:
 
@@ -1574,7 +1574,7 @@ msgstr "Need more gold"
 
 Use Chinese translations in `zh_CN.po`.
 
-- [ ] **Step 3: Return reason keys from runner**
+- [x] **Step 3: Return reason keys from runner**
 
 Modify `scripts/event/event_runner.gd` unavailable reasons to return keys:
 
@@ -1586,7 +1586,7 @@ if run.gold < option.min_gold:
 return ""
 ```
 
-- [ ] **Step 4: Localize event screen composition**
+- [x] **Step 4: Localize event screen composition**
 
 In `scripts/ui/event_screen.gd`, replace fallback text:
 
@@ -1605,7 +1605,7 @@ if not reason.is_empty():
 
 Apply `UiStyle` to title, body, option buttons, and preview rows.
 
-- [ ] **Step 5: Run tests and commit**
+- [x] **Step 5: Run tests and commit**
 
 Run full checks.
 
