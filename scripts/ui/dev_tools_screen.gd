@@ -16,6 +16,8 @@ const RewardResolver := preload("res://scripts/reward/reward_resolver.gd")
 const RunState := preload("res://scripts/run/run_state.gd")
 const SaveService := preload("res://scripts/save/save_service.gd")
 const SceneRouterScript := preload("res://scripts/app/scene_router.gd")
+const UiStyle := preload("res://scripts/ui/ui_style.gd")
+const UiText := preload("res://scripts/ui/ui_text.gd")
 
 const TOOL_CARD_BROWSER := "card_browser"
 const TOOL_ENEMY_SANDBOX := "enemy_sandbox"
@@ -51,12 +53,12 @@ const SAVE_RESUME_MAP := "map"
 const RARITY_ORDER := {"common": 0, "uncommon": 1, "rare": 2}
 const TYPE_ORDER := {"attack": 0, "skill": 1, "power": 2}
 const ENEMY_TIER_ORDER := {"normal": 0, "elite": 1, "boss": 2}
-const TOOL_LABELS := {
-	"card_browser": "Card Browser",
-	"enemy_sandbox": "Enemy Sandbox",
-	"event_tester": "Event Tester",
-	"reward_inspector": "Reward Inspector",
-	"save_inspector": "Save Inspector",
+const TOOL_LABEL_KEYS := {
+	"card_browser": "ui.dev_tools.card_browser",
+	"enemy_sandbox": "ui.dev_tools.enemy_sandbox",
+	"event_tester": "ui.dev_tools.event_tester",
+	"reward_inspector": "ui.dev_tools.reward_inspector",
+	"save_inspector": "ui.dev_tools.save_inspector",
 }
 
 var catalog := ContentCatalog.new()
@@ -135,6 +137,9 @@ func tool_ids() -> Array[String]:
 		TOOL_SAVE_INSPECTOR,
 	]
 
+func tool_label(tool_id: String) -> String:
+	return tr(String(TOOL_LABEL_KEYS.get(tool_id, tool_id)))
+
 func set_filters(character_id: String, rarity: String, card_type: String) -> void:
 	character_filter = character_id
 	rarity_filter = rarity
@@ -158,15 +163,15 @@ func filtered_cards() -> Array[CardDef]:
 
 func card_detail_text(card: CardDef) -> String:
 	if card == null:
-		return "No card selected"
+		return tr("ui.dev_tools.no_card_selected")
 	var lines: Array[String] = [
-		"id: %s" % card.id,
+		UiText.key_value("id", card.id),
 		"name_key: %s" % card.name_key,
 		"description_key: %s" % card.description_key,
-		"character: %s" % card.character_id,
-		"rarity: %s" % card.rarity,
-		"type: %s" % card.card_type,
-		"cost: %s" % card.cost,
+		UiText.key_value("character", card.character_id),
+		UiText.key_value("rarity", card.rarity),
+		UiText.key_value("type", card.card_type),
+		UiText.key_value("cost", card.cost),
 		"tags: %s" % _join_string_array(card.tags),
 		"pool_tags: %s" % _join_string_array(card.pool_tags),
 		"reward_weight: %s" % card.reward_weight,
@@ -184,7 +189,7 @@ func card_detail_text(card: CardDef) -> String:
 	return "\n".join(lines)
 
 func placeholder_text(tool_id: String) -> String:
-	return "%s\nPlanned tool" % String(TOOL_LABELS.get(tool_id, tool_id))
+	return "%s\n%s" % [tool_label(tool_id), tr("ui.dev_tools.planned_tool")]
 
 func enemy_sandbox_enemy_ids() -> Array[String]:
 	var enemies: Array[EnemyDef] = []
@@ -233,19 +238,19 @@ func enemy_sandbox_summary_text() -> String:
 	_ensure_enemy_sandbox_defaults()
 	var config := enemy_sandbox_config()
 	var lines: Array[String] = [
-		"character: %s" % String(config.get("character_id", "")),
-		"deck: %s" % _join_string_array(config.get("deck_ids", [])),
+		UiText.key_value("character", String(config.get("character_id", ""))),
+		UiText.key_value("deck", _join_string_array(config.get("deck_ids", []))),
 	]
 	for enemy_id: String in config.get("enemy_ids", []):
 		var enemy := catalog.get_enemy(enemy_id)
 		if enemy == null:
 			continue
-		lines.append("enemy: %s tier=%s hp=%s intents=%s" % [
+		lines.append(UiText.key_value("enemy", "%s tier=%s hp=%s intents=%s" % [
 			enemy.id,
 			enemy.tier,
 			enemy.max_hp,
 			_join_string_array(enemy.intent_sequence),
-		])
+		]))
 	return "\n".join(lines)
 
 func event_tester_event_ids() -> Array[String]:
@@ -292,13 +297,13 @@ func event_tester_run_summary_text() -> String:
 		reset_event_tester_run()
 	var pending_rewards: Array = event_tester_run.current_reward_state.get("rewards", [])
 	return "\n".join([
-		"event: %s" % selected_event_tester_event_id,
-		"character: %s" % event_tester_run.character_id,
-		"hp: %s/%s" % [event_tester_run.current_hp, event_tester_run.max_hp],
-		"gold: %s" % event_tester_run.gold,
-		"deck: %s" % _join_string_array(event_tester_run.deck_ids),
-		"relics: %s" % _join_string_array(event_tester_run.relic_ids),
-		"pending_rewards: %s" % ("none" if pending_rewards.is_empty() else str(pending_rewards.size())),
+		UiText.key_value("event", selected_event_tester_event_id),
+		UiText.key_value("character", event_tester_run.character_id),
+		UiText.key_value("hp", "%s/%s" % [event_tester_run.current_hp, event_tester_run.max_hp]),
+		UiText.key_value("gold", event_tester_run.gold),
+		UiText.key_value("deck", _join_string_array(event_tester_run.deck_ids)),
+		UiText.key_value("relics", _join_string_array(event_tester_run.relic_ids)),
+		UiText.key_value("pending_rewards", "none" if pending_rewards.is_empty() else str(pending_rewards.size())),
 	])
 
 func event_tester_option_text(index: int) -> String:
@@ -312,11 +317,11 @@ func event_tester_option_text(index: int) -> String:
 	var available := runner.is_option_available(event_tester_run, option)
 	var lines: Array[String] = [
 		"option: %s" % option.id,
-		"state: %s" % ("available" if available else "blocked"),
+		UiText.key_value("status", "available" if available else "blocked"),
 	]
 	var reason := runner.unavailable_reason(event_tester_run, option)
 	if not reason.is_empty():
-		lines.append("reason=%s" % reason)
+		lines.append(UiText.key_value("reason", reason))
 	if option.min_hp > 0:
 		lines.append("min_hp=%s" % option.min_hp)
 	if option.min_gold > 0:
@@ -347,9 +352,9 @@ func apply_event_tester_option(index: int) -> bool:
 	var applied := EventRunner.new().apply_event_option(catalog, event_tester_run, event, option)
 	if applied:
 		event_tester_option_applied = true
-		event_tester_result_text = "Applied option: %s" % option.id
+		event_tester_result_text = tr("ui.dev_tools.applied_option").format({"id": option.id})
 	else:
-		event_tester_result_text = "Option failed: %s" % option.id
+		event_tester_result_text = tr("ui.dev_tools.option_failed").format({"id": option.id})
 	_refresh_event_tester_after_apply()
 	return applied
 
@@ -395,14 +400,14 @@ func reward_inspector_run_summary_text() -> String:
 	if reward_inspector_run == null:
 		reset_reward_inspector_run()
 	return "\n".join([
-		"character: %s" % reward_inspector_run.character_id,
+		UiText.key_value("character", reward_inspector_run.character_id),
 		"node_type: %s" % selected_reward_inspector_node_type,
 		"seed: %s" % selected_reward_inspector_seed,
-		"hp: %s/%s" % [reward_inspector_run.current_hp, reward_inspector_run.max_hp],
-		"gold: %s" % reward_inspector_run.gold,
+		UiText.key_value("hp", "%s/%s" % [reward_inspector_run.current_hp, reward_inspector_run.max_hp]),
+		UiText.key_value("gold", reward_inspector_run.gold),
 		"deck_count: %s" % reward_inspector_run.deck_ids.size(),
-		"deck: %s" % _join_string_array(reward_inspector_run.deck_ids),
-		"relics: %s" % _join_string_array(reward_inspector_run.relic_ids),
+		UiText.key_value("deck", _join_string_array(reward_inspector_run.deck_ids)),
+		UiText.key_value("relics", _join_string_array(reward_inspector_run.relic_ids)),
 		"resolved: %s/%s" % [_resolved_reward_inspector_count(), reward_inspector_rewards.size()],
 	])
 
@@ -412,8 +417,8 @@ func reward_inspector_reward_text(index: int) -> String:
 	var reward := reward_inspector_rewards[index]
 	var lines: Array[String] = [
 		"reward: %s" % String(reward.get("id", "")),
-		"type: %s" % String(reward.get("type", "")),
-		"state: %s" % reward_inspector_reward_states[index],
+		UiText.key_value("type", String(reward.get("type", ""))),
+		UiText.key_value("status", reward_inspector_reward_states[index]),
 	]
 	match String(reward.get("type", "")):
 		"card_choice":
@@ -421,10 +426,10 @@ func reward_inspector_reward_text(index: int) -> String:
 			lines.append("cards: %s" % _join_variant_string_array(card_ids))
 		"gold":
 			lines.append("amount: %s" % int(reward.get("amount", 0)))
-			lines.append("tier: %s" % String(reward.get("tier", "")))
+			lines.append(UiText.key_value("tier", String(reward.get("tier", ""))))
 		"relic":
 			lines.append("relic: %s" % String(reward.get("relic_id", "")))
-			lines.append("tier: %s" % String(reward.get("tier", "")))
+			lines.append(UiText.key_value("tier", String(reward.get("tier", ""))))
 	return " | ".join(lines)
 
 func claim_reward_inspector_card(reward_index: int, card_index: int) -> bool:
@@ -480,10 +485,10 @@ func save_inspector_resume_target() -> String:
 func save_inspector_status_text() -> String:
 	var snapshot := save_inspector_snapshot()
 	return "\n".join([
-		"status: %s" % String(snapshot.get("status", SAVE_STATUS_MISSING_SERVICE)),
+		UiText.key_value("status", String(snapshot.get("status", SAVE_STATUS_MISSING_SERVICE))),
 		"has_service: %s" % _bool_text(bool(snapshot.get("has_service", false))),
 		"has_save: %s" % _bool_text(bool(snapshot.get("has_save", false))),
-		"reason: %s" % String(snapshot.get("reason", "")),
+		UiText.key_value("reason", String(snapshot.get("reason", ""))),
 	])
 
 func save_inspector_summary_text() -> String:
@@ -494,9 +499,9 @@ func save_inspector_summary_text() -> String:
 	return "\n".join([
 		"version: %s" % run.version,
 		"seed: %s" % run.seed_value,
-		"character: %s" % run.character_id,
-		"hp: %s/%s" % [run.current_hp, run.max_hp],
-		"gold: %s" % run.gold,
+		UiText.key_value("character", run.character_id),
+		UiText.key_value("hp", "%s/%s" % [run.current_hp, run.max_hp]),
+		UiText.key_value("gold", run.gold),
 		"deck_count: %s" % run.deck_ids.size(),
 		"relic_count: %s" % run.relic_ids.size(),
 		"current_node_id: %s" % run.current_node_id,
@@ -508,7 +513,7 @@ func save_inspector_summary_text() -> String:
 func save_inspector_map_text() -> String:
 	var run: RunState = save_inspector_snapshot().get("run", null)
 	if run == null:
-		return "map: none"
+		return "%s\nmap: none" % UiText.key_value("status", "none")
 	var visited_count := 0
 	var unlocked_count := 0
 	for node in run.map_nodes:
@@ -517,6 +522,7 @@ func save_inspector_map_text() -> String:
 		if node.unlocked:
 			unlocked_count += 1
 	return "\n".join([
+		UiText.key_value("status", _save_inspector_current_node_type(run)),
 		"map_nodes: %s" % run.map_nodes.size(),
 		"current_node_id: %s" % run.current_node_id,
 		"current_node_type: %s" % _save_inspector_current_node_type(run),
@@ -527,9 +533,9 @@ func save_inspector_map_text() -> String:
 func save_inspector_shop_text() -> String:
 	var run: RunState = save_inspector_snapshot().get("run", null)
 	if run == null:
-		return "shop_state: none"
+		return "%s\nshop_state: none" % UiText.key_value("status", "none")
 	if run.current_shop_state.is_empty():
-		return "shop_state: empty"
+		return "%s\nshop_state: empty" % UiText.key_value("status", "empty")
 	var offers: Array = run.current_shop_state.get("offers", [])
 	var sold_count := 0
 	for offer in offers:
@@ -540,6 +546,7 @@ func save_inspector_shop_text() -> String:
 			sold_count += 1
 	var matching := _save_inspector_shop_state_matches(run)
 	return "\n".join([
+		UiText.key_value("status", "matching" if matching else "mismatched"),
 		"shop_state: %s" % ("matching" if matching else "mismatched"),
 		"node_id: %s" % String(run.current_shop_state.get("node_id", "")),
 		"offers: %s" % offers.size(),
@@ -549,18 +556,19 @@ func save_inspector_shop_text() -> String:
 func save_inspector_reward_text() -> String:
 	var run: RunState = save_inspector_snapshot().get("run", null)
 	if run == null:
-		return "reward_state: none"
+		return "%s\nreward_state: none" % UiText.key_value("status", "none")
 	if run.current_reward_state.is_empty():
-		return "reward_state: empty"
+		return "%s\nreward_state: empty" % UiText.key_value("status", "empty")
 	var rewards: Array = run.current_reward_state.get("rewards", [])
 	var matching := _save_inspector_reward_state_matches(run)
 	return "\n".join([
+		UiText.key_value("status", "matching" if matching else "mismatched"),
 		"reward_state: %s" % ("matching" if matching else "mismatched"),
 		"source: %s" % String(run.current_reward_state.get("source", "")),
 		"node_id: %s" % String(run.current_reward_state.get("node_id", "")),
-		"event_id: %s" % String(run.current_reward_state.get("event_id", "")),
+		UiText.key_value("event", String(run.current_reward_state.get("event_id", ""))),
 		"option_id: %s" % String(run.current_reward_state.get("option_id", "")),
-		"rewards: %s" % rewards.size(),
+		UiText.key_value("pending_rewards", rewards.size()),
 	])
 
 func _build_layout() -> void:
@@ -571,7 +579,7 @@ func _build_layout() -> void:
 
 	var title := Label.new()
 	title.name = "DevToolsTitle"
-	title.text = "DevTools"
+	title.text = tr("ui.dev_tools.title")
 	root.add_child(title)
 
 	var tool_nav := HBoxContainer.new()
@@ -580,7 +588,8 @@ func _build_layout() -> void:
 	for tool_id in tool_ids():
 		var button := Button.new()
 		button.name = "ToolButton_%s" % tool_id
-		button.text = String(TOOL_LABELS.get(tool_id, tool_id))
+		button.text = tool_label(tool_id)
+		UiStyle.apply_secondary_button(button)
 		var selected_tool_id := tool_id
 		button.pressed.connect(func(): _show_tool(selected_tool_id))
 		tool_nav.add_child(button)
@@ -612,6 +621,7 @@ func _show_tool(tool_id: String) -> void:
 func _build_card_browser() -> void:
 	var panel := VBoxContainer.new()
 	panel.name = "CardBrowserPanel"
+	UiStyle.apply_panel(panel)
 	tool_content.add_child(panel)
 
 	var filters := HBoxContainer.new()
@@ -666,7 +676,7 @@ func _refresh_card_browser() -> void:
 	if cards.is_empty():
 		var empty := Label.new()
 		empty.name = "NoMatchingCardsLabel"
-		empty.text = "No cards match filters"
+		empty.text = tr("ui.dev_tools.no_cards")
 		card_list.add_child(empty)
 		selected_card_id = ""
 		card_detail_label.text = card_detail_text(null)
@@ -678,6 +688,7 @@ func _refresh_card_browser() -> void:
 		button.name = "CardBrowserCard_%s" % card.id.replace(".", "_")
 		button.text = "%s | %s | %s | %s | %s" % [card.id, card.character_id, card.rarity, card.card_type, card.cost]
 		button.disabled = card.id == selected_card_id
+		UiStyle.apply_secondary_button(button)
 		var selected_id := card.id
 		button.pressed.connect(func(): select_card(selected_id))
 		card_list.add_child(button)
@@ -687,6 +698,7 @@ func _build_enemy_sandbox() -> void:
 	_ensure_enemy_sandbox_defaults()
 	var panel := VBoxContainer.new()
 	panel.name = "EnemySandboxPanel"
+	UiStyle.apply_panel(panel)
 	tool_content.add_child(panel)
 
 	enemy_sandbox_character_select = OptionButton.new()
@@ -713,7 +725,8 @@ func _build_enemy_sandbox() -> void:
 
 	var launch := Button.new()
 	launch.name = "EnemySandboxLaunchButton"
-	launch.text = "Launch Sandbox"
+	launch.text = tr("ui.dev_tools.launch_sandbox")
+	UiStyle.apply_secondary_button(launch)
 	launch.pressed.connect(_launch_enemy_sandbox)
 	panel.add_child(launch)
 
@@ -735,7 +748,7 @@ func _refresh_enemy_sandbox_panel() -> void:
 	if character != null:
 		deck_ids = _copy_string_array(character.starting_deck_ids)
 	if enemy_sandbox_deck_label != null:
-		enemy_sandbox_deck_label.text = "Starter deck: %s" % _join_string_array(deck_ids)
+		enemy_sandbox_deck_label.text = tr("ui.dev_tools.starter_deck").format({"deck": _join_string_array(deck_ids)})
 	if enemy_sandbox_enemy_list != null:
 		_clear_children(enemy_sandbox_enemy_list)
 		for enemy_id in enemy_sandbox_enemy_ids():
@@ -746,14 +759,16 @@ func _refresh_enemy_sandbox_panel() -> void:
 			button.name = "EnemySandboxEnemy_%s" % enemy.id
 			var selected := selected_sandbox_enemy_ids.has(enemy.id)
 			var marker := "[x]" if selected else "[ ]"
-			button.text = "%s %s | %s | HP %s | %s" % [
+			button.text = "%s %s | %s | %s %s | %s" % [
 				marker,
 				enemy.id,
 				enemy.tier,
+				tr("ui.label.hp"),
 				enemy.max_hp,
 				_join_string_array(enemy.intent_sequence),
 			]
 			button.disabled = not selected and selected_sandbox_enemy_ids.size() >= 3
+			UiStyle.apply_secondary_button(button)
 			var selected_enemy_id := enemy.id
 			button.pressed.connect(func(): toggle_enemy_sandbox_enemy(selected_enemy_id))
 			enemy_sandbox_enemy_list.add_child(button)
@@ -775,6 +790,7 @@ func _build_event_tester() -> void:
 		reset_event_tester_run()
 	var panel := VBoxContainer.new()
 	panel.name = "EventTesterPanel"
+	UiStyle.apply_panel(panel)
 	tool_content.add_child(panel)
 
 	event_tester_event_select = OptionButton.new()
@@ -810,7 +826,8 @@ func _build_event_tester() -> void:
 
 	var reset := Button.new()
 	reset.name = "EventTesterResetButton"
-	reset.text = "Reset Test Run"
+	reset.text = tr("ui.dev_tools.reset_test_run")
+	UiStyle.apply_secondary_button(reset)
 	reset.pressed.connect(_on_event_tester_reset_pressed)
 	panel.add_child(reset)
 
@@ -844,7 +861,7 @@ func _refresh_event_tester_panel() -> void:
 	if event == null:
 		var empty := Label.new()
 		empty.name = "EventTesterNoEventLabel"
-		empty.text = "No event available"
+		empty.text = tr("ui.dev_tools.no_event")
 		event_tester_option_list.add_child(empty)
 		return
 	for i in range(event.options.size()):
@@ -853,6 +870,7 @@ func _refresh_event_tester_panel() -> void:
 		button.name = "EventTesterOption_%s" % i
 		button.text = event_tester_option_text(i)
 		button.disabled = event_tester_option_applied or not EventRunner.new().is_option_available(event_tester_run, option)
+		UiStyle.apply_secondary_button(button)
 		var option_index := i
 		button.pressed.connect(func(): apply_event_tester_option(option_index))
 		event_tester_option_list.add_child(button)
@@ -875,6 +893,7 @@ func _build_reward_inspector() -> void:
 		reset_reward_inspector_run()
 	var panel := VBoxContainer.new()
 	panel.name = "RewardInspectorPanel"
+	UiStyle.apply_panel(panel)
 	tool_content.add_child(panel)
 
 	reward_inspector_character_select = OptionButton.new()
@@ -919,7 +938,8 @@ func _build_reward_inspector() -> void:
 
 	var reset := Button.new()
 	reset.name = "RewardInspectorResetButton"
-	reset.text = "Reset Reward Run"
+	reset.text = tr("ui.dev_tools.reset_reward_run")
+	UiStyle.apply_secondary_button(reset)
 	reset.pressed.connect(_on_reward_inspector_reset_pressed)
 	panel.add_child(reset)
 
@@ -962,7 +982,8 @@ func _add_reward_inspector_reward_row(reward_index: int) -> void:
 			for card_index in range(card_ids.size()):
 				var button := Button.new()
 				button.name = "RewardInspectorClaimCard_%s_%s" % [reward_index, card_index]
-				button.text = "Claim %s" % String(card_ids[card_index])
+				button.text = tr("ui.dev_tools.claim_item").format({"item": String(card_ids[card_index])})
+				UiStyle.apply_secondary_button(button)
 				var selected_reward_index := reward_index
 				var selected_card_index := card_index
 				button.pressed.connect(func(): claim_reward_inspector_card(selected_reward_index, selected_card_index))
@@ -971,7 +992,8 @@ func _add_reward_inspector_reward_row(reward_index: int) -> void:
 		"gold":
 			var gold_button := Button.new()
 			gold_button.name = "RewardInspectorClaimGold_%s" % reward_index
-			gold_button.text = "Claim %s gold" % int(reward.get("amount", 0))
+			gold_button.text = tr("ui.dev_tools.claim_gold").format({"amount": int(reward.get("amount", 0))})
+			UiStyle.apply_secondary_button(gold_button)
 			var selected_gold_reward_index := reward_index
 			gold_button.pressed.connect(func(): claim_reward_inspector_gold(selected_gold_reward_index))
 			item.add_child(gold_button)
@@ -979,6 +1001,7 @@ func _add_reward_inspector_reward_row(reward_index: int) -> void:
 		"relic":
 			var relic_button := Button.new()
 			relic_button.name = "RewardInspectorClaimRelic_%s" % reward_index
+			UiStyle.apply_secondary_button(relic_button)
 			var relic_id := String(reward.get("relic_id", ""))
 			relic_button.text = ""
 			relic_button.custom_minimum_size = Vector2(128, 104)
@@ -997,7 +1020,8 @@ func _add_reward_inspector_reward_row(reward_index: int) -> void:
 func _reward_inspector_skip_button(reward_index: int) -> Button:
 	var button := Button.new()
 	button.name = "RewardInspectorSkip_%s" % reward_index
-	button.text = "Skip"
+	button.text = tr("ui.reward.skip")
+	UiStyle.apply_secondary_button(button)
 	var selected_reward_index := reward_index
 	button.pressed.connect(func(): skip_reward_inspector_reward(selected_reward_index))
 	return button
@@ -1215,7 +1239,7 @@ func _refresh_reward_inspector_panel() -> void:
 	if reward_inspector_rewards.is_empty():
 		var empty := Label.new()
 		empty.name = "RewardInspectorNoRewardsLabel"
-		empty.text = "No rewards"
+		empty.text = tr("ui.dev_tools.no_rewards")
 		reward_inspector_reward_list.add_child(empty)
 		return
 	for i in range(reward_inspector_rewards.size()):
@@ -1308,6 +1332,7 @@ func _refresh_save_inspector_if_ready() -> void:
 func _build_save_inspector() -> void:
 	var panel := VBoxContainer.new()
 	panel.name = "SaveInspectorPanel"
+	UiStyle.apply_panel(panel)
 	tool_content.add_child(panel)
 
 	save_inspector_status_label = Label.new()
@@ -1349,22 +1374,24 @@ func _build_save_inspector() -> void:
 
 	var reload := Button.new()
 	reload.name = "SaveInspectorReloadButton"
-	reload.text = "Reload"
+	reload.text = tr("ui.dev_tools.reload")
+	UiStyle.apply_secondary_button(reload)
 	reload.pressed.connect(_on_save_inspector_reload_pressed)
 	action_bar.add_child(reload)
 
-	action_bar.add_child(_disabled_save_inspector_action("SaveInspectorDeleteButton", "Delete"))
-	action_bar.add_child(_disabled_save_inspector_action("SaveInspectorExportButton", "Export"))
-	action_bar.add_child(_disabled_save_inspector_action("SaveInspectorCopyJsonButton", "Copy JSON"))
-	action_bar.add_child(_disabled_save_inspector_action("SaveInspectorRepairButton", "Repair"))
+	action_bar.add_child(_disabled_save_inspector_action("SaveInspectorDeleteButton", "ui.dev_tools.delete"))
+	action_bar.add_child(_disabled_save_inspector_action("SaveInspectorExportButton", "ui.dev_tools.export"))
+	action_bar.add_child(_disabled_save_inspector_action("SaveInspectorCopyJsonButton", "ui.dev_tools.copy_json"))
+	action_bar.add_child(_disabled_save_inspector_action("SaveInspectorRepairButton", "ui.dev_tools.repair"))
 
 	refresh_save_inspector()
 
 func _disabled_save_inspector_action(node_name: String, label: String) -> Button:
 	var button := Button.new()
 	button.name = node_name
-	button.text = label
+	button.text = tr(label)
 	button.disabled = true
+	UiStyle.apply_secondary_button(button)
 	return button
 
 func _on_save_inspector_reload_pressed() -> void:

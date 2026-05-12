@@ -14,6 +14,7 @@ func _ready() -> void:
 	add_child(game)
 	game.audio_mix_config.ensure_buses()
 	game.audio_mix_config.apply_all()
+	game.localization_service.load_or_default()
 	game.router.setup(self)
 	game.router.go_to(SceneRouterScript.MAIN_MENU)
 	if OS.is_debug_build():

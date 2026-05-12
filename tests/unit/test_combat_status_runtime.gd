@@ -76,29 +76,41 @@ func test_status_text_lists_positive_status_layers_in_key_order() -> bool:
 	return passed
 
 func test_status_display_text_uses_stable_known_order_and_layers() -> bool:
+	var original_locale := TranslationServer.get_locale()
+	TranslationServer.set_locale("zh_CN")
 	var combatant := CombatantState.new("sample", 10)
 	combatant.statuses["broken_stance"] = 1
 	combatant.statuses["poison"] = 3
 	combatant.statuses["sword_focus"] = 2
 	var display := CombatStatusRuntime.new().status_display_text(combatant)
-	var poison_index := display.find("3")
-	var focus_index := display.find("2")
-	var broken_index := display.rfind("1")
+	var poison := "%s 3" % tr("status.poison.name")
+	var focus := "%s 2" % tr("status.sword_focus.name")
+	var broken := "%s 1" % tr("status.broken_stance.name")
+	TranslationServer.set_locale("en")
+	var poison_index := display.find(poison)
+	var focus_index := display.find(focus)
+	var broken_index := display.find(broken)
 	var passed: bool = not display.contains("poison:3") \
 		and display.contains(" | ") \
 		and poison_index >= 0 \
 		and focus_index > poison_index \
 		and broken_index > focus_index
+	TranslationServer.set_locale(original_locale)
 	assert(passed)
 	return passed
 
 func test_status_display_text_lists_unknown_statuses_after_known_statuses() -> bool:
+	var original_locale := TranslationServer.get_locale()
+	TranslationServer.set_locale("zh_CN")
 	var combatant := CombatantState.new("sample", 10)
 	combatant.statuses["zzz_unknown"] = 4
 	combatant.statuses["poison"] = 1
 	var display := CombatStatusRuntime.new().status_display_text(combatant)
-	var passed: bool = display.find("1") >= 0 \
-		and display.find("zzz_unknown 4") > display.find("1")
+	var poison := "%s 1" % tr("status.poison.name")
+	TranslationServer.set_locale("en")
+	var passed: bool = display.find(poison) >= 0 \
+		and display.find("zzz_unknown 4") > display.find(poison)
+	TranslationServer.set_locale(original_locale)
 	assert(passed)
 	return passed
 

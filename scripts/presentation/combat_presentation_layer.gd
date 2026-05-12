@@ -162,7 +162,7 @@ func _status_text(event: CombatPresentationEvent) -> String:
 		return event.text
 	var prefix := "+" if event.amount > 0 else ""
 	if event.status_id.is_empty():
-		return "%s%s Status" % [prefix, event.amount]
+		return "%s%s %s" % [prefix, event.amount, tr("ui.label.status")]
 	return "%s%s %s" % [prefix, event.amount, event.status_id]
 
 func _show_cinematic_slash(event: CombatPresentationEvent) -> void:

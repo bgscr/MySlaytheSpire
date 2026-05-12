@@ -1,19 +1,32 @@
 extends Control
 
 const SceneRouterScript := preload("res://scripts/app/scene_router.gd")
+const UiStyle := preload("res://scripts/ui/ui_style.gd")
 
 func _ready() -> void:
 	var app = get_tree().root.get_node("App")
 	var run = app.game.current_run
 	var run_failed: bool = run != null and run.failed
 	var label := Label.new()
-	label.text = "失败结算" if run_failed else "通关结算"
+	label.name = "RunSummaryTitle"
+	label.text = tr("ui.summary.defeat") if run_failed else tr("ui.summary.victory")
+	UiStyle.apply_title(label)
 	add_child(label)
+
+	var stats := Label.new()
+	stats.name = "RunSummaryStats"
+	stats.text = tr("ui.summary.stats")
+	stats.position.y = 28
+	UiStyle.apply_body_label(stats)
+	add_child(stats)
+
 	_clear_ended_run(app)
 
 	var menu := Button.new()
-	menu.text = "返回主菜单"
+	menu.name = "RunSummaryMenuButton"
+	menu.text = tr("ui.summary.return_menu")
 	menu.position.y = 48
+	UiStyle.apply_primary_button(menu)
 	menu.pressed.connect(func(): app.game.router.go_to(SceneRouterScript.MAIN_MENU))
 	add_child(menu)
 

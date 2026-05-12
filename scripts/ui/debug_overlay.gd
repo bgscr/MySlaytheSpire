@@ -3,49 +3,59 @@ extends PanelContainer
 const SceneRouterScript := preload("res://scripts/app/scene_router.gd")
 const CombatPresentationConfig := preload("res://scripts/presentation/combat_presentation_config.gd")
 const AudioMixConfig := preload("res://scripts/presentation/audio_mix_config.gd")
+const UiStyle := preload("res://scripts/ui/ui_style.gd")
 
 func _ready() -> void:
 	visible = OS.is_debug_build()
+	UiStyle.apply_panel(self)
 	var box := VBoxContainer.new()
 	add_child(box)
 
 	var heal := Button.new()
-	heal.text = "Debug: Full HP"
+	heal.name = "DebugFullHp"
+	heal.text = _debug_text("ui.debug.full_hp")
+	UiStyle.apply_secondary_button(heal)
 	heal.pressed.connect(_full_hp)
 	box.add_child(heal)
 
 	var gold := Button.new()
-	gold.text = "Debug: +100 Gold"
+	gold.text = _debug_text("ui.debug.gold_100")
+	UiStyle.apply_secondary_button(gold)
 	gold.pressed.connect(_add_gold)
 	box.add_child(gold)
 
 	var map := Button.new()
-	map.text = "Debug: Map"
+	map.text = _debug_text("ui.debug.map")
+	UiStyle.apply_secondary_button(map)
 	map.pressed.connect(_go_map)
 	box.add_child(map)
 
 	var dev_tools := Button.new()
 	dev_tools.name = "DebugDevTools"
-	dev_tools.text = "Debug: Dev Tools"
+	dev_tools.text = _debug_text("ui.debug.dev_tools")
+	UiStyle.apply_secondary_button(dev_tools)
 	dev_tools.pressed.connect(_go_dev_tools)
 	box.add_child(dev_tools)
 
-	_add_presentation_toggle(box, "DebugPresentationEnabled", "Presentation", "enabled")
+	_add_presentation_toggle(box, "DebugPresentationEnabled", "ui.debug.presentation", "enabled")
 	_add_reduced_motion_toggle(box)
-	_add_presentation_toggle(box, "DebugPresentationDrag", "Drag Play", "drag_enabled")
-	_add_presentation_toggle(box, "DebugPresentationFloatingText", "Float Text", "floating_text_enabled")
-	_add_presentation_toggle(box, "DebugPresentationFlash", "Hit Flash", "flash_enabled")
-	_add_presentation_toggle(box, "DebugPresentationHighlight", "Target Highlight", "target_highlight_enabled")
-	_add_presentation_toggle(box, "DebugPresentationStatusPulse", "Status Pulse", "status_pulse_enabled")
-	_add_presentation_toggle(box, "DebugPresentationCinematic", "Future Cinematic", "cinematic_enabled")
-	_add_presentation_toggle(box, "DebugPresentationParticles", "Particles", "particle_enabled")
-	_add_presentation_toggle(box, "DebugPresentationCameraImpulse", "Camera Impulse", "camera_impulse_enabled")
-	_add_presentation_toggle(box, "DebugPresentationSlowMotion", "Slow Motion", "slow_motion_enabled")
-	_add_presentation_toggle(box, "DebugPresentationAudioCue", "Audio Cue", "audio_cue_enabled")
-	_add_audio_volume_slider(box, "DebugAudioMasterVolume", "Master Volume", AudioMixConfig.BUS_MASTER)
-	_add_audio_volume_slider(box, "DebugAudioMusicVolume", "Music Volume", AudioMixConfig.BUS_MUSIC)
-	_add_audio_volume_slider(box, "DebugAudioSfxVolume", "SFX Volume", AudioMixConfig.BUS_SFX)
-	_add_audio_volume_slider(box, "DebugAudioUiVolume", "UI Volume", AudioMixConfig.BUS_UI)
+	_add_presentation_toggle(box, "DebugPresentationDrag", "ui.debug.drag_play", "drag_enabled")
+	_add_presentation_toggle(box, "DebugPresentationFloatingText", "ui.debug.float_text", "floating_text_enabled")
+	_add_presentation_toggle(box, "DebugPresentationFlash", "ui.debug.hit_flash", "flash_enabled")
+	_add_presentation_toggle(box, "DebugPresentationHighlight", "ui.debug.target_highlight", "target_highlight_enabled")
+	_add_presentation_toggle(box, "DebugPresentationStatusPulse", "ui.debug.status_pulse", "status_pulse_enabled")
+	_add_presentation_toggle(box, "DebugPresentationCinematic", "ui.debug.future_cinematic", "cinematic_enabled")
+	_add_presentation_toggle(box, "DebugPresentationParticles", "ui.debug.particles", "particle_enabled")
+	_add_presentation_toggle(box, "DebugPresentationCameraImpulse", "ui.debug.camera_impulse", "camera_impulse_enabled")
+	_add_presentation_toggle(box, "DebugPresentationSlowMotion", "ui.debug.slow_motion", "slow_motion_enabled")
+	_add_presentation_toggle(box, "DebugPresentationAudioCue", "ui.debug.audio_cue", "audio_cue_enabled")
+	_add_audio_volume_slider(box, "DebugAudioMasterVolume", "ui.debug.master_volume", AudioMixConfig.BUS_MASTER)
+	_add_audio_volume_slider(box, "DebugAudioMusicVolume", "ui.debug.music_volume", AudioMixConfig.BUS_MUSIC)
+	_add_audio_volume_slider(box, "DebugAudioSfxVolume", "ui.debug.sfx_volume", AudioMixConfig.BUS_SFX)
+	_add_audio_volume_slider(box, "DebugAudioUiVolume", "ui.debug.ui_volume", AudioMixConfig.BUS_UI)
+
+func _debug_text(key: String) -> String:
+	return tr("ui.debug.prefix").format({"label": tr(key)})
 
 func _get_app() -> Node:
 	return get_tree().root.get_node_or_null("App")
@@ -56,7 +66,7 @@ func _add_presentation_toggle(box: VBoxContainer, node_name: String, label: Stri
 		return
 	var toggle := CheckBox.new()
 	toggle.name = node_name
-	toggle.text = "Debug: %s" % label
+	toggle.text = _debug_text(label)
 	toggle.button_pressed = bool(app.game.presentation_config.get(property_name))
 	toggle.toggled.connect(func(enabled: bool): app.game.presentation_config.set(property_name, enabled))
 	box.add_child(toggle)
@@ -67,7 +77,7 @@ func _add_reduced_motion_toggle(box: VBoxContainer) -> void:
 		return
 	var toggle := CheckBox.new()
 	toggle.name = "DebugPresentationReducedMotion"
-	toggle.text = "Debug: Reduced Motion"
+	toggle.text = _debug_text("ui.debug.reduced_motion")
 	toggle.button_pressed = app.game.presentation_config.is_reduced_motion()
 	toggle.toggled.connect(func(enabled: bool):
 		var profile := CombatPresentationConfig.MOTION_PROFILE_REDUCED if enabled else CombatPresentationConfig.MOTION_PROFILE_FULL
@@ -83,7 +93,7 @@ func _add_audio_volume_slider(box: VBoxContainer, node_name: String, label: Stri
 	row.name = "%sRow" % node_name
 	var label_node := Label.new()
 	label_node.name = "%sLabel" % node_name
-	label_node.text = "Debug: %s" % label
+	label_node.text = _debug_text(label)
 	row.add_child(label_node)
 	var slider := HSlider.new()
 	slider.name = node_name

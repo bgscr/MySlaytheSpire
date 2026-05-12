@@ -4,18 +4,24 @@ const ContentCatalog := preload("res://scripts/content/content_catalog.gd")
 const EnemyIntentDisplayResolver := preload("res://scripts/presentation/enemy_intent_display_resolver.gd")
 
 func test_resolver_parses_attack_block_and_status_intents() -> bool:
+	var original_locale := TranslationServer.get_locale()
+	TranslationServer.set_locale("zh_CN")
 	var catalog := ContentCatalog.new()
 	catalog.load_default()
 	var resolver := EnemyIntentDisplayResolver.new()
-	var attack := resolver.resolve("attack_5", catalog)
+	var attack_zh_label := tr("intent.attack.label")
+	var attack_zh := resolver.resolve("attack_5", catalog)
+	TranslationServer.set_locale("en")
+	var attack_en := resolver.resolve("attack_5", catalog)
 	var block := resolver.resolve("block_6", catalog)
 	var poison := resolver.resolve("apply_status_poison_2_player", catalog)
-	var passed: bool = attack.get("display_id") == "attack" \
-		and attack.get("kind") == "attack" \
-		and attack.get("amount") == 5 \
-		and attack.get("target") == "player" \
-		and attack.get("label") == "Attack" \
-		and attack.get("is_known") == true \
+	var passed: bool = attack_zh.get("display_id") == "attack" \
+		and attack_zh.get("kind") == "attack" \
+		and attack_zh.get("amount") == 5 \
+		and attack_zh.get("target") == "player" \
+		and attack_zh.get("label") == attack_zh_label \
+		and attack_zh.get("is_known") == true \
+		and attack_en.get("label") == "Attack" \
 		and block.get("display_id") == "block" \
 		and block.get("kind") == "block" \
 		and block.get("amount") == 6 \
@@ -27,10 +33,13 @@ func test_resolver_parses_attack_block_and_status_intents() -> bool:
 		and poison.get("amount") == 2 \
 		and poison.get("target") == "player" \
 		and poison.get("label") == "Poison"
+	TranslationServer.set_locale(original_locale)
 	assert(passed)
 	return passed
 
 func test_resolver_handles_status_ids_with_underscores() -> bool:
+	var original_locale := TranslationServer.get_locale()
+	TranslationServer.set_locale("en")
 	var catalog := ContentCatalog.new()
 	catalog.load_default()
 	var resolver := EnemyIntentDisplayResolver.new()
@@ -48,25 +57,32 @@ func test_resolver_handles_status_ids_with_underscores() -> bool:
 		and focus.get("amount") == 1 \
 		and focus.get("target") == "self" \
 		and focus.get("label") == "Sword Focus"
+	TranslationServer.set_locale(original_locale)
 	assert(passed)
 	return passed
 
 func test_resolver_returns_unknown_for_malformed_intents() -> bool:
+	var original_locale := TranslationServer.get_locale()
 	var catalog := ContentCatalog.new()
 	catalog.load_default()
 	var resolver := EnemyIntentDisplayResolver.new()
+	TranslationServer.set_locale("zh_CN")
+	var unknown_label := tr("intent.unknown.label")
 	var malformed_attack := resolver.resolve("attack_bad", catalog)
 	var malformed_status := resolver.resolve("apply_status_poison_player", catalog)
 	var unknown := resolver.resolve("wait", catalog)
+	TranslationServer.set_locale("en")
 	var passed: bool = malformed_attack.get("display_id") == "unknown" \
 		and malformed_attack.get("kind") == "unknown" \
 		and malformed_attack.get("is_known") == false \
-		and malformed_attack.get("label") == "Unknown" \
+		and malformed_attack.get("label") == unknown_label \
 		and malformed_status.get("display_id") == "unknown" \
 		and malformed_status.get("is_known") == false \
 		and unknown.get("display_id") == "unknown" \
+		and unknown.get("label") == unknown_label \
 		and unknown.get("show_amount") == false \
 		and unknown.get("show_target") == false
+	TranslationServer.set_locale(original_locale)
 	assert(passed)
 	return passed
 

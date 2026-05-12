@@ -14,7 +14,7 @@ window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 
 [internationalization]
-locale/translations=PackedStringArray("res://localization/zh_CN.po")
+locale/translations=PackedStringArray("res://localization/zh_CN.po", "res://localization/en.po")
 
 [rendering]
 renderer/rendering_method="forward_plus"

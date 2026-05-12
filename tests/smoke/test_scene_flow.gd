@@ -7,6 +7,7 @@ const CardDefScript := preload("res://scripts/data/card_def.gd")
 const ContentCatalogScript := preload("res://scripts/content/content_catalog.gd")
 const EventResolverScript := preload("res://scripts/event/event_resolver.gd")
 const ItemDetailPanel := preload("res://scripts/ui/item_detail_panel.gd")
+const LocalizationServiceScript := preload("res://scripts/app/localization_service.gd")
 const MapNodeStateScript := preload("res://scripts/run/map_node_state.gd")
 const RunStateScript := preload("res://scripts/run/run_state.gd")
 const SaveServiceScript := preload("res://scripts/save/save_service.gd")
@@ -31,11 +32,66 @@ func test_debug_overlay_is_anchored_away_from_main_menu_actions() -> bool:
 	debug_overlay.free()
 	return passed
 
+func test_debug_overlay_localizes_controls(tree: SceneTree) -> bool:
+	var original_locale := TranslationServer.get_locale()
+	TranslationServer.set_locale("en")
+	var debug_overlay := DebugOverlayScene.instantiate() as Control
+	tree.root.add_child(debug_overlay)
+	var heal := _find_node_by_name(debug_overlay, "DebugFullHp") as Button
+	var dev_tools := _find_node_by_name(debug_overlay, "DebugDevTools") as Button
+	var english_ok := heal != null and heal.text == "Debug: Full HP" \
+		and dev_tools != null and dev_tools.text == "Debug: Dev Tools"
+	debug_overlay.free()
+	TranslationServer.set_locale("zh_CN")
+	debug_overlay = DebugOverlayScene.instantiate() as Control
+	tree.root.add_child(debug_overlay)
+	heal = _find_node_by_name(debug_overlay, "DebugFullHp") as Button
+	dev_tools = _find_node_by_name(debug_overlay, "DebugDevTools") as Button
+	var chinese_ok := heal != null \
+		and heal.text == tr("ui.debug.prefix").format({"label": tr("ui.debug.full_hp")}) \
+		and dev_tools != null \
+		and dev_tools.text == tr("ui.debug.prefix").format({"label": tr("ui.debug.dev_tools")})
+	debug_overlay.free()
+	TranslationServer.set_locale(original_locale)
+	var passed := english_ok and chinese_ok
+	assert(passed)
+	return passed
+
 func test_failed_run_summary_clears_save(tree: SceneTree) -> bool:
 	return _run_summary_clears_save(tree, true, false, "user://test_failed_summary_save.json")
 
 func test_completed_run_summary_clears_save(tree: SceneTree) -> bool:
 	return _run_summary_clears_save(tree, false, true, "user://test_completed_summary_save.json")
+
+func test_completed_run_summary_localizes_result(tree: SceneTree) -> bool:
+	var save_path := "user://test_summary_locale_save.json"
+	var locale_path := "user://test_summary_locale.cfg"
+	var app = _create_app_with_save_and_locale_service(tree, save_path, locale_path, "en")
+	var run := RunStateScript.new()
+	run.completed = true
+	app.game.current_run = run
+	var summary = app.game.router.go_to(SceneRouterScript.SUMMARY)
+	var title := _find_node_by_name(summary, "RunSummaryTitle") as Label
+	var stats := _find_node_by_name(summary, "RunSummaryStats") as Label
+	var menu := _find_node_by_name(summary, "RunSummaryMenuButton") as Button
+	var english_ok := title != null and title.text == "Victory Summary" \
+		and stats != null and stats.text == "Run complete" \
+		and menu != null and menu.text == "Return to Main Menu"
+	app.game.localization_service.set_locale("zh_CN")
+	run = RunStateScript.new()
+	run.completed = true
+	app.game.current_run = run
+	summary = app.game.router.go_to(SceneRouterScript.SUMMARY)
+	title = _find_node_by_name(summary, "RunSummaryTitle") as Label
+	stats = _find_node_by_name(summary, "RunSummaryStats") as Label
+	menu = _find_node_by_name(summary, "RunSummaryMenuButton") as Button
+	var chinese_ok := title != null and title.text == "胜利总结" \
+		and stats != null and stats.text == "本次冒险已结束" \
+		and menu != null and menu.text == "返回主菜单"
+	var passed := english_ok and chinese_ok
+	_cleanup_app_save_and_locale(app, save_path, locale_path)
+	assert(passed, "Run summary should localize title, stats, and menu button in en and zh_CN.")
+	return passed
 
 func test_main_menu_disables_continue_without_save(tree: SceneTree) -> bool:
 	var save_path := "user://test_no_continue_save.json"
@@ -47,6 +103,36 @@ func test_main_menu_disables_continue_without_save(tree: SceneTree) -> bool:
 	_delete_test_save(save_path)
 	return passed
 
+func test_main_menu_defaults_to_chinese_and_toggles_english(tree: SceneTree) -> bool:
+	var save_path := "user://test_main_menu_locale_save.json"
+	var locale_path := "user://test_main_menu_locale.cfg"
+	var original_locale := TranslationServer.get_locale()
+	_delete_test_save(save_path)
+	_delete_test_save(locale_path)
+	var app := AppScene.instantiate()
+	app.game.localization_service = LocalizationServiceScript.new(locale_path)
+	tree.root.add_child(app)
+	app.game.save_service = SaveServiceScript.new(save_path)
+	app.game.localization_service.clear_saved_locale()
+	app.game.localization_service.load_or_default()
+	var main_menu = app.game.router.go_to(SceneRouterScript.MAIN_MENU)
+	var new_run := _find_node_by_name(main_menu, "NewRunButton") as Button
+	var toggle := _find_node_by_name(main_menu, "LanguageToggleButton") as Button
+	var chinese_ok := new_run != null and new_run.text == tr("ui.new_run") \
+		and toggle != null and toggle.text == "中文 / EN"
+	if toggle != null:
+		toggle.pressed.emit()
+	var english_ok := new_run != null and new_run.text == "New Run" \
+		and toggle != null and toggle.text == "中文 / EN"
+	var passed := chinese_ok and english_ok and toggle != null
+	app.game.localization_service.clear_saved_locale()
+	app.free()
+	_delete_test_save(save_path)
+	_delete_test_save(locale_path)
+	TranslationServer.set_locale(original_locale)
+	assert(passed)
+	return passed
+
 func test_main_menu_rejects_terminal_save(tree: SceneTree) -> bool:
 	return _main_menu_rejects_terminal_save(tree, true, false, "user://test_failed_terminal_continue_save.json")
 
@@ -54,7 +140,12 @@ func test_main_menu_rejects_completed_save(tree: SceneTree) -> bool:
 	return _main_menu_rejects_terminal_save(tree, false, true, "user://test_completed_terminal_continue_save.json")
 
 func test_combat_screen_creates_session_and_cancels_pending_card(tree: SceneTree) -> bool:
-	var app = _create_app_with_save_service(tree, "user://test_combat_screen_session_save.json")
+	var app = _create_app_with_save_and_locale_service(
+		tree,
+		"user://test_combat_screen_session_save.json",
+		"user://test_combat_screen_session_locale.cfg",
+		"en"
+	)
 	var run := RunStateScript.new()
 	run.seed_value = 12345
 	run.character_id = "sword"
@@ -73,14 +164,15 @@ func test_combat_screen_creates_session_and_cancels_pending_card(tree: SceneTree
 	var cancel_button := combat.get_node_or_null("CancelSelectionButton") as Button
 	var end_turn_button := combat.get_node_or_null("EndTurnButton") as Button
 	var first_card: Button = hand_container.get_child(0) as Button if hand_container != null and hand_container.get_child_count() > 0 else null
-	var first_card_has_type := false
+	var first_card_has_visible_text := false
 	if first_card != null and combat.session.state.hand.size() > 0:
 		var first_card_id: String = combat.session.state.hand[0]
 		var first_card_def: CardDefScript = combat.session.catalog.get_card(first_card_id)
 		var first_card_text := _find_node_by_name(first_card, "CardText_0") as Label
-		first_card_has_type = first_card_def != null \
+		first_card_has_visible_text = first_card_def != null \
 			and first_card_text != null \
-			and first_card_text.text.contains(first_card_def.card_type)
+			and first_card_text.text.contains(tr(first_card_def.name_key)) \
+			and first_card_text.text.contains("Cost")
 	if first_card != null:
 		first_card.pressed.emit()
 	var pending_phase: bool = combat.session.phase == "selecting_enemy_target" \
@@ -95,15 +187,23 @@ func test_combat_screen_creates_session_and_cancels_pending_card(tree: SceneTree
 		and hand_container.get_child_count() >= 1 \
 		and end_turn_button != null \
 		and cancel_button != null \
-		and first_card_has_type \
+		and first_card_has_visible_text \
 		and pending_phase \
 		and combat.session.phase == "player_turn"
-	app.free()
-	_delete_test_save("user://test_combat_screen_session_save.json")
+	_cleanup_app_save_and_locale(
+		app,
+		"user://test_combat_screen_session_save.json",
+		"user://test_combat_screen_session_locale.cfg"
+	)
 	return passed
 
 func test_combat_screen_shows_attack_intent_row(tree: SceneTree) -> bool:
-	var app = _create_app_with_save_service(tree, "user://test_attack_intent_row_save.json")
+	var app = _create_app_with_save_and_locale_service(
+		tree,
+		"user://test_attack_intent_row_save.json",
+		"user://test_attack_intent_row_locale.cfg",
+		"en"
+	)
 	app.game.set_debug_combat_sandbox_config({
 		"character_id": "sword",
 		"deck_ids": ["sword.strike"],
@@ -121,19 +221,23 @@ func test_combat_screen_shows_attack_intent_row(tree: SceneTree) -> bool:
 		and icon != null \
 		and icon.text == "ATK" \
 		and label != null \
-		and label.text == "Attack" \
+		and label.text == tr("intent.attack.label") \
 		and amount != null \
 		and amount.text == "5" \
 		and target != null \
 		and target.text == "Player" \
 		and enemy_button != null \
 		and not enemy_button.text.contains("attack_5")
-	app.free()
-	_delete_test_save("user://test_attack_intent_row_save.json")
+	_cleanup_app_save_and_locale(app, "user://test_attack_intent_row_save.json", "user://test_attack_intent_row_locale.cfg")
 	return passed
 
 func test_combat_screen_shows_block_intent_row(tree: SceneTree) -> bool:
-	var app = _create_app_with_save_service(tree, "user://test_block_intent_row_save.json")
+	var app = _create_app_with_save_and_locale_service(
+		tree,
+		"user://test_block_intent_row_save.json",
+		"user://test_block_intent_row_locale.cfg",
+		"en"
+	)
 	app.game.set_debug_combat_sandbox_config({
 		"character_id": "sword",
 		"deck_ids": ["sword.guard"],
@@ -148,17 +252,21 @@ func test_combat_screen_shows_block_intent_row(tree: SceneTree) -> bool:
 	var passed: bool = icon != null \
 		and icon.text == "BLK" \
 		and label != null \
-		and label.text == "Block" \
+		and label.text == tr("intent.block.label") \
 		and amount != null \
 		and amount.text == "6" \
 		and target != null \
 		and target.text == "Self"
-	app.free()
-	_delete_test_save("user://test_block_intent_row_save.json")
+	_cleanup_app_save_and_locale(app, "user://test_block_intent_row_save.json", "user://test_block_intent_row_locale.cfg")
 	return passed
 
 func test_combat_screen_shows_status_intent_row(tree: SceneTree) -> bool:
-	var app = _create_app_with_save_service(tree, "user://test_status_intent_row_save.json")
+	var app = _create_app_with_save_and_locale_service(
+		tree,
+		"user://test_status_intent_row_save.json",
+		"user://test_status_intent_row_locale.cfg",
+		"en"
+	)
 	app.game.set_debug_combat_sandbox_config({
 		"character_id": "sword",
 		"deck_ids": ["sword.guard"],
@@ -173,13 +281,50 @@ func test_combat_screen_shows_status_intent_row(tree: SceneTree) -> bool:
 	var passed: bool = icon != null \
 		and icon.text == "PSN" \
 		and label != null \
-		and label.text == "Poison" \
+		and label.text == tr("intent.poison.label") \
 		and amount != null \
 		and amount.text == "2" \
 		and target != null \
 		and target.text == "Player"
-	app.free()
-	_delete_test_save("user://test_status_intent_row_save.json")
+	_cleanup_app_save_and_locale(app, "user://test_status_intent_row_save.json", "user://test_status_intent_row_locale.cfg")
+	return passed
+
+func test_combat_screen_localizes_player_summary_and_intent(tree: SceneTree) -> bool:
+	var save_path := "user://test_combat_locale_save.json"
+	var locale_path := "user://test_combat_locale.cfg"
+	var app = _create_app_with_save_and_locale_service(tree, save_path, locale_path, "en")
+	app.game.set_debug_combat_sandbox_config({
+		"character_id": "sword",
+		"deck_ids": ["sword.strike"],
+		"enemy_ids": ["training_puppet"],
+		"seed_value": 201,
+	})
+	var combat = app.game.router.go_to(SceneRouterScript.COMBAT)
+	combat.session.state.player.statuses["poison"] = 2
+	combat.session.state.enemies[0].statuses["broken_stance"] = 1
+	combat._refresh()
+	var status := _find_node_by_name(combat, "PlayerStatus") as Label
+	var pile := _find_node_by_name(combat, "PileStatus") as Label
+	var target := _find_node_by_name(combat, "IntentTarget_0") as Label
+	var enemy_summary := _find_node_by_name(combat, "EnemySummaryLabel_0") as Label
+	var english_ok := status != null and status.text.contains("HP") \
+		and status.text.contains("%s " % tr("ui.label.status")) \
+		and pile != null and pile.text.contains("Draw") \
+		and target != null and target.text == "Player" \
+		and enemy_summary != null and enemy_summary.text.contains("%s " % tr("ui.label.status"))
+	app.game.localization_service.set_locale("zh_CN")
+	status = _find_node_by_name(combat, "PlayerStatus") as Label
+	pile = _find_node_by_name(combat, "PileStatus") as Label
+	target = _find_node_by_name(combat, "IntentTarget_0") as Label
+	enemy_summary = _find_node_by_name(combat, "EnemySummaryLabel_0") as Label
+	var chinese_ok := status != null and status.text.contains("生命") \
+		and status.text.contains("%s " % tr("ui.label.status")) \
+		and pile != null and pile.text.contains("抽牌") \
+		and target != null and target.text == "玩家" \
+		and enemy_summary != null and enemy_summary.text.contains("%s " % tr("ui.label.status"))
+	var passed := english_ok and chinese_ok
+	_cleanup_app_save_and_locale(app, save_path, locale_path)
+	assert(passed)
 	return passed
 
 func test_combat_screen_renders_sword_visual_theme_background(tree: SceneTree) -> bool:
@@ -251,7 +396,7 @@ func test_combat_screen_renders_card_thumbnail_children(tree: SceneTree) -> bool
 		and frame != null \
 		and frame.color.a > 0.0 \
 		and text != null \
-		and text.text.contains("sword.strike") \
+		and text.text.contains(tr("card.sword.strike.name")) \
 		and card.text.is_empty()
 	app.free()
 	_delete_test_save("user://test_card_thumbnail_children_save.json")
@@ -314,6 +459,41 @@ func test_combat_card_detail_hides_on_refresh(tree: SceneTree) -> bool:
 		and hidden_after_refresh
 	app.free()
 	_delete_test_save(save_path)
+	return passed
+
+func test_combat_card_detail_stays_open_on_locale_change(tree: SceneTree) -> bool:
+	var save_path := "user://test_combat_card_detail_locale_save.json"
+	var locale_path := "user://test_combat_card_detail_locale.cfg"
+	var app = _create_app_with_save_and_locale_service(tree, save_path, locale_path, "en")
+	app.game.set_debug_combat_sandbox_config({
+		"character_id": "sword",
+		"deck_ids": ["sword.strike"],
+		"enemy_ids": ["training_puppet"],
+		"seed_value": 303,
+	})
+	var combat = app.game.router.go_to(SceneRouterScript.COMBAT)
+	combat.session.state.hand.clear()
+	combat.session.state.hand.append("sword.strike")
+	combat.session.state.draw_pile.clear()
+	combat._refresh()
+	var card_button := _find_node_by_name(combat, "CardButton_0") as Button
+	if card_button != null:
+		card_button.mouse_entered.emit()
+	var detail := _find_node_by_name(combat, "ItemDetailPanel") as ItemDetailPanel
+	var title := _find_node_by_name(combat, "ItemDetailTitle") as Label
+	var title_before := title.text if title != null else ""
+	var visible_after_hover: bool = detail != null and detail.visible
+	app.game.localization_service.set_locale("zh_CN")
+	detail = _find_node_by_name(combat, "ItemDetailPanel") as ItemDetailPanel
+	title = _find_node_by_name(combat, "ItemDetailTitle") as Label
+	var passed: bool = card_button != null \
+		and visible_after_hover \
+		and detail != null \
+		and detail.visible \
+		and title != null \
+		and title.text == tr("card.sword.strike.name") \
+		and title.text != title_before
+	_cleanup_app_save_and_locale(app, save_path, locale_path)
 	return passed
 
 func test_combat_screen_renders_normal_enemy_portrait(tree: SceneTree) -> bool:
@@ -683,7 +863,7 @@ func test_dev_tools_screen_starts_on_card_browser_and_selects_strike(tree: Scene
 	var passed: bool = screen.active_tool_id == "card_browser" \
 		and panel != null \
 		and detail != null \
-		and detail.text.contains("id: sword.strike")
+		and detail.text.contains("%s: sword.strike" % tr("ui.label.id"))
 	screen.free()
 	return passed
 
@@ -700,9 +880,30 @@ func test_dev_tools_enemy_sandbox_button_shows_panel(tree: SceneTree) -> bool:
 		and screen.active_tool_id == "enemy_sandbox" \
 		and panel != null \
 		and summary != null \
-		and summary.text.contains("enemy: training_puppet") \
+		and summary.text.contains("%s: training_puppet" % tr("ui.label.enemy")) \
 		and launch != null
 	screen.free()
+	return passed
+
+func test_dev_tools_enemy_sandbox_enemy_buttons_localize_hp_label(tree: SceneTree) -> bool:
+	var original_locale := TranslationServer.get_locale()
+	TranslationServer.set_locale("zh_CN")
+	var screen := DevToolsScene.instantiate()
+	tree.root.add_child(screen)
+	var button := _find_node_by_name(screen, "ToolButton_enemy_sandbox") as Button
+	if button != null:
+		button.pressed.emit()
+	var enemy_button := _find_node_by_name(screen, "EnemySandboxEnemy_training_puppet") as Button
+	var summary := _find_node_by_name(screen, "EnemySandboxSummaryLabel") as Label
+	var passed: bool = button != null \
+		and enemy_button != null \
+		and enemy_button.text.contains(tr("ui.label.hp")) \
+		and not enemy_button.text.contains("HP 20") \
+		and summary != null \
+		and summary.text.contains("%s: training_puppet" % tr("ui.label.enemy"))
+	screen.free()
+	TranslationServer.set_locale(original_locale)
+	assert(passed)
 	return passed
 
 func test_dev_tools_event_tester_button_shows_panel(tree: SceneTree) -> bool:
@@ -719,7 +920,7 @@ func test_dev_tools_event_tester_button_shows_panel(tree: SceneTree) -> bool:
 		and screen.active_tool_id == "event_tester" \
 		and panel != null \
 		and summary != null \
-		and summary.text.contains("event: alchemist_market") \
+		and summary.text.contains("%s: alchemist_market" % tr("ui.label.event")) \
 		and option != null \
 		and reset != null
 	screen.free()
@@ -761,9 +962,9 @@ func test_dev_tools_event_tester_apply_option_stays_in_dev_tools_without_current
 	var summary := _find_node_by_name(dev_tools, "EventTesterRunSummaryLabel") as Label
 	var passed: bool = option_button != null \
 		and result != null \
-		and result.text.contains("Applied option: buy_brew") \
+		and result.text.contains(tr("ui.dev_tools.applied_option").format({"id": "buy_brew"})) \
 		and summary != null \
-		and summary.text.contains("gold: 30") \
+		and summary.text.contains("%s: 30" % tr("ui.label.gold")) \
 		and app.game.current_run == null \
 		and app.game.router.current_scene == dev_tools
 	app.free()
@@ -931,7 +1132,7 @@ func test_dev_tools_save_inspector_button_shows_read_only_panel(tree: SceneTree)
 		and screen.active_tool_id == "save_inspector" \
 		and panel != null \
 		and status != null \
-		and status.text.contains("status: missing_service") \
+		and status.text.contains("%s: missing_service" % tr("ui.label.status")) \
 		and target != null \
 		and target.text.contains("continue_target: none") \
 		and reload != null \
@@ -961,11 +1162,11 @@ func test_dev_tools_save_inspector_displays_saved_run_and_stays_in_dev_tools(tre
 	var summary := _find_node_by_name(dev_tools, "SaveInspectorRunSummaryLabel") as Label
 	var map_section := _find_node_by_name(dev_tools, "SaveInspectorMapSectionLabel") as Label
 	var passed: bool = status != null \
-		and status.text.contains("status: active") \
+		and status.text.contains("%s: active" % tr("ui.label.status")) \
 		and target != null \
 		and target.text.contains("continue_target: map") \
 		and summary != null \
-		and summary.text.contains("character: sword") \
+		and summary.text.contains("%s: sword" % tr("ui.label.character")) \
 		and summary.text.contains("current_node_type: combat") \
 		and map_section != null \
 		and map_section.text.contains("map_nodes: 2") \
@@ -990,10 +1191,10 @@ func test_dev_tools_save_inspector_reload_refreshes_without_routing_or_current_r
 		reload.pressed.emit()
 	var status_after := _find_node_by_name(dev_tools, "SaveInspectorStatusLabel") as Label
 	var target_after := _find_node_by_name(dev_tools, "SaveInspectorResumeTargetLabel") as Label
-	var passed: bool = before_text.contains("status: no_save") \
+	var passed: bool = before_text.contains("%s: no_save" % tr("ui.label.status")) \
 		and reload != null \
 		and status_after != null \
-		and status_after.text.contains("status: active") \
+		and status_after.text.contains("%s: active" % tr("ui.label.status")) \
 		and target_after != null \
 		and target_after.text.contains("continue_target: map") \
 		and app.game.current_run == null \
@@ -1018,7 +1219,7 @@ func test_dev_tools_save_inspector_does_not_delete_invalid_save(tree: SceneTree)
 	var status := _find_node_by_name(dev_tools, "SaveInspectorStatusLabel") as Label
 	var target := _find_node_by_name(dev_tools, "SaveInspectorResumeTargetLabel") as Label
 	var passed: bool = status != null \
-		and status.text.contains("status: invalid") \
+		and status.text.contains("%s: invalid" % tr("ui.label.status")) \
 		and target != null \
 		and target.text.contains("continue_target: invalid_delete_on_continue") \
 		and app.game.save_service.has_save() \
@@ -1050,7 +1251,7 @@ func test_dev_tools_save_inspector_can_reopen_after_switching_tools(tree: SceneT
 		and screen.active_tool_id == "save_inspector" \
 		and panel != null \
 		and status != null \
-		and status.text.contains("status: missing_service")
+		and status.text.contains("%s: missing_service" % tr("ui.label.status"))
 	screen.free()
 	return passed
 
@@ -1474,6 +1675,30 @@ func test_enemy_intent_polish_respects_particle_toggle(tree: SceneTree) -> bool:
 	_delete_test_save("user://test_enemy_particle_toggle_save.json")
 	return passed
 
+func test_reward_screen_localizes_empty_state(tree: SceneTree) -> bool:
+	var save_path := "user://test_reward_locale_save.json"
+	var locale_path := "user://test_reward_locale.cfg"
+	var app = _create_app_with_save_and_locale_service(tree, save_path, locale_path, "en")
+	app.game.current_run = _test_run_with_nodes(["combat"])
+	var reward = app.game.router.go_to(SceneRouterScript.REWARD)
+	var title := _find_node_by_name(reward, "RewardTitle") as Label
+	var status := _find_node_by_name(reward, "RewardStatus") as Label
+	var english_ok := title != null and title.text == "Rewards" \
+		and status != null and status.text.contains("No rewards")
+	_cleanup_app_save_and_locale(app, save_path, locale_path)
+
+	app = _create_app_with_save_and_locale_service(tree, save_path, locale_path, "zh_CN")
+	app.game.current_run = _test_run_with_nodes(["combat"])
+	reward = app.game.router.go_to(SceneRouterScript.REWARD)
+	title = _find_node_by_name(reward, "RewardTitle") as Label
+	status = _find_node_by_name(reward, "RewardStatus") as Label
+	var chinese_ok := title != null and title.text == tr("ui.reward.title") \
+		and status != null and status.text.contains(tr("ui.reward.no_rewards"))
+	var passed := english_ok and chinese_ok
+	_cleanup_app_save_and_locale(app, save_path, locale_path)
+	assert(passed)
+	return passed
+
 func test_reward_screen_claims_card_skips_gold_and_saves_on_continue(tree: SceneTree) -> bool:
 	var save_path := "user://test_reward_screen_claim_skip_save.json"
 	var app = _create_app_with_save_service(tree, save_path)
@@ -1524,7 +1749,7 @@ func test_reward_screen_claims_card_skips_gold_and_saves_on_continue(tree: Scene
 		and thumbnail.texture != null \
 		and thumbnail.mouse_filter == Control.MOUSE_FILTER_IGNORE \
 		and preview_text != null \
-		and preview_text.text.contains("sword.") \
+		and preview_text.text.contains(tr("ui.label.cost")) \
 		and card_detail_visible \
 		and card_detail_hidden \
 		and still_disabled_after_card \
@@ -1588,7 +1813,7 @@ func test_map_event_node_routes_to_event_screen(tree: SceneTree) -> bool:
 	var run := _reward_run("event", true)
 	app.game.current_run = run
 	var map_screen = app.game.router.go_to(SceneRouterScript.MAP)
-	var event_button := _find_node_by_text(map_screen, "node_0: event") as Button
+	var event_button := _find_node_by_name(map_screen, "MapNodeButton_node_0") as Button
 	if event_button != null:
 		event_button.pressed.emit()
 	var passed: bool = event_button != null \
@@ -1596,6 +1821,81 @@ func test_map_event_node_routes_to_event_screen(tree: SceneTree) -> bool:
 		and app.game.router.current_scene.name == "EventScreen"
 	app.free()
 	_delete_test_save(save_path)
+	return passed
+
+func test_map_screen_localizes_node_types(tree: SceneTree) -> bool:
+	var save_path := "user://test_map_locale_save.json"
+	var locale_path := "user://test_map_locale.cfg"
+	var original_locale := TranslationServer.get_locale()
+	_delete_test_save(save_path)
+	_delete_test_save(locale_path)
+	var app := AppScene.instantiate()
+	app.game.localization_service = LocalizationServiceScript.new(locale_path)
+	tree.root.add_child(app)
+	app.game.save_service = SaveServiceScript.new(save_path)
+	app.game.localization_service.set_locale("en")
+	app.game.current_run = _test_run_with_nodes(["combat", "event", "shop"])
+	var map = app.game.router.go_to(SceneRouterScript.MAP)
+	var title := _find_node_by_name(map, "MapTitle") as Label
+	var first_node := _find_node_by_name(map, "MapNodeButton_node_0") as Button
+	var second_node := _find_node_by_name(map, "MapNodeButton_node_1") as Button
+	var third_node := _find_node_by_name(map, "MapNodeButton_node_2") as Button
+	var english_ok := title != null and title.text == "Route Map" \
+		and first_node != null and first_node.text.contains("Combat") \
+		and second_node != null and second_node.text.contains("Event") \
+		and third_node != null and third_node.text.contains("Shop")
+	app.game.localization_service.set_locale("zh_CN")
+	title = _find_node_by_name(map, "MapTitle") as Label
+	first_node = _find_node_by_name(map, "MapNodeButton_node_0") as Button
+	second_node = _find_node_by_name(map, "MapNodeButton_node_1") as Button
+	third_node = _find_node_by_name(map, "MapNodeButton_node_2") as Button
+	var chinese_ok := title != null and title.text == tr("ui.map.title") \
+		and first_node != null and first_node.text.contains(tr("node_type.combat")) \
+		and second_node != null and second_node.text.contains(tr("node_type.event")) \
+		and third_node != null and third_node.text.contains(tr("node_type.shop"))
+	var passed := english_ok and chinese_ok
+	app.game.localization_service.clear_saved_locale()
+	app.free()
+	_delete_test_save(save_path)
+	_delete_test_save(locale_path)
+	TranslationServer.set_locale(original_locale)
+	assert(passed)
+	return passed
+
+func test_event_screen_localizes_title_body_and_option(tree: SceneTree) -> bool:
+	var save_path := "user://test_event_screen_locale_save.json"
+	var locale_path := "user://test_event_screen_locale.cfg"
+	var app = _create_app_with_save_and_locale_service(tree, save_path, locale_path, "en")
+	var run := _reward_run("event", true)
+	run.seed_value = 1
+	run.current_hp = 20
+	run.max_hp = 40
+	run.gold = 50
+	app.game.current_run = run
+	var event_screen = app.game.router.go_to(SceneRouterScript.EVENT)
+	var title := _find_node_by_name(event_screen, "EventTitle") as Label
+	var body := _find_node_by_name(event_screen, "EventBody") as Label
+	var option := _find_node_by_name(event_screen, "EventOption_0") as Button
+	var event = event_screen.current_event
+	var first_option = event.options[0] if event != null and event.options.size() > 0 else null
+	var english_ok := event != null \
+		and first_option != null \
+		and title != null and title.text == tr(event.title_key) \
+		and body != null and body.text == tr(event.body_key) \
+		and option != null and option.text.contains(tr(first_option.label_key))
+	app.game.localization_service.set_locale("zh_CN")
+	event_screen._render()
+	title = _find_node_by_name(event_screen, "EventTitle") as Label
+	body = _find_node_by_name(event_screen, "EventBody") as Label
+	option = _find_node_by_name(event_screen, "EventOption_0") as Button
+	var chinese_ok := event != null \
+		and first_option != null \
+		and title != null and title.text == tr(event.title_key) \
+		and body != null and body.text == tr(event.body_key) \
+		and option != null and option.text.contains(tr(first_option.label_key))
+	var passed := english_ok and chinese_ok
+	_cleanup_app_save_and_locale(app, save_path, locale_path)
+	assert(passed)
 	return passed
 
 func test_event_screen_option_applies_saves_and_advances(tree: SceneTree) -> bool:
@@ -1631,8 +1931,9 @@ func test_event_screen_disables_unavailable_option(tree: SceneTree) -> bool:
 	run.gold = 0
 	app.game.current_run = run
 	var event_screen = app.game.router.go_to(SceneRouterScript.EVENT)
-	var disabled_button := _first_disabled_event_option(event_screen)
-	var passed: bool = disabled_button != null and disabled_button.disabled
+	var disabled_button := _first_disabled_event_option_with_reason(event_screen)
+	var passed: bool = disabled_button != null \
+		and disabled_button.disabled
 	app.free()
 	_delete_test_save(save_path)
 	return passed
@@ -1749,7 +2050,7 @@ func test_map_shop_node_routes_to_shop_screen(tree: SceneTree) -> bool:
 	var run := _reward_run("shop", true)
 	app.game.current_run = run
 	var map_screen = app.game.router.go_to(SceneRouterScript.MAP)
-	var shop_button := _find_node_by_text(map_screen, "node_0: shop") as Button
+	var shop_button := _find_node_by_name(map_screen, "MapNodeButton_node_0") as Button
 	if shop_button != null:
 		shop_button.pressed.emit()
 	var loaded_run = app.game.save_service.load_run()
@@ -1760,6 +2061,80 @@ func test_map_shop_node_routes_to_shop_screen(tree: SceneTree) -> bool:
 		and not loaded_run.current_shop_state.is_empty()
 	app.free()
 	_delete_test_save(save_path)
+	return passed
+
+func test_shop_screen_localizes_actions(tree: SceneTree) -> bool:
+	var save_path := "user://test_shop_locale_save.json"
+	var locale_path := "user://test_shop_locale.cfg"
+	var app = _create_app_with_save_and_locale_service(tree, save_path, locale_path, "en")
+	app.game.current_run = _test_run_with_nodes(["shop"])
+	app.game.current_run.current_node_id = "node_0"
+	var shop = app.game.router.go_to(SceneRouterScript.SHOP)
+	var title := _find_node_by_name(shop, "ShopTitle") as Label
+	var leave := _find_node_by_name(shop, "LeaveShopButton") as Button
+	var refresh := _find_node_by_name(shop, "RefreshButton") as Button
+	var english_ok := title != null and title.text == "Shop" \
+		and leave != null and leave.text == "Leave" \
+		and refresh != null and refresh.text == "Refresh (%s gold)" % ShopResolverScript.REFRESH_PRICE
+	_cleanup_app_save_and_locale(app, save_path, locale_path)
+
+	app = _create_app_with_save_and_locale_service(tree, save_path, locale_path, "zh_CN")
+	app.game.current_run = _test_run_with_nodes(["shop"])
+	app.game.current_run.current_node_id = "node_0"
+	shop = app.game.router.go_to(SceneRouterScript.SHOP)
+	title = _find_node_by_name(shop, "ShopTitle") as Label
+	leave = _find_node_by_name(shop, "LeaveShopButton") as Button
+	refresh = _find_node_by_name(shop, "RefreshButton") as Button
+	var chinese_ok := title != null and title.text == tr("ui.shop.title") \
+		and leave != null and leave.text == tr("ui.shop.leave") \
+		and refresh != null and refresh.text.contains(tr("ui.shop.refresh").format({"price": ShopResolverScript.REFRESH_PRICE}))
+	var passed := english_ok and chinese_ok
+	_cleanup_app_save_and_locale(app, save_path, locale_path)
+	assert(passed)
+	return passed
+
+func test_shop_screen_missing_catalog_offer_preserves_id_and_price(tree: SceneTree) -> bool:
+	var save_path := "user://test_shop_missing_offer_save.json"
+	var locale_path := "user://test_shop_missing_offer_locale.cfg"
+	var app = _create_app_with_save_and_locale_service(tree, save_path, locale_path, "en")
+	var run := _test_run_with_nodes(["shop"])
+	run.current_node_id = "node_0"
+	run.current_shop_state = {
+		"node_id": "node_0",
+		"refresh_used": false,
+		"offers": [
+			{
+				"id": "card_missing",
+				"type": "card",
+				"item_id": "missing.card",
+				"price": 41,
+				"sold": false,
+			},
+			{
+				"id": "relic_missing",
+				"type": "relic",
+				"item_id": "missing.relic",
+				"price": 123,
+				"sold": false,
+			},
+		],
+	}
+	app.game.current_run = run
+	var shop = app.game.router.go_to(SceneRouterScript.SHOP)
+	var card_offer := _find_node_by_name(shop, "ShopOffer_card_missing") as VBoxContainer
+	var relic_offer := _find_node_by_name(shop, "ShopOffer_relic_missing") as VBoxContainer
+	var card_label: Label = null
+	var relic_label: Label = null
+	if card_offer != null and card_offer.get_child_count() > 0:
+		card_label = card_offer.get_child(0) as Label
+	if relic_offer != null and relic_offer.get_child_count() > 0:
+		relic_label = relic_offer.get_child(0) as Label
+	var passed: bool = card_label != null \
+		and card_label.text == "Card: missing.card [?] (?) - 41 gold" \
+		and relic_label != null \
+		and relic_label.text == "Relic: missing.relic [?] - 123 gold"
+	_cleanup_app_save_and_locale(app, save_path, locale_path)
+	assert(passed)
 	return passed
 
 func test_shop_screen_buy_card_saves_immediately(tree: SceneTree) -> bool:
@@ -1984,6 +2359,7 @@ func _combat_screen_renders_enemy_portrait(
 	var portrait := _find_node_by_name(combat, "EnemyPortrait_0") as TextureRect
 	var summary := _find_node_by_name(combat, "EnemySummaryLabel_0") as Label
 	var row := _find_node_by_name(combat, "EnemyIntentRow_0") as HBoxContainer
+	var enemy = combat.session.catalog.get_enemy(enemy_id)
 	var passed: bool = button != null \
 		and root != null \
 		and root.mouse_filter == Control.MOUSE_FILTER_IGNORE \
@@ -1996,7 +2372,8 @@ func _combat_screen_renders_enemy_portrait(
 		and portrait.get_meta("enemy_id") == enemy_id \
 		and portrait.get_meta("silhouette_tag") == expected_silhouette \
 		and summary != null \
-		and summary.text.contains(enemy_id) \
+		and enemy != null \
+		and summary.text.contains(tr(enemy.name_key)) \
 		and row != null
 	app.free()
 	_delete_test_save(save_path)
@@ -2048,6 +2425,26 @@ func _create_app_with_save_service(tree: SceneTree, save_path: String):
 	app.game.save_service = SaveServiceScript.new(save_path)
 	return app
 
+func _create_app_with_save_and_locale_service(tree: SceneTree, save_path: String, locale_path: String, locale: String):
+	_delete_test_save(save_path)
+	_delete_test_save(locale_path)
+	var original_locale := TranslationServer.get_locale()
+	var app := AppScene.instantiate()
+	app.set_meta("original_locale", original_locale)
+	app.game.localization_service = LocalizationServiceScript.new(locale_path)
+	app.game.localization_service.set_locale(locale)
+	tree.root.add_child(app)
+	app.game.save_service = SaveServiceScript.new(save_path)
+	return app
+
+func _cleanup_app_save_and_locale(app, save_path: String, locale_path: String) -> void:
+	var original_locale := String(app.get_meta("original_locale", TranslationServer.get_locale()))
+	app.game.localization_service.clear_saved_locale()
+	app.free()
+	_delete_test_save(save_path)
+	_delete_test_save(locale_path)
+	TranslationServer.set_locale(original_locale)
+
 func _reward_run(node_type: String, include_next_node: bool) -> RunStateScript:
 	var run := RunStateScript.new()
 	run.seed_value = 12345
@@ -2063,6 +2460,19 @@ func _reward_run(node_type: String, include_next_node: bool) -> RunStateScript:
 	if include_next_node:
 		nodes.append(MapNodeStateScript.new("node_1", 1, "combat"))
 	run.map_nodes = nodes
+	return run
+
+func _test_run_with_nodes(types: Array[String]) -> RunStateScript:
+	var run := RunStateScript.new()
+	run.seed_value = 9
+	run.character_id = "sword"
+	run.max_hp = 72
+	run.current_hp = 72
+	run.deck_ids = ["sword.strike", "sword.strike", "sword.strike"]
+	for i in range(types.size()):
+		var node := MapNodeStateScript.new("node_%s" % i, i, types[i])
+		node.unlocked = i == 0
+		run.map_nodes.append(node)
 	return run
 
 func _find_continue_button(menu: Node) -> Button:
@@ -2101,13 +2511,17 @@ func _find_node_by_prefix(root: Node, prefix: String) -> Node:
 			return found
 	return null
 
-func _first_disabled_event_option(root: Node) -> Button:
+func _first_disabled_event_option_with_reason(root: Node) -> Button:
 	if root == null:
 		return null
 	if root is Button and root.name.begins_with("EventOption_") and (root as Button).disabled:
-		return root as Button
+		var button := root as Button
+		if button.text.contains(tr("ui.event.need_hp")) \
+			or button.text.contains(tr("ui.event.need_gold")) \
+			or button.text.contains(tr("ui.event.need_card")):
+			return button
 	for child in root.get_children():
-		var found := _first_disabled_event_option(child)
+		var found := _first_disabled_event_option_with_reason(child)
 		if found != null:
 			return found
 	return null

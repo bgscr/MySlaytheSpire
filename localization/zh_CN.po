@@ -10,8 +10,32 @@ msgstr "新局"
 msgid "ui.continue"
 msgstr "继续"
 
+msgid "ui.main_menu.title"
+msgstr "杀戮尖塔 2"
+
+msgid "ui.main_menu.continue_disabled"
+msgstr "无可用存档"
+
+msgid "ui.language_toggle"
+msgstr "中文 / EN"
+
 msgid "ui.end_turn"
 msgstr "结束回合"
+
+msgid "ui.event.fallback_title"
+msgstr "事件"
+
+msgid "ui.event.no_event"
+msgstr "暂无可用事件"
+
+msgid "ui.event.need_hp"
+msgstr "生命不足"
+
+msgid "ui.event.need_gold"
+msgstr "金币不足"
+
+msgid "ui.event.need_card"
+msgstr "缺少所需卡牌"
 
 msgid "character.sword.name"
 msgstr "剑修"
@@ -331,8 +355,89 @@ msgstr "下一次由玩家造成的伤害增加等同层数的数值，然后减
 msgid "status.broken_stance.name"
 msgstr "破势"
 
+msgid "ui.label.id"
+msgstr "ID"
+
+msgid "ui.label.hp"
+msgstr "生命"
+
+msgid "ui.label.block"
+msgstr "格挡"
+
+msgid "ui.label.energy"
+msgstr "能量"
+
+msgid "ui.label.turn"
+msgstr "回合"
+
+msgid "ui.label.type"
+msgstr "类型"
+
+msgid "ui.label.rarity"
+msgstr "稀有度"
+
+msgid "ui.label.cost"
+msgstr "费用"
+
+msgid "ui.label.tier"
+msgstr "品阶"
+
+msgid "ui.label.character"
+msgstr "角色"
+
+msgid "ui.label.deck"
+msgstr "牌组"
+
+msgid "ui.label.enemy"
+msgstr "敌人"
+
+msgid "ui.label.event"
+msgstr "事件"
+
+msgid "ui.label.gold"
+msgstr "金币"
+
+msgid "ui.label.relics"
+msgstr "遗物"
+
+msgid "ui.label.pending_rewards"
+msgstr "待领取奖励"
+
+msgid "ui.label.status"
+msgstr "状态"
+
+msgid "ui.label.reason"
+msgstr "原因"
+
+msgid "ui.common.unknown_card"
+msgstr "未知卡牌"
+
+msgid "ui.common.unknown_relic"
+msgstr "未知遗物"
+
+msgid "ui.common.unknown_reward"
+msgstr "未知奖励"
+
 msgid "status.broken_stance.desc"
 msgstr "下一次受到伤害时额外受到等同层数的伤害，然后减少 1 层。"
+
+msgid "intent.attack.label"
+msgstr "攻击"
+
+msgid "intent.block.label"
+msgstr "格挡"
+
+msgid "intent.poison.label"
+msgstr "施毒"
+
+msgid "intent.broken_stance.label"
+msgstr "破势"
+
+msgid "intent.sword_focus.label"
+msgstr "剑心"
+
+msgid "intent.unknown.label"
+msgstr "未知"
 
 msgid "card.sword.wind_splitting_step.name"
 msgstr "分风踏"
@@ -706,5 +811,422 @@ msgstr "移除一张毒丸。"
 msgid "event.withered_master.option.work"
 msgstr "为师父打杂"
 
+msgid "node_type.combat"
+msgstr "战斗"
+
 msgid "event.withered_master.option.work.desc"
 msgstr "失去 5 生命，获得 22 金。"
+
+msgid "ui.summary.victory"
+msgstr "胜利总结"
+
+msgid "ui.summary.defeat"
+msgstr "失败总结"
+
+msgid "ui.summary.return_menu"
+msgstr "返回主菜单"
+
+msgid "ui.summary.stats"
+msgstr "本次冒险已结束"
+
+msgid "ui.reward.title"
+msgstr "奖励"
+
+msgid "ui.reward.no_rewards"
+msgstr "暂无奖励"
+
+msgid "ui.reward.no_rewards_available"
+msgstr "暂无奖励可领取"
+
+msgid "ui.reward.resolve_prompt"
+msgstr "领取或跳过每项奖励"
+
+msgid "ui.reward.resolved"
+msgstr "奖励已处理"
+
+msgid "ui.reward.choose_one_card"
+msgstr "选择一张卡牌"
+
+msgid "ui.reward.take_gold"
+msgstr "领取 {amount} 金"
+
+msgid "ui.reward.gold_label"
+msgstr "金币：{amount}"
+
+msgid "ui.reward.relic_label"
+msgstr "遗物：{name}"
+
+msgid "ui.reward.skip"
+msgstr "跳过"
+
+msgid "ui.reward.state_claimed"
+msgstr "已领取"
+
+msgid "ui.reward.state_skipped"
+msgstr "已跳过"
+
+msgid "ui.shop.title"
+msgstr "商店"
+
+msgid "ui.shop.gold"
+msgstr "金币：{amount}"
+
+msgid "ui.shop.no_shop"
+msgstr "暂无商店"
+
+msgid "ui.shop.card_offer"
+msgstr "卡牌：{name} [{rarity}] ({cost}) - {price} 金币"
+
+msgid "ui.shop.relic_offer"
+msgstr "遗物：{name} [{tier}] - {price} 金币"
+
+msgid "ui.shop.heal_offer"
+msgstr "治疗 - {price} 金币"
+
+msgid "ui.shop.remove_offer"
+msgstr "移除一张卡牌 - {price} 金币"
+
+msgid "ui.shop.unknown_offer"
+msgstr "未知商品"
+
+msgid "ui.shop.sold_out"
+msgstr "已售罄"
+
+msgid "ui.shop.buy"
+msgstr "购买"
+
+msgid "ui.shop.choose_card"
+msgstr "选择卡牌"
+
+msgid "ui.shop.choose_remove_card"
+msgstr "选择要移除的卡牌"
+
+msgid "ui.shop.refresh"
+msgstr "刷新（{price} 金币）"
+
+msgid "ui.shop.leave"
+msgstr "离开"
+
+msgid "ui.dev_tools.title"
+msgstr "开发工具"
+
+msgid "ui.dev_tools.card_browser"
+msgstr "卡牌浏览器"
+
+msgid "ui.dev_tools.enemy_sandbox"
+msgstr "敌人沙盒"
+
+msgid "ui.dev_tools.event_tester"
+msgstr "事件测试器"
+
+msgid "ui.dev_tools.reward_inspector"
+msgstr "奖励检查器"
+
+msgid "ui.dev_tools.save_inspector"
+msgstr "存档检查器"
+
+msgid "ui.dev_tools.no_cards"
+msgstr "没有符合筛选的卡牌"
+
+msgid "ui.dev_tools.no_card_selected"
+msgstr "未选择卡牌"
+
+msgid "ui.dev_tools.launch_sandbox"
+msgstr "启动沙盒"
+
+msgid "ui.dev_tools.starter_deck"
+msgstr "初始牌组：{deck}"
+
+msgid "ui.dev_tools.reset_test_run"
+msgstr "重置测试流程"
+
+msgid "ui.dev_tools.no_event"
+msgstr "暂无事件"
+
+msgid "ui.dev_tools.reset_reward_run"
+msgstr "重置奖励流程"
+
+msgid "ui.dev_tools.no_rewards"
+msgstr "没有奖励"
+
+msgid "ui.dev_tools.reload"
+msgstr "重新加载"
+
+msgid "ui.dev_tools.delete"
+msgstr "删除"
+
+msgid "ui.dev_tools.export"
+msgstr "导出"
+
+msgid "ui.dev_tools.copy_json"
+msgstr "复制 JSON"
+
+msgid "ui.dev_tools.repair"
+msgstr "修复"
+
+msgid "ui.dev_tools.planned_tool"
+msgstr "计划中的工具"
+
+msgid "ui.dev_tools.applied_option"
+msgstr "已应用选项：{id}"
+
+msgid "ui.dev_tools.option_failed"
+msgstr "选项失败：{id}"
+
+msgid "ui.dev_tools.claim_item"
+msgstr "领取 {item}"
+
+msgid "ui.dev_tools.claim_gold"
+msgstr "领取 {amount} 金币"
+
+msgid "ui.map.title"
+msgstr "路线地图"
+
+msgid "ui.map.node_label"
+msgstr "{id}: {type}（{state}）"
+
+msgid "ui.map.state_unlocked"
+msgstr "可进入"
+
+msgid "ui.map.state_locked"
+msgstr "未解锁"
+
+msgid "ui.map.state_visited"
+msgstr "已访问"
+
+msgid "node_type.elite"
+msgstr "精英"
+
+msgid "node_type.boss"
+msgstr "首领"
+
+msgid "node_type.event"
+msgstr "事件"
+
+msgid "node_type.shop"
+msgstr "商店"
+
+msgid "node_type.reward"
+msgstr "奖励"
+
+msgid "ui.combat.confirm_player_target"
+msgstr "确认玩家目标"
+
+msgid "ui.combat.cancel"
+msgstr "取消"
+
+msgid "ui.combat.end_turn"
+msgstr "结束回合"
+
+msgid "ui.combat.draw"
+msgstr "抽牌"
+
+msgid "ui.combat.discard"
+msgstr "弃牌"
+
+msgid "ui.combat.exhaust"
+msgstr "消耗"
+
+msgid "ui.combat.phase"
+msgstr "阶段"
+
+msgid "ui.combat.no_player"
+msgstr "无玩家"
+
+msgid "combat.error.start_no_run"
+msgstr "战斗会话无法启动：缺少流程。"
+
+msgid "combat.error.start_no_catalog"
+msgstr "战斗会话无法启动：缺少目录。"
+
+msgid "combat.error.sandbox_no_catalog"
+msgstr "战斗沙盒无法启动：缺少目录。"
+
+msgid "combat.error.sandbox_empty_deck"
+msgstr "战斗沙盒无法启动：牌组为空。"
+
+msgid "combat.error.sandbox_no_enemies"
+msgstr "战斗沙盒无法启动：缺少敌人。"
+
+msgid "combat.error.sandbox_enemy_count"
+msgstr "战斗沙盒需要一到三个敌人。"
+
+msgid "combat.error.sandbox_character_missing"
+msgstr "战斗沙盒角色缺失：{character_id}"
+
+msgid "combat.error.sandbox_enemy_missing"
+msgstr "战斗沙盒敌人缺失：{enemy_id}"
+
+msgid "combat.error.cards_player_turn"
+msgstr "只能在玩家回合选择卡牌。"
+
+msgid "combat.error.card_selection_index_invalid"
+msgstr "卡牌选择索引无效：{index}"
+
+msgid "combat.error.card_missing"
+msgstr "所选卡牌不在目录中：{card_id}"
+
+msgid "combat.error.not_enough_energy"
+msgstr "能量不足，无法打出卡牌：{card_id}"
+
+msgid "combat.error.cancel_no_pending_selection"
+msgstr "没有可取消的待确认卡牌选择。"
+
+msgid "combat.error.enemy_target_not_pending"
+msgstr "当前没有等待确认的敌人目标。"
+
+msgid "combat.error.enemy_target_index_invalid"
+msgstr "敌人目标索引无效：{index}"
+
+msgid "combat.error.enemy_target_defeated"
+msgstr "敌人目标已被击败：{index}"
+
+msgid "combat.error.player_target_not_pending"
+msgstr "当前没有等待确认的玩家目标。"
+
+msgid "combat.error.end_turn_not_player_turn"
+msgstr "只能在玩家回合结束回合。"
+
+msgid "combat.error.pending_card_missing"
+msgstr "待打出的卡牌缺失。"
+
+msgid "combat.error.pending_card_index_invalid"
+msgstr "待打出卡牌的手牌索引无效：{index}"
+
+msgid "combat.error.pending_card_mismatch"
+msgstr "待打出卡牌与手牌不再匹配：{card_id}"
+
+msgid "combat.error.current_node_missing"
+msgstr "战斗会话当前地图节点缺失：{node_id}"
+
+msgid "combat.error.empty_deck"
+msgstr "战斗会话无法启动：牌组为空。"
+
+msgid "combat.error.character_missing"
+msgstr "战斗会话角色缺失：{character_id}"
+
+msgid "combat.error.encounter_empty"
+msgstr "战斗会话节点没有遭遇：{node_id}"
+
+msgid "combat.error.enemy_missing"
+msgstr "战斗会话敌人缺失：{enemy_id}"
+
+msgid "target.player"
+msgstr "玩家"
+
+msgid "target.self"
+msgstr "自身"
+
+msgid "phase.invalid"
+msgstr "无效"
+
+msgid "phase.player_turn"
+msgstr "玩家回合"
+
+msgid "phase.selecting_enemy_target"
+msgstr "选择目标"
+
+msgid "phase.confirming_player_target"
+msgstr "确认玩家目标"
+
+msgid "phase.enemy_turn"
+msgstr "敌人回合"
+
+msgid "phase.won"
+msgstr "胜利"
+
+msgid "phase.lost"
+msgstr "失败"
+
+msgid "card_type.attack"
+msgstr "攻击"
+
+msgid "card_type.skill"
+msgstr "技能"
+
+msgid "card_type.power"
+msgstr "能力"
+
+msgid "rarity.common"
+msgstr "普通"
+
+msgid "rarity.uncommon"
+msgstr "非凡"
+
+msgid "rarity.rare"
+msgstr "稀有"
+
+msgid "relic_tier.common"
+msgstr "普通"
+
+msgid "relic_tier.uncommon"
+msgstr "非凡"
+
+msgid "relic_tier.rare"
+msgstr "稀有"
+
+msgid "relic_tier.boss"
+msgstr "首领"
+
+msgid "ui.debug.prefix"
+msgstr "调试：{label}"
+
+msgid "ui.debug.full_hp"
+msgstr "满生命"
+
+msgid "ui.debug.gold_100"
+msgstr "+100 金币"
+
+msgid "ui.debug.map"
+msgstr "地图"
+
+msgid "ui.debug.dev_tools"
+msgstr "开发工具"
+
+msgid "ui.debug.presentation"
+msgstr "演出效果"
+
+msgid "ui.debug.reduced_motion"
+msgstr "减少动态效果"
+
+msgid "ui.debug.drag_play"
+msgstr "拖拽出牌"
+
+msgid "ui.debug.float_text"
+msgstr "浮动文字"
+
+msgid "ui.debug.hit_flash"
+msgstr "受击闪烁"
+
+msgid "ui.debug.target_highlight"
+msgstr "目标高亮"
+
+msgid "ui.debug.status_pulse"
+msgstr "状态脉冲"
+
+msgid "ui.debug.future_cinematic"
+msgstr "未来过场"
+
+msgid "ui.debug.particles"
+msgstr "粒子"
+
+msgid "ui.debug.camera_impulse"
+msgstr "镜头冲击"
+
+msgid "ui.debug.slow_motion"
+msgstr "慢动作"
+
+msgid "ui.debug.audio_cue"
+msgstr "音效提示"
+
+msgid "ui.debug.master_volume"
+msgstr "主音量"
+
+msgid "ui.debug.music_volume"
+msgstr "音乐音量"
+
+msgid "ui.debug.sfx_volume"
+msgstr "音效音量"
+
+msgid "ui.debug.ui_volume"
+msgstr "界面音量"

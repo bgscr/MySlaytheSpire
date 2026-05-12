@@ -14,6 +14,8 @@ const EnemyIntentDisplayResolver := preload("res://scripts/presentation/enemy_in
 const ItemDetailPanel := preload("res://scripts/ui/item_detail_panel.gd")
 const ItemVisualPresenter := preload("res://scripts/ui/item_visual_presenter.gd")
 const SceneRouterScript := preload("res://scripts/app/scene_router.gd")
+const UiStyle := preload("res://scripts/ui/ui_style.gd")
+const UiText := preload("res://scripts/ui/ui_text.gd")
 
 var session: CombatSession
 var presentation_config: CombatPresentationConfig
@@ -47,6 +49,7 @@ var end_turn_button: Button
 func _ready() -> void:
 	set_process_unhandled_input(true)
 	_build_layout()
+	_connect_locale_signal()
 	_start_session()
 	_refresh()
 
@@ -67,11 +70,13 @@ func _build_layout() -> void:
 
 	status_label = Label.new()
 	status_label.name = "PlayerStatus"
+	UiStyle.apply_body_label(status_label)
 	add_child(status_label)
 
 	pile_label = Label.new()
 	pile_label.name = "PileStatus"
 	pile_label.position.y = 24
+	UiStyle.apply_body_label(pile_label)
 	add_child(pile_label)
 
 	error_label = Label.new()
@@ -86,24 +91,25 @@ func _build_layout() -> void:
 
 	player_target_button = Button.new()
 	player_target_button.name = "PlayerTargetButton"
-	player_target_button.text = "Confirm Player Target"
 	player_target_button.position = Vector2(16, 88)
+	UiStyle.apply_secondary_button(player_target_button)
 	player_target_button.pressed.connect(_on_player_target_pressed)
 	add_child(player_target_button)
 
 	cancel_button = Button.new()
 	cancel_button.name = "CancelSelectionButton"
-	cancel_button.text = "Cancel"
 	cancel_button.position = Vector2(16, 136)
+	UiStyle.apply_secondary_button(cancel_button)
 	cancel_button.pressed.connect(_cancel_selection)
 	add_child(cancel_button)
 
 	end_turn_button = Button.new()
 	end_turn_button.name = "EndTurnButton"
-	end_turn_button.text = "End Turn"
 	end_turn_button.position = Vector2(16, 184)
+	UiStyle.apply_secondary_button(end_turn_button)
 	end_turn_button.pressed.connect(_on_end_turn_pressed)
 	add_child(end_turn_button)
+	_refresh_locale_text()
 
 	hand_container = HBoxContainer.new()
 	hand_container.name = "HandContainer"
@@ -184,12 +190,12 @@ func _refresh() -> void:
 		return
 	_hide_item_detail()
 	status_label.text = _player_status_text()
-	pile_label.text = "Draw %s | Discard %s | Exhaust %s | Phase %s" % [
+	pile_label.text = UiText.pile_summary(
 		session.state.draw_pile.size(),
 		session.state.discard_pile.size(),
 		session.state.exhausted_pile.size(),
 		session.phase,
-	]
+	)
 	error_label.text = session.error_text
 	player_target_button.visible = session.phase == CombatSession.PHASE_CONFIRMING_PLAYER_TARGET
 	cancel_button.visible = session.phase == CombatSession.PHASE_SELECTING_ENEMY_TARGET \
@@ -206,30 +212,25 @@ func _refresh() -> void:
 
 func _player_status_text() -> String:
 	if session.state.player == null:
-		return "No player"
-	var text := "Player %s HP %s/%s Block %s Energy %s Turn %s" % [
-		session.state.player.id,
-		session.state.player.current_hp,
-		session.state.player.max_hp,
-		session.state.player.block,
-		session.state.energy,
-		session.state.turn,
-	]
+		return tr("ui.combat.no_player")
+	var text := UiText.player_summary({
+		"id": session.state.player.id,
+		"hp": session.state.player.current_hp,
+		"max_hp": session.state.player.max_hp,
+		"block": session.state.player.block,
+		"energy": session.state.energy,
+		"turn": session.state.turn,
+	})
 	var statuses := session.status_runtime.status_display_text(session.state.player)
 	if not statuses.is_empty():
-		text += " Status %s" % statuses
+		text += " %s %s" % [tr("ui.label.status"), statuses]
 	return text
 
 func _enemy_summary_text(enemy, _enemy_index: int) -> String:
-	var text := "%s HP %s/%s Block %s" % [
-		enemy.id,
-		enemy.current_hp,
-		enemy.max_hp,
-		enemy.block,
-	]
+	var text := UiText.enemy_summary(session.catalog, enemy.id, enemy.current_hp, enemy.max_hp, enemy.block)
 	var statuses := session.status_runtime.status_display_text(enemy)
 	if not statuses.is_empty():
-		text += " Status %s" % statuses
+		text += " %s %s" % [tr("ui.label.status"), statuses]
 	return text
 
 func _add_enemy_visual(parent: Control, enemy_index: int, enemy) -> void:
@@ -313,10 +314,34 @@ func _intent_icon_text(icon_key: String) -> String:
 func _intent_target_text(target: String) -> String:
 	match target:
 		"player":
-			return "Player"
+			return tr("target.player")
 		"self":
-			return "Self"
+			return tr("target.self")
 	return target.capitalize()
+
+func _connect_locale_signal() -> void:
+	var app = get_tree().root.get_node_or_null("App")
+	if app == null or app.game == null or app.game.localization_service == null:
+		return
+	if not app.game.localization_service.locale_changed.is_connected(_on_locale_changed):
+		app.game.localization_service.locale_changed.connect(_on_locale_changed)
+
+func _refresh_locale_text() -> void:
+	player_target_button.text = tr("ui.combat.confirm_player_target")
+	cancel_button.text = tr("ui.combat.cancel")
+	end_turn_button.text = tr("ui.combat.end_turn")
+
+func _on_locale_changed(_locale: String) -> void:
+	var restore_detail := item_detail_panel != null and item_detail_panel.visible and session != null
+	var detail_kind := ""
+	var detail_id := ""
+	if restore_detail:
+		detail_kind = String(item_detail_panel.get_meta("item_kind", ""))
+		detail_id = String(item_detail_panel.get_meta("item_id", ""))
+	_refresh_locale_text()
+	_refresh()
+	if restore_detail and detail_kind == "card" and session.state.hand.has(detail_id):
+		item_detail_panel.show_card(detail_id, session.catalog, visual_theme)
 
 func _refresh_enemies() -> void:
 	_clear_children(enemy_container)

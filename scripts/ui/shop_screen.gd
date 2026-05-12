@@ -8,6 +8,8 @@ const RunProgression := preload("res://scripts/run/run_progression.gd")
 const SceneRouterScript := preload("res://scripts/app/scene_router.gd")
 const ShopResolver := preload("res://scripts/shop/shop_resolver.gd")
 const ShopRunner := preload("res://scripts/shop/shop_runner.gd")
+const UiStyle := preload("res://scripts/ui/ui_style.gd")
+const UiText := preload("res://scripts/ui/ui_text.gd")
 
 var catalog: ContentCatalog
 var resolver := ShopResolver.new()
@@ -31,41 +33,48 @@ func _ready() -> void:
 func _build_layout() -> void:
 	title_label = Label.new()
 	title_label.name = "ShopTitle"
-	title_label.text = "Shop"
+	title_label.text = tr("ui.shop.title")
+	UiStyle.apply_title(title_label)
 	add_child(title_label)
 
 	gold_label = Label.new()
 	gold_label.name = "ShopGoldLabel"
 	gold_label.position.y = 28
+	UiStyle.apply_body_label(gold_label)
 	add_child(gold_label)
 
 	status_label = Label.new()
 	status_label.name = "ShopStatusLabel"
 	status_label.position.y = 52
+	UiStyle.apply_body_label(status_label)
 	add_child(status_label)
 
 	offer_container = VBoxContainer.new()
 	offer_container.name = "ShopOfferContainer"
 	offer_container.position = Vector2(16, 88)
 	offer_container.size = Vector2(640, 320)
+	UiStyle.apply_panel(offer_container)
 	add_child(offer_container)
 
 	removal_container = VBoxContainer.new()
 	removal_container.name = "ShopRemovalContainer"
 	removal_container.position = Vector2(680, 88)
 	removal_container.size = Vector2(320, 320)
+	UiStyle.apply_panel(removal_container)
 	add_child(removal_container)
 
 	refresh_button = Button.new()
 	refresh_button.name = "RefreshButton"
 	refresh_button.position = Vector2(16, 430)
+	UiStyle.apply_secondary_button(refresh_button)
 	refresh_button.pressed.connect(_on_refresh_pressed)
 	add_child(refresh_button)
 
 	leave_button = Button.new()
 	leave_button.name = "LeaveShopButton"
-	leave_button.text = "Leave"
+	leave_button.text = tr("ui.shop.leave")
 	leave_button.position = Vector2(160, 430)
+	UiStyle.apply_secondary_button(leave_button)
 	leave_button.pressed.connect(_on_leave_pressed)
 	add_child(leave_button)
 
@@ -90,11 +99,11 @@ func _render() -> void:
 	var app = _app()
 	var run = app.game.current_run if app != null else null
 	if run == null or run.current_shop_state.is_empty():
-		gold_label.text = "Gold: 0"
-		status_label.text = "No shop available"
+		gold_label.text = tr("ui.shop.gold").format({"amount": 0})
+		status_label.text = tr("ui.shop.no_shop")
 		refresh_button.disabled = true
 		return
-	gold_label.text = "Gold: %s" % run.gold
+	gold_label.text = tr("ui.shop.gold").format({"amount": run.gold})
 	status_label.text = ""
 	for offer in run.current_shop_state.get("offers", []):
 		_add_offer_row(offer as Dictionary)
@@ -105,10 +114,12 @@ func _add_offer_row(offer: Dictionary) -> void:
 	var item := VBoxContainer.new()
 	var offer_id := String(offer.get("id", ""))
 	item.name = "ShopOffer_%s" % offer_id
+	UiStyle.apply_panel(item)
 	offer_container.add_child(item)
 
 	var label := Label.new()
 	label.text = _offer_label(offer)
+	UiStyle.apply_body_label(label)
 	item.add_child(label)
 
 	var item_id := String(offer.get("item_id", ""))
@@ -119,13 +130,15 @@ func _add_offer_row(offer: Dictionary) -> void:
 
 	if bool(offer.get("sold", false)):
 		var sold_label := Label.new()
-		sold_label.text = "Sold out"
+		sold_label.text = tr("ui.shop.sold_out")
+		UiStyle.apply_body_label(sold_label)
 		item.add_child(sold_label)
 		return
 
 	var button := Button.new()
 	button.name = "BuyOffer_%s" % offer_id
 	button.text = _buy_button_text(offer)
+	UiStyle.apply_primary_button(button)
 	button.disabled = not _can_buy_offer(offer)
 	button.pressed.connect(func(): _on_buy_pressed(offer_id))
 	_connect_offer_detail(button, offer)
@@ -139,23 +152,39 @@ func _offer_label(offer: Dictionary) -> String:
 		"card":
 			var card = catalog.get_card(item_id)
 			if card != null:
-				return "Card: %s [%s] (%s) - %s gold" % [card.id, card.rarity, card.cost, price]
-			return "Card: %s - %s gold" % [item_id, price]
+				return tr("ui.shop.card_offer").format({
+					"name": UiText.card_name(catalog, item_id),
+					"rarity": tr("rarity.%s" % card.rarity),
+					"cost": card.cost,
+					"price": price,
+				})
+			return tr("ui.shop.card_offer").format({
+				"name": item_id,
+				"rarity": "?",
+				"cost": "?",
+				"price": price,
+			})
 		"relic":
 			var relic = catalog.get_relic(item_id)
 			if relic != null:
-				return "Relic: %s [%s] - %s gold" % [relic.id, relic.tier, price]
-			return "Relic: %s - %s gold" % [item_id, price]
+				return tr("ui.shop.relic_offer").format({
+					"name": UiText.relic_name(catalog, item_id),
+					"tier": tr("relic_tier.%s" % relic.tier),
+					"price": price,
+				})
+			return tr("ui.shop.relic_offer").format({
+				"name": item_id,
+				"tier": "?",
+				"price": price,
+			})
 		"heal":
-			return "Heal - %s gold" % price
+			return tr("ui.shop.heal_offer").format({"price": price})
 		"remove":
-			return "Remove a card - %s gold" % price
-	return "Unknown offer"
+			return tr("ui.shop.remove_offer").format({"price": price})
+	return tr("ui.shop.unknown_offer")
 
 func _buy_button_text(offer: Dictionary) -> String:
-	if String(offer.get("type", "")) == "remove":
-		return "Choose card"
-	return "Buy"
+	return tr("ui.shop.choose_card") if String(offer.get("type", "")) == "remove" else tr("ui.shop.buy")
 
 func _can_buy_offer(offer: Dictionary) -> bool:
 	var app = _app()
@@ -183,13 +212,15 @@ func _render_removal_choices() -> void:
 	if run == null or selected_remove_offer_id.is_empty():
 		return
 	var label := Label.new()
-	label.text = "Choose a card to remove"
+	label.text = tr("ui.shop.choose_remove_card")
+	UiStyle.apply_body_label(label)
 	removal_container.add_child(label)
 	for i in range(run.deck_ids.size()):
 		var card_id := String(run.deck_ids[i])
 		var button := Button.new()
 		button.name = "RemoveCard_%s" % i
 		button.text = ""
+		UiStyle.apply_primary_button(button)
 		button.custom_minimum_size = Vector2(148, 104)
 		ItemVisualPresenter.add_card_preview(
 			button,
@@ -224,7 +255,7 @@ func _on_refresh_pressed() -> void:
 func _refresh_refresh_button() -> void:
 	var app = _app()
 	var run = app.game.current_run if app != null else null
-	refresh_button.text = "Refresh (%s gold)" % ShopResolver.REFRESH_PRICE
+	refresh_button.text = tr("ui.shop.refresh").format({"price": ShopResolver.REFRESH_PRICE})
 	refresh_button.disabled = not runner.can_refresh(catalog, run)
 
 func _on_leave_pressed() -> void:

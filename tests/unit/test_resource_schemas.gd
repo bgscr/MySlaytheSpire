@@ -59,14 +59,14 @@ func test_enemy_intent_display_def_stores_display_fields() -> bool:
 	display.id = "status.poison"
 	display.intent_kind = "apply_status"
 	display.icon_key = "poison"
-	display.label = "Poison"
+	display.label_key = "intent.poison.label"
 	display.color = Color(0.62, 0.42, 0.9, 1.0)
 	display.show_amount = true
 	display.show_target = true
 	var passed: bool = display.id == "status.poison" \
 		and display.intent_kind == "apply_status" \
 		and display.icon_key == "poison" \
-		and display.label == "Poison" \
+		and display.label_key == "intent.poison.label" \
 		and display.color == Color(0.62, 0.42, 0.9, 1.0) \
 		and display.show_amount \
 		and display.show_target

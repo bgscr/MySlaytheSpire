@@ -50,7 +50,7 @@ func test_session_invalid_when_current_node_is_missing() -> bool:
 	session.start(catalog, run)
 
 	var passed: bool = session.phase == CombatSession.PHASE_INVALID \
-		and session.error_text.contains("current map node")
+		and session.error_text == tr("combat.error.current_node_missing").format({"node_id": "missing_node"})
 	assert(passed)
 	return passed
 
@@ -61,7 +61,7 @@ func test_session_invalid_when_deck_is_empty() -> bool:
 	session.start(catalog, run)
 
 	var passed: bool = session.phase == CombatSession.PHASE_INVALID \
-		and session.error_text.contains("deck")
+		and session.error_text == tr("combat.error.empty_deck")
 	assert(passed)
 	return passed
 
@@ -212,10 +212,55 @@ func test_insufficient_energy_keeps_card_in_hand() -> bool:
 
 	var passed: bool = not selected \
 		and session.phase == CombatSession.PHASE_PLAYER_TURN \
-		and session.error_text.contains("energy") \
+		and session.error_text == tr("combat.error.not_enough_energy").format({"card_id": "sword.horizon_arc"}) \
 		and session.state.energy == energy_before \
 		and session.state.hand == ["sword.horizon_arc"] \
 		and session.state.discard_pile.is_empty()
+	assert(passed)
+	return passed
+
+func test_error_text_localizes_player_visible_failures() -> bool:
+	var original_locale := TranslationServer.get_locale()
+	var catalog := _default_catalog()
+	TranslationServer.set_locale("en")
+	var run := _run_with_single_node("node_0", "combat", ["sword.horizon_arc"])
+	var session := CombatSession.new()
+	session.start(catalog, run)
+	session.state.energy = _card_cost(catalog, "sword.horizon_arc") - 1
+	var selected_en := session.select_card(0)
+	var english_ok := not selected_en \
+		and session.error_text == tr("combat.error.not_enough_energy").format({"card_id": "sword.horizon_arc"})
+	TranslationServer.set_locale("zh_CN")
+	run = _run_with_single_node("node_0", "combat", ["sword.horizon_arc"])
+	session = CombatSession.new()
+	session.start(catalog, run)
+	session.state.energy = _card_cost(catalog, "sword.horizon_arc") - 1
+	var selected_zh := session.select_card(0)
+	var chinese_ok := not selected_zh \
+		and session.error_text == tr("combat.error.not_enough_energy").format({"card_id": "sword.horizon_arc"}) \
+		and not session.error_text.contains("Not enough energy")
+	TranslationServer.set_locale(original_locale)
+	var passed := english_ok and chinese_ok
+	assert(passed)
+	return passed
+
+func test_invalid_start_error_text_localizes_and_preserves_ids() -> bool:
+	var original_locale := TranslationServer.get_locale()
+	var catalog := _default_catalog()
+	TranslationServer.set_locale("zh_CN")
+	var missing_node_run := _run_with_single_node("missing_node", "combat", ["sword.strike"])
+	var session := CombatSession.new()
+	session.start(catalog, missing_node_run)
+	var missing_node_ok := session.phase == CombatSession.PHASE_INVALID \
+		and session.error_text == tr("combat.error.current_node_missing").format({"node_id": "missing_node"}) \
+		and session.error_text.contains("missing_node")
+	session = CombatSession.new()
+	session.start_sandbox(catalog, "sword", ["sword.strike"], ["missing_enemy"], 1)
+	var missing_enemy_ok := session.phase == CombatSession.PHASE_INVALID \
+		and session.error_text == tr("combat.error.sandbox_enemy_missing").format({"enemy_id": "missing_enemy"}) \
+		and session.error_text.contains("missing_enemy")
+	TranslationServer.set_locale(original_locale)
+	var passed := missing_node_ok and missing_enemy_ok
 	assert(passed)
 	return passed
 
@@ -601,7 +646,7 @@ func test_sandbox_session_rejects_missing_enemy() -> bool:
 	var session := CombatSession.new()
 	session.start_sandbox(catalog, "sword", ["sword.strike"], ["missing_enemy"], 1)
 	var passed: bool = session.phase == CombatSession.PHASE_INVALID \
-		and session.error_text.contains("enemy is missing")
+		and session.error_text == tr("combat.error.sandbox_enemy_missing").format({"enemy_id": "missing_enemy"})
 	assert(passed)
 	return passed
 
@@ -615,7 +660,7 @@ func test_sandbox_session_rejects_more_than_three_enemies() -> bool:
 		"stone_grove_guardian",
 	], 1)
 	var passed: bool = session.phase == CombatSession.PHASE_INVALID \
-		and session.error_text.contains("one to three enemies")
+		and session.error_text == tr("combat.error.sandbox_enemy_count")
 	assert(passed)
 	return passed
 

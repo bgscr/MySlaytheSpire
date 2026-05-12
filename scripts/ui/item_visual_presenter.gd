@@ -2,6 +2,7 @@ class_name ItemVisualPresenter
 extends RefCounted
 
 const CombatVisualResolver := preload("res://scripts/presentation/combat_visual_resolver.gd")
+const UiText := preload("res://scripts/ui/ui_text.gd")
 
 static func add_card_preview(
 	parent: Control,
@@ -134,7 +135,7 @@ static func _card_text(card_id: String, catalog: Object) -> String:
 		card = catalog.get_card(card_id)
 	if card == null:
 		return "%s (?)" % card_id
-	return "%s [%s] (%s)" % [card.id, card.card_type, card.cost]
+	return "%s  %s %s" % [UiText.card_name(catalog, card_id), TranslationServer.translate("ui.label.cost"), card.cost]
 
 static func _relic_text(relic_id: String, catalog: Object) -> String:
 	var relic = null
@@ -142,7 +143,7 @@ static func _relic_text(relic_id: String, catalog: Object) -> String:
 		relic = catalog.get_relic(relic_id)
 	if relic == null:
 		return "%s (?)" % relic_id
-	return "%s [%s]" % [relic.id, relic.tier]
+	return "%s  %s" % [UiText.relic_name(catalog, relic_id), TranslationServer.translate("relic_tier.%s" % relic.tier)]
 
 static func _object_has_property(object: Object, property_name: String) -> bool:
 	if object == null:

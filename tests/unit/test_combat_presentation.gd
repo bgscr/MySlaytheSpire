@@ -252,6 +252,30 @@ func test_layer_processes_queue_into_feedback_nodes(tree: SceneTree) -> bool:
 	assert(passed)
 	return passed
 
+func test_layer_status_fallback_label_localizes(tree: SceneTree) -> bool:
+	var original_locale := TranslationServer.get_locale()
+	TranslationServer.set_locale("zh_CN")
+	var layer := CombatPresentationLayer.new()
+	tree.root.add_child(layer)
+	var player_target := Label.new()
+	player_target.name = "PlayerTarget"
+	layer.bind_target("player", player_target)
+	layer.add_child(player_target)
+
+	var status := CombatPresentationEvent.new("status_number")
+	status.target_id = "player"
+	status.amount = 2
+	layer.play_event(status)
+
+	var float_text := layer.get_node_or_null("FloatText_0") as Label
+	var passed: bool = float_text != null \
+		and float_text.text == "+2 %s" % tr("ui.label.status") \
+		and not float_text.text.contains("Status")
+	layer.free()
+	TranslationServer.set_locale(original_locale)
+	assert(passed)
+	return passed
+
 func test_layer_target_highlight_applies_and_clears(tree: SceneTree) -> bool:
 	var layer := CombatPresentationLayer.new()
 	tree.root.add_child(layer)

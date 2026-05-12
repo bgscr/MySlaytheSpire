@@ -58,8 +58,8 @@ func test_dev_tools_card_detail_text_includes_effects_and_presentation_cues() ->
 	screen.load_default_catalog()
 	var card = screen.catalog.get_card("sword.strike")
 	var detail := screen.card_detail_text(card)
-	var passed: bool = detail.contains("id: sword.strike") \
-		and detail.contains("cost: 1") \
+	var passed: bool = detail.contains("%s: sword.strike" % tr("ui.label.id")) \
+		and detail.contains("%s: 1" % tr("ui.label.cost")) \
 		and detail.contains("effect: damage target=enemy amount=6") \
 		and detail.contains("cue: cinematic_slash target_mode=played_target")
 	screen.free()
@@ -76,9 +76,51 @@ func test_dev_tools_exposes_deferred_tool_placeholders() -> bool:
 		"reward_inspector",
 		"save_inspector",
 	] \
-		and screen.placeholder_text("enemy_sandbox").contains("Enemy Sandbox") \
-		and screen.placeholder_text("enemy_sandbox").contains("Planned tool")
+		and screen.placeholder_text("enemy_sandbox").contains(tr("ui.dev_tools.enemy_sandbox")) \
+		and screen.placeholder_text("enemy_sandbox").contains(tr("ui.dev_tools.planned_tool"))
 	screen.free()
+	assert(passed)
+	return passed
+
+func test_dev_tools_tool_labels_localize() -> bool:
+	var original_locale := TranslationServer.get_locale()
+	TranslationServer.set_locale("en")
+	var screen := DevToolsScreen.new()
+	var english_ok: bool = screen.has_method("tool_label") \
+		and screen.call("tool_label", "card_browser") == "Card Browser" \
+		and screen.call("tool_label", "save_inspector") == "Save Inspector"
+	screen.free()
+	TranslationServer.set_locale("zh_CN")
+	screen = DevToolsScreen.new()
+	var chinese_ok: bool = screen.has_method("tool_label") \
+		and screen.call("tool_label", "card_browser") == tr("ui.dev_tools.card_browser") \
+		and screen.call("tool_label", "save_inspector") == tr("ui.dev_tools.save_inspector")
+	screen.free()
+	TranslationServer.set_locale(original_locale)
+	var passed := english_ok and chinese_ok
+	assert(passed)
+	return passed
+
+func test_dev_tools_summaries_localize_labels_and_preserve_ids() -> bool:
+	var original_locale := TranslationServer.get_locale()
+	TranslationServer.set_locale("en")
+	var screen := DevToolsScreen.new()
+	screen.load_default_catalog()
+	screen.set_enemy_sandbox_character("alchemy")
+	var summary := screen.enemy_sandbox_summary_text()
+	var english_ok := summary.contains("Character: alchemy") \
+		and summary.contains("Deck:")
+	screen.free()
+	TranslationServer.set_locale("zh_CN")
+	screen = DevToolsScreen.new()
+	screen.load_default_catalog()
+	screen.set_enemy_sandbox_character("alchemy")
+	summary = screen.enemy_sandbox_summary_text()
+	var chinese_ok := summary.contains("%s: alchemy" % tr("ui.label.character")) \
+		and summary.contains("%s:" % tr("ui.label.deck"))
+	screen.free()
+	TranslationServer.set_locale(original_locale)
+	var passed := english_ok and chinese_ok
 	assert(passed)
 	return passed
 
@@ -132,9 +174,9 @@ func test_enemy_sandbox_summary_includes_character_deck_and_enemy_details() -> b
 	screen.set_enemy_sandbox_character("alchemy")
 	screen.set_enemy_sandbox_enemies(["training_puppet"])
 	var summary: String = screen.enemy_sandbox_summary_text()
-	var passed: bool = summary.contains("character: alchemy") \
-		and summary.contains("deck: alchemy.toxic_pill, alchemy.toxic_pill, alchemy.toxic_pill") \
-		and summary.contains("enemy: training_puppet tier=normal hp=20 intents=attack_5")
+	var passed: bool = summary.contains("%s: alchemy" % tr("ui.label.character")) \
+		and summary.contains("%s: alchemy.toxic_pill, alchemy.toxic_pill, alchemy.toxic_pill" % tr("ui.label.deck")) \
+		and summary.contains("%s: training_puppet tier=normal hp=20 intents=attack_5" % tr("ui.label.enemy"))
 	screen.free()
 	assert(passed)
 	return passed
@@ -197,11 +239,11 @@ func test_event_tester_apply_option_mutates_only_isolated_run() -> bool:
 	var summary: String = screen.event_tester_run_summary_text()
 	var passed: bool = applied \
 		and screen.event_tester_option_applied \
-		and screen.event_tester_result_text == "Applied option: buy_brew" \
+		and screen.event_tester_result_text == tr("ui.dev_tools.applied_option").format({"id": "buy_brew"}) \
 		and screen.event_tester_run.gold == 30 \
 		and screen.event_tester_run.current_hp == 72 \
-		and summary.contains("gold: 30") \
-		and summary.contains("pending_rewards: none")
+		and summary.contains("%s: 30" % tr("ui.label.gold")) \
+		and summary.contains("%s: none" % tr("ui.label.pending_rewards"))
 	screen.free()
 	assert(passed)
 	return passed
@@ -215,12 +257,12 @@ func test_event_tester_pending_reward_and_reset_are_visible() -> bool:
 	screen.reset_event_tester_run()
 	var summary_reset: String = screen.event_tester_run_summary_text()
 	var passed: bool = applied \
-		and summary_after.contains("gold: 32") \
-		and summary_after.contains("pending_rewards: 1") \
+		and summary_after.contains("%s: 32" % tr("ui.label.gold")) \
+		and summary_after.contains("%s: 1" % tr("ui.label.pending_rewards")) \
 		and not screen.event_tester_option_applied \
 		and screen.event_tester_result_text.is_empty() \
-		and summary_reset.contains("gold: 50") \
-		and summary_reset.contains("pending_rewards: none")
+		and summary_reset.contains("%s: 50" % tr("ui.label.gold")) \
+		and summary_reset.contains("%s: none" % tr("ui.label.pending_rewards"))
 	screen.free()
 	assert(passed)
 	return passed
@@ -251,9 +293,9 @@ func test_reward_inspector_rewards_match_resolver_for_current_config() -> bool:
 	var expected: Array[Dictionary] = RewardResolver.new().resolve(screen.catalog, screen.reward_inspector_run)
 	var passed: bool = screen.reward_inspector_rewards == expected \
 		and expected.size() == 3 \
-		and screen.reward_inspector_reward_text(0).contains("type: card_choice") \
-		and screen.reward_inspector_reward_text(1).contains("type: gold") \
-		and screen.reward_inspector_reward_text(2).contains("type: relic")
+		and screen.reward_inspector_reward_text(0).contains("%s: card_choice" % tr("ui.label.type")) \
+		and screen.reward_inspector_reward_text(1).contains("%s: gold" % tr("ui.label.type")) \
+		and screen.reward_inspector_reward_text(2).contains("%s: relic" % tr("ui.label.type"))
 	screen.free()
 	assert(passed)
 	return passed
@@ -294,7 +336,7 @@ func test_save_inspector_reports_missing_service_without_tree_app() -> bool:
 		and snapshot.get("has_save") == false \
 		and snapshot.get("status") == "missing_service" \
 		and snapshot.get("resume_target") == "none" \
-		and screen.save_inspector_status_text().contains("status: missing_service")
+		and screen.save_inspector_status_text().contains("%s: missing_service" % tr("ui.label.status"))
 	screen.free()
 	assert(passed)
 	return passed
@@ -418,7 +460,7 @@ func test_save_inspector_predicts_reward_resume_for_matching_event_reward() -> b
 	var passed: bool = screen.save_inspector_snapshot().get("resume_target") == "reward" \
 		and screen.save_inspector_reward_text().contains("reward_state: matching") \
 		and screen.save_inspector_reward_text().contains("source: event") \
-		and screen.save_inspector_reward_text().contains("rewards: 1")
+		and screen.save_inspector_reward_text().contains("%s: 1" % tr("ui.label.pending_rewards"))
 	screen.free()
 	_delete_test_save(save_path)
 	assert(passed)

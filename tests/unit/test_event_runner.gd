@@ -31,7 +31,17 @@ func test_runner_rejects_unavailable_option_without_mutation() -> bool:
 	var passed: bool = not applied \
 		and run.current_hp == 5 \
 		and run.gold == 10 \
-		and reason.contains("Requires")
+		and reason == "ui.event.need_hp"
+	assert(passed)
+	return passed
+
+func test_unavailable_reason_uses_locale_key() -> bool:
+	var option := EventOptionDef.new()
+	option.min_gold = 99
+	var run := RunState.new()
+	run.gold = 1
+	var reason := EventRunner.new().unavailable_reason(run, option)
+	var passed := reason == "ui.event.need_gold"
 	assert(passed)
 	return passed
 
@@ -86,8 +96,10 @@ func test_runner_remove_card_option_unavailable_when_card_missing() -> bool:
 	var applied := runner.apply_event_option(_catalog(), run, _event("test_event", option), option)
 	var passed: bool = not available \
 		and not applied \
-		and reason.contains("Requires card") \
+		and reason == "ui.event.need_card" \
 		and run.deck_ids == ["sword.guard"]
+	if not passed:
+		push_error("Expected unavailable reason ui.event.need_card, got %s" % reason)
 	assert(passed)
 	return passed
 

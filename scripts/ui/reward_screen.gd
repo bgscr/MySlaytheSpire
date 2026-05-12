@@ -9,6 +9,8 @@ const RewardResolver := preload("res://scripts/reward/reward_resolver.gd")
 const RunProgression := preload("res://scripts/run/run_progression.gd")
 const RunStateScript := preload("res://scripts/run/run_state.gd")
 const SceneRouterScript := preload("res://scripts/app/scene_router.gd")
+const UiStyle := preload("res://scripts/ui/ui_style.gd")
+const UiText := preload("res://scripts/ui/ui_text.gd")
 
 const STATE_AVAILABLE := "available"
 const STATE_CLAIMED := "claimed"
@@ -34,12 +36,14 @@ func _ready() -> void:
 func _build_layout() -> void:
 	title_label = Label.new()
 	title_label.name = "RewardTitle"
-	title_label.text = "Rewards"
+	title_label.text = tr("ui.reward.title")
+	UiStyle.apply_title(title_label)
 	add_child(title_label)
 
 	status_label = Label.new()
 	status_label.name = "RewardStatus"
 	status_label.position.y = 28
+	UiStyle.apply_body_label(status_label)
 	add_child(status_label)
 
 	reward_container = VBoxContainer.new()
@@ -50,8 +54,9 @@ func _build_layout() -> void:
 
 	continue_button = Button.new()
 	continue_button.name = "ContinueButton"
-	continue_button.text = "Continue"
+	continue_button.text = tr("ui.continue")
 	continue_button.position = Vector2(16, 420)
+	UiStyle.apply_primary_button(continue_button)
 	continue_button.pressed.connect(_on_continue_pressed)
 	add_child(continue_button)
 
@@ -78,7 +83,8 @@ func _render_rewards() -> void:
 	if rewards.is_empty():
 		var no_rewards := Label.new()
 		no_rewards.name = "NoRewardsLabel"
-		no_rewards.text = "No rewards"
+		no_rewards.text = tr("ui.reward.no_rewards")
+		UiStyle.apply_body_label(no_rewards)
 		reward_container.add_child(no_rewards)
 		return
 
@@ -91,12 +97,14 @@ func _render_rewards() -> void:
 		var label := Label.new()
 		label.name = "RewardLabel_%s" % reward_index
 		label.text = _reward_label_text(reward)
+		UiStyle.apply_body_label(label)
 		item.add_child(label)
 
 		var state := reward_states[reward_index]
 		if state == STATE_CLAIMED or state == STATE_SKIPPED:
 			var state_label := Label.new()
-			state_label.text = state.capitalize()
+			state_label.text = _reward_state_text(state)
+			UiStyle.apply_body_label(state_label)
 			item.add_child(state_label)
 			continue
 
@@ -111,6 +119,7 @@ func _add_reward_actions(item: VBoxContainer, reward_index: int, reward: Diction
 				var button := Button.new()
 				button.name = "ClaimCard_%s_%s" % [reward_index, card_index]
 				button.text = ""
+				UiStyle.apply_primary_button(button)
 				button.custom_minimum_size = Vector2(148, 104)
 				button.pressed.connect(func(): _claim_card(reward_index, card_index))
 				var theme := _visual_theme()
@@ -131,7 +140,8 @@ func _add_reward_actions(item: VBoxContainer, reward_index: int, reward: Diction
 		"gold":
 			var gold_button := Button.new()
 			gold_button.name = "ClaimGold_%s" % reward_index
-			gold_button.text = "Take %s gold" % int(reward.get("amount", 0))
+			gold_button.text = tr("ui.reward.take_gold").format({"amount": int(reward.get("amount", 0))})
+			UiStyle.apply_primary_button(gold_button)
 			gold_button.pressed.connect(func(): _claim_gold(reward_index))
 			item.add_child(gold_button)
 			item.add_child(_skip_button(reward_index))
@@ -139,6 +149,7 @@ func _add_reward_actions(item: VBoxContainer, reward_index: int, reward: Diction
 			var relic_button := Button.new()
 			relic_button.name = "ClaimRelic_%s" % reward_index
 			relic_button.text = ""
+			UiStyle.apply_primary_button(relic_button)
 			relic_button.custom_minimum_size = Vector2(128, 104)
 			var relic_id := String(reward.get("relic_id", ""))
 			ItemVisualPresenter.add_relic_preview(relic_button, "Reward", str(reward_index), relic_id, catalog)
@@ -155,7 +166,8 @@ func _add_reward_actions(item: VBoxContainer, reward_index: int, reward: Diction
 func _skip_button(reward_index: int) -> Button:
 	var button := Button.new()
 	button.name = "SkipReward_%s" % reward_index
-	button.text = "Skip"
+	button.text = tr("ui.reward.skip")
+	UiStyle.apply_secondary_button(button)
 	button.pressed.connect(func(): _skip_reward(reward_index))
 	return button
 
@@ -245,22 +257,29 @@ func _refresh_continue_button() -> void:
 		return
 	continue_button.disabled = advance_requested or not _all_rewards_resolved()
 	if rewards.is_empty():
-		status_label.text = "No rewards available"
+		status_label.text = tr("ui.reward.no_rewards_available")
 	elif continue_button.disabled:
-		status_label.text = "Claim or skip each reward"
+		status_label.text = tr("ui.reward.resolve_prompt")
 	else:
-		status_label.text = "Rewards resolved"
+		status_label.text = tr("ui.reward.resolved")
 
 func _reward_label_text(reward: Dictionary) -> String:
 	match String(reward.get("type", "")):
 		"card_choice":
-			return "Choose one card"
+			return tr("ui.reward.choose_one_card")
 		"gold":
-			return "Gold: %s" % int(reward.get("amount", 0))
+			return tr("ui.reward.gold_label").format({"amount": int(reward.get("amount", 0))})
 		"relic":
-			return "Relic: %s" % _relic_text(String(reward.get("relic_id", "")))
-		_:
-			return "Unknown reward"
+			return tr("ui.reward.relic_label").format({"name": UiText.relic_name(catalog, String(reward.get("relic_id", "")))})
+	return tr("ui.common.unknown_reward")
+
+func _reward_state_text(state: String) -> String:
+	match state:
+		STATE_CLAIMED:
+			return tr("ui.reward.state_claimed")
+		STATE_SKIPPED:
+			return tr("ui.reward.state_skipped")
+	return state.capitalize()
 
 func _card_text(card_id: String) -> String:
 	if catalog == null:
@@ -269,14 +288,6 @@ func _card_text(card_id: String) -> String:
 	if card == null:
 		return card_id
 	return "%s [%s] (%s)" % [card.id, card.card_type, card.cost]
-
-func _relic_text(relic_id: String) -> String:
-	if catalog == null:
-		return relic_id
-	var relic = catalog.get_relic(relic_id)
-	if relic == null:
-		return relic_id
-	return "%s [%s]" % [relic.id, relic.tier]
 
 func _visual_theme() -> Dictionary:
 	var app = _app()

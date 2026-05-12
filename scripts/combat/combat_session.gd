@@ -44,10 +44,10 @@ func start(input_catalog: ContentCatalog, input_run: RunState) -> void:
 	run = input_run
 	_reset_runtime_state()
 	if run == null:
-		_set_invalid("CombatSession cannot start without a run.")
+		_set_invalid("combat.error.start_no_run")
 		return
 	if catalog == null:
-		_set_invalid("CombatSession cannot start without a catalog.")
+		_set_invalid("combat.error.start_no_catalog")
 		return
 	rng = RngService.new(run.seed_value).fork("combat:%s" % run.current_node_id)
 	_initialize_from_run()
@@ -63,26 +63,26 @@ func start_sandbox(
 	run = null
 	_reset_runtime_state()
 	if catalog == null:
-		_set_invalid("CombatSession sandbox cannot start without a catalog.")
+		_set_invalid("combat.error.sandbox_no_catalog")
 		return
 	if deck_ids.is_empty():
-		_set_invalid("CombatSession sandbox cannot start with an empty deck.")
+		_set_invalid("combat.error.sandbox_empty_deck")
 		return
 	if enemy_ids.is_empty():
-		_set_invalid("CombatSession sandbox cannot start without enemies.")
+		_set_invalid("combat.error.sandbox_no_enemies")
 		return
 	if enemy_ids.size() > 3:
-		_set_invalid("CombatSession sandbox requires one to three enemies.")
+		_set_invalid("combat.error.sandbox_enemy_count")
 		return
 	var character := catalog.get_character(character_id)
 	if character == null:
-		_set_invalid("CombatSession sandbox character is missing: %s" % character_id)
+		_set_invalid("combat.error.sandbox_character_missing", {"character_id": character_id})
 		return
 	var enemy_defs: Array[EnemyDef] = []
 	for enemy_id in enemy_ids:
 		var enemy_def := catalog.get_enemy(enemy_id)
 		if enemy_def == null:
-			_set_invalid("CombatSession sandbox enemy is missing: %s" % enemy_id)
+			_set_invalid("combat.error.sandbox_enemy_missing", {"enemy_id": enemy_id})
 			return
 		enemy_defs.append(enemy_def)
 	rng = RngService.new(seed_value).fork("sandbox:%s:%s" % [character_id, ",".join(enemy_ids)])
@@ -111,20 +111,20 @@ func get_enemy_intent(enemy_index: int) -> String:
 
 func select_card(hand_index: int) -> bool:
 	if phase != PHASE_PLAYER_TURN:
-		error_text = "Cards can only be selected during the player turn."
+		_set_error("combat.error.cards_player_turn")
 		return false
 	if hand_index < 0 or hand_index >= state.hand.size():
-		error_text = "Card selection index is invalid: %d" % hand_index
+		_set_error("combat.error.card_selection_index_invalid", {"index": hand_index})
 		return false
 	var card_id := state.hand[hand_index]
 	var card: CardDef = null
 	if catalog != null:
 		card = catalog.get_card(card_id)
 	if card == null:
-		error_text = "Selected card is missing from catalog: %s" % card_id
+		_set_error("combat.error.card_missing", {"card_id": card_id})
 		return false
 	if state.energy < card.cost:
-		error_text = "Not enough energy to play card: %s" % card_id
+		_set_error("combat.error.not_enough_energy", {"card_id": card_id})
 		return false
 
 	pending_hand_index = hand_index
@@ -138,7 +138,7 @@ func select_card(hand_index: int) -> bool:
 
 func cancel_selection() -> bool:
 	if phase != PHASE_SELECTING_ENEMY_TARGET and phase != PHASE_CONFIRMING_PLAYER_TARGET:
-		error_text = "There is no pending card selection to cancel."
+		_set_error("combat.error.cancel_no_pending_selection")
 		return false
 	_clear_pending_selection()
 	phase = PHASE_PLAYER_TURN
@@ -147,27 +147,27 @@ func cancel_selection() -> bool:
 
 func confirm_enemy_target(enemy_index: int) -> bool:
 	if phase != PHASE_SELECTING_ENEMY_TARGET:
-		error_text = "Enemy target confirmation is not currently pending."
+		_set_error("combat.error.enemy_target_not_pending")
 		return false
 	if enemy_index < 0 or enemy_index >= state.enemies.size():
-		error_text = "Enemy target index is invalid: %d" % enemy_index
+		_set_error("combat.error.enemy_target_index_invalid", {"index": enemy_index})
 		return false
 	var target := state.enemies[enemy_index]
 	if target.is_defeated():
-		error_text = "Enemy target is already defeated: %d" % enemy_index
+		_set_error("combat.error.enemy_target_defeated", {"index": enemy_index})
 		return false
 	return _play_pending_card(target)
 
 func confirm_player_target() -> bool:
 	if phase != PHASE_CONFIRMING_PLAYER_TARGET:
-		error_text = "Player target confirmation is not currently pending."
+		_set_error("combat.error.player_target_not_pending")
 		return false
 	return _play_pending_card(state.player)
 
 func end_player_turn() -> bool:
 	error_text = ""
 	if phase != PHASE_PLAYER_TURN:
-		error_text = "Cannot end turn outside the player turn."
+		_set_error("combat.error.end_turn_not_player_turn")
 		return false
 	state.discard_pile.append_array(state.hand)
 	state.hand.clear()
@@ -306,17 +306,17 @@ func _card_requires_enemy_target(card: CardDef) -> bool:
 
 func _play_pending_card(target: CombatantState) -> bool:
 	if pending_card == null:
-		error_text = "Pending card is missing."
+		_set_error("combat.error.pending_card_missing")
 		return false
 	if pending_hand_index < 0 or pending_hand_index >= state.hand.size():
-		error_text = "Pending card hand index is invalid: %d" % pending_hand_index
+		_set_error("combat.error.pending_card_index_invalid", {"index": pending_hand_index})
 		return false
 	var played_card_id := state.hand[pending_hand_index]
 	if played_card_id != pending_card.id:
-		error_text = "Pending card no longer matches hand card: %s" % played_card_id
+		_set_error("combat.error.pending_card_mismatch", {"card_id": played_card_id})
 		return false
 	if state.energy < pending_card.cost:
-		error_text = "Not enough energy to play card: %s" % pending_card.id
+		_set_error("combat.error.not_enough_energy", {"card_id": pending_card.id})
 		return false
 
 	state.energy -= pending_card.cost
@@ -388,14 +388,14 @@ func _finish_loss() -> void:
 func _initialize_from_run() -> void:
 	var node = _find_current_node()
 	if node == null:
-		_set_invalid("CombatSession current map node is missing: %s" % run.current_node_id)
+		_set_invalid("combat.error.current_node_missing", {"node_id": run.current_node_id})
 		return
 	if run.deck_ids.is_empty():
-		_set_invalid("CombatSession cannot start with an empty deck.")
+		_set_invalid("combat.error.empty_deck")
 		return
 	var character := catalog.get_character(run.character_id)
 	if character == null:
-		_set_invalid("CombatSession character is missing: %s" % run.character_id)
+		_set_invalid("combat.error.character_missing", {"character_id": run.character_id})
 		return
 
 	state.player = CombatantState.new(run.character_id, max(1, run.max_hp))
@@ -406,12 +406,12 @@ func _initialize_from_run() -> void:
 
 	var encounter_ids := EncounterGenerator.new().generate(catalog, run.seed_value, node.id, node.node_type)
 	if encounter_ids.is_empty():
-		_set_invalid("CombatSession encounter is empty for node: %s" % node.id)
+		_set_invalid("combat.error.encounter_empty", {"node_id": node.id})
 		return
 	for enemy_id in encounter_ids:
 		var enemy_def := catalog.get_enemy(enemy_id)
 		if enemy_def == null:
-			_set_invalid("CombatSession enemy is missing: %s" % enemy_id)
+			_set_invalid("combat.error.enemy_missing", {"enemy_id": enemy_id})
 			return
 		enemy_defs_by_id[enemy_id] = enemy_def
 		state.enemies.append(CombatantState.new(enemy_id, enemy_def.max_hp))
@@ -437,6 +437,15 @@ func _shuffle_card_ids(card_ids: Array[String]) -> Array[String]:
 		result.append(String(card_id))
 	return result
 
-func _set_invalid(message: String) -> void:
+func _set_invalid(key: String, values: Dictionary = {}) -> void:
 	phase = PHASE_INVALID
-	error_text = message
+	_set_error(key, values)
+
+func _set_error(key: String, values: Dictionary = {}) -> void:
+	error_text = _error_text(key, values)
+
+func _error_text(key: String, values: Dictionary = {}) -> String:
+	var text := tr(key)
+	if values.is_empty():
+		return text
+	return text.format(values)
